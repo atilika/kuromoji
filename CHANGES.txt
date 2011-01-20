@@ -1,0 +1,10 @@
+CHANGES.txt
+===========
+
+Release 0.7.3 (2011-01-18)
+
+* Modified Tokenizer to reuse dictionaries so that it doesn't throw OOM when
+  several Tokenzer instances are created.
+
+* Modified API to get Tokenizer instance. It is instanciated using build()
+  method.

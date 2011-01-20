@@ -1,0 +1,13 @@
+##
+## This file should use UTF-8 encoding
+##
+## User dictionary format:
+##   <text>,<token1> <token2> ... <tokenn>,<reading1> <reading2> ... <readingn>,<part-of-speech> 
+##
+
+# Custom segmentation for long entries
+日本経済新聞,日本 経済 新聞,ニホン ケイザイ シンブン,カスタム名詞
+関西国際空港,関西 国際 空港,カンサイ コクサイ クウコウ,テスト名詞
+
+# Custom reading for former sumo wrestler Asashoryu
+朝青龍,朝青龍,アサショウリュウ,カスタム人名
