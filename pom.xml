@@ -8,9 +8,34 @@
 	<name>Kuromoji Japanese Morphological Analyzer</name>
 
 	<organization>
-		<name>Atilika Inc.</name>
-		<url>http://www.atilika.com</url>
+		<name>ATILIKA</name>
+		<url>http://www.atilika.org</url>
 	</organization>
+
+	<developers>
+		<developer>
+			<id>masaruh</id>
+			<name>Masaru Hasegawa</name>
+			<email>masaru@atilika.com</email>
+			<organization>Atilika Inc.</organization>
+			<organizationUrl>http://www.atilika.com</organizationUrl>
+			<roles>
+				<role>main developer</role>
+			</roles>
+			<timezone>JST</timezone>
+		</developer>
+		<developer>
+			<id>cm</id>
+			<name>Christian Moen</name>
+			<email>cm@atilika.com</email>
+			<organization>Atilika Inc.</organization>
+			<organizationUrl>http://www.atilika.com</organizationUrl>
+			<roles>
+				<role>developer</role>
+			</roles>
+			<timezone>JST</timezone>
+		</developer>
+	</developers>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -71,14 +96,16 @@
 					<execution>
 						<id>download-dictionary</id>
 						<phase>generate-resources</phase>
-						<configuration>							
+						<configuration>
 							<target if="download">
-								<echo message="Downloading dictionary"/>
+								<echo message="Downloading dictionary" />
 								<delete dir="dictionary" />
 								<mkdir dir="dictionary" />
-								<get src="http://atilika.com/releases/mecab-ipadic/mecab-ipadic-2.7.0-20070801.tar.gz"
-									 dest="dictionary/mecab-ipadic-2.7.0-20070801.tar.gz" verbose="true" />
-								<untar src="dictionary/mecab-ipadic-2.7.0-20070801.tar.gz" dest="dictionary" compression="gzip" />
+								<get
+									src="http://atilika.com/releases/mecab-ipadic/mecab-ipadic-2.7.0-20070801.tar.gz"
+									dest="dictionary/mecab-ipadic-2.7.0-20070801.tar.gz" verbose="true" />
+								<untar src="dictionary/mecab-ipadic-2.7.0-20070801.tar.gz"
+									dest="dictionary" compression="gzip" />
 							</target>
 						</configuration>
 						<goals>
