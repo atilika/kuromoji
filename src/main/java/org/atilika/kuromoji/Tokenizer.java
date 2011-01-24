@@ -198,10 +198,10 @@ public class Tokenizer {
 			return this;
 		}
 		
-		public synchronized Builder userDictionary(String userDicitonaryPath) {
-            if(userDicitonaryPath != null && userDicitonaryPath.length() > 0) {
+		public synchronized Builder userDictionary(String userDictionaryPath) {
+            if(userDictionaryPath != null && userDictionaryPath.length() > 0) {
             	try {
-					userDictionary(new BufferedInputStream(new FileInputStream(userDicitonaryPath)));
+					userDictionary(new BufferedInputStream(new FileInputStream(userDictionaryPath)));
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
