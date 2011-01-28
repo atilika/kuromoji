@@ -37,6 +37,9 @@ import org.atilika.kuromoji.viterbi.ViterbiNode;
 import org.atilika.kuromoji.viterbi.ViterbiNode.Type;
 
 /**
+ * Tokenizer main class.
+ * Thread safe.
+ * 
  * @author Masaru Hasegawa
  * @author Christian Moen
  */
@@ -153,6 +156,10 @@ public class Tokenizer {
 		return new Builder();
 	}
 	
+	/**
+	 * Builder class used to create Tokenizer instance.
+	 * Dictionaries are shared among each Tokenizer instance.
+	 */
 	public static class Builder {
 		private static TokenInfoDictionary dictionary = null;
 		private static ConnectionCosts costs = null;
@@ -166,6 +173,9 @@ public class Tokenizer {
 			loadDictionaries();
 		}
 		
+		/**
+		 * Load dictionaries
+		 */
 		private static synchronized void loadDictionaries() {
 			if(initialized == true) {
 				return;
@@ -182,11 +192,21 @@ public class Tokenizer {
 			}
 		}
 		
+		/**
+		 * Set tokenization mode
+		 * @param mode
+		 * @return Builder
+		 */
 		public synchronized Builder mode(Mode mode) {
 			this.mode = mode;
 			return this;
 		}
 		
+		/**
+		 * Set user dicitonary input stream
+		 * @param userDictionaryInputStream
+		 * @return Builder
+		 */
 		public synchronized Builder userDictionary(InputStream userDictionaryInputStream) {
 			if (userDictionaryInputStream != null) {
 				try {
@@ -198,10 +218,15 @@ public class Tokenizer {
 			return this;
 		}
 		
-		public synchronized Builder userDictionary(String userDicitonaryPath) {
-            if(userDicitonaryPath != null && userDicitonaryPath.length() > 0) {
+		/**
+		 * Set user dictionary path
+		 * @param userDictionaryPath
+		 * @return Builder
+		 */
+		public synchronized Builder userDictionary(String userDictionaryPath) {
+            if(userDictionaryPath != null && userDictionaryPath.length() > 0) {
             	try {
-					userDictionary(new BufferedInputStream(new FileInputStream(userDicitonaryPath)));
+					userDictionary(new BufferedInputStream(new FileInputStream(userDictionaryPath)));
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -210,6 +235,10 @@ public class Tokenizer {
             return this;
 		}
 		
+		/**
+		 * Create Tokenizer instance
+		 * @return Tokenizer
+		 */
 		public Tokenizer build() {
 			return new Tokenizer(dictionary, costs, trie, unkDictionary, userDictionary, mode);
 		}

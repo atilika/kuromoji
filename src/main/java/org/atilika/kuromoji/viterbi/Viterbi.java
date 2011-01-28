@@ -241,7 +241,8 @@ public class Viterbi {
 			// Process Unknown Word
 			int unknownWordLength = 0;
 			char firstCharacter = suffix.charAt(0);
-			if(characterDefinition.isInvoke(firstCharacter)){	// Process "invoke"
+			boolean isInvoke = characterDefinition.isInvoke(firstCharacter);
+			if(isInvoke){	// Process "invoke"
 				if(extendedMode) {
 					// EXTENDED mode uni-gram unknown words
 					unknownWordLength = unkDictionary.lookupExt(suffix);
@@ -258,7 +259,7 @@ public class Viterbi {
 				String unkWord = suffix.substring(0, unknownWordLength);
 				int characterId = characterDefinition.lookup(firstCharacter);
 				int[] wordIds;
-				if(extendedMode) {
+				if(isInvoke && extendedMode) {
 					wordIds = unkDictionary.lookupWordIdsExt(characterId); // characters in input text are supposed to be the same
 				} else {
 					wordIds = unkDictionary.lookupWordIds(characterId); // characters in input text are supposed to be the same
