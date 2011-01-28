@@ -142,4 +142,13 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
+
+	<distributionManagement>
+		<repository>
+			<id>atilika</id>
+			<name>ATILIKA Open Source</name>
+			<url>http://atilika.org/nexus/content/repositories/atilika/</url>
+		</repository>
+	</distributionManagement>
+
 </project>

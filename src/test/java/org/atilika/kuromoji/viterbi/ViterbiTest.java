@@ -51,7 +51,7 @@ public class ViterbiTest {
 //
 //		GraphvizFormatter formatter = new GraphvizFormatter(dictionary, costs);
 //		
-////		Viterbi viterbi = new Tokenizer().initialize(null, Mode.EXTENDED);
+//		Viterbi viterbi = new Tokenizer().initialize(null, Mode.EXTENDED);
 //		ViterbiNode[][][] graph = viterbi.build("ピタゴラスイッチ");
 //
 //		File viterbiDebug = File.createTempFile("debug-viterbi-", ".gv"); 

@@ -31,3 +31,9 @@ The korumoji homepage is available on http://atilika.org for
 Further documentation is avilable on http://atilika.org/confluence
 
 Please file bugs using JIRA on http://atilika.org/jira
+
+
+Contact us
+----------
+
+kuromoji@atilika.com
