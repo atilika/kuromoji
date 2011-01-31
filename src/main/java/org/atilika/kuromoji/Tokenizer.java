@@ -48,6 +48,8 @@ public class Tokenizer {
 	
 	private final EnumMap<Type, Dictionary> dictionaryMap = new EnumMap<Type, Dictionary>(Type.class);
 	
+	private final boolean split;
+	
 	/**
 	 * 
 	 * @param dictionary
@@ -57,7 +59,7 @@ public class Tokenizer {
 	 * @param userDictionary
 	 * @param mode
 	 */
-	protected Tokenizer(UserDictionary userDictionary, Mode mode) {
+	protected Tokenizer(UserDictionary userDictionary, Mode mode, boolean split) {
 
 		this.viterbi = new Viterbi(Dictionaries.getTrie(),
 				                   Dictionaries.getDictionary(),
@@ -66,6 +68,8 @@ public class Tokenizer {
 				                   userDictionary,
 				                   mode);
 
+		this.split = split;
+		
 		dictionaryMap.put(Type.KNOWN, Dictionaries.getDictionary());
 		dictionaryMap.put(Type.UNKNOWN, Dictionaries.getUnknownDictionary());
 		dictionaryMap.put(Type.USER, userDictionary);
@@ -78,6 +82,10 @@ public class Tokenizer {
 	 */
 	public List<Token> tokenize(String text) {
 
+		if(!split) {
+			return doTokenize(0, text);			
+		}
+		
 		List<Integer> splitPositions = getSplitPositions(text);
 
 		if(splitPositions.size() == 0) {
@@ -97,7 +105,7 @@ public class Tokenizer {
 		
 		return result;
 	}
-
+	
 	/**
 	 * Split input text at 句読点, which is 。 and 、
 	 * @param text
@@ -165,6 +173,8 @@ public class Tokenizer {
 	public static class Builder {
 
 		private Mode mode = Mode.NORMAL;
+		
+		private boolean split = true;
 
 		private UserDictionary userDictionary = null;
 		
@@ -175,6 +185,16 @@ public class Tokenizer {
 		 */
 		public synchronized Builder mode(Mode mode) {
 			this.mode = mode;
+			return this;
+		}
+		
+		/**
+		 * Set split mode
+		 * @param split
+		 * @return Builder
+		 */
+		public synchronized Builder split(boolean split) {
+			this.split = split;
 			return this;
 		}
 		
@@ -206,7 +226,7 @@ public class Tokenizer {
 		 * @return Tokenizer
 		 */
 		public synchronized Tokenizer build() {
-			return new Tokenizer(this.userDictionary, this.mode);
+			return new Tokenizer(userDictionary, mode, split);
 		}
 	}
 }
