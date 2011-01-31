@@ -5,13 +5,11 @@ Release 0.7.4
 
 * Added DebugTokenizer to analyze Viterbi
 
-* Fixed extended mode bug
-
 * Modified extended mode behavior so that it now unigrams only unknown words
 
 * Made splitting configurable
 
-* Modified search mode(including extended mode) behavior. It now adds extra cost to non-kanji only nodes.
+* Modified search mode(including extended mode) behavior. It now adds extra cost to non-kanji only nodes too.
 
 * Known Issues
   - GraphvizFormatter doesn't work properly in extended mode
