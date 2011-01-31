@@ -56,7 +56,9 @@ public class Viterbi {
 	
 	private static final int DEFAULT_COST = 10000000;
 
-	private static final int SEARCH_MODE_LENGTH = 3;
+	private static final int SEARCH_MODE_LENGTH_KANJI = 3;
+
+	private static final int SEARCH_MODE_LENGTH = 5;
 
 	private static final int SEARCH_MODE_PENALTY = 10000;
 		
@@ -138,12 +140,12 @@ public class Viterbi {
 					
 					int pathCost = leftNode.getPathCost() + costs.get(leftNode.getLeftId(), rightId) + wordCost;	// cost = [total cost from BOS to previous node] + [connection cost between previous node and current node] + [word cost]
 
-					// "Search mode". Add extra costs if it is long kanji node.
+					// "Search mode". Add extra costs if it is long node.
 					if(searchMode) {
 //						System.out.print(""); // If this line exists, kuromoji runs faster for some reason when searchMode == false.
 						String surfaceForm = node.getSurfaceForm();
 						int length = surfaceForm.length();
-						if(node.getType() == Type.KNOWN && length > SEARCH_MODE_LENGTH) {
+						if(length > SEARCH_MODE_LENGTH_KANJI) {
 							boolean allKanji = true;
 							// check if node consists of only kanji
 							for(int pos = 0; pos < length; pos++) {
@@ -154,7 +156,9 @@ public class Viterbi {
 							}
 							
 							if(allKanji) {	// Process only Kanji keywords
-								pathCost += (length - SEARCH_MODE_LENGTH) * SEARCH_MODE_PENALTY;
+								pathCost += (length - SEARCH_MODE_LENGTH_KANJI) * SEARCH_MODE_PENALTY;
+							} else if(length > SEARCH_MODE_LENGTH) {
+								pathCost += (length - SEARCH_MODE_LENGTH) * SEARCH_MODE_PENALTY;								
 							}
 						}
 					}
@@ -246,7 +250,8 @@ public class Viterbi {
 				}
 			}
 
-			if(unknownWordEndIndex > startIndex){
+			// In the case of normal mode, it doesn't process unknown word greedily.
+			if(!searchMode && unknownWordEndIndex > startIndex){
 				continue;
 			}
 			
