@@ -13,6 +13,9 @@ Release 0.7.4
 
 * Modified search mode(including extended mode) behavior. It now adds extra cost to non-kanji only nodes.
 
+* Known Issues
+  - GraphvizFormatter doesn't work properly in extended mode
+ 
 Release 0.7.3 (2011-01-18)
 
 * Modified Tokenizer to reuse dictionaries so that it doesn't throw OOM when
