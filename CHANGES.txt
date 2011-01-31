@@ -3,8 +3,9 @@ CHANGES.txt
 
 Release 0.7.4
 
-* Fixed extended mode bug
+* Added DebugTokenizer to analyze Viterbi
 
+* Fixed extended mode bug
 
 
 Release 0.7.3 (2011-01-18)

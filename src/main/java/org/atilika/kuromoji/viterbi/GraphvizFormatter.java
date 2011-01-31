@@ -1,9 +1,6 @@
 /**
  * Copyright © 2010-2011 Atilika Inc.  All rights reserved.
  *
- * See the NOTICE.txt file distributed with this work for additional
- * information regarding copyright ownership.
- * 
  * Atilika Inc. licenses this file to you under the Apache License, Version
  * 2.0 (the "License"); you may not use this file except in compliance with
  * the License.  A copy of the License is distributed with this work in the
@@ -24,7 +21,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.atilika.kuromoji.dict.ConnectionCosts;
-import org.atilika.kuromoji.dict.TokenInfoDictionary;
 import org.atilika.kuromoji.viterbi.ViterbiNode.Type;
 
 /**
@@ -47,8 +43,7 @@ public class GraphvizFormatter {
 
 	private boolean foundBOS;
 		
-	public GraphvizFormatter(TokenInfoDictionary dictionary, ConnectionCosts costs) {
-		super();
+	public GraphvizFormatter(ConnectionCosts costs) {
 		this.costs = costs;
 		this.nodeMap = new HashMap<String, ViterbiNode>();
 		this.bestPathMap = new HashMap<String, String>();
@@ -72,7 +67,6 @@ public class GraphvizFormatter {
 		StringBuilder sb = new StringBuilder();
 		sb.append(formatHeader());
 		sb.append(formatNodes(startsArray, endsArray));
-//		sb.append(formatEdge(bestPath.get(1), bestPath.get(2), "fontcolor=\"red\""));
 		sb.append(formatTrailer());
 		return sb.toString();
 		
@@ -106,7 +100,6 @@ public class GraphvizFormatter {
 			if(endsArray[i] == null || startsArray[i] == null) {
 				continue;
 			}
-			
 			for (int j = 0; j < endsArray[i].length; j++) {
 				ViterbiNode from = endsArray[i][j];
 				if(from == null){

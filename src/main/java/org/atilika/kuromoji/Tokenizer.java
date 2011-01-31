@@ -1,9 +1,6 @@
 /**
  * Copyright © 2010-2011 Atilika Inc.  All rights reserved.
  *
- * See the NOTICE.txt file distributed with this work for additional
- * information regarding copyright ownership.
- * 
  * Atilika Inc. licenses this file to you under the Apache License, Version
  * 2.0 (the "License"); you may not use this file except in compliance with
  * the License.  A copy of the License is distributed with this work in the
@@ -21,12 +18,15 @@ package org.atilika.kuromoji;
 
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 
 import org.atilika.kuromoji.dict.ConnectionCosts;
+import org.atilika.kuromoji.dict.Dictionaries;
 import org.atilika.kuromoji.dict.Dictionary;
 import org.atilika.kuromoji.dict.TokenInfoDictionary;
 import org.atilika.kuromoji.dict.UnknownDictionary;
@@ -47,7 +47,7 @@ public class Tokenizer {
 	public enum Mode {
 		NORMAL, SEARCH, EXTENDED
 	}
-
+	
 	private final Viterbi viterbi;
 	
 	private final EnumMap<Type, Dictionary> dictionaryMap = new EnumMap<Type, Dictionary>(Type.class);
@@ -61,13 +61,19 @@ public class Tokenizer {
 	 * @param userDictionary
 	 * @param mode
 	 */
-	protected Tokenizer(TokenInfoDictionary dictionary, ConnectionCosts costs, DoubleArrayTrie trie, UnknownDictionary unkDictionary, UserDictionary userDictionary, Mode mode) {
-		viterbi = new Viterbi(trie, dictionary, unkDictionary, costs, userDictionary, mode);
-		dictionaryMap.put(Type.KNOWN, dictionary);
-		dictionaryMap.put(Type.UNKNOWN, unkDictionary);
+	protected Tokenizer(UserDictionary userDictionary, Mode mode) {
+
+		this.viterbi = new Viterbi(Dictionaries.getTrie(),
+				                   Dictionaries.getDictionary(),
+				                   Dictionaries.getUnknownDictionary(),
+				                   Dictionaries.getCosts(),
+				                   userDictionary,
+				                   mode);
+
+		dictionaryMap.put(Type.KNOWN, Dictionaries.getDictionary());
+		dictionaryMap.put(Type.UNKNOWN, Dictionaries.getUnknownDictionary());
 		dictionaryMap.put(Type.USER, userDictionary);
 	}
-
 
 	/**
 	 * Tokenize input text
@@ -95,7 +101,7 @@ public class Tokenizer {
 		
 		return result;
 	}
-	
+
 	/**
 	 * Split input text at 句読点, which is 。 and 、
 	 * @param text
@@ -161,36 +167,10 @@ public class Tokenizer {
 	 * Dictionaries are shared among each Tokenizer instance.
 	 */
 	public static class Builder {
-		private static TokenInfoDictionary dictionary = null;
-		private static ConnectionCosts costs = null;
-		private static DoubleArrayTrie trie = null;
-		private static UnknownDictionary unkDictionary = null;
-		private Mode mode = Mode.NORMAL;
-		private UserDictionary userDictionary = null;
-		private static boolean initialized = false;
 
-		protected Builder() {
-			loadDictionaries();
-		}
-		
-		/**
-		 * Load dictionaries
-		 */
-		private static synchronized void loadDictionaries() {
-			if(initialized == true) {
-				return;
-			}
-			
-			try {
-				dictionary = TokenInfoDictionary.getInstance();
-				costs = ConnectionCosts.getInstance();
-				trie = DoubleArrayTrie.getInstance();
-				unkDictionary = UnknownDictionary.getInstance();
-				initialized = true;
-			} catch(Exception e) {
-				e.printStackTrace();
-			}
-		}
+		private Mode mode = Mode.NORMAL;
+
+		private UserDictionary userDictionary = null;
 		
 		/**
 		 * Set tokenization mode
@@ -203,18 +183,13 @@ public class Tokenizer {
 		}
 		
 		/**
-		 * Set user dicitonary input stream
+		 * Set user dictionary input stream
 		 * @param userDictionaryInputStream
 		 * @return Builder
+		 * @throws IOException 
 		 */
-		public synchronized Builder userDictionary(InputStream userDictionaryInputStream) {
-			if (userDictionaryInputStream != null) {
-				try {
-					userDictionary = UserDictionary.read(userDictionaryInputStream);
-				} catch(Exception e) {
-					e.printStackTrace();
-				}
-			}
+		public synchronized Builder userDictionary(InputStream userDictionaryInputStream) throws IOException {
+			this.userDictionary = UserDictionary.read(userDictionaryInputStream);
 			return this;
 		}
 		
@@ -222,16 +197,11 @@ public class Tokenizer {
 		 * Set user dictionary path
 		 * @param userDictionaryPath
 		 * @return Builder
+		 * @throws IOException 
+		 * @throws FileNotFoundException 
 		 */
-		public synchronized Builder userDictionary(String userDictionaryPath) {
-            if(userDictionaryPath != null && userDictionaryPath.length() > 0) {
-            	try {
-					userDictionary(new BufferedInputStream(new FileInputStream(userDictionaryPath)));
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-            }
-            
+		public synchronized Builder userDictionary(String userDictionaryPath) throws FileNotFoundException, IOException {
+			this.userDictionary(new BufferedInputStream(new FileInputStream(userDictionaryPath)));
             return this;
 		}
 		
@@ -239,8 +209,8 @@ public class Tokenizer {
 		 * Create Tokenizer instance
 		 * @return Tokenizer
 		 */
-		public Tokenizer build() {
-			return new Tokenizer(dictionary, costs, trie, unkDictionary, userDictionary, mode);
+		public synchronized Tokenizer build() {
+			return new Tokenizer(this.userDictionary, this.mode);
 		}
 	}
 }
