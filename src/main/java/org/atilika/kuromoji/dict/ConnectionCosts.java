@@ -38,19 +38,11 @@ public class ConnectionCosts implements Serializable{
 		
 	private short[][] costs; // array is right first since get is called using the same right ID consecutively. maybe doesn't matter.
 	
-//	private int leftSize = 0;
-//	
-//	private int rightSize = 0;
-	
-//	private ShortBuffer costBuffer;
-	
 	public ConnectionCosts() {
 		
 	}
 	
 	public ConnectionCosts(int leftSize, int rightSize) {
-//		this.leftSize = leftSize;
-//		this.rightSize = rightSize;
 		this.costs = new short[rightSize][leftSize]; 
 	}
 
@@ -58,10 +50,6 @@ public class ConnectionCosts implements Serializable{
 		this.costs[rightId][leftId] = (short)cost;
 	}
 	
-//	public int get(int leftId, int rightId) {
-//		return costBuffer.get(leftId * rightSize + rightId);
-//	}
-
 	public int get(int leftId, int rightId) {
 		return costs[rightId][leftId];
 	}
@@ -72,37 +60,6 @@ public class ConnectionCosts implements Serializable{
 		outputStream.writeObject(this);
 		outputStream.close();
 	}
-
-//	public void write(String filename) throws IOException {
-//		DataOutputStream dos = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(filename)));
-//		dos.writeInt(leftSize);
-//		dos.writeInt(rightSize);
-//		for(short[] costArr : costs) {
-//			for(short cost : costArr){
-//				dos.writeInt(cost);
-//			}
-//		}
-//		dos.close();
-//	}
-
-//	public static ConnectionCosts read(InputStream is) throws IOException {
-//		ConnectionCosts cc = new ConnectionCosts();
-//		DataInputStream dis = new DataInputStream(is);
-//		cc.leftSize = dis.readInt();
-//		cc.rightSize = dis.readInt();
-//		System.out.println(cc.leftSize + ": " + cc.rightSize);
-//		
-//		ByteBuffer tmpCostBuffer = ByteBuffer.allocateDirect(cc.leftSize * cc.rightSize * 2);
-//		byte[] tmpArr = new byte[cc.rightSize * 2];
-//		for(int i = 0; i < cc.leftSize; i++) {
-//			dis.read(tmpArr);
-//			tmpCostBuffer.put(tmpArr, 0, tmpArr.length);
-//		}
-//		dis.close();
-//		tmpCostBuffer.rewind();
-//		cc.costBuffer = tmpCostBuffer.asShortBuffer().asReadOnlyBuffer();
-//		return cc;
-//	}
 
 	public static ConnectionCosts getInstance() throws IOException, ClassNotFoundException {
 		InputStream is = ConnectionCosts.class.getClassLoader().getResourceAsStream(FILENAME);
