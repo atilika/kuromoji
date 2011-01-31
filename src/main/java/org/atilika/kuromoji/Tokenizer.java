@@ -25,13 +25,9 @@ import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 
-import org.atilika.kuromoji.dict.ConnectionCosts;
 import org.atilika.kuromoji.dict.Dictionaries;
 import org.atilika.kuromoji.dict.Dictionary;
-import org.atilika.kuromoji.dict.TokenInfoDictionary;
-import org.atilika.kuromoji.dict.UnknownDictionary;
 import org.atilika.kuromoji.dict.UserDictionary;
-import org.atilika.kuromoji.trie.DoubleArrayTrie;
 import org.atilika.kuromoji.viterbi.Viterbi;
 import org.atilika.kuromoji.viterbi.ViterbiNode;
 import org.atilika.kuromoji.viterbi.ViterbiNode.Type;
