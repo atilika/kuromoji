@@ -11,6 +11,8 @@ Release 0.7.4
 
 * Made splitting configurable
 
+* Modified search mode(including extended mode) behavior. It now adds extra cost to non-kanji only nodes.
+
 Release 0.7.3 (2011-01-18)
 
 * Modified Tokenizer to reuse dictionaries so that it doesn't throw OOM when
