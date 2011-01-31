@@ -139,7 +139,7 @@ public class Viterbi {
 
 					// "Search mode". Add extra costs if it is long kanji node.
 					if(searchMode) {
-//						System.out.print(""); // If this line exists, wakaba runs faster for some reason when searchMode == false.
+//						System.out.print(""); // If this line exists, kuromoji runs faster for some reason when searchMode == false.
 						String surfaceForm = node.getSurfaceForm();
 						int length = surfaceForm.length();
 						if(node.getType() == Type.KNOWN && length > SEARCH_MODE_LENGTH) {
