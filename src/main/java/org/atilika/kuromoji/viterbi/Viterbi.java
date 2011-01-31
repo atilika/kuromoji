@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.atilika.kuromoji.Tokenizer.Mode;
 import org.atilika.kuromoji.dict.CharacterDefinition;
+import org.atilika.kuromoji.dict.CharacterDefinition.CharacterClass;
 import org.atilika.kuromoji.dict.ConnectionCosts;
 import org.atilika.kuromoji.dict.TokenInfoDictionary;
 import org.atilika.kuromoji.dict.UnknownDictionary;
@@ -176,7 +177,21 @@ public class Viterbi {
 			if(leftNode == null) {
 				break;
 			}
-			result.addFirst(leftNode);
+			
+			// EXTENDED mode convert unknown word into unigram node
+			if(extendedMode && leftNode.getType() == Type.UNKNOWN) {
+				int unigramWordId = CharacterClass.NGRAM.getId();
+				int unigramLeftId = unkDictionary.getLeftId(unigramWordId); // isn't required
+				int unigramRightId = unkDictionary.getLeftId(unigramWordId); // isn't required
+				int unigramWordCost = unkDictionary.getWordCost(unigramWordId); // isn't required
+				String surfaceForm = leftNode.getSurfaceForm();
+				for(int i = surfaceForm.length(); i > 0; i--) {
+					ViterbiNode uniGramNode = new ViterbiNode(unigramWordId, surfaceForm.substring(i - 1, i), unigramLeftId, unigramRightId, unigramWordCost, leftNode.getStartIndex() + i - 1, Type.UNKNOWN);
+					result.addFirst(uniGramNode);
+				}
+			} else {
+				result.addFirst(leftNode);		
+			}
 			node = leftNode;
 		}
 		
@@ -240,14 +255,7 @@ public class Viterbi {
 			char firstCharacter = suffix.charAt(0);
 			boolean isInvoke = characterDefinition.isInvoke(firstCharacter);
 			if(isInvoke){	// Process "invoke"
-				if(extendedMode) {
-					// EXTENDED mode uni-gram unknown words
-					unknownWordLength = unkDictionary.lookupExt(suffix);
-				} else{
-					// Not EXTENDED mode. Normal Unknown word processing.
-					unknownWordLength = unkDictionary.lookup(suffix);
-				}
-
+				unknownWordLength = unkDictionary.lookup(suffix);
 			} else if(found == false){	// Process not "invoke"
 				unknownWordLength = unkDictionary.lookup(suffix);				
 			}
@@ -255,12 +263,7 @@ public class Viterbi {
 			if(unknownWordLength > 0) {      // found unknown word
 				String unkWord = suffix.substring(0, unknownWordLength);
 				int characterId = characterDefinition.lookup(firstCharacter);
-				int[] wordIds;
-				if(isInvoke && extendedMode) {
-					wordIds = unkDictionary.lookupWordIdsExt(characterId); // characters in input text are supposed to be the same
-				} else {
-					wordIds = unkDictionary.lookupWordIds(characterId); // characters in input text are supposed to be the same
-				}
+				int[] wordIds = unkDictionary.lookupWordIds(characterId); // characters in input text are supposed to be the same
 				
 				for (int wordId : wordIds) {
 					ViterbiNode node = new ViterbiNode(wordId, unkWord, unkDictionary.getLeftId(wordId), unkDictionary.getRightId(wordId), unkDictionary.getWordCost(wordId), startIndex, Type.UNKNOWN);

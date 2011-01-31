@@ -86,15 +86,6 @@ public class UnknownDictionary extends TokenInfoDictionary {
     	return length;
     }
 
-    public int lookupExt(String text) {
-    	return 1;
-    }
-    
-    public int[] lookupWordIdsExt(int characterId){
-    	return super.lookupWordIds(CharacterClass.NGRAM.getId());
-    }
-    
-
 	/**
 	 * Put mapping from unicode code point to character class.
 	 * 
