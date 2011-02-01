@@ -11,7 +11,7 @@ Release 0.7.4
 
 * Modified search mode(including extended mode) behavior. It now adds extra cost to non-kanji only nodes too.
 
-* Added boundary cheking in DoubleArrayTrie.
+* Added boundary checking in DoubleArrayTrie.
 
 
 * Known Issues
