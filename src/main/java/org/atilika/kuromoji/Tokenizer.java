@@ -51,7 +51,7 @@ public class Tokenizer {
 	private final boolean split;
 	
 	/**
-	 * 
+	 * Constructor
 	 * @param dictionary
 	 * @param costs
 	 * @param trie
@@ -162,13 +162,16 @@ public class Tokenizer {
 		return result;
 	}
 	
+	/**
+	 * Get Builder to create Tokenizer instance.
+	 * @return Builder
+	 */
 	public static Builder builder() {
 		return new Builder();
 	}
 	
 	/**
 	 * Builder class used to create Tokenizer instance.
-	 * Dictionaries are shared among each Tokenizer instance.
 	 */
 	public static class Builder {
 
@@ -180,7 +183,8 @@ public class Tokenizer {
 		
 		/**
 		 * Set tokenization mode
-		 * @param mode
+		 * Default: NORMAL
+		 * @param mode tokenization mode
 		 * @return Builder
 		 */
 		public synchronized Builder mode(Mode mode) {
@@ -189,8 +193,11 @@ public class Tokenizer {
 		}
 		
 		/**
-		 * Set split mode
-		 * @param split
+		 * Set if tokenizer should split input string at "。" and "、" before tokenize to increase performance.
+		 * Splitting shouldn't change the result of tokenization most of the cases.
+		 * Default: true
+		 * 
+		 * @param split whether tokenizer should split input string
 		 * @return Builder
 		 */
 		public synchronized Builder split(boolean split) {
@@ -200,7 +207,7 @@ public class Tokenizer {
 		
 		/**
 		 * Set user dictionary input stream
-		 * @param userDictionaryInputStream
+		 * @param userDictionaryInputStream dictionary file as input stream
 		 * @return Builder
 		 * @throws IOException 
 		 */
@@ -211,7 +218,7 @@ public class Tokenizer {
 		
 		/**
 		 * Set user dictionary path
-		 * @param userDictionaryPath
+		 * @param userDictionaryPath path to dictionary file
 		 * @return Builder
 		 * @throws IOException 
 		 * @throws FileNotFoundException 
