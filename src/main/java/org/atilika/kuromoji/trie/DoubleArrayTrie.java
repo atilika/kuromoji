@@ -195,6 +195,11 @@ public class DoubleArrayTrie {
 		for(int i = 0; i < keyLength; i++) {
 			int previous = index;
 			index = index + base + key.charAt(i);
+			
+			if(index > baseBuffer.limit()) { // Too long
+				return -1;
+			}
+			
 			base = baseBuffer.get(index);
 			
 			if (base == 0 ) { // Didn't find match
