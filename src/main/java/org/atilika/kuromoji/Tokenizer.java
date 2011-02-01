@@ -224,8 +224,10 @@ public class Tokenizer {
 		 * @throws FileNotFoundException 
 		 */
 		public synchronized Builder userDictionary(String userDictionaryPath) throws FileNotFoundException, IOException {
-			this.userDictionary(new BufferedInputStream(new FileInputStream(userDictionaryPath)));
-            return this;
+			if (userDictionaryPath != null && ! userDictionaryPath.isEmpty()) {
+				this.userDictionary(new BufferedInputStream(new FileInputStream(userDictionaryPath)));
+			}
+			return this;
 		}
 		
 		/**
