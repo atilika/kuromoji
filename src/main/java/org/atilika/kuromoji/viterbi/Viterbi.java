@@ -58,7 +58,7 @@ public class Viterbi {
 
 	private static final int SEARCH_MODE_LENGTH_KANJI = 3;
 
-	private static final int SEARCH_MODE_LENGTH = 5;
+	private static final int SEARCH_MODE_LENGTH = 7;
 
 	private static final int SEARCH_MODE_PENALTY = 10000;
 		

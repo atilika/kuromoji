@@ -3,7 +3,9 @@ Kuromoji Japanese Morphological Analyzer
 Copyright © 2010-2011 Atilika Inc.  All rights reserved.
 ===========================================================================
 
-This software includes a binary and source version of data from
+This product includes software developed by Atilika Inc.
+
+This software also includes a binary and/or source version of data from
 
   mecab-ipadic-2.7.0-20070801
 
@@ -15,7 +17,6 @@ or
 
   http://jaist.dl.sourceforge.net/project/mecab/mecab-ipadic/2.7.0-20070801/mecab-ipadic-2.7.0-20070801.tar.gz
 
-The mecab-ipadic copyright notice is reproduced below
 
 ===========================================================================
 mecab-ipadic-2.7.0-20070801 Notice
