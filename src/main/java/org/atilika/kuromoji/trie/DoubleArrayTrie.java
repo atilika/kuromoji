@@ -258,6 +258,12 @@ public class DoubleArrayTrie {
 		while(true) {
 			boolean collision = false;	// already taken?
 			for(Node node : nodes) {
+				/*
+				 * NOTE:
+				 * Originally, nextIndex is base + node.getKey(). But to reduce construction time, we use index + base + node.getKey().
+				 * However, this makes array bigger. If there is a need to compat the file dat.dat, it's possbile to modify here and there.
+				 * Although the size of jar file doesn't change, memory consumption will be smaller.
+				 */
 				int nextIndex = index + base + node.getKey();
 				
 				while(baseBuffer.capacity() < nextIndex) {
