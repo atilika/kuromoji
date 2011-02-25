@@ -31,6 +31,8 @@ import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.WritableByteChannel;
 
+import org.atilika.kuromoji.util.CSVUtil;
+
 /**
  * @author Masaru Hasegawa
  * @author Christian Moen
@@ -59,15 +61,14 @@ public class TokenInfoDictionary implements Dictionary{
 	 * @param entry
 	 * @return current position of buffer, which will be wordId of next entry
 	 */
-	public int put(String entry) {
-		String[] fields = entry.split(",");
-		short leftId = Short.parseShort(fields[1]);
-		short rightId = Short.parseShort(fields[2]);
-		short wordCost = Short.parseShort(fields[3]);
+	public int put(String[] entry) {
+		short leftId = Short.parseShort(entry[1]);
+		short rightId = Short.parseShort(entry[2]);
+		short wordCost = Short.parseShort(entry[3]);
 
 		StringBuilder sb = new StringBuilder();
-		for(int i = 4; i < fields.length; i++){
-			sb.append(fields[i]).append(",");
+		for(int i = 4; i < entry.length; i++){
+			sb.append(entry[i]).append(INTERNAL_SEPARATOR);
 		}
 		String features = sb.deleteCharAt(sb.length() - 1).toString();
 
@@ -133,15 +134,22 @@ public class TokenInfoDictionary implements Dictionary{
 		}
 		String allFeatures = new String(targetArr);
 		
-		if(fields.length == 0){
-			return allFeatures;
-		}
 
-		String[] features = allFeatures.split(",");
+		String[] features = allFeatures.split(INTERNAL_SEPARATOR);
 		StringBuilder sb = new StringBuilder();
-		for(int field : fields){
-			sb.append(features[field]).append(",");
+		
+		if(fields.length == 0){ // All features
+			for(String feature : features) {
+				sb.append(CSVUtil.quoteEscape(feature)).append(",");
+			}
+		} else if(fields.length == 1) { // One feature doesn't need to escape value
+			sb.append(features[0]).append(",");			
+		} else {
+			for(int field : fields){
+				sb.append(CSVUtil.quoteEscape(features[field])).append(",");
+			}
 		}
+		
 		return sb.deleteCharAt(sb.length() - 1).toString();
 	}
 	

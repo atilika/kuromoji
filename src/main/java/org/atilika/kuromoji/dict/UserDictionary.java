@@ -26,6 +26,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.atilika.kuromoji.util.CSVUtil;
+
 /**
  * @author Masaru Hasegawa
  * @author Christian Moen
@@ -131,15 +133,21 @@ public class UserDictionary implements Dictionary {
 			return null;
 		}
 		
-		if(fields.length == 0) {
-			return allFeatures;
+		String[] features = allFeatures.split(INTERNAL_SEPARATOR);
+		StringBuilder sb = new StringBuilder();
+
+		if(fields.length == 0){ // All features
+			for(String feature : features) {
+				sb.append(CSVUtil.quoteEscape(feature)).append(",");
+			}
+		} else if(fields.length == 1) { // One feature doesn't need to escape value
+			sb.append(features[0]).append(",");			
+		} else {
+			for(int field : fields){
+				sb.append(CSVUtil.quoteEscape(features[field])).append(",");
+			}
 		}
 		
-		String[] features = allFeatures.split(",");
-		StringBuilder sb = new StringBuilder();
-		for(int field : fields){
-			sb.append(features[field]).append(",");
-		}
 		return sb.deleteCharAt(sb.length() - 1).toString();
 	}
 
@@ -162,7 +170,7 @@ public class UserDictionary implements Dictionary {
 			if (line.trim().length() == 0) {
 				continue;
 			}
-			String[] values = line.split(",");
+			String[] values = CSVUtil.parse(line);
 			String[] segmentation = values[1].replaceAll("  *", " ").split(" ");
 			String[] readings = values[2].replaceAll("  *", " ").split(" ");
 			String pos = values[3];
@@ -175,7 +183,7 @@ public class UserDictionary implements Dictionary {
 			wordIdAndLength[0] = wordId;
 			for (int i = 0; i < segmentation.length; i++) {
 				wordIdAndLength[i + 1] = segmentation[i].length();
-				dictionary.featureEntries.put(wordId, readings[i] + "," + pos);
+				dictionary.featureEntries.put(wordId, readings[i] + INTERNAL_SEPARATOR + pos);
 				wordId++;
 			}
 			dictionary.entries.put(values[0], wordIdAndLength);

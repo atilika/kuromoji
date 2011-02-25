@@ -21,7 +21,8 @@ package org.atilika.kuromoji.dict;
  * @author Christian Moen
  */
 public interface Dictionary {
-	
+	public static final String INTERNAL_SEPARATOR = "\u0000";
+
 	/**
 	 * Get left id of specified word
 	 * @param wordId

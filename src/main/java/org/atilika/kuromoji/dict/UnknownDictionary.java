@@ -53,7 +53,7 @@ public class UnknownDictionary extends TokenInfoDictionary {
     }
     
     @Override
-    public int put(String entry) {
+    public int put(String[] entry) {
     	// Get wordId of current entry
     	int wordId = buffer.position();
     	
@@ -61,8 +61,7 @@ public class UnknownDictionary extends TokenInfoDictionary {
 		int result = super.put(entry);
 
 		// Put entry in targetMap
-    	String[] fields = entry.split(",");
-		int characterId = CharacterClass.valueOf(fields[0]).getId();
+		int characterId = CharacterClass.valueOf(entry[0]).getId();
 		addMapping(characterId, wordId);
 		return result;
     }

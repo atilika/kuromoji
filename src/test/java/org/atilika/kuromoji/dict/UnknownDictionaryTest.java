@@ -24,6 +24,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 
 import org.atilika.kuromoji.dict.UnknownDictionary;
+import org.atilika.kuromoji.util.CSVUtil;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -63,7 +64,7 @@ public class UnknownDictionaryTest {
 	public void testPut() {
 		UnknownDictionary unkDic = new UnknownDictionary(10 * 1024 * 1024);
 		try{
-			unkDic.put("KANJI,1285,11426,名詞,一般,*,*,*,*,*");
+			unkDic.put(CSVUtil.parse("KANJI,1285,11426,名詞,一般,*,*,*,*,*"));
 			fail();
 		} catch(Exception e){
 			
@@ -77,9 +78,9 @@ public class UnknownDictionaryTest {
 		unkDic.putCharacterCategory(1, "ALPHA");
 		unkDic.putCharacterCategory(2, "HIRAGANA");
 		
-		unkDic.put(entry1);
-		unkDic.put(entry2);
-		unkDic.put(entry3);
+		unkDic.put(CSVUtil.parse(entry1));
+		unkDic.put(CSVUtil.parse(entry2));
+		unkDic.put(CSVUtil.parse(entry3));
 	}
 
 //	@Test
@@ -166,7 +167,7 @@ public class UnknownDictionaryTest {
 		
 		String line = null;
 		while((line = reader.readLine()) != null) {
-			dictionary.put(line);
+			dictionary.put(CSVUtil.parse(line));
 		}
 		reader.close();
 

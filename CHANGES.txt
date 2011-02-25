@@ -1,6 +1,15 @@
 CHANGES.txt
 ===========
 
+0.7.5 Snapshot
+
+* Made CSV parsing (source dictionary parsing) proper. It now handles quote properly.
+  You can now add half-width comma as dictionary entry by quoting it.
+
+* Quote and escape output of getFeature method if necessary when it returns comma separated value(to return more than one feature).
+
+* Added option to DicitonaryBuilder to create NFKC normalized dictionary entry (disabled by default).
+
 Release 0.7.4
 
 * Added DebugTokenizer to analyze Viterbi

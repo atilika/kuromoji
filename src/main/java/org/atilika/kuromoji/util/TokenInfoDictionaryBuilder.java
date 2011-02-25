@@ -22,6 +22,7 @@ import java.io.FileInputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
@@ -43,8 +44,15 @@ public class TokenInfoDictionaryBuilder {
 	
 	private TreeMap<Integer, String> dictionaryEntries; // wordId, surface form
 	
+	private boolean normalizeEntry = false;
+	
 	public TokenInfoDictionaryBuilder() {
-		dictionaryEntries = new TreeMap<Integer, String>();
+		this(false);
+	}
+	
+	public TokenInfoDictionaryBuilder(boolean normalizeEntry) {
+		dictionaryEntries = new TreeMap<Integer, String>();		
+		this.normalizeEntry = normalizeEntry;
 	}
 
 	public TokenInfoDictionary build(String dirname) throws IOException {
@@ -71,26 +79,35 @@ public class TokenInfoDictionaryBuilder {
 
 			String line = null;
 			while ((line = reader.readLine()) != null) {
-				if(!isValid(line)) {
+				String[] entry = CSVUtil.parse(line);
+				if(entry.length < 13) {
 					System.out.println("Entry in CSV is not valid :" + line);
 					continue;
 				}
 				
-				int next = dictionary.put(line);
+				int next = dictionary.put(entry);
 				if(next == offset){
 					System.out.println("Failed to process line :" + line);
 					continue;
 				}
 				
-				dictionaryEntries.put(offset, line.split(",")[0]);
+				dictionaryEntries.put(offset, entry[0]);
 				offset = next;
 				
-//				if(line.contains("，")){
-//					continue;
-//				}
-//				String normzlizedLine = Normalizer.normalize(line, Normalizer.Form.NFKC);
-//				size = dictionary.put(offset, normzlizedLine);
-//				offset = offset + size;
+				// NFKC normalize dictionary entry
+				if(normalizeEntry) {
+					if(entry[0].equals(Normalizer.normalize(entry[0], Normalizer.Form.NFKC))){
+						continue;
+					}
+					String[] normalizedEntry = new String[entry.length];
+					for(int i = 0; i < entry.length; i++) {
+						normalizedEntry[i] = Normalizer.normalize(entry[i], Normalizer.Form.NFKC);
+					}
+					
+					next = dictionary.put(normalizedEntry);
+					dictionaryEntries.put(offset, normalizedEntry[0]);
+					offset = next;
+				}
 			}
 		}
 		
@@ -99,9 +116,5 @@ public class TokenInfoDictionaryBuilder {
 	
 	public Set<Entry<Integer, String>> entrySet() {
 		return dictionaryEntries.entrySet();
-	}
-	
-	private boolean isValid(String entry) {
-		return entry.split(",").length >= 13;
-	}
+	}	
 }

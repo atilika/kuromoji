@@ -59,11 +59,11 @@ public class UnknownDictionaryBuilder {
 		InputStreamReader streamReader = new InputStreamReader(inputStream, encoding);
 		LineNumberReader lineReader = new LineNumberReader(streamReader);
 		
-		dictionary.put(NGRAM_DICTIONARY_ENTRY);
+		dictionary.put(CSVUtil.parse(NGRAM_DICTIONARY_ENTRY));
 
 		String line = null;
 		while ((line = lineReader.readLine()) != null) {
-			dictionary.put(line);
+			dictionary.put(CSVUtil.parse(line)); // Probably we don't need to validate entry
 		}
 
 		return dictionary;
