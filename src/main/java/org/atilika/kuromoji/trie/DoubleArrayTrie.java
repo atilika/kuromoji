@@ -266,7 +266,7 @@ public class DoubleArrayTrie {
 				 */
 				int nextIndex = index + base + node.getKey();
 				
-				while(baseBuffer.capacity() < nextIndex) {
+				if(baseBuffer.capacity() <= nextIndex) {
 					int newLength = nextIndex + 1;
 					IntBuffer newBaseBuffer = ByteBuffer.allocate(newLength * 4).asIntBuffer();
 					baseBuffer.rewind();
