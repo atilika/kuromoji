@@ -50,7 +50,14 @@ public interface Dictionary {
 	 * @return All features of the token
 	 */
 	public String getAllFeatures(int wordId);
-	
+
+	/**
+	 * Get all features as array
+	 * @param wordId word ID of token
+	 * @return Array containing all features of the token
+	 */
+	public String[] getAllFeaturesArray(int wordId);
+
 	/**
 	 * Get Part-Of-Speech of tokens
 	 * @param wordId word ID of token

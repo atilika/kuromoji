@@ -126,25 +126,34 @@ public class UserDictionary implements Dictionary {
 	}
 
 	@Override
-	public String getFeature(int wordId, int... fields) {
+	public String[] getAllFeaturesArray(int wordId) {
 		String allFeatures = featureEntries.get(wordId);
-		
 		if(allFeatures == null) {
 			return null;
 		}
 		
-		String[] features = allFeatures.split(INTERNAL_SEPARATOR);
+		return allFeatures.split(INTERNAL_SEPARATOR);		
+	}
+
+	
+	@Override
+	public String getFeature(int wordId, int... fields) {
+		String[] allFeatures = getAllFeaturesArray(wordId);
+		if(allFeatures == null) {
+			return null;
+		}
+		
 		StringBuilder sb = new StringBuilder();
 
 		if(fields.length == 0){ // All features
-			for(String feature : features) {
+			for(String feature : allFeatures) {
 				sb.append(CSVUtil.quoteEscape(feature)).append(",");
 			}
 		} else if(fields.length == 1) { // One feature doesn't need to escape value
-			sb.append(features[0]).append(",");			
+			sb.append(allFeatures[fields[0]]).append(",");			
 		} else {
 			for(int field : fields){
-				sb.append(CSVUtil.quoteEscape(features[field])).append(",");
+				sb.append(CSVUtil.quoteEscape(allFeatures[field])).append(",");
 			}
 		}
 		

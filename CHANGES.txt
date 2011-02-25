@@ -10,6 +10,8 @@ CHANGES.txt
 
 * Added option to DicitonaryBuilder to create NFKC normalized dictionary entry (disabled by default).
 
+* Added a method to Token, which get all features as array rather than CSV.
+
 Release 0.7.4
 
 * Added DebugTokenizer to analyze Viterbi

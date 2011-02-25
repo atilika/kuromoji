@@ -56,6 +56,13 @@ public class Token {
 		return dictionary.getAllFeatures(wordId);
 	}
 
+	/**
+	 * @return all features as array
+	 */
+	public String[] getAllFeaturesArray() {
+		return dictionary.getAllFeaturesArray(wordId);
+	}
+
 
 	/**
 	 * @return reading. null if token doesn't have reading.
