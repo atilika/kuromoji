@@ -56,11 +56,11 @@ public class ConnectionCostsBuilder {
 
 			assert fields.length == 3;
 			
-			int leftId = Integer.parseInt(fields[0]);
-			int rightId = Integer.parseInt(fields[1]);
+			int forwardId = Integer.parseInt(fields[0]);
+			int backwardId = Integer.parseInt(fields[1]);
 			int cost = Integer.parseInt(fields[2]);
 
-			costs.add(leftId, rightId, cost);
+			costs.add(forwardId, backwardId, cost);
 		}
 		return costs;
 	}
