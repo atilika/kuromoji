@@ -16,8 +16,6 @@
  */
 package org.atilika.kuromoji.dict;
 
-import javax.management.RuntimeErrorException;
-
 import org.atilika.kuromoji.trie.DoubleArrayTrie;
 
 public final class Dictionaries {
@@ -49,8 +47,7 @@ public final class Dictionaries {
 			Dictionaries.trie = DoubleArrayTrie.getInstance();
 			Dictionaries.initialized = true;
 		} catch (Exception ex) {
-			throw new RuntimeErrorException(new Error(ex.getMessage(), ex),
-											"Could not load dictionaries!  Ouch, ouch, ouch...");
+			throw new RuntimeException("Could not load dictionaries!  Ouch, ouch, ouch...", ex);
 		}
 	}
 
