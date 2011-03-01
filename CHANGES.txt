@@ -14,6 +14,13 @@ CHANGES.txt
 
 * Added option to DicitonaryBuilder to specify source dictionary encoding.
 
+* Bug fixes.
+
+* Known Issues
+
+  - GraphvizFormatter doesn't count penalty cost in search mode and extended mode
+  - GraphvizFormatter doesn't work properly in extended mode
+
 Release 0.7.4
 
 * Added DebugTokenizer to analyze Viterbi
