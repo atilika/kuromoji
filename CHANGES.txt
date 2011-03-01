@@ -12,6 +12,8 @@ CHANGES.txt
 
 * Added a method to Token, which get all features as array rather than CSV.
 
+* Added option to DicitonaryBuilder to specify source dictionary encoding.
+
 Release 0.7.4
 
 * Added DebugTokenizer to analyze Viterbi
