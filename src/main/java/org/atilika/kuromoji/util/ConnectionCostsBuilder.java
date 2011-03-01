@@ -44,12 +44,12 @@ public class ConnectionCostsBuilder {
 		
 		assert dimensions.length == 3;
 
-		int leftSize = Integer.parseInt(dimensions[0]);
-		int rightSize = Integer.parseInt(dimensions[1]);
+		int forwardSize = Integer.parseInt(dimensions[0]);
+		int backwardSize = Integer.parseInt(dimensions[1]);
 		
-		assert leftSize > 0 && rightSize > 0;
+		assert forwardSize > 0 && backwardSize > 0;
 		
-		ConnectionCosts costs = new ConnectionCosts(leftSize, rightSize);
+		ConnectionCosts costs = new ConnectionCosts(forwardSize, backwardSize);
 		
 		while ((line = lineReader.readLine()) != null) {
 			String[] fields = line.split("\\s+");

@@ -130,7 +130,7 @@ public class Viterbi {
 					break;
 				}
 
-				int rightId = node.getRightId();
+				int backwardConnectionId = node.getLeftId();
 				int wordCost = node.getWordCost();
 				int leastPathCost = DEFAULT_COST;
 				for(ViterbiNode leftNode : endIndexArr[i]) {
@@ -138,7 +138,7 @@ public class Viterbi {
 						break;
 					}
 					
-					int pathCost = leftNode.getPathCost() + costs.get(leftNode.getLeftId(), rightId) + wordCost;	// cost = [total cost from BOS to previous node] + [connection cost between previous node and current node] + [word cost]
+					int pathCost = leftNode.getPathCost() + costs.get(leftNode.getRightId(), backwardConnectionId) + wordCost;	// cost = [total cost from BOS to previous node] + [connection cost between previous node and current node] + [word cost]
 
 					// "Search mode". Add extra costs if it is long node.
 					if(searchMode) {

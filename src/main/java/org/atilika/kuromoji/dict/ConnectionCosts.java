@@ -36,22 +36,22 @@ public class ConnectionCosts implements Serializable{
 
 	public static final String FILENAME = "cc.dat";
 		
-	private short[][] costs; // array is right first since get is called using the same right ID consecutively. maybe doesn't matter.
+	private short[][] costs; // array is backward IDs first since get is called using the same backward ID consecutively. maybe doesn't matter.
 	
 	public ConnectionCosts() {
 		
 	}
 	
-	public ConnectionCosts(int leftSize, int rightSize) {
-		this.costs = new short[rightSize][leftSize]; 
+	public ConnectionCosts(int forwardSize, int backwardSize) {
+		this.costs = new short[backwardSize][forwardSize]; 
 	}
 
-	public void add(int leftId, int rightId, int cost) {
-		this.costs[rightId][leftId] = (short)cost;
+	public void add(int forwardId, int backwardId, int cost) {
+		this.costs[backwardId][forwardId] = (short)cost;
 	}
 	
-	public int get(int leftId, int rightId) {
-		return costs[rightId][leftId];
+	public int get(int forwardId, int backwardId) {
+		return costs[backwardId][forwardId];
 	}
 
 	public void write(String directoryname) throws IOException {
