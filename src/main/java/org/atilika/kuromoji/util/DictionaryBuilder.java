@@ -36,9 +36,9 @@ public class DictionaryBuilder {
 		
 	}
 	
-	public void build(String inputDirname, String outputDirname, boolean normalizeEntry) throws IOException {
+	public void build(String inputDirname, String outputDirname, String encoding, boolean normalizeEntry) throws IOException {
 		System.out.println("building tokeninfo dict...");
-		TokenInfoDictionaryBuilder tokenInfoBuilder = new TokenInfoDictionaryBuilder(normalizeEntry);
+		TokenInfoDictionaryBuilder tokenInfoBuilder = new TokenInfoDictionaryBuilder(encoding, normalizeEntry);
 		TokenInfoDictionary tokenInfoDictionary = tokenInfoBuilder.build(inputDirname);
 
 		System.out.print("  building double array trie...");
@@ -62,7 +62,7 @@ public class DictionaryBuilder {
 		System.out.println("done");
 
 		System.out.print("building unknown word dict...");
-		UnknownDictionaryBuilder unkBuilder = new UnknownDictionaryBuilder();
+		UnknownDictionaryBuilder unkBuilder = new UnknownDictionaryBuilder(encoding);
 		UnknownDictionary unkDictionary = unkBuilder.build(inputDirname);
 		unkDictionary.write(outputDirname);
 		System.out.println("done");
@@ -76,8 +76,8 @@ public class DictionaryBuilder {
 	
 	public static void main(String[] args) throws IOException, ClassNotFoundException {
 		DictionaryBuilder builder = new DictionaryBuilder();
-		boolean normalizeEntry = Boolean.parseBoolean(args[2]);
-		builder.build(args[0], args[1], normalizeEntry);
+		boolean normalizeEntry = Boolean.parseBoolean(args[3]);
+		builder.build(args[0], args[1], args[2], normalizeEntry);
 	}
 	
 }

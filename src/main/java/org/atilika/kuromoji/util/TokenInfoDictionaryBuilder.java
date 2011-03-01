@@ -37,20 +37,20 @@ import org.atilika.kuromoji.dict.TokenInfoDictionary;
  * @author Christian Moen
  */
 public class TokenInfoDictionaryBuilder {
-	private static final String DEFAULT_DICTIONARY_ENCODING = "euc-jp";
-
 	/** Internal word id - incrementally assigned as entries are read and added. This will be byte offset of dictionary file*/
 	private int offset = 4; // Start from 4. First 4 bytes are used to store size of dictionary file.
 	
 	private TreeMap<Integer, String> dictionaryEntries; // wordId, surface form
+
+	private String encoding = "euc-jp";
 	
 	private boolean normalizeEntry = false;
 	
 	public TokenInfoDictionaryBuilder() {
-		this(false);
 	}
 	
-	public TokenInfoDictionaryBuilder(boolean normalizeEntry) {
+	public TokenInfoDictionaryBuilder(String encoding, boolean normalizeEntry) {
+		this.encoding = encoding;
 		dictionaryEntries = new TreeMap<Integer, String>();		
 		this.normalizeEntry = normalizeEntry;
 	}
@@ -74,7 +74,7 @@ public class TokenInfoDictionaryBuilder {
 		
 		for(File file : csvFiles){
 			FileInputStream inputStream = new FileInputStream(file);
-			InputStreamReader streamReader = new InputStreamReader(inputStream, DEFAULT_DICTIONARY_ENCODING);
+			InputStreamReader streamReader = new InputStreamReader(inputStream, encoding);
 			BufferedReader reader = new BufferedReader(streamReader);
 
 			String line = null;

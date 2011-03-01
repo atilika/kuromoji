@@ -85,6 +85,7 @@
 					<arguments>
 						<argument>dictionary/mecab-ipadic-2.7.0-20070801</argument>
 						<argument>target/classes</argument>
+						<argument>euc-jp</argument>
 						<argument>false</argument>
 					</arguments>
 				</configuration>

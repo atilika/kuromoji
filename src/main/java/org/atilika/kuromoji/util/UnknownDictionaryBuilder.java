@@ -30,15 +30,18 @@ import org.atilika.kuromoji.dict.UnknownDictionary;
  * @author Christian Moen
  */
 public class UnknownDictionaryBuilder {
-
-	private static final String DEFAULT_DICTIONARY_ENCODING = "euc-jp";
-	
 	private static final String NGRAM_DICTIONARY_ENTRY = "NGRAM,5,5,-32768,-,*,*,*,*,*,*";
+	
+	private String encoding = "euc-jp";
 	
 	public UnknownDictionaryBuilder() {
 		
 	}
 
+	public UnknownDictionaryBuilder(String encoding) {
+		this.encoding = encoding;
+	}
+	
 	public UnknownDictionary build(String dirname) throws IOException {
 		UnknownDictionary unkDictionary = null;
 		unkDictionary = readDictionaryFile(dirname + File.separator + "unk.def");  //Should be only one file
@@ -48,7 +51,7 @@ public class UnknownDictionaryBuilder {
 	
 	public UnknownDictionary readDictionaryFile(String filename)
 		throws IOException {
-		return readDictionaryFile(filename, DEFAULT_DICTIONARY_ENCODING);
+		return readDictionaryFile(filename, encoding);
 	}
 
 	public UnknownDictionary readDictionaryFile(String filename, String encoding)
@@ -71,7 +74,7 @@ public class UnknownDictionaryBuilder {
 	
 	public void readCharacterDefinition(String filename, UnknownDictionary dictionary) throws IOException {
 		FileInputStream inputStream = new FileInputStream(filename);
-		InputStreamReader streamReader = new InputStreamReader(inputStream, DEFAULT_DICTIONARY_ENCODING);
+		InputStreamReader streamReader = new InputStreamReader(inputStream, encoding);
 		LineNumberReader lineReader = new LineNumberReader(streamReader);
 
 		String line = null;
