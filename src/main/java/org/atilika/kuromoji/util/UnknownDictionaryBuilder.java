@@ -56,7 +56,7 @@ public class UnknownDictionaryBuilder {
 
 	public UnknownDictionary readDictionaryFile(String filename, String encoding)
 		throws IOException {
-		UnknownDictionary dictionary = new UnknownDictionary(10 * 1024 * 1024); // 10MB should be enough
+		UnknownDictionary dictionary = new UnknownDictionary(5 * 1024 * 1024);
 		
 		FileInputStream inputStream = new FileInputStream(filename);
 		InputStreamReader streamReader = new InputStreamReader(inputStream, encoding);

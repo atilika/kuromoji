@@ -70,7 +70,7 @@ public class TokenInfoDictionaryBuilder {
 	}
 	
 	public TokenInfoDictionary buildDictionary(List<File> csvFiles) throws IOException {
-		TokenInfoDictionary dictionary = new TokenInfoDictionary(100 * 1024 * 1024); // 100MB should be enough
+		TokenInfoDictionary dictionary = new TokenInfoDictionary(10 * 1024 * 1024);
 		
 		for(File file : csvFiles){
 			FileInputStream inputStream = new FileInputStream(file);

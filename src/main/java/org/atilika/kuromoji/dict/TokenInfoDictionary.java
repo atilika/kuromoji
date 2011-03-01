@@ -71,11 +71,21 @@ public class TokenInfoDictionary implements Dictionary{
 			sb.append(entry[i]).append(INTERNAL_SEPARATOR);
 		}
 		String features = sb.deleteCharAt(sb.length() - 1).toString();
+		int featuresSize = features.length()* 2;
 
+		// extend buffer if necessary
+		int left = buffer.limit() - buffer.position();
+		if(8 + featuresSize > left) { // four short and features
+			ByteBuffer newBuffer = ByteBuffer.allocate(buffer.limit() * 2);
+			buffer.flip();
+			newBuffer.put(buffer);
+			buffer = newBuffer;
+		}
+		
 		buffer.putShort(leftId);
 		buffer.putShort(rightId);
 		buffer.putShort(wordCost);
-		buffer.putShort((short)(features.toCharArray().length * 2));
+		buffer.putShort((short)featuresSize);
 		for(char c : features.toCharArray()){
 			buffer.putChar(c);
 		}
