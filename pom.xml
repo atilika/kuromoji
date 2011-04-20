@@ -4,7 +4,7 @@
 	<groupId>org.atilika.kuromoji</groupId>
 	<artifactId>kuromoji</artifactId>
 	<packaging>jar</packaging>
-	<version>0.7.5-SNAPSHOT</version>
+	<version>0.7.5</version>
 	<name>Kuromoji Japanese Morphological Analyzer</name>
 
 	<organization>
@@ -145,17 +145,19 @@
 		</dependency>
 	</dependencies>
 
-	<distributionManagement><!--
+	<distributionManagement>
 		<repository>
 			<id>atilika</id>
 			<name>ATILIKA Open Source</name>
 			<url>http://atilika.org/nexus/content/repositories/atilika/</url>
 		</repository>
-        --><repository>
+        <!--
+        <repository>
             <id>atilika</id>
             <name>ATILIKA Open Source Snaphots</name>
             <url>http://atilika.org/nexus/content/repositories/atilika-snapshots/</url>
         </repository>
+        -->
 	</distributionManagement>
 
 

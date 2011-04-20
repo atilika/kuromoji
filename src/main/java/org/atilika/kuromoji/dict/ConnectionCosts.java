@@ -51,7 +51,14 @@ public class ConnectionCosts implements Serializable{
 	}
 	
 	public int get(int forwardId, int backwardId) {
-		return costs[backwardId][forwardId];
+		// FIXME: There seems to be something wrong with the double array trie in some rare
+		// cases causing and IndexOutOfBoundsException.  Use a guard as a temporary work-around
+		// and return a high cost to advise Mr. Viterbi strongly to not use this transition
+		if (backwardId < costs.length && forwardId < costs[backwardId].length ) {
+	    	return costs[backwardId][forwardId];
+	    } else {
+	    	return 50000;
+	    }
 	}
 
 	public void write(String directoryname) throws IOException {
