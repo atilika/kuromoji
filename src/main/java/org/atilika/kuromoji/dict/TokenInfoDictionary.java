@@ -149,7 +149,6 @@ public class TokenInfoDictionary implements Dictionary{
 	@Override
 	public String getFeature(int wordId, int... fields) {
 		String[] allFeatures = getAllFeaturesArray(wordId);
-		
 		StringBuilder sb = new StringBuilder();
 		
 		if(fields.length == 0){ // All features

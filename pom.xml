@@ -4,7 +4,7 @@
 	<groupId>org.atilika.kuromoji</groupId>
 	<artifactId>kuromoji</artifactId>
 	<packaging>jar</packaging>
-	<version>0.7.5</version>
+	<version>0.7.6-SNAPSHOT</version>
 	<name>Kuromoji Japanese Morphological Analyzer</name>
 
 	<organization>
@@ -38,8 +38,13 @@
 	</developers>
 
 	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <kuromoji.dict.format>ipadic</kuromoji.dict.format>
+        <kuromoji.dict.url>http://atilika.com/releases/mecab-ipadic/mecab-ipadic-2.7.0-20070801.tar.gz</kuromoji.dict.url>
+        <kuromoji.dict.dir>dictionary/mecab-ipadic-2.7.0-20070801</kuromoji.dict.dir>
+        <kuromoji.dict.encoding>euc-jp</kuromoji.dict.encoding>
+
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 	</properties>
 
 	<build>
@@ -83,9 +88,10 @@
 				<configuration>
 					<mainClass>org.atilika.kuromoji.util.DictionaryBuilder</mainClass>
 					<arguments>
-						<argument>dictionary/mecab-ipadic-2.7.0-20070801</argument>
+						<argument>${kuromoji.dict.format}</argument>
+						<argument>${kuromoji.dict.dir}</argument>
 						<argument>target/classes</argument>
-						<argument>euc-jp</argument>
+						<argument>${kuromoji.dict.encoding}</argument>
 						<argument>false</argument>
 					</arguments>
 				</configuration>
@@ -103,16 +109,15 @@
 								<echo message="Downloading dictionary" />
 								<delete dir="dictionary" />
 								<mkdir dir="dictionary" />
-								<get
-									src="http://atilika.com/releases/mecab-ipadic/mecab-ipadic-2.7.0-20070801.tar.gz"
+								<get src="${kuromoji.dict.url}"
 									dest="dictionary/mecab-ipadic-2.7.0-20070801.tar.gz" verbose="true" />
 								<untar src="dictionary/mecab-ipadic-2.7.0-20070801.tar.gz"
 									dest="dictionary" compression="gzip" />
 							</target>
 						</configuration>
-						<goals>
-							<goal>run</goal>
-						</goals>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
 					</execution>
 				</executions>
 			</plugin>

@@ -1,6 +1,16 @@
 CHANGES.txt
 ===========
 
+Snapshot 0.7.6 (2011-04-23)
+
+* Added preliminary UniDic support.  Download UniDic and build using
+
+    mvn -Dkuromoji.dict.format=unidic \
+        -Dkuromoji.dict.dir=unidic-mecab1312src \
+        -Dkuromoji.dict.encoding=utf-8 \
+        clean package
+
+
 Release 0.7.5 (2011-04-20)
 
 * Added temporary workaround for IOB exception in ConnectionCosts.

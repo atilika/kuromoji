@@ -16,6 +16,9 @@
  */
 package org.atilika.kuromoji;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
@@ -26,10 +29,9 @@ import org.atilika.kuromoji.Tokenizer;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-
 public class TokenizerTest {
 
-	static Tokenizer tokenizer;
+	private static Tokenizer tokenizer;
 	
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
@@ -40,9 +42,21 @@ public class TokenizerTest {
 	public void testMain() {
 		String input = "ミシェル・クワンが優勝しました。スペースステーションに行きます。うたがわしい。";
 		List<Token> result = tokenizer.tokenize(input);
-		for(Token token : result) {
+		for (Token token : result) {
 			System.out.println("[" + token.getPosition() + "]" + token.getSurfaceForm() + " : " + token.getAllFeatures());
 		}
+	}
+	
+	@Test
+	public void testReadings() {
+		List<Token> tokens = tokenizer.tokenize("寿司が食べたいです。");
+		assertTrue(tokens.size() == 6);
+		assertEquals(tokens.get(0).getReading(), "スシ");
+		assertEquals(tokens.get(1).getReading(), "ガ");
+		assertEquals(tokens.get(2).getReading(), "タベ");
+		assertEquals(tokens.get(3).getReading(), "タイ");
+		assertEquals(tokens.get(4).getReading(), "デス");
+		assertEquals(tokens.get(5).getReading(), "。");
 	}
 	
 	@Test
@@ -68,7 +82,5 @@ public class TokenizerTest {
 			}
 		}
 		System.out.println("Total time : " + (System.currentTimeMillis() - totalStart));
-
 	}
-
 }

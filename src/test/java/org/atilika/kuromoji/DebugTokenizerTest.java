@@ -22,9 +22,8 @@ public class DebugTokenizerTest {
 
 	@Test
 	public void testDebug() {
-//		DebugTokenizer tokenizer = DebugTokenizer.builder().userDictionary("/Users/cm/Projects/kuromoji/src/example/resources/").build();		
-		DebugTokenizer tokenizer = DebugTokenizer.builder().build();		
-		System.out.println(tokenizer.debugTokenize("東京都に住む。"));
+		DebugTokenizer tokenizer = DebugTokenizer.builder().build();
+		tokenizer.debugTokenize("東京都に住む。");
 //		File viterbiDebug = File.createTempFile("debug-viterbi-", ".gv"); 
 //		System.out.println("Writing to output file " + viterbiDebug.getCanonicalPath());
 //		PrintWriter outputStream = new PrintWriter(new FileOutputStream(viterbiDebug));

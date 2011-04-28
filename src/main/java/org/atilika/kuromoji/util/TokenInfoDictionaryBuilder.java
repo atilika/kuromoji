@@ -22,14 +22,21 @@ import java.io.FileInputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.text.Normalizer;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 
+import javax.swing.event.ListSelectionEvent;
+
 import org.atilika.kuromoji.dict.TokenInfoDictionary;
+import org.atilika.kuromoji.util.DictionaryBuilder.DictionaryFormat;
 
 
 /**
@@ -37,22 +44,26 @@ import org.atilika.kuromoji.dict.TokenInfoDictionary;
  * @author Christian Moen
  */
 public class TokenInfoDictionaryBuilder {
+		
 	/** Internal word id - incrementally assigned as entries are read and added. This will be byte offset of dictionary file*/
 	private int offset = 4; // Start from 4. First 4 bytes are used to store size of dictionary file.
-	
+
 	private TreeMap<Integer, String> dictionaryEntries; // wordId, surface form
 
 	private String encoding = "euc-jp";
 	
-	private boolean normalizeEntry = false;
+	private boolean normalizeEntries = false;
+	
+	private DictionaryFormat format = DictionaryFormat.IPADIC;
 	
 	public TokenInfoDictionaryBuilder() {
 	}
 	
-	public TokenInfoDictionaryBuilder(String encoding, boolean normalizeEntry) {
+	public TokenInfoDictionaryBuilder(DictionaryFormat format, String encoding, boolean normalizeEntries) {
+		this.format = format;
 		this.encoding = encoding;
-		dictionaryEntries = new TreeMap<Integer, String>();		
-		this.normalizeEntry = normalizeEntry;
+		this.dictionaryEntries = new TreeMap<Integer, String>();		
+		this.normalizeEntries = normalizeEntries;
 	}
 
 	public TokenInfoDictionary build(String dirname) throws IOException {
@@ -81,13 +92,13 @@ public class TokenInfoDictionaryBuilder {
 			while ((line = reader.readLine()) != null) {
 				String[] entry = CSVUtil.parse(line);
 				if(entry.length < 13) {
-					System.out.println("Entry in CSV is not valid :" + line);
+					System.out.println("Entry in CSV is not valid: " + line);
 					continue;
 				}
-				
-				int next = dictionary.put(entry);
+				int next = dictionary.put(formatEntry(entry));
+
 				if(next == offset){
-					System.out.println("Failed to process line :" + line);
+					System.out.println("Failed to process line: " + line);
 					continue;
 				}
 				
@@ -95,7 +106,7 @@ public class TokenInfoDictionaryBuilder {
 				offset = next;
 				
 				// NFKC normalize dictionary entry
-				if(normalizeEntry) {
+				if(normalizeEntries) {
 					if(entry[0].equals(Normalizer.normalize(entry[0], Normalizer.Form.NFKC))){
 						continue;
 					}
@@ -104,7 +115,7 @@ public class TokenInfoDictionaryBuilder {
 						normalizedEntry[i] = Normalizer.normalize(entry[i], Normalizer.Form.NFKC);
 					}
 					
-					next = dictionary.put(normalizedEntry);
+					next = dictionary.put(formatEntry(normalizedEntry));
 					dictionaryEntries.put(offset, normalizedEntry[0]);
 					offset = next;
 				}
@@ -112,6 +123,70 @@ public class TokenInfoDictionaryBuilder {
 		}
 		
 		return dictionary;
+	}
+
+	/*
+	 * IPADIC features
+	 * 
+	 * 0	- surface
+	 * 1	- left cost
+	 * 2	- right cost
+	 * 3	- word cost
+	 * 4-9	- pos
+	 * 10	- base form
+	 * 11	- reading
+	 * 12	- pronounciation
+	 *
+	 * UniDic features
+	 * 
+	 * 0	- surface
+	 * 1	- left cost
+	 * 2	- right cost
+	 * 3	- word cost
+	 * 4-9	- pos
+	 * 10	- base form reading
+	 * 11	- base form
+	 * 12	- surface form
+	 * 13	- surface reading
+	 */
+
+	public String[] formatEntry(String[] features) {
+		if (this.format == DictionaryFormat.IPADIC) {
+//			if (features[0].equals("。")) {
+//				System.out.println("found");
+//				System.out.println("features : " + Arrays.asList(features));
+//			}
+			return features;
+		} else {
+			String[] features2 = new String[13];
+			features2[0] = features[0];
+			features2[1] = features[1];
+			features2[2] = features[2];
+			features2[3] = features[3];
+			features2[4] = features[4];
+			features2[5] = features[5];
+			features2[6] = features[6];
+			features2[7] = features[7];
+			features2[8] = features[8];
+			features2[9] = features[9];
+			features2[10] = features[11];
+			
+			// If the surface reading is non-existent, use surface form for reading and pronunciation.
+			// (Happens with punctionation in UniDic and possible more as well)
+			if (features[13].length() == 0) {
+				features2[11] = features[0];
+				features2[12] = features[0];
+			} else {
+				features2[11] = features[13];
+				features2[12] = features[13];
+			}			
+//			if (features[0].equals("。")) {
+//				System.out.println();
+//				System.out.println("features : " + Arrays.asList(features));
+//				System.out.println("features2: " + Arrays.asList(features2));
+//			}
+			return features2;
+		}
 	}
 	
 	public Set<Entry<Integer, String>> entrySet() {
