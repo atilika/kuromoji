@@ -22,18 +22,12 @@ import java.io.FileInputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
 import java.text.Normalizer;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
-
-import javax.swing.event.ListSelectionEvent;
 
 import org.atilika.kuromoji.dict.TokenInfoDictionary;
 import org.atilika.kuromoji.util.DictionaryBuilder.DictionaryFormat;
@@ -45,7 +39,7 @@ import org.atilika.kuromoji.util.DictionaryBuilder.DictionaryFormat;
  */
 public class TokenInfoDictionaryBuilder {
 		
-	/** Internal word id - incrementally assigned as entries are read and added. This will be byte offset of dictionary file*/
+	/** Internal word id - incrementally assigned as entries are read and added. This will be byte offset of dictionary file */
 	private int offset = 4; // Start from 4. First 4 bytes are used to store size of dictionary file.
 
 	private TreeMap<Integer, String> dictionaryEntries; // wordId, surface form
