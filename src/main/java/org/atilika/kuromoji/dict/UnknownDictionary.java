@@ -74,8 +74,8 @@ public class UnknownDictionary extends TokenInfoDictionary {
     	// Extract unknown word. Characters with the same character class are considered to be part of unknown word
     	int characterIdOfFirstCharacter = characterDefinition.lookup(text.charAt(0));
     	int length = 1;
-    	for(int i = 1; i < text.length(); i++) {
-    		if(characterIdOfFirstCharacter == characterDefinition.lookup(text.charAt(i))){
+    	for (int i = 1; i < text.length(); i++) {
+    		if (characterIdOfFirstCharacter == characterDefinition.lookup(text.charAt(i))){
         		length++;    			
     		} else {
     			break;
@@ -129,7 +129,6 @@ public class UnknownDictionary extends TokenInfoDictionary {
 		dictionary.loadDictionary(loader.getResourceAsStream(FILENAME));
 		dictionary.loadTargetMap(loader.getResourceAsStream(TARGETMAP_FILENAME));
 		dictionary.loadCharDef(loader.getResourceAsStream(CHARDEF_FILENAME));
-		
 		return dictionary;
 	}
 

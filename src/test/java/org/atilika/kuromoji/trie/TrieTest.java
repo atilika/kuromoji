@@ -17,13 +17,11 @@
 package org.atilika.kuromoji.trie;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import org.atilika.kuromoji.trie.Trie.Node;
 import org.junit.Test;
-
 
 /**
  * @author Masaru Hasegawa

@@ -82,7 +82,7 @@ public class Tokenizer {
 	 */
 	public List<Token> tokenize(String text) {
 
-		if(!split) {
+		if (!split) {
 			return doTokenize(0, text);			
 		}
 		
@@ -149,12 +149,11 @@ public class Tokenizer {
 		
 		ViterbiNode[][][] lattice = viterbi.build(sentence);
 		List<ViterbiNode> bestPath = viterbi.search(lattice);
-		for(ViterbiNode node : bestPath) {
+		for (ViterbiNode node : bestPath) {
 			int wordId = node.getWordId();
-			if(node.getType() == Type.KNOWN && wordId == 0){ // Do not include BOS/EOS 
+			if (node.getType() == Type.KNOWN && wordId == 0){ // Do not include BOS/EOS 
 				continue;
 			}
-			
 			Token token = new Token(wordId, node.getSurfaceForm(), node.getType(), offset + node.getStartIndex(), dictionaryMap.get(node.getType()));	// Pass different dictionary based on the type of node
 			result.add(token);
 		}
