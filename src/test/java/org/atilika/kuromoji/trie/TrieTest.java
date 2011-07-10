@@ -17,11 +17,11 @@
 package org.atilika.kuromoji.trie;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
-import org.atilika.kuromoji.trie.Trie;
 import org.atilika.kuromoji.trie.Trie.Node;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 
@@ -30,11 +30,14 @@ import org.junit.Test;
  * @author Christian Moen
  */
 public class TrieTest {
-
-	@BeforeClass
-	public static void setUpBeforeClass() throws Exception {
+	
+	@Test
+	public void testGetRoot() {
+		Trie trie = new Trie();
+		Node rootNode = trie.getRoot();
+		assertNotNull(rootNode);
 	}
-
+	
 	@Test
 	public void testAdd() {
 		Trie trie = new Trie();
@@ -46,16 +49,8 @@ public class TrieTest {
 		assertEquals(2, rootNode.getChildren().length);
 		assertEquals(2, rootNode.getChildren()[0].getChildren().length);
 		assertEquals(1, rootNode.getChildren()[1].getChildren().length);
-
 	}
-
-	@Test
-	public void testGetRoot() {
-		Trie trie = new Trie();
-		Node rootNode = trie.getRoot();
-		assertNotNull(rootNode);
-	}
-
+	
 	@Test
 	public void testGetChildren() {
 		Trie trie = new Trie();
@@ -67,7 +62,18 @@ public class TrieTest {
 		assertEquals(2, rootNode.getChildren().length);
 		assertEquals(2, rootNode.getChildren()[0].getChildren().length);
 		assertEquals(1, rootNode.getChildren()[1].getChildren().length);
-
 	}
-
+	
+	@Test
+	public void testSinglePath() {
+		Trie trie = new Trie();
+		assertTrue(trie.getRoot().hasSinglePath());
+		trie.add("abcdef");
+		assertTrue(trie.getRoot().hasSinglePath());
+		trie.add("abdfg");
+		Node rootNode = trie.getRoot();
+		assertEquals(2, rootNode.getChildren()[0].getChildren()[0].getChildren().length);
+		assertTrue(rootNode.getChildren()[0].getChildren()[0].getChildren()[0].hasSinglePath());
+		assertTrue(rootNode.getChildren()[0].getChildren()[0].getChildren()[1].hasSinglePath());
+	}
 }

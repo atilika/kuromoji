@@ -24,6 +24,7 @@ package org.atilika.kuromoji.trie;
  * @author Christian Moen
  */
 public class Trie {
+	
 	private Node root;	// Root node of Trie
 
 	/**
@@ -81,9 +82,8 @@ public class Trie {
 			if (value.length() == 0) {
 				return;
 			}
-
+			
 			Node node = new Node(value.charAt(0));
-
 			addChild(node).add(value.substring(1));
 		}
 

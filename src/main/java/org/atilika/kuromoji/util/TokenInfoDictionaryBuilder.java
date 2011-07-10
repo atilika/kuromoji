@@ -83,7 +83,7 @@ public class TokenInfoDictionaryBuilder {
 	public TokenInfoDictionary buildDictionary(List<File> csvFiles) throws IOException {
 		TokenInfoDictionary dictionary = new TokenInfoDictionary(10 * 1024 * 1024);
 		
-		for(File file : csvFiles){
+		for (File file : csvFiles){
 			FileInputStream inputStream = new FileInputStream(file);
 			InputStreamReader streamReader = new InputStreamReader(inputStream, encoding);
 			BufferedReader reader = new BufferedReader(streamReader);
@@ -106,12 +106,12 @@ public class TokenInfoDictionaryBuilder {
 				offset = next;
 				
 				// NFKC normalize dictionary entry
-				if(normalizeEntries) {
-					if(entry[0].equals(Normalizer.normalize(entry[0], Normalizer.Form.NFKC))){
+				if (normalizeEntries) {
+					if (entry[0].equals(Normalizer.normalize(entry[0], Normalizer.Form.NFKC))){
 						continue;
 					}
 					String[] normalizedEntry = new String[entry.length];
-					for(int i = 0; i < entry.length; i++) {
+					for (int i = 0; i < entry.length; i++) {
 						normalizedEntry[i] = Normalizer.normalize(entry[i], Normalizer.Form.NFKC);
 					}
 					
@@ -149,13 +149,8 @@ public class TokenInfoDictionaryBuilder {
 	 * 12	- surface form
 	 * 13	- surface reading
 	 */
-
 	public String[] formatEntry(String[] features) {
 		if (this.format == DictionaryFormat.IPADIC) {
-//			if (features[0].equals("。")) {
-//				System.out.println("found");
-//				System.out.println("features : " + Arrays.asList(features));
-//			}
 			return features;
 		} else {
 			String[] features2 = new String[13];
@@ -172,7 +167,7 @@ public class TokenInfoDictionaryBuilder {
 			features2[10] = features[11];
 			
 			// If the surface reading is non-existent, use surface form for reading and pronunciation.
-			// (Happens with punctionation in UniDic and possible more as well)
+			// This happens with punctuation in UniDic and there are possibly other cases as well
 			if (features[13].length() == 0) {
 				features2[11] = features[0];
 				features2[12] = features[0];
@@ -180,11 +175,6 @@ public class TokenInfoDictionaryBuilder {
 				features2[11] = features[13];
 				features2[12] = features[13];
 			}			
-//			if (features[0].equals("。")) {
-//				System.out.println();
-//				System.out.println("features : " + Arrays.asList(features));
-//				System.out.println("features2: " + Arrays.asList(features2));
-//			}
 			return features2;
 		}
 	}

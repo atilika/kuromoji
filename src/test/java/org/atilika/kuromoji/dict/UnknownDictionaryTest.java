@@ -214,6 +214,5 @@ public class UnknownDictionaryTest {
 		reader.close();
 		
 		return dictionary;
-		
 	}
 }

@@ -80,7 +80,7 @@ public class Token {
 
 	/**
 	 * Returns true if this token is known word
-	 * @return ture if this token is in standard dictionary. false if not.
+	 * @return true if this token is in standard dictionary. false if not.
 	 */
 	public boolean isKnown() {
 		return type == Type.KNOWN;

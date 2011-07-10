@@ -33,6 +33,7 @@ import org.atilika.kuromoji.util.CSVUtil;
  * @author Christian Moen
  */
 public class UserDictionary implements Dictionary {
+
 	private TreeMap<String, int[]> entries = new TreeMap<String, int[]>();
 	
 	private HashMap<Integer, String> featureEntries = new HashMap<Integer, String>();
@@ -45,10 +46,8 @@ public class UserDictionary implements Dictionary {
 
 	public static final int RIGHT_ID = 5;
 	
-	
-
 	public UserDictionary() {
-
+		
 	}
 
 	/**
@@ -62,7 +61,7 @@ public class UserDictionary implements Dictionary {
 		for (String keyword : entries.descendingKeySet()) {
 			int offset = 0;
 			int position = text.indexOf(keyword, offset);
-			while(offset < text.length() && position >= 0) {
+			while (offset < text.length() && position >= 0) {
 				if(!result.containsKey(position)){
 					result.put(position, entries.get(keyword));
 				}
@@ -139,24 +138,21 @@ public class UserDictionary implements Dictionary {
 	@Override
 	public String getFeature(int wordId, int... fields) {
 		String[] allFeatures = getAllFeaturesArray(wordId);
-		if(allFeatures == null) {
+		if (allFeatures == null) {
 			return null;
 		}
-		
 		StringBuilder sb = new StringBuilder();
-
-		if(fields.length == 0){ // All features
-			for(String feature : allFeatures) {
+		if (fields.length == 0) { // All features
+			for (String feature : allFeatures) {
 				sb.append(CSVUtil.quoteEscape(feature)).append(",");
 			}
-		} else if(fields.length == 1) { // One feature doesn't need to escape value
+		} else if (fields.length == 1) { // One feature doesn't need to escape value
 			sb.append(allFeatures[fields[0]]).append(",");			
 		} else {
-			for(int field : fields){
+			for (int field : fields){
 				sb.append(CSVUtil.quoteEscape(allFeatures[field])).append(",");
 			}
 		}
-		
 		return sb.deleteCharAt(sb.length() - 1).toString();
 	}
 
@@ -166,12 +162,10 @@ public class UserDictionary implements Dictionary {
 
 	public static UserDictionary read(InputStream is) throws IOException {
 		UserDictionary dictionary = new UserDictionary();
-
 		BufferedReader reader = new BufferedReader(new InputStreamReader(is));
 		String line = null;
 		int wordId = CUSTOM_DICTIONARY_WORD_ID_OFFSET;
 		while ((line = reader.readLine()) != null) {
-
 			// Remove comments
 			line = line.replaceAll("#.*$", "");
 
@@ -185,6 +179,7 @@ public class UserDictionary implements Dictionary {
 			String pos = values[3];
 
 			if (segmentation.length != readings.length) {
+				// FIXME: Should probably deal with this differently.  Exception?
 				System.out.println("This entry is not properly formatted : " + line);
 			}
 

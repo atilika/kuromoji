@@ -39,13 +39,20 @@ public class TokenizerTest {
 	}
 
 	@Test
-	public void testMain() {
+	public void testSegmentation() {
 		String input = "ミシェル・クワンが優勝しました。スペースステーションに行きます。うたがわしい。";
-		List<Token> result = tokenizer.tokenize(input);
-		for (Token token : result) {
-			System.out.println("[" + token.getPosition() + "]" + token.getSurfaceForm() + " : " + token.getAllFeatures());
+		String[] surfaceForms = {
+				"ミシェル", "・", "クワン", "が", "優勝", "し", "まし", "た", "。",
+				"スペース", "ステーション", "に", "行き", "ます", "。",
+				"うたがわしい", "。"
+		};
+		List<Token> tokens = tokenizer.tokenize(input);
+		assertTrue(tokens.size() == surfaceForms.length);
+		for (int i = 0; i < tokens.size(); i++) {
+			assertEquals(surfaceForms[i], tokens.get(i).getSurfaceForm());
 		}
 	}
+	
 	
 	@Test
 	public void testReadings() {
@@ -61,23 +68,23 @@ public class TokenizerTest {
 	
 	@Test
 	public void testBocchan() throws IOException, InterruptedException {
-		LineNumberReader reader = new LineNumberReader(new InputStreamReader(this.getClass().getClassLoader().getResourceAsStream("bocchan.utf-8.txt")));
+		LineNumberReader reader = new LineNumberReader(new InputStreamReader(
+				this.getClass().getClassLoader().getResourceAsStream("bocchan.utf-8.txt")));
 		
 		String line = reader.readLine();
 		reader.close();
 
 		System.out.println("Test for Bocchan without pre-splitting sentences");
 		long totalStart = System.currentTimeMillis();
-		for(int i = 0; i < 100; i++){
-				tokenizer.tokenize(line);
+		for (int i = 0; i < 100; i++){
+			tokenizer.tokenize(line);
 		}
 		System.out.println("Total time : " + (System.currentTimeMillis() - totalStart));
-
 		System.out.println("Test for Bocchan with pre-splitting sentences");
 		String[] sentences = line.split("、|。");
 		totalStart = System.currentTimeMillis();
-		for(int i = 0; i < 100; i++){
-			for(String sentence: sentences){
+		for (int i = 0; i < 100; i++) {
+			for (String sentence: sentences) {
 				tokenizer.tokenize(sentence);				
 			}
 		}

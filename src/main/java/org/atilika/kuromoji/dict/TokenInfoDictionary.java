@@ -67,7 +67,7 @@ public class TokenInfoDictionary implements Dictionary{
 		short wordCost = Short.parseShort(entry[3]);
 
 		StringBuilder sb = new StringBuilder();
-		for(int i = 4; i < entry.length; i++){
+		for (int i = 4; i < entry.length; i++){
 			sb.append(entry[i]).append(INTERNAL_SEPARATOR);
 		}
 		String features = sb.deleteCharAt(sb.length() - 1).toString();
@@ -75,7 +75,7 @@ public class TokenInfoDictionary implements Dictionary{
 
 		// extend buffer if necessary
 		int left = buffer.limit() - buffer.position();
-		if(8 + featuresSize > left) { // four short and features
+		if (8 + featuresSize > left) { // four short and features
 			ByteBuffer newBuffer = ByteBuffer.allocate(buffer.limit() * 2);
 			buffer.flip();
 			newBuffer.put(buffer);
@@ -86,7 +86,7 @@ public class TokenInfoDictionary implements Dictionary{
 		buffer.putShort(rightId);
 		buffer.putShort(wordCost);
 		buffer.putShort((short)featuresSize);
-		for(char c : features.toCharArray()){
+		for (char c : features.toCharArray()){
 			buffer.putChar(c);
 		}
 
@@ -102,7 +102,7 @@ public class TokenInfoDictionary implements Dictionary{
 		
 		// Prepare array -- extend the length of array by one
 		int[] current = targetMap[sourceId];
-		if(current == null) {
+		if (current == null) {
 			current = new int[1];
 		} else {
 			int[] newArray = new int[current.length + 1];

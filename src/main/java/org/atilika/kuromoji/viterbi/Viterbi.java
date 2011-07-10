@@ -119,51 +119,51 @@ public class Viterbi {
 		ViterbiNode[][] startIndexArr = lattice[0];
 		ViterbiNode[][] endIndexArr = lattice[1];
 		
-		for(int i = 1; i < startIndexArr.length; i++){
+		for (int i = 1; i < startIndexArr.length; i++){
 
-			if(startIndexArr[i] == null || endIndexArr[i] == null){	// continue since no array which contains ViterbiNodes exists. Or no previous node exists.
+			if (startIndexArr[i] == null || endIndexArr[i] == null){	// continue since no array which contains ViterbiNodes exists. Or no previous node exists.
 				continue;
 			}
 
-			for(ViterbiNode node : startIndexArr[i]) {
-				if(node == null){	// If array doesn't contain ViterbiNode any more, continue to next index
+			for (ViterbiNode node : startIndexArr[i]) {
+				if (node == null){	// If array doesn't contain ViterbiNode any more, continue to next index
 					break;
 				}
 
 				int backwardConnectionId = node.getLeftId();
 				int wordCost = node.getWordCost();
 				int leastPathCost = DEFAULT_COST;
-				for(ViterbiNode leftNode : endIndexArr[i]) {
-					if(leftNode == null){ // If array doesn't contain ViterbiNode any more, continue to next index
+				for (ViterbiNode leftNode : endIndexArr[i]) {
+					if (leftNode == null){ // If array doesn't contain ViterbiNode any more, continue to next index
 						break;
 					}
 					
 					int pathCost = leftNode.getPathCost() + costs.get(leftNode.getRightId(), backwardConnectionId) + wordCost;	// cost = [total cost from BOS to previous node] + [connection cost between previous node and current node] + [word cost]
 
 					// "Search mode". Add extra costs if it is long node.
-					if(searchMode) {
+					if (searchMode) {
 //						System.out.print(""); // If this line exists, kuromoji runs faster for some reason when searchMode == false.
 						String surfaceForm = node.getSurfaceForm();
 						int length = surfaceForm.length();
-						if(length > SEARCH_MODE_LENGTH_KANJI) {
+						if (length > SEARCH_MODE_LENGTH_KANJI) {
 							boolean allKanji = true;
 							// check if node consists of only kanji
-							for(int pos = 0; pos < length; pos++) {
-								if(!characterDefinition.isKanji(surfaceForm.charAt(pos))){
+							for (int pos = 0; pos < length; pos++) {
+								if (!characterDefinition.isKanji(surfaceForm.charAt(pos))){
 									allKanji = false;
 									break;
 								}				
 							}
 							
-							if(allKanji) {	// Process only Kanji keywords
+							if (allKanji) {	// Process only Kanji keywords
 								pathCost += (length - SEARCH_MODE_LENGTH_KANJI) * SEARCH_MODE_PENALTY;
-							} else if(length > SEARCH_MODE_LENGTH) {
+							} else if (length > SEARCH_MODE_LENGTH) {
 								pathCost += (length - SEARCH_MODE_LENGTH) * SEARCH_MODE_PENALTY;								
 							}
 						}
 					}
 					
-					if(pathCost < leastPathCost){	// If total cost is lower than before, set current previous node as best left node (previous means left).
+					if (pathCost < leastPathCost){	// If total cost is lower than before, set current previous node as best left node (previous means left).
 						leastPathCost = pathCost;
 						node.setPathCost(leastPathCost);
 						node.setLeftNode(leftNode);
@@ -176,20 +176,20 @@ public class Viterbi {
 		ViterbiNode node = endIndexArr[0][0];	// EOS
 		LinkedList<ViterbiNode> result = new LinkedList<ViterbiNode>();
 		result.add(node);
-		while(true) {
+		while (true) {
 			ViterbiNode leftNode = node.getLeftNode();
-			if(leftNode == null) {
+			if (leftNode == null) {
 				break;
 			}
 			
 			// EXTENDED mode convert unknown word into unigram node
-			if(extendedMode && leftNode.getType() == Type.UNKNOWN) {
+			if (extendedMode && leftNode.getType() == Type.UNKNOWN) {
 				int unigramWordId = CharacterClass.NGRAM.getId();
 				int unigramLeftId = unkDictionary.getLeftId(unigramWordId); // isn't required
 				int unigramRightId = unkDictionary.getLeftId(unigramWordId); // isn't required
 				int unigramWordCost = unkDictionary.getWordCost(unigramWordId); // isn't required
 				String surfaceForm = leftNode.getSurfaceForm();
-				for(int i = surfaceForm.length(); i > 0; i--) {
+				for (int i = surfaceForm.length(); i > 0; i--) {
 					ViterbiNode uniGramNode = new ViterbiNode(unigramWordId, surfaceForm.substring(i - 1, i), unigramLeftId, unigramRightId, unigramWordCost, leftNode.getStartIndex() + i - 1, Type.UNKNOWN);
 					result.addFirst(uniGramNode);
 				}
@@ -212,14 +212,14 @@ public class Viterbi {
 		int textLength = text.length();
 		ViterbiNode[][] startIndexArr = new ViterbiNode[textLength + 2][];  // text length + BOS and EOS
 		ViterbiNode[][] endIndexArr = new ViterbiNode[textLength + 2][];  // text length + BOS and EOS
-		int[] startSizeArr = new int[textLength + 2];       // array to keep ViterbiNode count in startIndexArr
-		int[] endSizeArr = new int[textLength + 2];         // array to keep ViterbiNode count in endIndexArr
+		int[] startSizeArr = new int[textLength + 2]; // array to keep ViterbiNode count in startIndexArr
+		int[] endSizeArr = new int[textLength + 2];   // array to keep ViterbiNode count in endIndexArr
 		
 		ViterbiNode bosNode = new ViterbiNode(0, BOS, 0, 0, 0, -1, Type.KNOWN);
 		addToArrays(bosNode, 0, 1, startIndexArr, endIndexArr, startSizeArr, endSizeArr);
 
 		// Process user dictionary;
-		if(useUserDictionary) {
+		if (useUserDictionary) {
 			processUserDictionary(text, startIndexArr, endIndexArr, startSizeArr, endSizeArr);
 		}
 		
@@ -227,7 +227,7 @@ public class Viterbi {
 
 		for (int startIndex = 0; startIndex < textLength; startIndex++) {
 			// If no token ends where current token starts, skip this index
-			if(endSizeArr[startIndex + 1] == 0) {
+			if (endSizeArr[startIndex + 1] == 0) {
 				continue;
 			}
 			
@@ -259,13 +259,13 @@ public class Viterbi {
 			int unknownWordLength = 0;
 			char firstCharacter = suffix.charAt(0);
 			boolean isInvoke = characterDefinition.isInvoke(firstCharacter);
-			if(isInvoke){	// Process "invoke"
+			if (isInvoke){	// Process "invoke"
 				unknownWordLength = unkDictionary.lookup(suffix);
-			} else if(found == false){	// Process not "invoke"
+			} else if (found == false){	// Process not "invoke"
 				unknownWordLength = unkDictionary.lookup(suffix);				
 			}
 			
-			if(unknownWordLength > 0) {      // found unknown word
+			if (unknownWordLength > 0) {      // found unknown word
 				String unkWord = suffix.substring(0, unknownWordLength);
 				int characterId = characterDefinition.lookup(firstCharacter);
 				int[] wordIds = unkDictionary.lookupWordIds(characterId); // characters in input text are supposed to be the same
@@ -276,8 +276,6 @@ public class Viterbi {
 				}
 				unknownWordEndIndex = startIndex + unknownWordLength;
 			}
-
-			
 		}
 		
 		ViterbiNode eosNode = new ViterbiNode(0, EOS, 0, 0, 0, textLength + 1, Type.KNOWN);
@@ -297,7 +295,6 @@ public class Viterbi {
 	 * @param endSizeArr
 	 */
 	private void processUserDictionary(String text, ViterbiNode[][] startIndexArr, ViterbiNode[][] endIndexArr, int[] startSizeArr, int[] endSizeArr) {
-		
 		int[][] result = userDictionary.lookup(text);
 		for(int[] segmentation : result) {
 			int wordId = segmentation[0];
@@ -322,19 +319,19 @@ public class Viterbi {
 		int startNodesCount = startSizeArr[startIndex];
 		int endNodesCount = endSizeArr[endIndex];
 
-		if(startNodesCount == 0) {
+		if (startNodesCount == 0) {
 			startIndexArr[startIndex] = new ViterbiNode[10];
 		}
 
-		if(endNodesCount == 0) {
+		if (endNodesCount == 0) {
 			endIndexArr[endIndex] = new ViterbiNode[10];
 		}
 
-		if(startIndexArr[startIndex].length <= startNodesCount){
+		if (startIndexArr[startIndex].length <= startNodesCount){
 			startIndexArr[startIndex] = extendArray(startIndexArr[startIndex]);
 		}
 		
-		if(endIndexArr[endIndex].length <= endNodesCount){
+		if (endIndexArr[endIndex].length <= endNodesCount){
 			endIndexArr[endIndex] = extendArray(endIndexArr[endIndex]);
 		}
 				
@@ -343,7 +340,6 @@ public class Viterbi {
 		
 		startSizeArr[startIndex] = startNodesCount + 1;
 		endSizeArr[endIndex] = endNodesCount + 1;
-
 	}
 	
 
