@@ -4,7 +4,7 @@
 	<groupId>org.atilika.kuromoji</groupId>
 	<artifactId>kuromoji</artifactId>
 	<packaging>jar</packaging>
-	<version>0.7.6-SNAPSHOT</version>
+	<version>0.7.6</version>
 	<name>Kuromoji Japanese Morphological Analyzer</name>
 
 	<organization>

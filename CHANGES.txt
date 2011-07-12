@@ -1,7 +1,7 @@
 CHANGES.txt
 ===========
 
-Snapshot 0.7.6 (2011-04-23)
+Release 0.7.6 (2011-07-12)
 
 * Added preliminary UniDic support.  Download UniDic and build using
 
