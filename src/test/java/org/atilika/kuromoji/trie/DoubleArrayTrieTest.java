@@ -62,9 +62,9 @@ public class DoubleArrayTrieTest {
 		dir.deleteOnExit();
 		for(File file : dir.listFiles()) {
 			file.deleteOnExit();
-		}
-		
-		assertTrue(dir.length() > 0);
+		}		
+
+		assertTrue(dir.list().length > 0);
 		
 	}
 	
