@@ -64,7 +64,7 @@ public class DoubleArrayTrieTest {
 			file.deleteOnExit();
 		}
 		
-		assertTrue(dir.length() > 0);
+		assertTrue(dir.list().length > 0);
 	}
 
 	@Test

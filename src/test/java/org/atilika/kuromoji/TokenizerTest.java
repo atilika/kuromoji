@@ -28,6 +28,7 @@ import java.util.List;
 import org.atilika.kuromoji.Token;
 import org.atilika.kuromoji.Tokenizer;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class TokenizerTest {
@@ -40,14 +41,7 @@ public class TokenizerTest {
 	}
 
 	@Test
-	public void testSegmentation() {
-		// Skip tests for Michelle Kwan -- UniDic segments Kwan as ク ワン
-//		String input = "ミシェル・クワンが優勝しました。スペースステーションに行きます。うたがわしい。";
-//		String[] surfaceForms = {
-//				"ミシェル", "・", "クワン", "が", "優勝", "し", "まし", "た", "。",
-//				"スペース", "ステーション", "に", "行き", "ます", "。",
-//				"うたがわしい", "。"
-//		};
+	public void testSimpleSegmentation() {
 		String input = "スペースステーションに行きます。うたがわしい。";
 		String[] surfaceForms = {
 				"スペース", "ステーション", "に", "行き", "ます", "。",
@@ -62,7 +56,7 @@ public class TokenizerTest {
 	
 	
 	@Test
-	public void testReadings() {
+	public void testSimpleReadings() {
 		List<Token> tokens = tokenizer.tokenize("寿司が食べたいです。");
 		assertTrue(tokens.size() == 6);
 		assertEquals(tokens.get(0).getReading(), "スシ");
@@ -77,7 +71,7 @@ public class TokenizerTest {
 	}
 	
 	@Test
-	public void testBaseForm() {
+	public void testSimpleBaseForm() {
 		// Known word
 		List<Token> tokens = tokenizer.tokenize("お寿司が食べたい。");
 		assertTrue(tokens.size() == 6);
@@ -94,19 +88,20 @@ public class TokenizerTest {
 	}
 	
 	@Test
-	public void testYabottai() {
+	public void testYabottaiCornerCase() {
 		List<Token> tokens = tokenizer.tokenize("やぼったい");
 		assertEquals(1, tokens.size());
 		assertEquals("やぼったい", tokens.get(0).getSurfaceForm());
 	}
 	
 	@Test
-	public void testTsukitosha() {
+	public void testTsukitoshaCornerCase() {
 		List<Token> tokens = tokenizer.tokenize("突き通しゃ");
 		assertEquals(1, tokens.size());
 		assertEquals("突き通しゃ", tokens.get(0).getSurfaceForm());
 	}
 	
+	@Ignore
 	@Test
 	public void testBocchan() throws IOException, InterruptedException {
 		LineNumberReader reader = new LineNumberReader(new InputStreamReader(
