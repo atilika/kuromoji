@@ -142,4 +142,9 @@ public class UnknownDictionary extends TokenInfoDictionary {
 	public String getReading(int wordId) {
 		return null;
 	}
+	
+	@Override
+	public String getBaseForm(int wordId) {
+		return null;
+	}
 }

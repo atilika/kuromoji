@@ -50,6 +50,15 @@ public class Token {
 	}
 
 	/**
+	 * Returns base form or null if it doens't exist, i.e. for unknown words of user dictionary terms
+	 * 
+	 * @return base form or null if non-existent
+	 */
+	public String getBaseForm() {
+		return dictionary.getBaseForm(wordId);
+	}
+
+	/**
 	 * @return all features
 	 */
 	public String getAllFeatures() {
@@ -62,7 +71,6 @@ public class Token {
 	public String[] getAllFeaturesArray() {
 		return dictionary.getAllFeaturesArray(wordId);
 	}
-
 
 	/**
 	 * @return reading. null if token doesn't have reading.

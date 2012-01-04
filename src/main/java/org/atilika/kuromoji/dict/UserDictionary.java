@@ -115,6 +115,11 @@ public class UserDictionary implements Dictionary {
 	}
 
 	@Override
+	public String getBaseForm(int wordId) {
+		return null; // NOTE: Currently unsupported
+	}
+
+	@Override
 	public String getPartOfSpeech(int wordId) {
 		return getFeature(wordId, 1);
 	}

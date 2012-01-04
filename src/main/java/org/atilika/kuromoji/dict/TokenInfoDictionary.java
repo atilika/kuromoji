@@ -181,6 +181,10 @@ public class TokenInfoDictionary implements Dictionary{
 		return getFeature(wordId, 0, 1, 2, 3);
 	}
 	
+	@Override
+	public String getBaseForm(int wordId) {
+		return getFeature(wordId, 6);
+	}
 
 	/**
 	 * Write dictionary in file

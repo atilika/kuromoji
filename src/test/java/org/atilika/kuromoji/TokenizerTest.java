@@ -17,6 +17,7 @@
 package org.atilika.kuromoji;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
@@ -70,6 +71,26 @@ public class TokenizerTest {
 		assertEquals(tokens.get(3).getReading(), "タイ");
 		assertEquals(tokens.get(4).getReading(), "デス");
 		assertEquals(tokens.get(5).getReading(), "。");
+		
+		tokens = tokenizer.tokenize("郵税");
+		assertEquals(tokens.get(0).getReading(), "ユウゼイ");
+	}
+	
+	@Test
+	public void testBaseForm() {
+		// Known word
+		List<Token> tokens = tokenizer.tokenize("お寿司が食べたい。");
+		assertTrue(tokens.size() == 6);
+		assertEquals("食べ", tokens.get(3).getSurfaceForm());
+		assertEquals("食べる", tokens.get(3).getBaseForm());
+		
+		// Unknown word
+		tokens = tokenizer.tokenize("アティリカ株式会社");
+		assertTrue(tokens.size() == 2);
+		assertTrue(tokens.get(0).isUnknown());
+		assertNull(tokens.get(0).getBaseForm());
+		assertTrue(tokens.get(1).isKnown());
+		assertEquals("株式会社", tokens.get(1).getBaseForm());
 	}
 	
 	@Test
