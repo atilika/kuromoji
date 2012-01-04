@@ -1,5 +1,5 @@
 /**
- * Copyright © 2010-2011 Atilika Inc.  All rights reserved.
+ * Copyright © 2010-2012 Atilika Inc.  All rights reserved.
  *
  * See the NOTICE.txt file distributed with this work for additional
  * information regarding copyright ownership.
