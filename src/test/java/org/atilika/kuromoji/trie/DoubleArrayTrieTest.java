@@ -65,10 +65,7 @@ public class DoubleArrayTrieTest {
 		}
 		
 		assertTrue(dir.length() > 0);
-		
 	}
-	
-	
 
 	@Test
 	public void lookupTest() throws IOException {
@@ -92,7 +89,6 @@ public class DoubleArrayTrieTest {
 		assertTrue(doubleArrayTrie.lookup("abc") > 0);
 		assertTrue(doubleArrayTrie.lookup("あいう") > 0);
 		assertTrue(doubleArrayTrie.lookup("xyz") < 0);
-
 	}
 	
 	private Trie getTrie() {
@@ -103,6 +99,4 @@ public class DoubleArrayTrieTest {
 		trie.add("あいう");
 		return trie;
 	}
-	
-
 }

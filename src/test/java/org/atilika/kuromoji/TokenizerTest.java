@@ -73,6 +73,20 @@ public class TokenizerTest {
 	}
 	
 	@Test
+	public void testYabottai() {
+		List<Token> tokens = tokenizer.tokenize("やぼったい");
+		assertEquals(1, tokens.size());
+		assertEquals("やぼったい", tokens.get(0).getSurfaceForm());
+	}
+	
+	@Test
+	public void testTsukitosha() {
+		List<Token> tokens = tokenizer.tokenize("突き通しゃ");
+		assertEquals(1, tokens.size());
+		assertEquals("突き通しゃ", tokens.get(0).getSurfaceForm());
+	}
+	
+	@Test
 	public void testBocchan() throws IOException, InterruptedException {
 		LineNumberReader reader = new LineNumberReader(new InputStreamReader(
 				this.getClass().getClassLoader().getResourceAsStream("bocchan.utf-8.txt")));

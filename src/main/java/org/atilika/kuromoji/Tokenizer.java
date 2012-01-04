@@ -151,7 +151,7 @@ public class Tokenizer {
 		List<ViterbiNode> bestPath = viterbi.search(lattice);
 		for (ViterbiNode node : bestPath) {
 			int wordId = node.getWordId();
-			if (node.getType() == Type.KNOWN && wordId == 0){ // Do not include BOS/EOS 
+			if (node.getType() == Type.KNOWN && wordId == -1) { // Do not include BOS/EOS 
 				continue;
 			}
 			Token token = new Token(wordId, node.getSurfaceForm(), node.getType(), offset + node.getStartIndex(), dictionaryMap.get(node.getType()));	// Pass different dictionary based on the type of node

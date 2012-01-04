@@ -16,12 +16,13 @@
  */
 package org.atilika.kuromoji.dict;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+
 import java.io.IOException;
 
-import org.atilika.kuromoji.dict.UserDictionary;
-import org.junit.BeforeClass;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 /**
  * @author Masaru Hasegawa

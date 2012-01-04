@@ -23,16 +23,6 @@ In order to build kuromoji from source, please do as follows:
   and a jar file should also be available in the target directory
 
 
-Additional info
----------------
-
-The korumoji homepage is available on http://atilika.org for
-
-Further documentation is avilable on http://atilika.org/confluence
-
-Please file bugs using JIRA on http://atilika.org/jira
-
-
 Contact us
 ----------
 

@@ -40,7 +40,7 @@ import org.atilika.kuromoji.util.DictionaryBuilder.DictionaryFormat;
 public class TokenInfoDictionaryBuilder {
 		
 	/** Internal word id - incrementally assigned as entries are read and added. This will be byte offset of dictionary file */
-	private int offset = 4; // Start from 4. First 4 bytes are used to store size of dictionary file.
+	private int offset = 0;
 
 	private TreeMap<Integer, String> dictionaryEntries; // wordId, surface form
 
