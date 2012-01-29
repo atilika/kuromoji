@@ -1,7 +1,7 @@
 CHANGES.txt
 ===========
 
-Snapshot 0.7.7 (2011-01-28)
+Release 0.7.7 (2012-01-30)
 
 * Improved search mode decompounding heuristic and added unit tests for IPADIC
 
