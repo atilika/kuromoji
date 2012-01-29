@@ -27,7 +27,7 @@ import org.atilika.kuromoji.viterbi.ViterbiNode.Type;
  * @author Masaru Hasegawa
  * @author Christian Moen
  */
-public class GraphvizFormatter {
+public class ViterbiFormatter {
 
 	private final static String BOS_LABEL = "BOS";
 
@@ -43,7 +43,7 @@ public class GraphvizFormatter {
 
 	private boolean foundBOS;
 		
-	public GraphvizFormatter(ConnectionCosts costs) {
+	public ViterbiFormatter(ConnectionCosts costs) {
 		this.costs = costs;
 		this.nodeMap = new HashMap<String, ViterbiNode>();
 		this.bestPathMap = new HashMap<String, String>();
