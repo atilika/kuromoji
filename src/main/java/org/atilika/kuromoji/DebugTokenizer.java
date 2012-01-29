@@ -26,13 +26,13 @@ import java.util.List;
 import org.atilika.kuromoji.Tokenizer.Mode;
 import org.atilika.kuromoji.dict.Dictionaries;
 import org.atilika.kuromoji.dict.UserDictionary;
-import org.atilika.kuromoji.viterbi.GraphvizFormatter;
+import org.atilika.kuromoji.viterbi.ViterbiFormatter;
 import org.atilika.kuromoji.viterbi.Viterbi;
 import org.atilika.kuromoji.viterbi.ViterbiNode;
 
 public class DebugTokenizer {
 
-	private GraphvizFormatter formatter;
+	private ViterbiFormatter formatter;
 	
 	private Viterbi viterbi;
 	
@@ -45,7 +45,7 @@ public class DebugTokenizer {
 								   userDictionary,
 								   mode);
 		
-		this.formatter = new GraphvizFormatter(Dictionaries.getCosts());
+		this.formatter = new ViterbiFormatter(Dictionaries.getCosts());
 	}
 	
 	public String debugTokenize(String text) {

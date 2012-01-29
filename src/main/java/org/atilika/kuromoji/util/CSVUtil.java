@@ -61,7 +61,7 @@ public class CSVUtil {
 		result.add(sb.toString());
 
 		// Validate
-		if(quoteCount % 2 != 0) {
+		if (quoteCount % 2 != 0) {
 			return new String[0];
 		}
 		

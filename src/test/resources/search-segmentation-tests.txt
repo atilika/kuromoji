@@ -8,10 +8,11 @@
 ### This file's format is as follows:
 ###	  <text><tab><token1> <token2> ... <token>
 ###
-### There's one test per line.  The text to be segmented and its expected
-### surface form token sequence is separated by a tab ('\t').  Tokens are 
-### separated by a half-width space.  Whitespace lines and lines starting with
-### a '#' are ignored.  No comments are not allowed on entry line.
+### This file should use UTF-8 encoding and there is one test per line.  The
+### text to be segmented and its expected surface form token sequence is 
+### separated by a tab ('\t').  Tokens are  separated by a half-width space.
+### Whitespace lines and lines starting with a '#' are ignored.  Comments
+### are not allowed on entry line.
 ###
 ### NOTE: These tests depends on IPADIC
 ###

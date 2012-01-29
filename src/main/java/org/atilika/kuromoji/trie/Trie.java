@@ -25,7 +25,7 @@ package org.atilika.kuromoji.trie;
  */
 public class Trie {
 	
-	private Node root;	// Root node of Trie
+	private Node root;// Root node of Trie
 
 	/**
 	 * Constructor

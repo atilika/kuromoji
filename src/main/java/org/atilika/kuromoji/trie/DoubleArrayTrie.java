@@ -56,8 +56,8 @@ public class DoubleArrayTrie {
 	
 	private int tailIndex = TAIL_OFFSET;
 	
-
-	public DoubleArrayTrie(){
+	public DoubleArrayTrie() {
+		
 	}
 
 	/**

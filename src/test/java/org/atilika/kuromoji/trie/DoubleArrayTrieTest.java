@@ -51,7 +51,7 @@ public class DoubleArrayTrieTest {
 		try{
 			doubleArrayTrie.write("/some/path/which/is/not/exist");
 			fail();
-		}catch(IOException e){
+		} catch(IOException e){
 			
 		}
 		

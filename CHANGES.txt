@@ -1,6 +1,15 @@
 CHANGES.txt
 ===========
 
+Snapshot 0.7.7 (2011-01-28)
+
+* Improved search mode decompounding heuristic and added unit tests for IPADIC
+
+* Resolved connection costs work-around issue
+
+* Renamed GraphvizFormatter to ViterbiFormatter
+
+
 Release 0.7.6 (2011-07-12)
 
 * Added preliminary UniDic support.  Download UniDic and build using

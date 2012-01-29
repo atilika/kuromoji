@@ -56,12 +56,22 @@ public class Viterbi {
 	
 	private static final int DEFAULT_COST = 10000000;
 
-	private static final int SEARCH_MODE_LENGTH_KANJI = 3;
+	private static final int SEARCH_MODE_KANJI_LENGTH_DEFAULT = 2;
 
-	private static final int SEARCH_MODE_LENGTH = 7;
+	private static final int SEARCH_MODE_OTHER_LENGTH_DEFAULT = 7;
 
-	private static final int SEARCH_MODE_PENALTY = 10000;
-		
+	private static final int SEARCH_MODE_KANJI_PENALTY_DEFAULT = 3000;
+
+	private static final int SEARCH_MODE_OTHER_PENALTY_DEFAULT = 1700;
+	
+	private final int searchModeKanjiPenalty;
+
+	private final int searchModeOtherPenalty;
+
+	private final int searchModeOtherLength;
+	
+	private final int searchModeKanjiLength;
+	
 	private static final String BOS = "BOS";
 	
 	private static final String EOS = "EOS";
@@ -80,19 +90,29 @@ public class Viterbi {
 				   UnknownDictionary unkDictionary,
 				   ConnectionCosts costs,
 				   UserDictionary userDictionary,
-				   Mode mode) {
+				   Mode mode,
+				   int searchModeKanjiPenalty,
+				   int searchModeOtherPenalty,
+				   int searchModeKanjiLength,
+				   int searchModeOtherLength) {
 		this.trie = trie;
 		this.dictionary = dictionary;
 		this.unkDictionary = unkDictionary;
 		this.costs = costs;
 		this.userDictionary = userDictionary;
-		if(userDictionary == null) {
+		
+		this.searchModeKanjiPenalty = searchModeKanjiPenalty;
+		this.searchModeOtherPenalty = searchModeOtherPenalty;
+		this.searchModeKanjiLength = searchModeKanjiLength;
+		this.searchModeOtherLength = searchModeOtherLength;
+		
+		if (userDictionary == null) {
 			this.useUserDictionary = false;
 		} else {
 			this.useUserDictionary = true;
 		}
 
-		switch(mode){
+		switch (mode) {
 		case SEARCH:
 			searchMode = true;
 			extendedMode = false;
@@ -110,6 +130,26 @@ public class Viterbi {
 		this.characterDefinition = unkDictionary.getCharacterDefinition();
 	}
 
+	/**
+	 * Constructor
+	 * @param trie
+	 * @param targetMap
+	 * @param dictionary
+	 * @param unkDictionary
+	 * @param costs
+	 * @param userDictionary
+	 */
+	public Viterbi(DoubleArrayTrie trie,
+				   TokenInfoDictionary dictionary,
+				   UnknownDictionary unkDictionary,
+				   ConnectionCosts costs,
+				   UserDictionary userDictionary,
+				   Mode mode) {
+		this(trie, dictionary, unkDictionary, costs, userDictionary, mode,
+			 SEARCH_MODE_KANJI_PENALTY_DEFAULT, SEARCH_MODE_OTHER_PENALTY_DEFAULT,
+			 SEARCH_MODE_KANJI_LENGTH_DEFAULT, SEARCH_MODE_OTHER_LENGTH_DEFAULT);
+	}
+	
 	/**
 	 * Find best path from input lattice.
 	 * @param lattice the result of build method
@@ -145,7 +185,7 @@ public class Viterbi {
 //						System.out.print(""); // If this line exists, kuromoji runs faster for some reason when searchMode == false.
 						String surfaceForm = node.getSurfaceForm();
 						int length = surfaceForm.length();
-						if (length > SEARCH_MODE_LENGTH_KANJI) {
+						if (length > searchModeKanjiLength) {
 							boolean allKanji = true;
 							// check if node consists of only kanji
 							for (int pos = 0; pos < length; pos++) {
@@ -156,9 +196,10 @@ public class Viterbi {
 							}
 							
 							if (allKanji) {	// Process only Kanji keywords
-								pathCost += (length - SEARCH_MODE_LENGTH_KANJI) * SEARCH_MODE_PENALTY;
-							} else if (length > SEARCH_MODE_LENGTH) {
-								pathCost += (length - SEARCH_MODE_LENGTH) * SEARCH_MODE_PENALTY;								
+								pathCost += (length - searchModeKanjiLength) * searchModeKanjiPenalty;
+							} else if (length > searchModeOtherLength) {
+								pathCost += (length - searchModeOtherLength) * searchModeOtherPenalty;								
+//								pathCost += searchModePenalty;								
 							}
 						}
 					}
