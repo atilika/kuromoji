@@ -1,6 +1,11 @@
 CHANGES.txt
 ===========
 
+Snapshot 0.7.8 (2012-05-06)
+
+* Added DebugTokenizerRunner to generate Viterbi debug output
+
+
 Release 0.7.7 (2012-01-30)
 
 * Improved search mode decompounding heuristic and added unit tests for IPADIC

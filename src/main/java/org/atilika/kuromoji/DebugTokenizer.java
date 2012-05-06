@@ -18,7 +18,6 @@ package org.atilika.kuromoji;
 
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
@@ -69,14 +68,12 @@ public class DebugTokenizer {
 			return this;
 		}
 		
-		public synchronized Builder userDictionary(InputStream userDictionaryInputStream)
-			throws IOException {
+		public synchronized Builder userDictionary(InputStream userDictionaryInputStream) throws IOException {
 			this.userDictionary = UserDictionary.read(userDictionaryInputStream);
 			return this;
 		}
 
-		public synchronized Builder userDictionary(String userDictionaryPath)
-			throws FileNotFoundException, IOException {
+		public synchronized Builder userDictionary(String userDictionaryPath) throws IOException {
 			this.userDictionary(new BufferedInputStream(new FileInputStream(userDictionaryPath)));
 			return this;
 		}
