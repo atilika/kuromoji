@@ -17,7 +17,7 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-package org.atilika.kuromoji.example;
+package com.atilika.kuromoji.example;
 
 import java.io.BufferedReader;
 import java.io.IOException;
