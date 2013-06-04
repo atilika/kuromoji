@@ -10,19 +10,12 @@ package com.atilika.kuromoji.dict;
 import com.atilika.kuromoji.trie.DoubleArrayTrie;
 
 public class DynamicDictionaries {
-
-    private TokenInfoDictionary tokenInfoDictionary;
-    private UnknownDictionary unknownDictionary;
-    private ConnectionCosts connectionCosts;
-    private DoubleArrayTrie doubleArrayTrie;
-    private String directory;
+    private final TokenInfoDictionary tokenInfoDictionary;
+    private final UnknownDictionary unknownDictionary;
+    private final ConnectionCosts connectionCosts;
+    private final DoubleArrayTrie doubleArrayTrie;
 
     public DynamicDictionaries(String directory) {
-        this.directory = directory;
-        load();
-    }
-
-    private synchronized void load() {
         try {
             tokenInfoDictionary = TokenInfoDictionary.newInstance(directory);
             unknownDictionary = UnknownDictionary.newInstance(directory);
