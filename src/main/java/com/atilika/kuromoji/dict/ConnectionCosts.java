@@ -26,6 +26,9 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
+import com.atilika.kuromoji.ClassLoaderResolver;
+import com.atilika.kuromoji.ResourceResolver;
+
 public class ConnectionCosts implements Serializable{
 
 	private static final long serialVersionUID = -7704592689635266457L;
@@ -53,17 +56,12 @@ public class ConnectionCosts implements Serializable{
 		outputStream.close();
 	}
 
-	public static ConnectionCosts newInstance(String directory) throws IOException, ClassNotFoundException {
-        String fileName = FILENAME;
-        if (directory != null) {
-            fileName = directory + "/" + FILENAME;
-        }
-		InputStream is = ConnectionCosts.class.getClassLoader().getResourceAsStream(fileName);
-		return read(is);
+	public static ConnectionCosts newInstance(ResourceResolver resolver) throws IOException, ClassNotFoundException {
+		return read(resolver.resolve(FILENAME));
 	}
 
     public static ConnectionCosts newInstance() throws IOException, ClassNotFoundException {
-        return newInstance(null);
+        return newInstance(new ClassLoaderResolver(ConnectionCosts.class));
     }
 
 	public static ConnectionCosts read(InputStream is) throws IOException, ClassNotFoundException {

@@ -16,6 +16,8 @@
  */
 package com.atilika.kuromoji.dict;
 
+import com.atilika.kuromoji.ClassLoaderResolver;
+import com.atilika.kuromoji.ResourceResolver;
 import com.atilika.kuromoji.dict.CharacterDefinition.CharacterClass;
 
 import java.io.BufferedInputStream;
@@ -123,25 +125,16 @@ public class UnknownDictionary extends TokenInfoDictionary {
 		oos.close();
 	}
 
-	public static UnknownDictionary newInstance(String directory) throws IOException, ClassNotFoundException {
-        String fileName = FILENAME;
-        String targetMapFileName = TARGETMAP_FILENAME;
-        String charDefFileName = CHARDEF_FILENAME;
-        if (directory != null) {
-            fileName = directory + "/" + FILENAME;
-            targetMapFileName = directory + "/" + TARGETMAP_FILENAME;
-            charDefFileName = directory + "/" + CHARDEF_FILENAME;
-        }
+	public static UnknownDictionary newInstance(ResourceResolver resolver) throws IOException, ClassNotFoundException {
 		UnknownDictionary dictionary = new UnknownDictionary();
-		ClassLoader loader = dictionary.getClass().getClassLoader();
-		dictionary.loadDictionary(loader.getResourceAsStream(fileName));
-		dictionary.loadTargetMap(loader.getResourceAsStream(targetMapFileName));
-		dictionary.loadCharDef(loader.getResourceAsStream(charDefFileName));
+		dictionary.loadDictionary(resolver.resolve(FILENAME));
+		dictionary.loadTargetMap(resolver.resolve(TARGETMAP_FILENAME));
+		dictionary.loadCharDef(resolver.resolve(CHARDEF_FILENAME));
 		return dictionary;
 	}
 
     public static UnknownDictionary newInstance() throws IOException, ClassNotFoundException {
-        return newInstance(null);
+        return newInstance(new ClassLoaderResolver(UnknownDictionary.class));
     }
 
 	protected void loadCharDef(InputStream is) throws IOException, ClassNotFoundException {

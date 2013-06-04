@@ -16,8 +16,6 @@
  */
 package com.atilika.kuromoji.dict;
 
-import com.atilika.kuromoji.util.CSVUtil;
-
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.DataInputStream;
@@ -32,6 +30,10 @@ import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.WritableByteChannel;
+
+import com.atilika.kuromoji.ClassLoaderResolver;
+import com.atilika.kuromoji.ResourceResolver;
+import com.atilika.kuromoji.util.CSVUtil;
 
 public class TokenInfoDictionary implements Dictionary {
 
@@ -217,24 +219,15 @@ public class TokenInfoDictionary implements Dictionary {
 	 * @throws IOException
 	 * @throws ClassNotFoundException 
 	 */
-	public static TokenInfoDictionary newInstance(String directory) throws IOException, ClassNotFoundException {
-        String fileName = createFileName(directory, FILENAME);
-        String targetMapFileName = createFileName(directory, TARGETMAP_FILENAME);
-
+	public static TokenInfoDictionary newInstance(ResourceResolver resolver) throws IOException, ClassNotFoundException {
 		TokenInfoDictionary dictionary = new TokenInfoDictionary();
-		ClassLoader loader = dictionary.getClass().getClassLoader();
-		dictionary.loadDictionary(loader.getResourceAsStream(fileName));
-		dictionary.loadTargetMap(loader.getResourceAsStream(targetMapFileName));
+		dictionary.loadDictionary(resolver.resolve(FILENAME));
+		dictionary.loadTargetMap(resolver.resolve(TARGETMAP_FILENAME));
 		return dictionary;
 	}
 
     public static TokenInfoDictionary newInstance() throws IOException, ClassNotFoundException {
-        return newInstance(null);
-    }
-
-    private static String createFileName(String directory, String fileName) {
-        String fullFileName = directory != null ? directory + "/" + fileName : fileName;
-        return fullFileName;
+        return newInstance(new ClassLoaderResolver(TokenInfoDictionary.class));
     }
 
 	protected void loadTargetMap(InputStream is) throws IOException, ClassNotFoundException {

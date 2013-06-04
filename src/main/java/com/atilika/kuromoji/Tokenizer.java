@@ -46,10 +46,7 @@ public class Tokenizer {
 
     private final boolean split;
 
-    protected Tokenizer(String directory, UserDictionary userDictionary, Mode mode, boolean split) {
-
-        DynamicDictionaries dictionaries = new DynamicDictionaries(directory);
-
+    protected Tokenizer(DynamicDictionaries dictionaries, UserDictionary userDictionary, Mode mode, boolean split) {
         this.viterbi = new Viterbi(dictionaries.getTrie(),
                 dictionaries.getDictionary(),
                 dictionaries.getUnknownDictionary(),
@@ -166,7 +163,6 @@ public class Tokenizer {
      * Builder class used to create Tokenizer instance.
      */
     public static class Builder {
-
         private Mode mode = Mode.NORMAL;
 
         private boolean split = true;
@@ -245,7 +241,13 @@ public class Tokenizer {
          * @return Tokenizer
          */
         public synchronized Tokenizer build() {
-            return new Tokenizer(directory, userDictionary, mode, split);
+            ResourceResolver resolver = new ClassLoaderResolver(this.getClass());
+            if (directory != null) {
+              resolver = new PrefixDecoratorResolver(directory + "/", resolver);
+            }
+
+            DynamicDictionaries dictionaries = new DynamicDictionaries(resolver);
+            return new Tokenizer(dictionaries, userDictionary, mode, split);
         }
     }
 }

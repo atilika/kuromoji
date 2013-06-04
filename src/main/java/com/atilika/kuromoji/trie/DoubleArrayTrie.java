@@ -29,6 +29,9 @@ import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
 
+import com.atilika.kuromoji.ClassLoaderResolver;
+import com.atilika.kuromoji.ResourceResolver;
+
 public class DoubleArrayTrie {
 	
 	public static final String FILENAME = "dat.dat";
@@ -96,17 +99,12 @@ public class DoubleArrayTrie {
 		raf.close();
 	}
 	
-	public static DoubleArrayTrie newInstance(String directory) throws IOException {
-        String fileName = FILENAME;
-        if (directory != null) {
-            fileName = directory + "/" + FILENAME;
-        }
-		InputStream is = DoubleArrayTrie.class.getClassLoader().getResourceAsStream(fileName);
-		return read(is);
+	public static DoubleArrayTrie newInstance(ResourceResolver resolver) throws IOException {
+		return read(resolver.resolve(FILENAME));
 	}
 
     public static DoubleArrayTrie newInstance() throws IOException {
-        return newInstance(null);
+        return newInstance(new ClassLoaderResolver(DoubleArrayTrie.class));
     }
 
 	/**

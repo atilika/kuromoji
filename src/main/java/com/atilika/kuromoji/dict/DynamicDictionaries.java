@@ -7,6 +7,7 @@
 
 package com.atilika.kuromoji.dict;
 
+import com.atilika.kuromoji.ResourceResolver;
 import com.atilika.kuromoji.trie.DoubleArrayTrie;
 
 public class DynamicDictionaries {
@@ -15,14 +16,14 @@ public class DynamicDictionaries {
     private final ConnectionCosts connectionCosts;
     private final DoubleArrayTrie doubleArrayTrie;
 
-    public DynamicDictionaries(String directory) {
+    public DynamicDictionaries(ResourceResolver resolver) {
         try {
-            tokenInfoDictionary = TokenInfoDictionary.newInstance(directory);
-            unknownDictionary = UnknownDictionary.newInstance(directory);
-            connectionCosts = ConnectionCosts.newInstance(directory);
-            doubleArrayTrie = DoubleArrayTrie.newInstance(directory);
+            tokenInfoDictionary = TokenInfoDictionary.newInstance(resolver);
+            unknownDictionary = UnknownDictionary.newInstance(resolver);
+            connectionCosts = ConnectionCosts.newInstance(resolver);
+            doubleArrayTrie = DoubleArrayTrie.newInstance(resolver);
         } catch (Exception ex) {
-            throw new RuntimeException("could not load dictionaries");
+            throw new RuntimeException("Could not load dictionaries.", ex);
         }
     }
 
