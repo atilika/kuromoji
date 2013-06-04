@@ -16,12 +16,8 @@
  */
 package com.atilika.kuromoji;
 
-import com.atilika.kuromoji.Tokenizer.Mode;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -29,27 +25,24 @@ import java.io.LineNumberReader;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
+import org.junit.BeforeClass;
+import org.junit.Ignore;
+import org.junit.Test;
+
+import com.atilika.kuromoji.Tokenizer.Mode;
 
 @Ignore
 public class SearchTokenizerTest {
 
 	private static Tokenizer tokenizer;
 
-    private final static String DIRECTORY = ".." + File.separator + "test-classes" + File.separator + "ipadic";
-
     @BeforeClass
-	public static void setUpBeforeClass() throws Exception {
-		tokenizer = Tokenizer.builder().directory(DIRECTORY).mode(Mode.SEARCH).build();
+	public static void beforeClass() throws Exception {
+		tokenizer = Tokenizer.builder()
+				.mode(Mode.SEARCH)
+				.build();
 	}
-	
-//	@Test
-//	public void testSimple() {
-//		for (Token token : tokenizer.tokenize("シニアシステムアドミニストレーター")) {
-//			System.out.println(token.getSurfaceForm());
-//		}
-//	}
-//	@Ignore
+
 	@Test
 	public void testCompoundSplitting() throws IOException {
 		assertSegmentation(tokenizer, "src/test/resources/search-segmentation-tests.txt");

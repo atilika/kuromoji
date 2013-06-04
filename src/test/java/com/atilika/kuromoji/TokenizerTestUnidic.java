@@ -7,27 +7,27 @@
 
 package com.atilika.kuromoji;
 
-import org.junit.BeforeClass;
-import org.junit.Ignore;
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
+import org.junit.BeforeClass;
+import org.junit.Ignore;
+import org.junit.Test;
 
 @Ignore
 public class TokenizerTestUnidic {
     private static Tokenizer tokenizer;
 
-    private final static String DIRECTORY = ".." + File.separator + "test-classes" + File.separator + "unidic";
-
     @BeforeClass
     public static void setUpBeforeClass() throws Exception {
-        tokenizer = Tokenizer.builder().directory(DIRECTORY).build();
+        tokenizer = Tokenizer
+        		.builder()
+        		.prefix("unidic/")
+        		.build();
     }
 
     @Test
