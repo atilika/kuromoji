@@ -16,7 +16,6 @@
  */
 package com.atilika.kuromoji.dict;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -24,8 +23,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
@@ -194,12 +191,6 @@ public class TokenInfoDictionary implements Dictionary {
 		writeDictionary(directoryName + File.separator + FILENAME);
 		writeTargetMap(directoryName + File.separator + TARGETMAP_FILENAME);
 	}
-
-	protected void writeTargetMap(String filename) throws IOException {
-		ObjectOutputStream oos = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(filename)));		
-		oos.writeObject(targetMap);
-		oos.close();
-	}
 	
 	protected void writeDictionary(String filename) throws IOException {
 		FileOutputStream fos = new FileOutputStream(filename);
@@ -209,7 +200,6 @@ public class TokenInfoDictionary implements Dictionary {
 		// Write Buffer
 		buffer.flip();  // set position to 0, set limit to current position
 		channel.write(buffer);
-		
 		fos.close();
 	}
 	
@@ -230,12 +220,35 @@ public class TokenInfoDictionary implements Dictionary {
         return newInstance(new ClassLoaderResolver(TokenInfoDictionary.class));
     }
 
-	protected void loadTargetMap(InputStream is) throws IOException, ClassNotFoundException {
-		ObjectInputStream ois = new ObjectInputStream(new BufferedInputStream(is));
-		targetMap = (int[][]) ois.readObject();
-		is.close();
+	protected void writeTargetMap(String filename) throws IOException {
+		DataOutputStream daos = new DataOutputStream(new FileOutputStream(filename));
+		daos.writeInt(targetMap.length);
+		// The array is mostly sparse so we'll save only non-null members.
+		for (int i = 0; i < targetMap.length; i++) {
+			if (targetMap[i] != null) {
+				int[] arr = targetMap[i];
+				daos.writeInt(i);
+				daos.writeInt(arr.length);
+				for (int j : arr) daos.writeInt(j);
+			}
+		}
+		daos.writeInt(-1); // End index marker.
+		daos.close();
 	}
-	
+
+	protected void loadTargetMap(InputStream is) throws IOException, ClassNotFoundException {
+		DataInputStream dais = new DataInputStream(is);
+		targetMap = new int [dais.readInt()][];
+		int index;
+		while ((index = dais.readInt()) >= 0) {
+			int length = dais.readInt();
+			targetMap[index] = new int[length];
+			for (int j = 0; j < length; j++) {
+				targetMap[index][j] = dais.readInt();				
+			}
+		}
+	}
+
 	protected void loadDictionary(InputStream is) throws IOException {
 		DataInputStream dis = new DataInputStream(is);
 		int size = dis.readInt();

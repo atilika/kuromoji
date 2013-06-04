@@ -16,10 +16,6 @@
  */
 package com.atilika.kuromoji.dict;
 
-import com.atilika.kuromoji.ClassLoaderResolver;
-import com.atilika.kuromoji.ResourceResolver;
-import com.atilika.kuromoji.dict.CharacterDefinition.CharacterClass;
-
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -28,6 +24,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.OutputStream;
+
+import com.atilika.kuromoji.ClassLoaderResolver;
+import com.atilika.kuromoji.ResourceResolver;
+import com.atilika.kuromoji.dict.CharacterDefinition.CharacterClass;
 
 /**
  * @author Masaru Hasegawa
@@ -118,12 +119,6 @@ public class UnknownDictionary extends TokenInfoDictionary {
 		writeTargetMap(directoryName + File.separator + TARGETMAP_FILENAME);
 		writeCharDef(directoryName + File.separator + CHARDEF_FILENAME);
 	}
-	
-	protected void writeCharDef(String filename) throws IOException {
-		ObjectOutputStream oos = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(filename)));		
-		oos.writeObject(characterDefinition);
-		oos.close();
-	}
 
 	public static UnknownDictionary newInstance(ResourceResolver resolver) throws IOException, ClassNotFoundException {
 		UnknownDictionary dictionary = new UnknownDictionary();
@@ -137,10 +132,15 @@ public class UnknownDictionary extends TokenInfoDictionary {
         return newInstance(new ClassLoaderResolver(UnknownDictionary.class));
     }
 
+	protected void writeCharDef(String filename) throws IOException {
+		OutputStream os = new BufferedOutputStream(new FileOutputStream(filename));
+		characterDefinition.write(os);
+		os.close();
+	}
+
 	protected void loadCharDef(InputStream is) throws IOException, ClassNotFoundException {
-		ObjectInputStream ois = new ObjectInputStream(new BufferedInputStream(is));
-		characterDefinition = (CharacterDefinition) ois.readObject();
-		ois.close();
+		characterDefinition = CharacterDefinition.read(is);
+		is.close();
 	}
 	
 	@Override
