@@ -59,7 +59,8 @@ public class UnknownDictionaryBuilder {
 		while ((line = lineReader.readLine()) != null) {
 			dictionary.put(CSVUtil.parse(line)); // Probably we don't need to validate entry
 		}
-
+		
+		lineReader.close();
 		return dictionary;
 	}
 	
@@ -104,5 +105,7 @@ public class UnknownDictionaryBuilder {
 				dictionary.putInvokeDefinition(characterClassName, invoke, group, length);
 			}
 		}
+
+		lineReader.close();
 	}
 }

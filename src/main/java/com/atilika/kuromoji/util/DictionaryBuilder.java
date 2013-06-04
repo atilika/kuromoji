@@ -16,14 +16,16 @@
  */
 package com.atilika.kuromoji.util;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.Map.Entry;
+
 import com.atilika.kuromoji.dict.ConnectionCosts;
 import com.atilika.kuromoji.dict.TokenInfoDictionary;
 import com.atilika.kuromoji.dict.UnknownDictionary;
 import com.atilika.kuromoji.trie.DoubleArrayTrie;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.Map.Entry;
 
 public class DictionaryBuilder {
 	
@@ -81,7 +83,10 @@ public class DictionaryBuilder {
         System.out.print("building connection costs...");
         ConnectionCosts connectionCosts
             = ConnectionCostsBuilder.build(inputDirname + File.separator + "matrix.def");
-        connectionCosts.write(outputDirname);
+        OutputStream os = new FileOutputStream(
+        		outputDirname + File.separator + ConnectionCosts.FILENAME);
+        connectionCosts.write(os);
+        os.close();
         System.out.println("done");
     }
 

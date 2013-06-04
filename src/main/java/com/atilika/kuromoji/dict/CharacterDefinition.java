@@ -16,19 +16,22 @@
  */
 package com.atilika.kuromoji.dict;
 
-import java.io.Serializable;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.EnumMap;
+import java.util.Map;
 
-public final class CharacterDefinition implements Serializable {
-    private static final long serialVersionUID = -1436753619176638532L;
+public final class CharacterDefinition {
+    private final CharacterClass[] characterCategoryMap;
 
-    private final CharacterClass[] characterCategoryMap = new CharacterClass[65536];
+    // invoke, group, length
+    private final EnumMap<CharacterClass, int[]> invokeDefinitionMap;
 
-    private final EnumMap<CharacterClass, int[]> invokeDefinitionMap =
-            new EnumMap<CharacterClass, int[]>(CharacterClass.class); // invoke, group, length
-
-    public enum CharacterClass {
-        NGRAM, DEFAULT, SPACE, SYMBOL, NUMERIC, ALPHA, CYRILLIC, GREEK, HIRAGANA, KATAKANA, KANJI, KANJINUMERIC;
+    public static enum CharacterClass {
+		NGRAM, DEFAULT, SPACE, SYMBOL, NUMERIC, ALPHA, CYRILLIC, GREEK, HIRAGANA, KATAKANA, KANJI, KANJINUMERIC;
 
         public int getId() {
             return ordinal();
@@ -36,9 +39,20 @@ public final class CharacterDefinition implements Serializable {
     }
 
     /**
+     * @see #read(InputStream)
+     */
+    private CharacterDefinition(CharacterClass[] charCatMap, EnumMap<CharacterClass, int[]> invokeMap) {
+    	this.characterCategoryMap = charCatMap;
+    	this.invokeDefinitionMap = invokeMap;
+    }
+
+    /**
      * Constructor
      */
     public CharacterDefinition() {
+    	characterCategoryMap = new CharacterClass[65536];
+    	invokeDefinitionMap = new EnumMap<CharacterClass, int[]>(CharacterClass.class);
+
         for (int i = 0; i < characterCategoryMap.length; i++) {
             characterCategoryMap[i] = CharacterClass.DEFAULT;
         }
@@ -72,8 +86,8 @@ public final class CharacterDefinition implements Serializable {
     /**
      * Put mapping from unicode code point to character class.
      *
-     * @param codePoint, code point
-     * @param characterClassName, character class name
+     * @param codePoint code point
+     * @param characterClassName character class name
      */
     public void putCharacterCategory(int codePoint, String characterClassName) {
         characterClassName = characterClassName.split(" ")[0]; // use first
@@ -93,4 +107,55 @@ public final class CharacterDefinition implements Serializable {
         int[] values = {invoke, group, length};
         invokeDefinitionMap.put(characterClass, values);
     }
+
+    /**
+     * Write the contents of this object to a stream.
+     */
+	void write(OutputStream os) throws IOException {
+		DataOutputStream daos = new DataOutputStream(os);
+
+		daos.writeInt(characterCategoryMap.length);
+		for (CharacterClass cc : characterCategoryMap) {
+			daos.writeByte(cc.ordinal());
+		}
+
+		daos.writeInt(invokeDefinitionMap.size());
+		for (Map.Entry<CharacterClass, int[]> e : invokeDefinitionMap.entrySet()) {
+			daos.writeByte(e.getKey().ordinal());
+			int[] arr = e.getValue();
+			daos.writeInt(arr.length);
+			for (int i : arr) daos.writeInt(arr[i]);
+		}
+	}
+
+	/**
+	 * Reconstruct an instance of this class from a stream.
+	 */
+	static CharacterDefinition read(InputStream is) throws IOException {
+		DataInputStream dais = new DataInputStream(is);
+
+		CharacterClass[] fromOrdinal = new CharacterClass [CharacterClass.values().length];
+		for (CharacterClass cc : CharacterClass.values()) {
+			fromOrdinal[cc.ordinal()] = cc;
+		}
+
+		CharacterClass[] charCatMap = new CharacterClass [dais.readInt()];
+		for (int i = 0; i < charCatMap.length; i++) {
+			charCatMap[i] = fromOrdinal[dais.readByte() & 0xFF];
+		}
+
+		EnumMap<CharacterClass, int[]> invokeMap = 
+				new EnumMap<CharacterClass, int[]>(CharacterClass.class);
+
+        for (int entries = dais.readInt(); --entries >= 0;) {
+        	CharacterClass cc = fromOrdinal[dais.readByte() & 0xFF];
+        	int[] arr = new int [dais.readInt()];
+        	for (int i = 0; i < arr.length; i++) {
+        		arr[i] = dais.readInt();
+        	}
+        	invokeMap.put(cc, arr);
+        }
+
+		return new CharacterDefinition(charCatMap, invokeMap);
+	}
 }
