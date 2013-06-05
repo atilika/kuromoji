@@ -25,7 +25,7 @@ public class DebugTokenizerRunner {
 	public static void main(String[] args) throws IOException {
 //		DebugTokenizer tokenizer;
 //		if (args.length == 1) {
-//			Mode mode = Mode.valueOf(args[0].toUpperCase());
+//			Mode mode = Tokenizer.Mode.valueOf(args[0].toUpperCase());
 //			tokenizer = DebugTokenizer.builder().mode(mode).build();
 //		} else if (args.length == 2) {
 //			Mode mode = Mode.valueOf(args[0].toUpperCase());
@@ -34,7 +34,7 @@ public class DebugTokenizerRunner {
 //			tokenizer = DebugTokenizer.builder().build();
 //		}
 
-        if (args.length > 1) {
+        if (args.length > 2) {
             usage();
         }
         
@@ -45,7 +45,8 @@ public class DebugTokenizerRunner {
             out = new PrintStream(new File(args[0]), "utf-8");
         }
 
-        DebugTokenizer tokenizer = DebugTokenizer.builder().build();
+
+        DebugTokenizer tokenizer = DebugTokenizer.builder().userDictionary(args[1]).build();
 
         // Read entire input from stdin into a String
         String input = new Scanner(System.in, "utf-8").useDelimiter("\\A").next();

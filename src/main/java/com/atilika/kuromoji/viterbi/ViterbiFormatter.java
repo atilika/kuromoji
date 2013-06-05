@@ -44,24 +44,24 @@ public class ViterbiFormatter {
 		this.bestPathMap = new HashMap<String, String>();
 	}
 
-	public String format(ViterbiNode[][] startsArray, ViterbiNode[][] endsArray) {
+	public String format(ViterbiLattice lattice) {
 		initBestPathMap(null);
 
 		StringBuilder sb = new StringBuilder();
 		sb.append(formatHeader());
-		sb.append(formatNodes(startsArray, endsArray));
+		sb.append(formatNodes(lattice));
 		sb.append(formatTrailer());
 		return sb.toString();
 	}
 
-	public String format(ViterbiNode[][] startsArray, ViterbiNode[][] endsArray, List<ViterbiNode> bestPath) {
+	public String format(ViterbiLattice lattice, List<ViterbiNode> bestPath) {
 
 //		List<ViterbiNode> bestPathWithBOSAndEOS = new ArrayList<ViterbiNode>(bastPath);
 		initBestPathMap(bestPath);
 
 		StringBuilder sb = new StringBuilder();
 		sb.append(formatHeader());
-		sb.append(formatNodes(startsArray, endsArray));
+		sb.append(formatNodes(lattice));
 		sb.append(formatTrailer());
 		return sb.toString();
 
@@ -86,7 +86,9 @@ public class ViterbiFormatter {
 		}
 	}
 
-	private String formatNodes(ViterbiNode[][] startsArray, ViterbiNode[][] endsArray) {
+	private String formatNodes(ViterbiLattice lattice) {
+        ViterbiNode[][] startsArray = lattice.getStartIndexArr();
+        ViterbiNode[][] endsArray = lattice.getEndIndexArr();
 		this.nodeMap.clear();
 		this.foundBOS = false;
 

@@ -19,8 +19,10 @@ package com.atilika.kuromoji;
 import com.atilika.kuromoji.dict.Dictionary;
 import com.atilika.kuromoji.dict.DynamicDictionaries;
 import com.atilika.kuromoji.dict.UserDictionary;
-import com.atilika.kuromoji.viterbi.Viterbi;
+import com.atilika.kuromoji.viterbi.ViterbiBuilder;
+import com.atilika.kuromoji.viterbi.ViterbiLattice;
 import com.atilika.kuromoji.viterbi.ViterbiNode;
+import com.atilika.kuromoji.viterbi.ViterbiSearcher;
 
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
@@ -40,7 +42,9 @@ public class Tokenizer {
         NORMAL, SEARCH, EXTENDED
     }
 
-    private final Viterbi viterbi;
+    private final ViterbiBuilder viterbiBuilder;
+
+    private final ViterbiSearcher viterbiSearcher;
 
     private final EnumMap<ViterbiNode.Type, Dictionary> dictionaryMap = new EnumMap<ViterbiNode.Type, Dictionary>(ViterbiNode.Type.class);
 
@@ -50,15 +54,15 @@ public class Tokenizer {
 
         DynamicDictionaries dictionaries = new DynamicDictionaries(directory);
 
-        this.viterbi = new Viterbi(dictionaries.getTrie(),
+        this.viterbiBuilder = new ViterbiBuilder(dictionaries.getTrie(),
                 dictionaries.getDictionary(),
                 dictionaries.getUnknownDictionary(),
-                dictionaries.getCosts(),
                 userDictionary,
                 mode);
 
         this.split = split;
 
+        this.viterbiSearcher = new ViterbiSearcher(mode, dictionaries.getCosts(), dictionaries.getUnknownDictionary());
         dictionaryMap.put(ViterbiNode.Type.KNOWN, dictionaries.getDictionary());
         dictionaryMap.put(ViterbiNode.Type.UNKNOWN, dictionaries.getUnknownDictionary());
         dictionaryMap.put(ViterbiNode.Type.USER, userDictionary);
@@ -139,8 +143,8 @@ public class Tokenizer {
     private List<Token> doTokenize(int offset, String sentence) {
         ArrayList<Token> result = new ArrayList<Token>();
 
-        ViterbiNode[][][] lattice = viterbi.build(sentence);
-        List<ViterbiNode> bestPath = viterbi.search(lattice);
+        ViterbiLattice lattice = viterbiBuilder.build(sentence);
+        List<ViterbiNode> bestPath = viterbiSearcher.search(lattice);
         for (ViterbiNode node : bestPath) {
             int wordId = node.getWordId();
             if (node.getType() == ViterbiNode.Type.KNOWN && wordId == -1) { // Do not include BOS/EOS

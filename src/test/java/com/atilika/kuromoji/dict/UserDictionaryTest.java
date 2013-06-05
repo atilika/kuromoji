@@ -18,6 +18,7 @@ package com.atilika.kuromoji.dict;
 
 import org.junit.Test;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
 import static org.junit.Assert.assertEquals;
@@ -29,7 +30,7 @@ public class UserDictionaryTest {
 	@Test
 	public void testLookup() throws IOException {
 		UserDictionary dictionary = UserDictionary.read("src/test/resources/userdict.txt");
-		int[][] dictionaryEntryResult = dictionary.lookup("関西国際空港に行った");
+		int[][] dictionaryEntryResult = dictionary.locateUserDefinedWordsInText("関西国際空港に行った");
 		// Length should be three 関西, 国際, 空港
 		assertEquals(3, dictionaryEntryResult.length);
 
@@ -43,7 +44,7 @@ public class UserDictionaryTest {
 		assertEquals(2, dictionaryEntryResult[1][2]); // length of 国際
 		assertEquals(2, dictionaryEntryResult[2][2]); // length of 空港
 
-		int[][] dictionaryEntryResult2 = dictionary.lookup("関西国際空港と関西国際空港に行った");
+		int[][] dictionaryEntryResult2 = dictionary.locateUserDefinedWordsInText("関西国際空港と関西国際空港に行った");
 		// Length should be six 
 		assertEquals(6, dictionaryEntryResult2.length);
 	}
@@ -73,4 +74,28 @@ public class UserDictionaryTest {
 		UserDictionary dictionary = UserDictionary.read("src/test/resources/userdict.txt");
 		assertNotNull(dictionary);		
 	}
+
+    @Test
+    public void testUserDictionaryEntries() throws IOException {
+        String userDictionaryEntry = "クロ,クロ,クロ,カスタム名詞";
+        UserDictionary dictionary = UserDictionary.read(new ByteArrayInputStream(userDictionaryEntry.getBytes("UTF-8")));
+        int[][] positions = dictionary.locateUserDefinedWordsInText("この丘はアクロポリスと呼ばれている");
+        int indexForKuro = 5;
+        int calculatedIndex = positions[0][1];
+        assertEquals(indexForKuro, calculatedIndex);
+    }
+
+    @Test
+    public void testOverlappingUserDictionaryEntries() throws IOException {
+        String userDictionaryEntries = "クロ,クロ,クロ,カスタム名詞\n" +
+            "アクロ,アクロ,アクロ,カスタム名詞";
+        UserDictionary dictionary = UserDictionary.read(new ByteArrayInputStream(userDictionaryEntries.getBytes("UTF-8")));
+        int[][] positions = dictionary.locateUserDefinedWordsInText("この丘はアクロポリスと呼ばれている");
+        int indexForAcro = 4;
+        int calculatedIndex = positions[0][1];
+        assertEquals(indexForAcro, calculatedIndex);
+        assertEquals(2, positions.length);
+
+    }
+
 }

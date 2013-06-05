@@ -31,9 +31,9 @@ import java.util.TreeMap;
 public class UserDictionary implements Dictionary {
 
 	private TreeMap<String, int[]> entries = new TreeMap<String, int[]>();
-	
+
 	private HashMap<Integer, String> featureEntries = new HashMap<Integer, String>();
-	
+
 	private static final int CUSTOM_DICTIONARY_WORD_ID_OFFSET = 100000000;
 
 	public static final int WORD_COST = -100000;
@@ -47,25 +47,29 @@ public class UserDictionary implements Dictionary {
 	 * @param text
 	 * @return array of {wordId, position, length}
 	 */
-	public int[][] lookup(String text) {
-		TreeMap<Integer, int[]> result = new TreeMap<Integer, int[]>(); // index, [length, length...]
+	public int[][] locateUserDefinedWordsInText(String text) {
+		TreeMap<Integer, int[]> positions = new TreeMap<Integer, int[]>(); // index, [length, length...]
 
-		for (String keyword : entries.descendingKeySet()) {
-			int offset = 0;
-			int position = text.indexOf(keyword, offset);
-			while (offset < text.length() && position >= 0) {
-				if(!result.containsKey(position)){
-					result.put(position, entries.get(keyword));
-				}
-				offset += position + keyword.length();
-				position = text.indexOf(keyword, offset);
-			}
+		for (String entry : entries.descendingKeySet()) {
+            checkUserDefinedWord(text, entry, positions);
 		}
 
-		return toIndexArray(result);
+		return toIndexArray(positions);
 	}
 
-	/**
+    private void checkUserDefinedWord(final String text, final String entry, TreeMap<Integer, int[]> positions) {
+        int offset = 0;
+        int pos = text.indexOf(entry, offset);
+        while (offset < text.length() && pos >= 0) {
+            if(!positions.containsKey(pos)){
+                positions.put(pos, entries.get(entry));
+            }
+            offset += pos + entry.length();
+            pos = text.indexOf(entry, offset);
+        }
+    }
+
+    /**
 	 * Convert Map of index and wordIdAndLength to array of {wordId, index, length}
 	 * @param input
 	 * @return array of {wordId, index, length}
@@ -127,11 +131,11 @@ public class UserDictionary implements Dictionary {
 		if(allFeatures == null) {
 			return null;
 		}
-		
-		return allFeatures.split(INTERNAL_SEPARATOR);		
+
+		return allFeatures.split(INTERNAL_SEPARATOR);
 	}
 
-	
+
 	@Override
 	public String getFeature(int wordId, int... fields) {
 		String[] allFeatures = getAllFeaturesArray(wordId);
@@ -144,7 +148,7 @@ public class UserDictionary implements Dictionary {
 				sb.append(CSVUtil.quoteEscape(feature)).append(",");
 			}
 		} else if (fields.length == 1) { // One feature doesn't need to escape value
-			sb.append(allFeatures[fields[0]]).append(",");			
+			sb.append(allFeatures[fields[0]]).append(",");
 		} else {
 			for (int field : fields){
 				sb.append(CSVUtil.quoteEscape(allFeatures[field])).append(",");

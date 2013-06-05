@@ -17,11 +17,13 @@
 package com.atilika.kuromoji;
 
 import com.atilika.kuromoji.Tokenizer.Mode;
-import com.atilika.kuromoji.dict.Dictionaries;
+import com.atilika.kuromoji.dict.DynamicDictionaries;
 import com.atilika.kuromoji.dict.UserDictionary;
-import com.atilika.kuromoji.viterbi.Viterbi;
+import com.atilika.kuromoji.viterbi.ViterbiBuilder;
 import com.atilika.kuromoji.viterbi.ViterbiFormatter;
+import com.atilika.kuromoji.viterbi.ViterbiLattice;
 import com.atilika.kuromoji.viterbi.ViterbiNode;
+import com.atilika.kuromoji.viterbi.ViterbiSearcher;
 
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
@@ -33,24 +35,28 @@ public class DebugTokenizer {
 
 	private ViterbiFormatter formatter;
 	
-	private Viterbi viterbi;
-	
-	protected DebugTokenizer(UserDictionary userDictionary, Mode mode) {
+	private ViterbiBuilder viterbiBuilder;
 
-		this.viterbi = new Viterbi(Dictionaries.getTrie(),
-								   Dictionaries.getDictionary(),
-								   Dictionaries.getUnknownDictionary(),
-								   Dictionaries.getCosts(),
+    private ViterbiSearcher viterbiSearcher;
+	
+	protected DebugTokenizer(String directory, UserDictionary userDictionary, Mode mode) {
+
+        DynamicDictionaries dictionaries = new DynamicDictionaries(directory);
+
+        this.viterbiBuilder = new ViterbiBuilder(dictionaries.getTrie(),
+								   dictionaries.getDictionary(),
+								   dictionaries.getUnknownDictionary(),
 								   userDictionary,
 								   mode);
-		
-		this.formatter = new ViterbiFormatter(Dictionaries.getCosts());
+
+        this.viterbiSearcher = new ViterbiSearcher(mode, dictionaries.getCosts(), dictionaries.getUnknownDictionary());
+		this.formatter = new ViterbiFormatter(dictionaries.getCosts());
 	}
 	
 	public String debugTokenize(String text) {
-		ViterbiNode[][][] lattice = this.viterbi.build(text);
-		List<ViterbiNode> bestPath = this.viterbi.search(lattice);
-		return this.formatter.format(lattice[0], lattice[1], bestPath);
+		ViterbiLattice lattice = this.viterbiBuilder.build(text);
+		List<ViterbiNode> bestPath = this.viterbiSearcher.search(lattice);
+		return this.formatter.format(lattice, bestPath);
 	}
 	
 	public static Builder builder() {
@@ -62,6 +68,8 @@ public class DebugTokenizer {
 		private Mode mode = Mode.NORMAL;
 		
 		private UserDictionary userDictionary = null;
+
+        private String directory = "ipadic";
 		
 		public synchronized Builder mode(Mode mode) {
 			this.mode = mode;
@@ -79,7 +87,7 @@ public class DebugTokenizer {
 		}
 		
 		public synchronized DebugTokenizer build() {
-			return new DebugTokenizer(userDictionary, mode);
+			return new DebugTokenizer(directory, userDictionary, mode);
 		}
 	}
 }
