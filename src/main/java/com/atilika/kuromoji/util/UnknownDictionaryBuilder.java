@@ -1,11 +1,11 @@
 /**
- * Copyright © 2010-2012 Atilika Inc.  All rights reserved.
+ * Copyright © 2010-2013 Atilika Inc. and contributors (CONTRIBUTORS.txt)
  *
  * Atilika Inc. licenses this file to you under the Apache License, Version
  * 2.0 (the "License"); you may not use this file except in compliance with
  * the License.  A copy of the License is distributed with this work in the
  * LICENSE.txt file.  You may also obtain a copy of the License from
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
@@ -59,7 +59,8 @@ public class UnknownDictionaryBuilder {
 		while ((line = lineReader.readLine()) != null) {
 			dictionary.put(CSVUtil.parse(line)); // Probably we don't need to validate entry
 		}
-
+		
+		lineReader.close();
 		return dictionary;
 	}
 	
@@ -104,5 +105,7 @@ public class UnknownDictionaryBuilder {
 				dictionary.putInvokeDefinition(characterClassName, invoke, group, length);
 			}
 		}
+
+		lineReader.close();
 	}
 }

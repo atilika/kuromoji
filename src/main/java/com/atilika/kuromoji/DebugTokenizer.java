@@ -1,11 +1,11 @@
 /**
- * Copyright © 2010-2012 Atilika Inc.  All rights reserved.
- * 
+ * Copyright © 2010-2013 Atilika Inc. and contributors (CONTRIBUTORS.txt)
+ *
  * Atilika Inc. licenses this file to you under the Apache License, Version
  * 2.0 (the "License"); you may not use this file except in compliance with
  * the License.  A copy of the License is distributed with this work in the
  * LICENSE.txt file.  You may also obtain a copy of the License from
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
@@ -39,9 +39,9 @@ public class DebugTokenizer {
 
     private ViterbiSearcher viterbiSearcher;
 	
-	protected DebugTokenizer(String directory, UserDictionary userDictionary, Mode mode) {
+	protected DebugTokenizer(DynamicDictionaries dictionaries, UserDictionary userDictionary, Mode mode) {
 
-        DynamicDictionaries dictionaries = new DynamicDictionaries(directory);
+//        DynamicDictionaries dictionaries = new DynamicDictionaries(directory);
 
         this.viterbiBuilder = new ViterbiBuilder(dictionaries.getTrie(),
 								   dictionaries.getDictionary(),
@@ -70,8 +70,21 @@ public class DebugTokenizer {
 		private UserDictionary userDictionary = null;
 
         private String directory = "ipadic";
-		
-		public synchronized Builder mode(Mode mode) {
+
+        /**
+         * The default resource prefix, also configurable via
+         * system property <code>kuromoji.dict.targetdir</code>.  
+         */
+        private String defaultPrefix = System.getProperty(
+            Tokenizer.DEFAULT_DICT_PREFIX_PROPERTY,
+            Tokenizer.DEFAULT_DICT_PREFIX);
+
+        /**
+         * The default resource resolver (relative to this class).
+         */
+        private ResourceResolver resolver = new ClassLoaderResolver(this.getClass());
+
+        public synchronized Builder mode(Mode mode) {
 			this.mode = mode;
 			return this;
 		}
@@ -87,7 +100,12 @@ public class DebugTokenizer {
 		}
 		
 		public synchronized DebugTokenizer build() {
-			return new DebugTokenizer(directory, userDictionary, mode);
+            if (defaultPrefix != null) {
+                resolver = new PrefixDecoratorResolver(defaultPrefix, resolver);
+            }
+
+            DynamicDictionaries dictionaries = new DynamicDictionaries(resolver);
+			return new DebugTokenizer(dictionaries, userDictionary, mode);
 		}
 	}
 }

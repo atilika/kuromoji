@@ -1,5 +1,5 @@
 /**
- * Copyright © 2010-2012 Atilika Inc.  All rights reserved.
+ * Copyright © 2010-2013 Atilika Inc. and contributors (CONTRIBUTORS.txt)
  *
  * Atilika Inc. licenses this file to you under the Apache License, Version
  * 2.0 (the "License"); you may not use this file except in compliance with
@@ -38,6 +38,12 @@ import java.util.List;
  * Thread safe.
  */
 public class Tokenizer {
+	/** @see Builder#defaultPrefix */
+    public static final String DEFAULT_DICT_PREFIX_PROPERTY = "kuromoji.dict.targetdir";
+
+    /** @see Builder#defaultPrefix */
+    public static final String DEFAULT_DICT_PREFIX = "ipadic/";
+
     public enum Mode {
         NORMAL, SEARCH, EXTENDED
     }
@@ -50,9 +56,7 @@ public class Tokenizer {
 
     private final boolean split;
 
-    protected Tokenizer(String directory, UserDictionary userDictionary, Mode mode, boolean split) {
-
-        DynamicDictionaries dictionaries = new DynamicDictionaries(directory);
+    protected Tokenizer(DynamicDictionaries dictionaries, UserDictionary userDictionary, Mode mode, boolean split) {
 
         this.viterbiBuilder = new ViterbiBuilder(dictionaries.getTrie(),
                 dictionaries.getDictionary(),
@@ -170,16 +174,25 @@ public class Tokenizer {
      * Builder class used to create Tokenizer instance.
      */
     public static class Builder {
-
-        private Mode mode = Mode.NORMAL;
+		private Mode mode = Mode.NORMAL;
 
         private boolean split = true;
 
         private UserDictionary userDictionary = null;
 
-        private String directory = "ipadic"; //TODO: Should fix to use system properties
-        // System.getProperty("kuromoji.dict.targetdir");//"kuromojidicts";
+        /**
+         * The default resource prefix, also configurable via
+         * system property <code>kuromoji.dict.targetdir</code>.  
+         */
+        private String defaultPrefix = System.getProperty(
+        		DEFAULT_DICT_PREFIX_PROPERTY, 
+        		DEFAULT_DICT_PREFIX); 
 
+        /**
+         * The default resource resolver (relative to this class).
+         */
+        private ResourceResolver resolver = new ClassLoaderResolver(this.getClass());
+        
         /**
          * Set tokenization mode
          * Default: NORMAL
@@ -233,15 +246,22 @@ public class Tokenizer {
         }
 
         /**
-         * Set path to dictionary files
-         *
-         * @param directory path to dictionaries
-         * @return Builder
+         * Sets the default prefix applied to resources at lookup time if classloader-relative
+         * {@link ResourceResolver} is used.
          */
-        public synchronized Builder directory(String directory) {
-            this.directory = directory;
+        public synchronized Builder prefix(String resourcePrefix) {
+            this.defaultPrefix = resourcePrefix;
             return this;
         }
+
+        /**
+         * Sets the default {@link ResourceResolver} used to locate dictionaries.
+         * @see #prefix(String)
+         */
+        public void resolver(ResourceResolver resolver) {
+        	if (resolver == null) throw new IllegalArgumentException();
+			this.resolver = resolver;
+		}
 
         /**
          * Create Tokenizer instance
@@ -249,7 +269,12 @@ public class Tokenizer {
          * @return Tokenizer
          */
         public synchronized Tokenizer build() {
-            return new Tokenizer(directory, userDictionary, mode, split);
+            if (defaultPrefix != null) {
+              resolver = new PrefixDecoratorResolver(defaultPrefix, resolver);
+            }
+
+            DynamicDictionaries dictionaries = new DynamicDictionaries(resolver);
+            return new Tokenizer(dictionaries, userDictionary, mode, split);
         }
     }
 }

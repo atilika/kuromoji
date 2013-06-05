@@ -14,29 +14,17 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-package com.atilika.kuromoji.util;
+package com.atilika.kuromoji;
 
-import com.atilika.kuromoji.trie.DoubleArrayTrie;
-import com.atilika.kuromoji.trie.Trie;
+import java.io.IOException;
+import java.io.InputStream;
 
-import java.util.Map.Entry;
-import java.util.Set;
-
-public class DoubleArrayTrieBuilder {
-
-	public static DoubleArrayTrie build(Set<Entry<Integer, String>> entries) {
-		Trie tempTrie = buildTrie(entries);
-		DoubleArrayTrie daTrie = new DoubleArrayTrie();
-		daTrie.build(tempTrie);
-		return daTrie;
-	}
-	
-	public static Trie buildTrie(Set<Entry<Integer, String>> entries) {
-		Trie trie = new Trie();
-		for (Entry<Integer, String> entry : entries) {
-			String surfaceForm = entry.getValue();
-			trie.add(surfaceForm);
-		}
-		return trie;
-	}
+/**
+ * An adapter to resolve the required resources into data streams. 
+ */
+public interface ResourceResolver {
+  /**
+   * Resolve the resource name and return an open input stream to it.
+   */
+  InputStream resolve(String resourceName) throws IOException;
 }

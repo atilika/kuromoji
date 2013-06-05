@@ -14,29 +14,28 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-package com.atilika.kuromoji.util;
+package com.atilika.kuromoji;
 
-import com.atilika.kuromoji.trie.DoubleArrayTrie;
-import com.atilika.kuromoji.trie.Trie;
+import java.io.IOException;
+import java.io.InputStream;
 
-import java.util.Map.Entry;
-import java.util.Set;
+/**
+ * Applies a given prefix to the resources passed to a given resolver.
+ */
+final class PrefixDecoratorResolver implements ResourceResolver {
+	private final ResourceResolver delegate;
+	private final String prefix;
 
-public class DoubleArrayTrieBuilder {
+	PrefixDecoratorResolver(String prefix, ResourceResolver resolver) {
+		assert prefix != null;
+		assert resolver != null;
 
-	public static DoubleArrayTrie build(Set<Entry<Integer, String>> entries) {
-		Trie tempTrie = buildTrie(entries);
-		DoubleArrayTrie daTrie = new DoubleArrayTrie();
-		daTrie.build(tempTrie);
-		return daTrie;
+		this.delegate = resolver;
+		this.prefix = prefix;
 	}
-	
-	public static Trie buildTrie(Set<Entry<Integer, String>> entries) {
-		Trie trie = new Trie();
-		for (Entry<Integer, String> entry : entries) {
-			String surfaceForm = entry.getValue();
-			trie.add(surfaceForm);
-		}
-		return trie;
+
+	@Override
+	public InputStream resolve(String resourceName) throws IOException {
+		return delegate.resolve(prefix + resourceName);
 	}
 }

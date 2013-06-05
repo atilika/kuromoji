@@ -14,29 +14,31 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-package com.atilika.kuromoji.util;
+package com.atilika.kuromoji;
 
-import com.atilika.kuromoji.trie.DoubleArrayTrie;
-import com.atilika.kuromoji.trie.Trie;
+import java.io.IOException;
+import java.io.InputStream;
 
-import java.util.Map.Entry;
-import java.util.Set;
-
-public class DoubleArrayTrieBuilder {
-
-	public static DoubleArrayTrie build(Set<Entry<Integer, String>> entries) {
-		Trie tempTrie = buildTrie(entries);
-		DoubleArrayTrie daTrie = new DoubleArrayTrie();
-		daTrie.build(tempTrie);
-		return daTrie;
+/**
+ * Resolves resources off based on the given class loader.
+ */
+public final class ClassLoaderResolver implements ResourceResolver {
+	private final ClassLoader loader;
+	
+	public ClassLoaderResolver(ClassLoader loader) {
+		this.loader = loader;
 	}
 	
-	public static Trie buildTrie(Set<Entry<Integer, String>> entries) {
-		Trie trie = new Trie();
-		for (Entry<Integer, String> entry : entries) {
-			String surfaceForm = entry.getValue();
-			trie.add(surfaceForm);
-		}
-		return trie;
+	public ClassLoaderResolver(Class<?> clazz) {
+		this(clazz.getClassLoader());
+	}
+
+	@Override
+	public InputStream resolve(String resourceName) throws IOException {
+		InputStream is = loader.getResourceAsStream(resourceName);
+		if (is == null)
+			throw new IOException("Classpath resource not found: "
+					+ resourceName);
+		return is;
 	}
 }

@@ -1,11 +1,11 @@
 /**
- * Copyright © 2010-2012 Atilika Inc.  All rights reserved.
+ * Copyright © 2010-2013 Atilika Inc. and contributors (CONTRIBUTORS.txt)
  *
  * Atilika Inc. licenses this file to you under the Apache License, Version
  * 2.0 (the "License"); you may not use this file except in compliance with
  * the License.  A copy of the License is distributed with this work in the
  * LICENSE.txt file.  You may also obtain a copy of the License from
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
@@ -16,20 +16,16 @@
  */
 package com.atilika.kuromoji.dict;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
+import java.io.OutputStream;
 
-public class ConnectionCosts implements Serializable{
+import com.atilika.kuromoji.ClassLoaderResolver;
+import com.atilika.kuromoji.ResourceResolver;
 
-	private static final long serialVersionUID = -7704592689635266457L;
-
+public class ConnectionCosts {
 	public static final String FILENAME = "cc.dat";
 		
 	private short[][] costs; // array is backward IDs first since get is called using the same backward ID consecutively. maybe doesn't matter.
@@ -46,30 +42,33 @@ public class ConnectionCosts implements Serializable{
 		return costs[backwardId][forwardId];
 	}
 
-	public void write(String directoryname) throws IOException {
-		String filename = directoryname + File.separator + FILENAME;
-		ObjectOutputStream outputStream = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(filename)));
-		outputStream.writeObject(this);
-		outputStream.close();
-	}
-
-	public static ConnectionCosts newInstance(String directory) throws IOException, ClassNotFoundException {
-        String fileName = FILENAME;
-        if (directory != null) {
-            fileName = directory + "/" + FILENAME;
-        }
-		InputStream is = ConnectionCosts.class.getClassLoader().getResourceAsStream(fileName);
-		return read(is);
+	public static ConnectionCosts newInstance(ResourceResolver resolver) throws IOException, ClassNotFoundException {
+		return read(resolver.resolve(FILENAME));
 	}
 
     public static ConnectionCosts newInstance() throws IOException, ClassNotFoundException {
-        return newInstance(null);
+        return newInstance(new ClassLoaderResolver(ConnectionCosts.class));
     }
 
+	public void write(OutputStream stream) throws IOException {
+		DataOutputStream daos = new DataOutputStream(stream);
+		daos.writeInt(costs.length);
+		for (short [] cost : costs) {
+			daos.writeInt(cost.length);
+			for (short s : cost) daos.writeShort(s);
+		}
+	}
+
 	public static ConnectionCosts read(InputStream is) throws IOException, ClassNotFoundException {
-		ObjectInputStream ois = new ObjectInputStream(new BufferedInputStream(is));
-		ConnectionCosts instance = (ConnectionCosts) ois.readObject();
-		ois.close();
+		DataInputStream dais = new DataInputStream(is);
+		ConnectionCosts instance = new ConnectionCosts(0, 0);
+		instance.costs = new short [dais.readInt()][];
+		for (int i = 0; i < instance.costs.length; i++) {
+			instance.costs[i] = new short[dais.readInt()];
+			for (int j = 0, max = instance.costs[i].length; j < max; j++) {
+				instance.costs[i][j] = dais.readShort();				
+			}
+		}
 		return instance;
 	}
 }

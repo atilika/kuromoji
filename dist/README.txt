@@ -5,14 +5,14 @@ This file describes how to build and run an example tokenizer in various modes.
 
 1.  Build example program
 
-    javac -cp lib/kuromoji-0.7.7.jar \
-              src/main/java/org/atilika/kuromoji/example/TokenizerExample.java
+    javac -cp lib/kuromoji-0.8-SNAPSHOT.jar \
+              src/main/java/com/atilika/kuromoji/example/TokenizerExample.java
             
 2a. Run example program with UTF-8 file encoding
 
     java -Dfile.encoding=UTF-8 \
-         -cp lib/kuromoji-0.7.7.jar:src/main/java \
-             org.atilika.kuromoji.example.TokenizerExample
+         -cp lib/kuromoji-0.8-SNAPSHOT.jar:src/main/java \
+             com.atilika.kuromoji.example.TokenizerExample
 
   Sample input 1: お寿司が美味しいです。
   Sample input 2: かにみそがおいしいです。
@@ -21,8 +21,8 @@ This file describes how to build and run an example tokenizer in various modes.
 2b. Run example program with segmentation useful for search
   
     java -Dfile.encoding=UTF-8 \
-       -cp lib/kuromoji-0.7.7.jar:src/main/java \
-           org.atilika.kuromoji.example.TokenizerExample search
+       -cp lib/kuromoji-0.8-SNAPSHOT.jar:src/main/java \
+           com.atilika.kuromoji.example.TokenizerExample search
 
   Sample input 1: 毎日日本経済新聞を読みます。
   - You will see that 日本経済新聞 gets segmented as 日本 経済 新聞
@@ -33,8 +33,8 @@ This file describes how to build and run an example tokenizer in various modes.
 2c. Run example tokenizer with user dictionary (non search mode)
 
     java -Dfile.encoding=UTF-8 \
-       -cp lib/kuromoji-0.7.7.jar:src/main/java \
-           org.atilika.kuromoji.example.TokenizerExample normal \
+       -cp lib/kuromoji-0.8-SNAPSHOT.jar:src/main/java \
+           com.atilika.kuromoji.example.TokenizerExample normal \
               src/main/resources/userdict.txt
 
     Sample input 1: 毎日日本経済新聞を読みます。

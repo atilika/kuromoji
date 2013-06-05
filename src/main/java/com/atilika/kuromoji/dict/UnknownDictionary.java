@@ -1,11 +1,11 @@
 /**
- * Copyright © 2010-2012 Atilika Inc.  All rights reserved.
- * 
+ * Copyright © 2010-2013 Atilika Inc. and contributors (CONTRIBUTORS.txt)
+ *
  * Atilika Inc. licenses this file to you under the Apache License, Version
  * 2.0 (the "License"); you may not use this file except in compliance with
  * the License.  A copy of the License is distributed with this work in the
  * LICENSE.txt file.  You may also obtain a copy of the License from
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
@@ -16,16 +16,16 @@
  */
 package com.atilika.kuromoji.dict;
 
-import com.atilika.kuromoji.dict.CharacterDefinition.CharacterClass;
-
-import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.OutputStream;
+
+import com.atilika.kuromoji.ClassLoaderResolver;
+import com.atilika.kuromoji.ResourceResolver;
+import com.atilika.kuromoji.dict.CharacterDefinition.CharacterClass;
 
 /**
  * @author Masaru Hasegawa
@@ -116,38 +116,28 @@ public class UnknownDictionary extends TokenInfoDictionary {
 		writeTargetMap(directoryName + File.separator + TARGETMAP_FILENAME);
 		writeCharDef(directoryName + File.separator + CHARDEF_FILENAME);
 	}
-	
-	protected void writeCharDef(String filename) throws IOException {
-		ObjectOutputStream oos = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(filename)));		
-		oos.writeObject(characterDefinition);
-		oos.close();
-	}
 
-	public static UnknownDictionary newInstance(String directory) throws IOException, ClassNotFoundException {
-        String fileName = FILENAME;
-        String targetMapFileName = TARGETMAP_FILENAME;
-        String charDefFileName = CHARDEF_FILENAME;
-        if (directory != null) {
-            fileName = directory + "/" + FILENAME;
-            targetMapFileName = directory + "/" + TARGETMAP_FILENAME;
-            charDefFileName = directory + "/" + CHARDEF_FILENAME;
-        }
+	public static UnknownDictionary newInstance(ResourceResolver resolver) throws IOException, ClassNotFoundException {
 		UnknownDictionary dictionary = new UnknownDictionary();
-		ClassLoader loader = dictionary.getClass().getClassLoader();
-		dictionary.loadDictionary(loader.getResourceAsStream(fileName));
-		dictionary.loadTargetMap(loader.getResourceAsStream(targetMapFileName));
-		dictionary.loadCharDef(loader.getResourceAsStream(charDefFileName));
+		dictionary.loadDictionary(resolver.resolve(FILENAME));
+		dictionary.loadTargetMap(resolver.resolve(TARGETMAP_FILENAME));
+		dictionary.loadCharDef(resolver.resolve(CHARDEF_FILENAME));
 		return dictionary;
 	}
 
     public static UnknownDictionary newInstance() throws IOException, ClassNotFoundException {
-        return newInstance(null);
+        return newInstance(new ClassLoaderResolver(UnknownDictionary.class));
     }
 
+	protected void writeCharDef(String filename) throws IOException {
+		OutputStream os = new BufferedOutputStream(new FileOutputStream(filename));
+		characterDefinition.write(os);
+		os.close();
+	}
+
 	protected void loadCharDef(InputStream is) throws IOException, ClassNotFoundException {
-		ObjectInputStream ois = new ObjectInputStream(new BufferedInputStream(is));
-		characterDefinition = (CharacterDefinition) ois.readObject();
-		ois.close();
+		characterDefinition = CharacterDefinition.read(is);
+		is.close();
 	}
 	
 	@Override

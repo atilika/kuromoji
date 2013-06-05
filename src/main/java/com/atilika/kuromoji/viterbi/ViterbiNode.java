@@ -1,11 +1,11 @@
 /**
- * Copyright © 2010-2012 Atilika Inc.  All rights reserved.
+ * Copyright © 2010-2013 Atilika Inc. and contributors (CONTRIBUTORS.txt)
  *
  * Atilika Inc. licenses this file to you under the Apache License, Version
  * 2.0 (the "License"); you may not use this file except in compliance with
  * the License.  A copy of the License is distributed with this work in the
  * LICENSE.txt file.  You may also obtain a copy of the License from
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
@@ -16,113 +16,117 @@
  */
 package com.atilika.kuromoji.viterbi;
 
-
 import com.atilika.kuromoji.dict.Dictionary;
 
 public class ViterbiNode {
+    
     public ViterbiNode(int wordId, String word, Dictionary dictionary, int startIndex, Type type) {
         this(wordId, word, dictionary.getLeftId(wordId), dictionary.getRightId(wordId), dictionary.getWordCost(wordId), startIndex, type);
     }
 
     public enum Type {
-		KNOWN,
-		UNKNOWN,
-		USER
-	}
+        KNOWN,
+        UNKNOWN,
+        USER
+    }
 
-	private final int wordId;
-	
-	private final String surfaceForm;
-	
-	private final int leftId;
-	
-	private final int rightId;
-	
-	/** word cost for this node */
-	private final int wordCost;
-	
-	/** minimum path cost found thus far */
-	private int pathCost;
-		
-	private ViterbiNode leftNode;
+    private final int wordId;
 
-	private final Type type;
-	
-	private final int startIndex;
-	
-	public ViterbiNode(int wordId, String surfaceForm, int leftId, int rightId, int wordCost, int startIndex, Type type) {
-		this.wordId = wordId;
-		this.surfaceForm = surfaceForm;
-		this.leftId = leftId;
-		this.rightId = rightId;
-		this.wordCost = wordCost;
-		this.startIndex = startIndex;
-		this.type = type;
-	}
-	
+    private final String surfaceForm;
 
-	/**
-	 * @return the wordId
-	 */
-	public int getWordId() {
-		return wordId;
-	}
+    private final int leftId;
 
-	/**
-	 * @return the surfaceForm
-	 */
-	public String getSurfaceForm() {
-		return surfaceForm;
-	}
+    private final int rightId;
 
-	/**
-	 * @return the leftId
-	 */
-	public int getLeftId() {
-		return leftId;
-	}
+    /**
+     * word cost for this node
+     */
+    private final int wordCost;
 
-	/**
-	 * @return the rightId
-	 */
-	public int getRightId() {
-		return rightId;
-	}
+    /**
+     * minimum path cost found thus far
+     */
+    private int pathCost;
 
-	/**
-	 * @return the cost
-	 */
-	public int getWordCost() {
-		return wordCost;
-	}
+    private ViterbiNode leftNode;
 
-	/**
-	 * @return the cost
-	 */
-	public int getPathCost() {
-		return pathCost;
-	}
+    private final Type type;
 
-	/**
-	 * param cost minimum path cost found this far
-	 */
-	public void setPathCost(int pathCost) {
-		this.pathCost = pathCost;
-	}
-	
-	public void setLeftNode(ViterbiNode node) {
-		leftNode = node;
-	}
+    private final int startIndex;
 
-	public ViterbiNode getLeftNode() {
-		return leftNode;
-	}
+    public ViterbiNode(int wordId, String surfaceForm, int leftId, int rightId, int wordCost, int startIndex, Type type) {
+        this.wordId = wordId;
+        this.surfaceForm = surfaceForm;
+        this.leftId = leftId;
+        this.rightId = rightId;
+        this.wordCost = wordCost;
+        this.startIndex = startIndex;
+        this.type = type;
+    }
 
-	public int getStartIndex() {
-		return startIndex;
-	}
 
-	public Type getType() {
-		return type;
-	}
+    /**
+     * @return the wordId
+     */
+    public int getWordId() {
+        return wordId;
+    }
+
+    /**
+     * @return the surfaceForm
+     */
+    public String getSurfaceForm() {
+        return surfaceForm;
+    }
+
+    /**
+     * @return the leftId
+     */
+    public int getLeftId() {
+        return leftId;
+    }
+
+    /**
+     * @return the rightId
+     */
+    public int getRightId() {
+        return rightId;
+    }
+
+    /**
+     * @return the cost
+     */
+    public int getWordCost() {
+        return wordCost;
+    }
+
+    /**
+     * @return the cost
+     */
+    public int getPathCost() {
+        return pathCost;
+    }
+
+    /**
+     * param cost minimum path cost found this far
+     */
+    public void setPathCost(int pathCost) {
+        this.pathCost = pathCost;
+    }
+
+    public void setLeftNode(ViterbiNode node) {
+        leftNode = node;
+    }
+
+    public ViterbiNode getLeftNode() {
+        return leftNode;
+    }
+
+    public int getStartIndex() {
+        return startIndex;
+    }
+
+    public Type getType() {
+        return type;
+    }
 }

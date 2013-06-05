@@ -3,6 +3,11 @@ CHANGES.txt
 
 Snapshot 0.7.8 (2012-05-06)
 
+* Improvements to how dictionary data is located and read/written:
+  No Java serialization is used so classes can be freely renamed or relocated.
+  Custom resolvers can be passed to locate dictionary data (and manipulate it
+  along the way).
+
 * Added DebugTokenizerRunner to generate Viterbi debug output
 
 

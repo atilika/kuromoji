@@ -1,11 +1,11 @@
 /**
- * Copyright © 2010-2012 Atilika Inc.  All rights reserved.
- * 
+ * Copyright © 2010-2013 Atilika Inc. and contributors (CONTRIBUTORS.txt)
+ *
  * Atilika Inc. licenses this file to you under the Apache License, Version
  * 2.0 (the "License"); you may not use this file except in compliance with
  * the License.  A copy of the License is distributed with this work in the
  * LICENSE.txt file.  You may also obtain a copy of the License from
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
@@ -28,6 +28,9 @@ import java.nio.IntBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
+
+import com.atilika.kuromoji.ClassLoaderResolver;
+import com.atilika.kuromoji.ResourceResolver;
 
 public class DoubleArrayTrie {
 	
@@ -96,17 +99,12 @@ public class DoubleArrayTrie {
 		raf.close();
 	}
 	
-	public static DoubleArrayTrie newInstance(String directory) throws IOException {
-        String fileName = FILENAME;
-        if (directory != null) {
-            fileName = directory + "/" + FILENAME;
-        }
-		InputStream is = DoubleArrayTrie.class.getClassLoader().getResourceAsStream(fileName);
-		return read(is);
+	public static DoubleArrayTrie newInstance(ResourceResolver resolver) throws IOException {
+		return read(resolver.resolve(FILENAME));
 	}
 
     public static DoubleArrayTrie newInstance() throws IOException {
-        return newInstance(null);
+        return newInstance(new ClassLoaderResolver(DoubleArrayTrie.class));
     }
 
 	/**
