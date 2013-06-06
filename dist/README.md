@@ -1,5 +1,5 @@
-README.txt
-==========
+README.md
+=========
 
 This file describes how to build and run an example tokenizer in various modes.
 
