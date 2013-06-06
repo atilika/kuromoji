@@ -18,7 +18,7 @@ In order to build kuromoji from source, please do as follows:
 
 3. A distribution should now be available as
 
-    `target/kuromoji-<version>.tar.gz # (and .zip)`
+    `target/kuromoji-<version>.tar.gz` (and .zip)
 
   and a jar file should also be available in the target directory
 
