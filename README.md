@@ -27,3 +27,11 @@ Contact us
 ----------
 
 kuromoji@atilika.com
+
+
+    Test
+    This
+    is a
+    multi-line
+    comment
+
