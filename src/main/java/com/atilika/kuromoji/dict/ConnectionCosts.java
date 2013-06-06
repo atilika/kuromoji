@@ -26,49 +26,49 @@ import com.atilika.kuromoji.ClassLoaderResolver;
 import com.atilika.kuromoji.ResourceResolver;
 
 public class ConnectionCosts {
-	public static final String FILENAME = "cc.dat";
-		
-	private short[][] costs; // array is backward IDs first since get is called using the same backward ID consecutively. maybe doesn't matter.
+    public static final String FILENAME = "cc.dat";
+
+    private short[][] costs; // array is backward IDs first since get is called using the same backward ID consecutively. maybe doesn't matter.
 
     public ConnectionCosts(int forwardSize, int backwardSize) {
-		this.costs = new short[backwardSize][forwardSize]; 
-	}
+        this.costs = new short[backwardSize][forwardSize];
+    }
 
-	public void add(int forwardId, int backwardId, int cost) {
-		this.costs[backwardId][forwardId] = (short)cost;
-	}
-	
-	public int get(int forwardId, int backwardId) {
-		return costs[backwardId][forwardId];
-	}
+    public void add(int forwardId, int backwardId, int cost) {
+        this.costs[backwardId][forwardId] = (short) cost;
+    }
 
-	public static ConnectionCosts newInstance(ResourceResolver resolver) throws IOException, ClassNotFoundException {
-		return read(resolver.resolve(FILENAME));
-	}
+    public int get(int forwardId, int backwardId) {
+        return costs[backwardId][forwardId];
+    }
+
+    public static ConnectionCosts newInstance(ResourceResolver resolver) throws IOException, ClassNotFoundException {
+        return read(resolver.resolve(FILENAME));
+    }
 
     public static ConnectionCosts newInstance() throws IOException, ClassNotFoundException {
         return newInstance(new ClassLoaderResolver(ConnectionCosts.class));
     }
 
-	public void write(OutputStream stream) throws IOException {
-		DataOutputStream daos = new DataOutputStream(stream);
-		daos.writeInt(costs.length);
-		for (short [] cost : costs) {
-			daos.writeInt(cost.length);
-			for (short s : cost) daos.writeShort(s);
-		}
-	}
+    public void write(OutputStream stream) throws IOException {
+        DataOutputStream daos = new DataOutputStream(stream);
+        daos.writeInt(costs.length);
+        for (short[] cost : costs) {
+            daos.writeInt(cost.length);
+            for (short s : cost) daos.writeShort(s);
+        }
+    }
 
-	public static ConnectionCosts read(InputStream is) throws IOException, ClassNotFoundException {
-		DataInputStream dais = new DataInputStream(is);
-		ConnectionCosts instance = new ConnectionCosts(0, 0);
-		instance.costs = new short [dais.readInt()][];
-		for (int i = 0; i < instance.costs.length; i++) {
-			instance.costs[i] = new short[dais.readInt()];
-			for (int j = 0, max = instance.costs[i].length; j < max; j++) {
-				instance.costs[i][j] = dais.readShort();				
-			}
-		}
-		return instance;
-	}
+    public static ConnectionCosts read(InputStream is) throws IOException, ClassNotFoundException {
+        DataInputStream dais = new DataInputStream(is);
+        ConnectionCosts instance = new ConnectionCosts(0, 0);
+        instance.costs = new short[dais.readInt()][];
+        for (int i = 0; i < instance.costs.length; i++) {
+            instance.costs[i] = new short[dais.readInt()];
+            for (int j = 0, max = instance.costs[i].length; j < max; j++) {
+                instance.costs[i][j] = dais.readShort();
+            }
+        }
+        return instance;
+    }
 }

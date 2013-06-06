@@ -29,14 +29,15 @@ import org.junit.Test;
 
 @Ignore
 public class TokenizerTestUnidic {
+
     private static Tokenizer tokenizer;
 
     @BeforeClass
     public static void setUpBeforeClass() throws Exception {
         tokenizer = Tokenizer
-        		.builder()
-        		.prefix("unidic/")
-        		.build();
+            .builder()
+            .prefix("unidic/")
+            .build();
     }
 
     @Test
