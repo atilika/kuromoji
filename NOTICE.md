@@ -1,9 +1,9 @@
 ===========================================================================
 Kuromoji Japanese Morphological Analyzer
-Copyright © 2010-2013 Atilika Inc. and contributors (see CONTRIBUTORS.txt)
+Copyright 2010-2013 Atilika Inc. and contributors (see CONTRIBUTORS.md)
 ===========================================================================
 
-This product includes software developed by Atilika Inc.
+This product includes software developed by Atilika Inc. and contributors.
 
 This software also includes a binary and/or source version of data from
 
