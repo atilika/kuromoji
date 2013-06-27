@@ -66,7 +66,26 @@ public class Tokenizer {
 
         this.split = split;
 
-        this.viterbiSearcher = new ViterbiSearcher(mode, dictionaries.getCosts(), dictionaries.getUnknownDictionary());
+        this.viterbiSearcher = new ViterbiSearcher(this.viterbiBuilder, mode, dictionaries.getCosts(), dictionaries.getUnknownDictionary());
+        dictionaryMap.put(ViterbiNode.Type.KNOWN, dictionaries.getDictionary());
+        dictionaryMap.put(ViterbiNode.Type.UNKNOWN, dictionaries.getUnknownDictionary());
+        dictionaryMap.put(ViterbiNode.Type.USER, userDictionary);
+    }
+
+    protected Tokenizer(DynamicDictionaries dictionaries, UserDictionary userDictionary, Mode mode, boolean split,
+                        int searchModeKanjiLength, int searchModeKanjiPenalty,
+                        int searchModeOtherLength, int searchModeOtherPenalty) {
+
+        this.viterbiBuilder = new ViterbiBuilder(dictionaries.getTrie(),
+                dictionaries.getDictionary(),
+                dictionaries.getUnknownDictionary(),
+                userDictionary,
+                mode);
+
+        this.split = split;
+
+        this.viterbiSearcher = new ViterbiSearcher(this.viterbiBuilder, mode, dictionaries.getCosts(), dictionaries.getUnknownDictionary(),
+                searchModeKanjiLength, searchModeKanjiPenalty, searchModeOtherLength, searchModeOtherPenalty);
         dictionaryMap.put(ViterbiNode.Type.KNOWN, dictionaries.getDictionary());
         dictionaryMap.put(ViterbiNode.Type.UNKNOWN, dictionaries.getUnknownDictionary());
         dictionaryMap.put(ViterbiNode.Type.USER, userDictionary);
@@ -174,25 +193,27 @@ public class Tokenizer {
      * Builder class used to create Tokenizer instance.
      */
     public static class Builder {
-		private Mode mode = Mode.NORMAL;
-
+        private Mode mode = Mode.NORMAL;
         private boolean split = true;
-
         private UserDictionary userDictionary = null;
+        private Integer searchModeKanjiLength;
+        private Integer searchModeKanjiPenalty;
+        private Integer searchModeOtherLength;
+        private Integer searchModeOtherPenalty;
 
         /**
          * The default resource prefix, also configurable via
-         * system property <code>kuromoji.dict.targetdir</code>.  
+         * system property <code>kuromoji.dict.targetdir</code>.
          */
         private String defaultPrefix = System.getProperty(
-        		DEFAULT_DICT_PREFIX_PROPERTY, 
-        		DEFAULT_DICT_PREFIX); 
+                DEFAULT_DICT_PREFIX_PROPERTY,
+                DEFAULT_DICT_PREFIX);
 
         /**
          * The default resource resolver (relative to this class).
          */
         private ResourceResolver resolver = new ClassLoaderResolver(this.getClass());
-        
+
         /**
          * Set tokenization mode
          * Default: NORMAL
@@ -259,9 +280,17 @@ public class Tokenizer {
          * @see #prefix(String)
          */
         public void resolver(ResourceResolver resolver) {
-        	if (resolver == null) throw new IllegalArgumentException();
-			this.resolver = resolver;
-		}
+            if (resolver == null) throw new IllegalArgumentException();
+            this.resolver = resolver;
+        }
+
+        public synchronized Builder penalties(int kanjiLength, int kanjiPenalty, int otherLength, int otherPenalty) {
+            this.searchModeKanjiLength = kanjiLength;
+            this.searchModeKanjiPenalty = kanjiPenalty;
+            this.searchModeOtherLength = otherLength;
+            this.searchModeOtherPenalty = otherPenalty;
+            return this;
+        }
 
         /**
          * Create Tokenizer instance
@@ -270,11 +299,21 @@ public class Tokenizer {
          */
         public synchronized Tokenizer build() {
             if (defaultPrefix != null) {
-              resolver = new PrefixDecoratorResolver(defaultPrefix, resolver);
+                resolver = new PrefixDecoratorResolver(defaultPrefix, resolver);
             }
 
             DynamicDictionaries dictionaries = new DynamicDictionaries(resolver);
-            return new Tokenizer(dictionaries, userDictionary, mode, split);
+
+            if (this.mode != Mode.NORMAL
+                    && searchModeKanjiLength != null && searchModeKanjiPenalty != null
+                    && searchModeOtherLength != null && searchModeOtherPenalty != null) {
+
+                return new Tokenizer(dictionaries, userDictionary, mode, split,
+                        searchModeKanjiLength, searchModeKanjiPenalty,
+                        searchModeOtherLength, searchModeOtherPenalty);
+            } else {
+                return new Tokenizer(dictionaries, userDictionary, mode, split);
+            }
         }
     }
 }

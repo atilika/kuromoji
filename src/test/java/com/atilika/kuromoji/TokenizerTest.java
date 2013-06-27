@@ -16,18 +16,18 @@
  */
 package com.atilika.kuromoji;
 
-import org.junit.BeforeClass;
-import org.junit.Ignore;
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import org.junit.BeforeClass;
+import org.junit.Ignore;
+import org.junit.Test;
 
 public class TokenizerTest {
 
@@ -103,6 +103,25 @@ public class TokenizerTest {
         assertEquals("突き通しゃ", tokens.get(0).getSurfaceForm());
     }
 
+    @Test
+    public void testCustomPenalties() {
+        Tokenizer customTokenizer = Tokenizer.builder().mode(Tokenizer.Mode.SEARCH).penalties(3, 10000, Integer.MAX_VALUE, 0).build();
+        String input = "シニアソフトウェアエンジニアを探しています";
+        String[] expected1 = {"シニアソフトウェアエンジニア", "を", "探し", "て", "い", "ます"};
+        List<Token> tokens = customTokenizer.tokenize(input);
+        assertTrue(tokens.size() == expected1.length);
+        for (int i = 0; i < tokens.size(); i++) {
+            assertEquals(expected1[i], tokens.get(i).getSurfaceForm());
+        }
+
+        Tokenizer searchTokenizer = Tokenizer.builder().mode(Tokenizer.Mode.SEARCH).build();
+        String[] expected2 = {"シニア", "ソフトウェア", "エンジニア", "を", "探し", "て", "い", "ます"};
+        tokens = searchTokenizer.tokenize(input);
+        assertTrue(tokens.size() == expected2.length);
+        for (int i = 0; i < tokens.size(); i++) {
+            assertEquals(expected2[i], tokens.get(i).getSurfaceForm());
+        }
+    }
 
     //	@Ignore
     @Test
