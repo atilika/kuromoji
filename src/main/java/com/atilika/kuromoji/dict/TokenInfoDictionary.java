@@ -26,6 +26,8 @@ import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.WritableByteChannel;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.atilika.kuromoji.ClassLoaderResolver;
 import com.atilika.kuromoji.ResourceResolver;
@@ -134,14 +136,22 @@ public class TokenInfoDictionary implements Dictionary {
     @Override
     public String[] getAllFeaturesArray(int wordId) {
         int size = buffer.getShort(wordId + 6) / 2; // Read length of feature String. Skip 6 bytes, see data structure.
-        char[] targetArr = new char[size];
+
+        List<String> features = new ArrayList<String>(16);
         int offset = wordId + 6 + 2; // offset is position where features string starts
+        char[] charBuffer = new char[128]; // Each feature should be < 128 chars.
+        int position = 0;
         for (int i = 0; i < size; i++) {
-            targetArr[i] = buffer.getChar(offset + i * 2);
+            char c = buffer.getChar(offset + i * 2);
+            if (c == INTERNAL_SEPARATOR) {
+                features.add(new String(charBuffer, 0, position));
+                position = 0;
+            } else {
+                charBuffer[position++] = c;
+            }
         }
-        String allFeatures = new String(targetArr);
-        // TODO: Add POS
-        return allFeatures.split(INTERNAL_SEPARATOR);
+
+        return features.toArray(new String[features.size()]);
     }
 
     @Override
