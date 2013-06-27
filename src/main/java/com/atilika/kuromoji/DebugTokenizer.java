@@ -34,11 +34,11 @@ import java.util.List;
 public class DebugTokenizer {
 
 	private ViterbiFormatter formatter;
-	
+
 	private ViterbiBuilder viterbiBuilder;
 
     private ViterbiSearcher viterbiSearcher;
-	
+
 	protected DebugTokenizer(DynamicDictionaries dictionaries, UserDictionary userDictionary, Mode mode) {
 
 //        DynamicDictionaries dictionaries = new DynamicDictionaries(directory);
@@ -49,31 +49,31 @@ public class DebugTokenizer {
 								   userDictionary,
 								   mode);
 
-        this.viterbiSearcher = new ViterbiSearcher(mode, dictionaries.getCosts(), dictionaries.getUnknownDictionary());
+        this.viterbiSearcher = new ViterbiSearcher(this.viterbiBuilder, mode, dictionaries.getCosts(), dictionaries.getUnknownDictionary());
 		this.formatter = new ViterbiFormatter(dictionaries.getCosts());
 	}
-	
+
 	public String debugTokenize(String text) {
 		ViterbiLattice lattice = this.viterbiBuilder.build(text);
 		List<ViterbiNode> bestPath = this.viterbiSearcher.search(lattice);
 		return this.formatter.format(lattice, bestPath);
 	}
-	
+
 	public static Builder builder() {
 		return new Builder();
 	}
-	
+
 	public static class Builder {
 
 		private Mode mode = Mode.NORMAL;
-		
+
 		private UserDictionary userDictionary = null;
 
         private String directory = "ipadic";
 
         /**
          * The default resource prefix, also configurable via
-         * system property <code>kuromoji.dict.targetdir</code>.  
+         * system property <code>kuromoji.dict.targetdir</code>.
          */
         private String defaultPrefix = System.getProperty(
             Tokenizer.DEFAULT_DICT_PREFIX_PROPERTY,
@@ -88,7 +88,7 @@ public class DebugTokenizer {
 			this.mode = mode;
 			return this;
 		}
-		
+
 		public synchronized Builder userDictionary(InputStream userDictionaryInputStream) throws IOException {
 			this.userDictionary = UserDictionary.read(userDictionaryInputStream);
 			return this;
@@ -98,7 +98,7 @@ public class DebugTokenizer {
 			this.userDictionary(new BufferedInputStream(new FileInputStream(userDictionaryPath)));
 			return this;
 		}
-		
+
 		public synchronized DebugTokenizer build() {
             if (defaultPrefix != null) {
                 resolver = new PrefixDecoratorResolver(defaultPrefix, resolver);

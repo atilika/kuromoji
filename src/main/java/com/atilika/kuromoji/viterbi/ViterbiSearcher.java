@@ -45,15 +45,15 @@ public class ViterbiSearcher {
                            Tokenizer.Mode mode,
                            ConnectionCosts costs,
                            UnknownDictionary unknownDictionary,
-                           int searchModeKanjiPenalty,
-                           int searchModeOtherPenalty,
                            int searchModeKanjiLength,
-                           int searchModeOtherLength) {
+                           int searchModeKanjiPenalty,
+                           int searchModeOtherLength,
+                           int searchModeOtherPenalty) {
         this.viterbi = viterbi;
-        this.searchModeKanjiPenalty = searchModeKanjiPenalty;
-        this.searchModeOtherPenalty = searchModeOtherPenalty;
         this.searchModeKanjiLength = searchModeKanjiLength;
+        this.searchModeKanjiPenalty = searchModeKanjiPenalty;
         this.searchModeOtherLength = searchModeOtherLength;
+        this.searchModeOtherPenalty = searchModeOtherPenalty;
         this.costs = costs;
         this.unknownDictionary = unknownDictionary;
 
@@ -74,9 +74,10 @@ public class ViterbiSearcher {
 
     }
 
-    public ViterbiSearcher(Tokenizer.Mode mode, ConnectionCosts costs, UnknownDictionary unknownDictionary) {
-        this(null, mode, costs, unknownDictionary, SEARCH_MODE_KANJI_PENALTY_DEFAULT, SEARCH_MODE_OTHER_PENALTY_DEFAULT,
-            SEARCH_MODE_KANJI_LENGTH_DEFAULT, SEARCH_MODE_OTHER_LENGTH_DEFAULT);
+    public ViterbiSearcher(ViterbiBuilder viterbi, Tokenizer.Mode mode, ConnectionCosts costs, UnknownDictionary unknownDictionary) {
+        this(viterbi, mode, costs, unknownDictionary,
+                SEARCH_MODE_KANJI_LENGTH_DEFAULT, SEARCH_MODE_KANJI_PENALTY_DEFAULT,
+                SEARCH_MODE_OTHER_LENGTH_DEFAULT, SEARCH_MODE_OTHER_PENALTY_DEFAULT);
     }
 
     /**
