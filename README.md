@@ -1,5 +1,5 @@
-README.txt
-==========
+README
+======
 
 Building
 --------

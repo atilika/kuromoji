@@ -8,3 +8,4 @@ AUTHORS
 CONTRIBUTORS
 
 * Dawid Weiss
+* Masaru Hasegawa

@@ -1,14 +1,17 @@
-CHANGES.txt
-===========
+CHANGES
+=======
 
-Snapshot 0.7.8 (2012-05-06)
+Snapshot 0.7.8 (2013-08-10)
 
-* Improvements to how dictionary data is located and read/written:
-  No Java serialization is used so classes can be freely renamed or relocated.
-  Custom resolvers can be passed to locate dictionary data (and manipulate it
-  along the way).
-
+* Improvements to how dictionary data is located and read/written: No Java serialization
+  is used so classes can be freely renamed or relocated.　 Custom resolvers can be passed
+  to locate dictionary data (and manipulate it along the way). (Dawid Weiss)
+  
 * Added DebugTokenizerRunner to generate Viterbi debug output
+
+* Performance improvements to TokenInfoDictionary#getAllFeaturesArray. (Masaru Hasegawa)
+
+* Added ability to customise Viterbi penalities (expert feature). (Masaru Hasegawa)
 
 
 Release 0.7.7 (2012-01-30)
