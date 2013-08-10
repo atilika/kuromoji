@@ -25,6 +25,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -127,13 +128,22 @@ public class UserDictionary implements Dictionary {
 
 	@Override
 	public String[] getAllFeaturesArray(int wordId) {
-		String allFeatures = featureEntries.get(wordId);
-		if(allFeatures == null) {
-			return null;
-		}
+        String allFeatures = featureEntries.get(wordId);
+        if(allFeatures == null) {
+            return null;
+        }
 
-		return allFeatures.split(INTERNAL_SEPARATOR);
-	}
+        List<String> features = new ArrayList<String>();
+        int start = 0;
+        for (int i = 0; i < allFeatures.length(); i++) {
+            if (allFeatures.charAt(i) == INTERNAL_SEPARATOR) {
+                features.add(allFeatures.substring(start, i));
+                start = i + 1;
+            }
+        }
+        features.add(allFeatures.substring(start, allFeatures.length())); // The last feature.
+        return features.toArray(new String[features.size()]);
+    }
 
 
 	@Override

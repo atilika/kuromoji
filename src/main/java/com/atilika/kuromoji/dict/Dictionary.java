@@ -18,7 +18,7 @@ package com.atilika.kuromoji.dict;
 
 public interface Dictionary {
 
-	public static final String INTERNAL_SEPARATOR = "\u0000";
+	public static final char INTERNAL_SEPARATOR = '\u0000';
 
 	/**
 	 * Get left id of specified word
@@ -26,14 +26,14 @@ public interface Dictionary {
 	 * @return	left id
 	 */
 	public int getLeftId(int wordId);
-	
+
 	/**
 	 * Get right id of specified word
 	 * @param wordId
 	 * @return	left id
 	 */
 	public int getRightId(int wordId);
-	
+
 	/**
 	 * Get word cost of specified word
 	 * @param wordId
@@ -68,14 +68,14 @@ public interface Dictionary {
 	 * @return Reading of the token
 	 */
 	public String getReading(int wordId);
-	
+
 	/**
 	 * Get base form of word
 	 * @param wordId word ID of token
 	 * @return Base form (only different for inflected words, otherwise null)
 	 */
 	public String getBaseForm(int wordId);
-	
+
 	/**
 	 * Get feature(s) of tokens
 	 * @param wordId word ID token
