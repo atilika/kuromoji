@@ -43,7 +43,8 @@
         <kuromoji.dict.dir>dictionary/mecab-ipadic-2.7.0-20070801</kuromoji.dict.dir>
         <kuromoji.dict.targetdir>ipadic</kuromoji.dict.targetdir>
         <kuromoji.dict.encoding>euc-jp</kuromoji.dict.encoding>
-
+        <kuromoji.dict.normalize>false</kuromoji.dict.normalize>
+        
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     </properties>
@@ -56,6 +57,7 @@
                 <kuromoji.dict.dir>dictionary/unidic-mecab1312src</kuromoji.dict.dir>
                 <kuromoji.dict.targetdir>unidic</kuromoji.dict.targetdir>
                 <kuromoji.dict.encoding>utf-8</kuromoji.dict.encoding>
+                <kuromoji.dict.normalize>false</kuromoji.dict.normalize>
             </properties>
         </profile>
     </profiles>
@@ -151,7 +153,7 @@
                         <argument>target/classes/${kuromoji.dict.targetdir}</argument>
                         <!--<argument>target/classes</argument>-->
                         <argument>${kuromoji.dict.encoding}</argument>
-                        <argument>false</argument>
+                        <argument>${kuromoji.dict.normalize}</argument>
                     </arguments>
                 </configuration>
             </plugin>
@@ -215,13 +217,13 @@
         <!-- atilika.org repositories -->
         <repository>
             <id>atilika</id>
-            <name>ATILIKA Open Source</name>
+            <name>Atilika Open Source</name>
             <url>http://atilika.org/nexus/content/repositories/atilika/</url>
         </repository>
 
         <snapshotRepository>
             <id>atilika-snapshots</id>
-            <name>ATILIKA Open Source Snaphots</name>
+            <name>Atilika Open Source Snaphots</name>
             <url>http://atilika.org/nexus/content/repositories/atilika-snapshots/</url>
         </snapshotRepository>
     </distributionManagement>
