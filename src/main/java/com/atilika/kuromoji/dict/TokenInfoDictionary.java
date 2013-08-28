@@ -151,6 +151,11 @@ public class TokenInfoDictionary implements Dictionary {
             }
         }
 
+        // Add the last feature.
+        if (position > 0) {
+            features.add(new String(charBuffer, 0, position));
+        }
+
         return features.toArray(new String[features.size()]);
     }
 

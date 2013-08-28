@@ -16,15 +16,15 @@
  */
 package com.atilika.kuromoji;
 
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import static junit.framework.Assert.assertEquals;
 
 import java.io.ByteArrayInputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 
-import static junit.framework.Assert.assertEquals;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
 
 public class UserDictionaryTokenizerTest {
 
@@ -38,6 +38,21 @@ public class UserDictionaryTokenizerTest {
     private ByteArrayInputStream getUserDictionaryFromString(String userDictionaryEntry) throws UnsupportedEncodingException {
         return new ByteArrayInputStream(userDictionaryEntry.getBytes("UTF-8"));
     }
+
+    @Test
+    public void testAllFeatures() {
+        String input = "シロクロ";
+        String[] surfaceForms = {"シロ", "クロ"};
+        List<Token> tokens = tokenizer.tokenize(input);
+        assertEquals(surfaceForms.length, tokens.size());
+
+        // Check features length.
+        // Get token of "クロ".
+        Token token = tokens.get(1);
+        String actual = token.getSurfaceForm() + "\t" +  token.getAllFeatures();
+        assertEquals("クロ\tクロ,カスタム名詞", actual);
+    }
+
 
     @Ignore
     @Test
