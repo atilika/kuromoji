@@ -123,6 +123,23 @@ public class TokenizerTest {
         }
     }
 
+    @Test
+    public void testAllFeatures() {
+        Tokenizer tokenizer = Tokenizer.builder().build();
+        String input = "寿司が食べたいです。";
+
+        List<Token> tokens = tokenizer.tokenize(input);
+        assertEquals("寿司\t名詞,一般,*,*,*,*,寿司,スシ,スシ", toString(tokens.get(0)));
+        assertEquals("が\t助詞,格助詞,一般,*,*,*,が,ガ,ガ", toString(tokens.get(1)));
+        assertEquals("食べ\t動詞,自立,*,*,一段,連用形,食べる,タベ,タベ", toString(tokens.get(2)));
+        assertEquals("たい\t助動詞,*,*,*,特殊・タイ,基本形,たい,タイ,タイ", toString(tokens.get(3)));
+        assertEquals("です\t助動詞,*,*,*,特殊・デス,基本形,です,デス,デス", toString(tokens.get(4)));
+    }
+
+    private String toString(Token token) {
+        return token.getSurfaceForm() + "\t" +  token.getAllFeatures();
+    }
+
     //	@Ignore
     @Test
     public void testBocchan() throws IOException, InterruptedException {
