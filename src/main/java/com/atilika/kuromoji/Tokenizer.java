@@ -18,6 +18,7 @@ package com.atilika.kuromoji;
 
 import com.atilika.kuromoji.dict.Dictionary;
 import com.atilika.kuromoji.dict.DynamicDictionaries;
+import com.atilika.kuromoji.dict.InsertedDictionary;
 import com.atilika.kuromoji.dict.UserDictionary;
 import com.atilika.kuromoji.viterbi.ViterbiBuilder;
 import com.atilika.kuromoji.viterbi.ViterbiLattice;
@@ -67,9 +68,14 @@ public class Tokenizer {
         this.split = split;
 
         this.viterbiSearcher = new ViterbiSearcher(this.viterbiBuilder, mode, dictionaries.getCosts(), dictionaries.getUnknownDictionary());
+        setupDictionaries(dictionaries, userDictionary);
+    }
+
+    private void setupDictionaries(DynamicDictionaries dictionaries, UserDictionary userDictionary) {
         dictionaryMap.put(ViterbiNode.Type.KNOWN, dictionaries.getDictionary());
         dictionaryMap.put(ViterbiNode.Type.UNKNOWN, dictionaries.getUnknownDictionary());
         dictionaryMap.put(ViterbiNode.Type.USER, userDictionary);
+        dictionaryMap.put(ViterbiNode.Type.INSERTED, new InsertedDictionary());
     }
 
     protected Tokenizer(DynamicDictionaries dictionaries, UserDictionary userDictionary, Mode mode, boolean split,
@@ -86,9 +92,7 @@ public class Tokenizer {
 
         this.viterbiSearcher = new ViterbiSearcher(this.viterbiBuilder, mode, dictionaries.getCosts(), dictionaries.getUnknownDictionary(),
                 searchModeKanjiLength, searchModeKanjiPenalty, searchModeOtherLength, searchModeOtherPenalty);
-        dictionaryMap.put(ViterbiNode.Type.KNOWN, dictionaries.getDictionary());
-        dictionaryMap.put(ViterbiNode.Type.UNKNOWN, dictionaries.getUnknownDictionary());
-        dictionaryMap.put(ViterbiNode.Type.USER, userDictionary);
+        setupDictionaries(dictionaries, userDictionary);
     }
 
     /**

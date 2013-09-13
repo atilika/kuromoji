@@ -123,7 +123,14 @@ public class UserDictionary implements Dictionary {
 
 	@Override
 	public String getAllFeatures(int wordId) {
-		return getFeature(wordId);
+        StringBuilder sb = new StringBuilder();
+        sb.append(getPartOfSpeech(wordId));
+        for (int i = 0; i < 6; i++) {
+            sb.append(",").append("*");
+        }
+        sb.append(",").append(getReading(wordId));
+        sb.append(",").append("*");
+        return sb.toString();
 	}
 
 	@Override
@@ -173,8 +180,8 @@ public class UserDictionary implements Dictionary {
 
 	public static UserDictionary read(InputStream is) throws IOException {
 		UserDictionary dictionary = new UserDictionary();
-		BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-		String line = null;
+		BufferedReader reader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
+		String line;
 		int wordId = CUSTOM_DICTIONARY_WORD_ID_OFFSET;
 		while ((line = reader.readLine()) != null) {
 			// Remove comments
@@ -184,6 +191,7 @@ public class UserDictionary implements Dictionary {
 			if (line.trim().length() == 0) {
 				continue;
 			}
+
 			String[] values = CSVUtil.parse(line);
 			String[] segmentation = values[1].replaceAll("  *", " ").split(" ");
 			String[] readings = values[2].replaceAll("  *", " ").split(" ");
@@ -198,10 +206,10 @@ public class UserDictionary implements Dictionary {
 			wordIdAndLength[0] = wordId;
 			for (int i = 0; i < segmentation.length; i++) {
 				wordIdAndLength[i + 1] = segmentation[i].length();
-				dictionary.featureEntries.put(wordId, readings[i] + INTERNAL_SEPARATOR + pos);
+                dictionary.featureEntries.put(wordId, readings[i] + INTERNAL_SEPARATOR + pos);
 				wordId++;
 			}
-			dictionary.entries.put(values[0], wordIdAndLength);
+            dictionary.entries.put(values[0], wordIdAndLength);
 		}
 		reader.close();
 		return dictionary;

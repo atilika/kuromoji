@@ -27,7 +27,8 @@ public class ViterbiNode {
     public enum Type {
         KNOWN,
         UNKNOWN,
-        USER
+        USER,
+        INSERTED
     }
 
     private final int wordId;

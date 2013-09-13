@@ -23,6 +23,9 @@ import com.atilika.kuromoji.dict.UnknownDictionary;
 import com.atilika.kuromoji.dict.UserDictionary;
 import com.atilika.kuromoji.trie.DoubleArrayTrie;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class ViterbiBuilder {
 
     private final DoubleArrayTrie trie;
@@ -62,7 +65,6 @@ public class ViterbiBuilder {
         this.unkDictionary = unkDictionary;
         this.userDictionary = userDictionary;
 
-
         if (userDictionary == null) {
             this.useUserDictionary = false;
         } else {
@@ -78,7 +80,6 @@ public class ViterbiBuilder {
 
     /**
      * Build lattice from input text
-     *
      *
      * @param text
      * @return
@@ -116,10 +117,11 @@ public class ViterbiBuilder {
 
     private boolean processIndex(ViterbiLattice lattice, int startIndex, String suffix) {
         boolean found = false;
+        int result = 0;
         for (int endIndex = 1; endIndex < suffix.length() + 1; endIndex++) {
             String prefix = suffix.substring(0, endIndex);
 
-            int result = trie.lookup(prefix);
+            result = trie.lookup(prefix, result, (result > 0) ? endIndex-1 : 0);
 
             if (result > 0) {    // Found match in double array trie
                 found = true;    // Don't produce unknown word starting from this index
@@ -172,10 +174,163 @@ public class ViterbiBuilder {
             String word = text.substring(index, index + length);
 
             ViterbiNode node = new ViterbiNode(wordId, word, userDictionary, index, ViterbiNode.Type.USER);
-            lattice.addNode(node, index + 1, index + 1 + length);
-            // TODO: Check here that user dictionary term doesn't break graph. Compensate if necessary.
+            int nodeStartIndex = index + 1;
+            int nodeEndIndex = nodeStartIndex + length;
+
+            lattice.addNode(node, nodeStartIndex, nodeEndIndex);
+
+            if (isLatticeBrokenBefore(nodeStartIndex, lattice)) {
+                repairBrokenLatticeBefore(lattice, index);
+            }
+
+            if (isLatticeBrokenAfter(nodeStartIndex + length, lattice)) {
+                repairBrokenLatticeAfter(lattice, nodeEndIndex);
+            }
         }
     }
 
+    /**
+     * Checks whether there exists any node in the lattice that connects to the newly inserted entry on the left side
+     * (before the new entry).
+     *
+     * @param nodeIndex
+     * @param lattice
+     * @return whether the lattice has a node that ends at nodeIndex
+     */
+    private boolean isLatticeBrokenBefore(int nodeIndex, ViterbiLattice lattice) {
+        ViterbiNode[][] nodeEndIndices = lattice.getEndIndexArr();
 
+        return nodeEndIndices[nodeIndex] == null;
+    }
+
+    /**
+     * Checks whether there exists any node in the lattice that connects to the newly inserted entry on the right side
+     * (after the new entry).
+     *
+     * @param endIndex
+     * @param lattice
+     * @return whether the lattice has a node that starts at endIndex
+     */
+    private boolean isLatticeBrokenAfter(int endIndex, ViterbiLattice lattice) {
+        ViterbiNode[][] nodeStartIndices = lattice.getStartIndexArr();
+
+        return nodeStartIndices[endIndex] == null;
+    }
+
+    /**
+     * Tries to repair the lattice by creating and adding an additional Viterbi node to the LEFT of the newly
+     * inserted user dictionary entry by using the substring of the node in the lattice that overlaps the least
+     *
+     * @param lattice
+     * @param index
+     */
+    private void repairBrokenLatticeBefore(ViterbiLattice lattice, int index) {
+        ViterbiNode[][] nodeStartIndices = lattice.getStartIndexArr();
+
+        for (int startIndex = index; startIndex > 0; startIndex--) {
+            if (nodeStartIndices[startIndex] != null) {
+                ViterbiNode glueBase = findGlueNodeCandidate(index, nodeStartIndices[startIndex], startIndex);
+                if (glueBase != null) {
+                    int length = index + 1 - startIndex;
+                    String surface = glueBase.getSurfaceForm().substring(0, length);
+                    ViterbiNode glueNode = createGlueNode(length, startIndex, glueBase, surface);
+                    lattice.addNode(glueNode, startIndex, startIndex + glueNode.getSurfaceForm().length());
+                    return;
+                }
+            }
+        }
+    }
+
+    /**
+     * Tries to repair the lattice by creating and adding an additional Viterbi node to the RIGHT of the newly
+     * inserted user dictionary entry by using the substring of the node in the lattice that overlaps the least
+     *
+     * @param lattice
+     * @param index
+     */
+    private void repairBrokenLatticeAfter(ViterbiLattice lattice, int index) {
+        ViterbiNode[][] nodeEndIndices = lattice.getEndIndexArr();
+
+        for (int endIndex = index + 1; endIndex < nodeEndIndices.length; endIndex++) {
+            if (nodeEndIndices[endIndex] != null) {
+                ViterbiNode glueBase = findGlueNodeCandidate(index, nodeEndIndices[endIndex], endIndex);
+                if (glueBase != null) {
+                    int length = endIndex + 1 - index;
+                    String surface = glueBase.getSurfaceForm().substring(length + 1);
+                    ViterbiNode glueNode = createGlueNode(length, index, glueBase, surface);
+                    lattice.addNode(glueNode, index, index + glueNode.getSurfaceForm().length());
+                    return;
+                }
+            }
+        }
+    }
+
+    /**
+     * Tries to locate a candidate for a "glue" node that repairs the broken lattice by looking at all nodes at the
+     * current index.
+     *
+     * @param index
+     * @param latticeNodes
+     * @param startIndex
+     * @return new ViterbiNode that can be inserted to glue the graph if such a node exists, else null
+     */
+    private ViterbiNode findGlueNodeCandidate(int index, ViterbiNode[] latticeNodes, int startIndex) {
+        List<ViterbiNode> candidates = new ArrayList<ViterbiNode>();
+
+        for (ViterbiNode viterbiNode : latticeNodes) {
+            if (viterbiNode != null) {
+                candidates.add(viterbiNode);
+            }
+        }
+        if (!candidates.isEmpty()) {
+            ViterbiNode glueBase = null;
+            int length = index + 1 - startIndex;
+            for (ViterbiNode candidate : candidates) {
+                if (isAcceptableCandidate(length, glueBase, candidate)) {
+                    glueBase = candidate;
+                }
+            }
+            if (glueBase != null) {
+                return glueBase;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Check whether a candidate for a glue node is acceptable.
+     * The candidate should be as short as possible, but long enough to overlap with the inserted user entry
+     *
+     * @param targetLength
+     * @param glueBase
+     * @param candidate
+     * @return whether candidate is acceptable
+     */
+    private boolean isAcceptableCandidate(int targetLength, ViterbiNode glueBase, ViterbiNode candidate) {
+        return (glueBase == null || candidate.getSurfaceForm().length() < glueBase.getSurfaceForm().length()) &&
+            candidate.getSurfaceForm().length() >= targetLength;
+    }
+
+    /**
+     * Create a glue node to be inserted based on ViterbiNode already in the lattice.
+     * The new node takes the same parameters as the node it is based on, but the word is truncated to match the
+     * hole in the lattice caused by the new user entry
+     *
+     * @param length
+     * @param startIndex
+     * @param glueBase
+     * @return new ViterbiNode to be inserted as glue into the lattice
+     */
+    private ViterbiNode createGlueNode(int length, int startIndex, ViterbiNode glueBase, String surface) {
+
+        return new ViterbiNode(
+            glueBase.getWordId(),
+            surface,
+            glueBase.getLeftId(),
+            glueBase.getRightId(),
+            glueBase.getWordCost(),
+            startIndex,
+            ViterbiNode.Type.INSERTED
+        );
+    }
 }

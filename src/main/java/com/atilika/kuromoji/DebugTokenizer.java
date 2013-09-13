@@ -41,8 +41,6 @@ public class DebugTokenizer {
 
 	protected DebugTokenizer(DynamicDictionaries dictionaries, UserDictionary userDictionary, Mode mode) {
 
-//        DynamicDictionaries dictionaries = new DynamicDictionaries(directory);
-
         this.viterbiBuilder = new ViterbiBuilder(dictionaries.getTrie(),
 								   dictionaries.getDictionary(),
 								   dictionaries.getUnknownDictionary(),

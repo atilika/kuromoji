@@ -38,21 +38,23 @@ public class DoubleArrayTrie {
 
 	public static final char TERMINATING_CHARACTER = '\u0001';
 
-	private static final int BASE_CHECK_INITIAL_SIZE = 1000000;
+    private static final int BASE_CHECK_INITIAL_SIZE = 700000; //1000000;
 
 	private static final int TAIL_INITIAL_SIZE = 10000;
 	
 	private static final int TAIL_OFFSET = 10000000;
-	
-	private IntBuffer baseBuffer;
+
+    private IntBuffer baseBuffer;
 	
 	private IntBuffer checkBuffer;
 	
 	private CharBuffer tailBuffer;
-	
-	private int tailIndex = TAIL_OFFSET;
-	
-	public DoubleArrayTrie() {
+
+    private int tailIndex = TAIL_OFFSET;
+
+    private boolean compact = true;
+
+    public DoubleArrayTrie() {
 		
 	}
 
@@ -145,14 +147,27 @@ public class DoubleArrayTrie {
 	 * @param trie normal trie which contains all dictionary words
 	 */
 	public void build(Trie trie) {
-		baseBuffer = ByteBuffer.allocate(BASE_CHECK_INITIAL_SIZE * 4).asIntBuffer();
+        System.out.println("\n    building " + (compact? "compact" : "sparse") + " trie...");
+        baseBuffer = ByteBuffer.allocate(BASE_CHECK_INITIAL_SIZE * 4).asIntBuffer();
 		baseBuffer.put(0, 1);
 		checkBuffer = ByteBuffer.allocate(BASE_CHECK_INITIAL_SIZE * 4).asIntBuffer();
 		tailBuffer = ByteBuffer.allocate(TAIL_INITIAL_SIZE * 2).asCharBuffer();
-		add(-1, 0, trie.getRoot());
-	}
-	
-	/**
+        add(-1, 0, trie.getRoot());
+
+        reportUtilizationRate();
+    }
+
+    private void reportUtilizationRate() {
+        int zeros = 0;
+        for (int i = 0; i < baseBuffer.limit(); i++) {
+            if (baseBuffer.get(i) == 0) {
+                zeros++;
+            }
+        }
+        System.out.println("    trie memory utilization ratio (" + (!compact ? "not " : "") + "compacted): " + ((baseBuffer.limit() - zeros) / (float) baseBuffer.limit()));
+    }
+
+    /**
 	 * Recursively add Nodes(characters) to double array trie
 	 * @param previous
 	 * @param index
@@ -161,51 +176,66 @@ public class DoubleArrayTrie {
 	private void add(int previous, int index, Trie.Node node) {
 		Trie.Node[] children = node.getChildren();	// nodes following current node
 
-		if(node.getChildren().length > 0 && node.hasSinglePath() && node.getChildren()[0].getKey() != TERMINATING_CHARACTER) {	// If node has only one path, put the rest in tail array
+        if(node.getChildren().length > 0 && node.hasSinglePath() && node.getChildren()[0].getKey() != TERMINATING_CHARACTER) {	// If node has only one path, put the rest in tail array
 			baseBuffer.put(index, tailIndex);	// current index of tail array
 			addToTail(node.children[0]);
 			checkBuffer.put(index, previous);
 			return;	// No more child to process
 		}
 
-		int base = findBase(index, children);	// Get base value for current index
+        int startIndex = (compact ? 0 : index);
+        int base = findBase (startIndex, children);
+
 		baseBuffer.put(index, base);
-		
-		if(previous >= 0){
+
+        if(previous >= 0){
 			checkBuffer.put(index, previous);	// Set check value
 		}
 				
 		for(Trie.Node child : children) {	// For each child to double array trie
-			add(index, index + base + child.getKey(), child);
+            if (compact) {
+                add(index, base + child.getKey(), child);
+            } else {
+                add(index, index + base + child.getKey(), child);
+            }
 		}
-		
+
 	}
-	
-	/**
+
+    /**
 	 * Match input keyword.
 	 * @param key key to match
 	 * @return index value of last character in baseBuffer(double array id) if it is complete match. Negative value if it doesn't match. 0 if it is prefix match.
 	 */
-	public int lookup(String key) {
-		int index = 0;
-		int base = 1; // base at index 0 should be 1
 
+    public int lookup(String key) {
+        return lookup(key, 0, 0);
+    }
+
+	public int lookup(String key, int index, int j) {
+        int base = 1;
+        if (index != 0) {
+            base = baseBuffer.get(index);
+        }
 		int keyLength = key.length();
-		for(int i = 0; i < keyLength; i++) {
+        for(int i = j; i < keyLength; i++) {
 			int previous = index;
-			index = index + base + key.charAt(i);
-			
-			if(index > baseBuffer.limit()) { // Too long
-				return -1;
-			}
-			
-			base = baseBuffer.get(index);
-			
-			if (base == 0 ) { // Didn't find match
+            if (compact) {
+                index = base + key.charAt(i);
+            } else {
+                index = index + base + key.charAt(i);
+            }
+            if(index > baseBuffer.limit()) { // Too long
 				return -1;
 			}
 
-			if(checkBuffer.get(index) != previous){	// check doesn't match
+			base = baseBuffer.get(index);
+
+            if (base == 0 ) { // Didn't find match
+				return -1;
+			}
+
+            if(checkBuffer.get(index) != previous){	// check doesn't match
 				return -1;
 			}
 
@@ -215,10 +245,15 @@ public class DoubleArrayTrie {
 
 		}
 
-		// If we reach at the end of input keyword, check if it is complete match by looking for following terminating character		
-		int endIndex = index + base + TERMINATING_CHARACTER;
-		
-		return checkBuffer.get(endIndex) == index ? index : 0;
+		// If we reach at the end of input keyword, check if it is complete match by looking for following terminating character
+        int endIndex;
+        if (compact) {
+            endIndex = base + TERMINATING_CHARACTER;
+        } else {
+            endIndex = index + base + TERMINATING_CHARACTER;
+        }
+
+        return checkBuffer.get(endIndex) == index ? index : 0;
 	}
 
 	/**
@@ -230,7 +265,7 @@ public class DoubleArrayTrie {
 	 */
 	private int matchTail(int base, int index, String key) {
 		int positionInTailArr = base - TAIL_OFFSET;
-		
+
 		int keyLength = key.length();
 		for(int i = 0; i < keyLength; i++) {
 			if(key.charAt(i) != tailBuffer.get(positionInTailArr + i)){
@@ -238,7 +273,7 @@ public class DoubleArrayTrie {
 			}
 		}
 		return tailBuffer.get(positionInTailArr + keyLength) == TERMINATING_CHARACTER ? index : 0;
-		
+
 	}
 
 	/**
@@ -253,18 +288,12 @@ public class DoubleArrayTrie {
 		if(base < 0) {
 			return base;
 		}
-		
+
 		while(true) {
 			boolean collision = false;	// already taken?
 			for(Trie.Node node : nodes) {
-				/*
-				 * NOTE:
-				 * Originally, nextIndex is base + node.getKey(). But to reduce construction time, we use index + base + node.getKey().
-				 * However, this makes array bigger. If there is a need to compat the file dat.dat, it's possbile to modify here and there.
-				 * Although the size of jar file doesn't change, memory consumption will be smaller.
-				 */
-				int nextIndex = index + base + node.getKey();
-				
+                int nextIndex = index + base + node.getKey();
+
 				if(baseBuffer.capacity() <= nextIndex) {
 					int newLength = nextIndex + 1;
 					IntBuffer newBaseBuffer = ByteBuffer.allocate(newLength * 4).asIntBuffer();
@@ -276,28 +305,28 @@ public class DoubleArrayTrie {
 					newCheckBuffer.put(checkBuffer);
 					checkBuffer = newCheckBuffer;
 				}
-				
+
 				if(baseBuffer.get(nextIndex) != 0) {	// already taken
 					base++;	// check next base value
 					collision = true;
-					break;
+                    break;
 				}
 			}
-			
+
 			if(!collision){
 				break;	// if there is no collision, found proper base value. Break the while loop.
 			}
-			
+
 		}
 
 		for(Trie.Node node : nodes) {
-			baseBuffer.put(index + base + node.getKey(), node.getKey() == TERMINATING_CHARACTER ? -1 : 1);	// Set -1 if key is terminating character. Set default base value 1 if not.
+            baseBuffer.put(index + base + node.getKey(), node.getKey() == TERMINATING_CHARACTER ? -1 : 1);	// Set -1 if key is terminating character. Set default base value 1 if not.
 		}
 
 		return base;
 	}
-	
-	/**
+
+    /**
 	 * Add characters(nodes) to tail array
 	 * @param node
 	 */

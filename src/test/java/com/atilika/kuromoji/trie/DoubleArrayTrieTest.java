@@ -77,7 +77,7 @@ public class DoubleArrayTrieTest {
             file.deleteOnExit();
         }
 
-        doubleArrayTrie = DoubleArrayTrie.read(new FileInputStream(dir.getCanonicalPath() + File.separator + DoubleArrayTrie.FILENAME));
+		doubleArrayTrie = DoubleArrayTrie.read(new FileInputStream(dir.getCanonicalPath() + File.separator + DoubleArrayTrie.FILENAME));
 
         assertEquals(0, doubleArrayTrie.lookup("a"));
         assertTrue(doubleArrayTrie.lookup("abc") > 0);
@@ -85,12 +85,12 @@ public class DoubleArrayTrieTest {
         assertTrue(doubleArrayTrie.lookup("xyz") < 0);
     }
 
-    private Trie getTrie() {
-        Trie trie = new Trie();
-        trie.add("abc");
-        trie.add("abd");
-        trie.add("あああ");
-        trie.add("あいう");
-        return trie;
-    }
+	private Trie getTrie() {
+		Trie trie = new Trie();
+		trie.add("abc");
+		trie.add("abd");
+		trie.add("あああ");
+		trie.add("あいう");
+		return trie;
+	}
 }

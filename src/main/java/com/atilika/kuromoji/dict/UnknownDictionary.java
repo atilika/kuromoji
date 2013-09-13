@@ -35,12 +35,15 @@ public class UnknownDictionary extends TokenInfoDictionary {
 
 	public static final String CHARDEF_FILENAME = "cd.dat";
 
+    public static final String PART_OF_SPEECH_FILENAME = "unk_pos.dat";
+
 	private CharacterDefinition characterDefinition;
 	
 	/**
 	 * Constructor
 	 */
     public UnknownDictionary() {
+        super();
     }
     
     public UnknownDictionary(int size) {
@@ -111,6 +114,7 @@ public class UnknownDictionary extends TokenInfoDictionary {
 		writeDictionary(directoryName + File.separator + FILENAME);
 		writeTargetMap(directoryName + File.separator + TARGETMAP_FILENAME);
 		writeCharDef(directoryName + File.separator + CHARDEF_FILENAME);
+        writePosVector(directoryName + File.separator + PART_OF_SPEECH_FILENAME);
 	}
 
 	public static UnknownDictionary newInstance(ResourceResolver resolver) throws IOException, ClassNotFoundException {
@@ -118,7 +122,8 @@ public class UnknownDictionary extends TokenInfoDictionary {
 		dictionary.loadDictionary(resolver.resolve(FILENAME));
 		dictionary.loadTargetMap(resolver.resolve(TARGETMAP_FILENAME));
 		dictionary.loadCharDef(resolver.resolve(CHARDEF_FILENAME));
-		return dictionary;
+        dictionary.loadPosVector(resolver.resolve(PART_OF_SPEECH_FILENAME));
+        return dictionary;
 	}
 
     public static UnknownDictionary newInstance() throws IOException, ClassNotFoundException {

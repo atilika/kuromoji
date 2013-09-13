@@ -16,16 +16,16 @@
  */
 package com.atilika.kuromoji.util;
 
+import com.atilika.kuromoji.dict.ConnectionCosts;
+import com.atilika.kuromoji.dict.TokenInfoDictionary;
+import com.atilika.kuromoji.dict.UnknownDictionary;
+import com.atilika.kuromoji.trie.DoubleArrayTrie;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Map.Entry;
-
-import com.atilika.kuromoji.dict.ConnectionCosts;
-import com.atilika.kuromoji.dict.TokenInfoDictionary;
-import com.atilika.kuromoji.dict.UnknownDictionary;
-import com.atilika.kuromoji.trie.DoubleArrayTrie;
 
 public class DictionaryBuilder {
 	
@@ -67,7 +67,7 @@ public class DictionaryBuilder {
         }
         tokenInfoDictionary.write(outputDirname);
 
-        System.out.println("  done");
+        System.out.println("done");
         System.out.println("done");
     }
 

@@ -153,7 +153,10 @@ public class TokenizerTest {
         System.out.println("Test for Bocchan without pre-splitting sentences");
         long totalStart = System.currentTimeMillis();
         for (int i = 0; i < runs; i++) {
-            tokenizer.tokenize(text);
+            List<Token> tokens = tokenizer.tokenize(text);
+            for (Token token : tokens) {
+                token.getAllFeatures();
+            }
         }
 
         reportStatistics(totalStart, runs);
@@ -166,7 +169,10 @@ public class TokenizerTest {
 
         for (int i = 0; i < runs; i++) {
             for (String sentence : sentences) {
-                tokenizer.tokenize(sentence);
+                List<Token> tokens = tokenizer.tokenize(sentence);
+                for (Token token : tokens) {
+                    token.getAllFeatures();
+                }
             }
         }
 

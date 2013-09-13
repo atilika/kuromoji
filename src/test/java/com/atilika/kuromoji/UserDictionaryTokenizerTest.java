@@ -16,27 +16,43 @@
  */
 package com.atilika.kuromoji;
 
-import static org.junit.Assert.assertEquals;
+import org.junit.Before;
+import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
 
 public class UserDictionaryTokenizerTest {
 
     private static Tokenizer tokenizer;
+
     @Before
-    public void setUp() throws Exception {
-        String userDictionaryEntry = "クロ,クロ,クロ,カスタム名詞";
-        tokenizer = Tokenizer.builder().userDictionary(getUserDictionaryFromString(userDictionaryEntry)).build();
+    public void setUp() throws IOException {
+        String userDictionary = "クロ,クロ,クロ,カスタム名詞\n"
+            + "真救世主,真救世主,シンキュウセイシュ,カスタム名詞\n"
+            + "真救世主伝説,真救世主伝説,シンキュウセイシュデンセツ,カスタム名詞\n"
+            + "北斗の拳,北斗の拳,ホクトノケン,カスタム名詞";
+
+        buildTokenizerWithUserDictionary(userDictionary);
     }
 
-    private ByteArrayInputStream getUserDictionaryFromString(String userDictionaryEntry) throws UnsupportedEncodingException {
-        return new ByteArrayInputStream(userDictionaryEntry.getBytes("UTF-8"));
+    @Test
+    public void testAcropolis() throws IOException {
+        String userDictionaryEntry = "クロ,クロ,クロ,カスタム名詞";
+        buildTokenizerWithUserDictionary(userDictionaryEntry);
+
+        String input = "アクロポリス";
+        String[] surfaceForms = {"ア", "クロ", "ポリス"};
+
+        List<Token> tokens = tokenizer.tokenize(input);
+
+        for (int i = 0; i < tokens.size(); i++) {
+            assertEquals(surfaceForms[i], tokens.get(i).getSurfaceForm());
+        }
     }
 
     @Test
@@ -49,22 +65,132 @@ public class UserDictionaryTokenizerTest {
         // Check features length.
         // Get token of "クロ".
         Token token = tokens.get(1);
-        String actual = token.getSurfaceForm() + "\t" +  token.getAllFeatures();
-        assertEquals("クロ\tクロ,カスタム名詞", actual);
+        String actual = token.getSurfaceForm() + "\t" + token.getAllFeatures();
+        assertEquals("クロ\tカスタム名詞,*,*,*,*,*,*,クロ,*", actual);
     }
 
 
-    @Ignore
     @Test
-    public void testAcropolis() {
+    public void testAcropolisInSentence() throws IOException {
+        String userDictionaryEntry = "クロ,クロ,クロ,カスタム名詞";
+        buildTokenizerWithUserDictionary(userDictionaryEntry);
+
         String input = "この丘はアクロポリスと呼ばれている。";
         String[] surfaceForms = {"この", "丘", "は", "ア", "クロ", "ポリス", "と", "呼ば", "れ", "て", "いる", "。"};
         List<Token> tokens = tokenizer.tokenize(input);
-        System.out.println(tokens);
-        for (Token token : tokens) {
-            System.out.println(token.getSurfaceForm());
+
+        for (int i = 0; i < tokens.size(); i++) {
+            assertEquals(surfaceForms[i], tokens.get(i).getSurfaceForm());
         }
+
         assertEquals(surfaceForms.length, tokens.size());
     }
 
+    //    @Ignore
+    @Test
+    public void testLatticeBrokenAfterUserDictEntry() throws IOException {
+        String userDictionaryEntry = "クロ,クロ,クロ,カスタム名詞";
+        buildTokenizerWithUserDictionary(userDictionaryEntry);
+
+        String input = "アクロア";
+        String[] surfaceForms = {"ア", "クロ", "ア"};
+        String[] features = {
+            "*,*,*,*,*,*,*,*,*",
+            "カスタム名詞,*,*,*,*,*,*,クロ,*",
+            "*,*,*,*,*,*,*,*,*"
+        };
+        List<Token> tokens = tokenizer.tokenize(input);
+
+        for (int i = 0; i < tokens.size(); i++) {
+            assertEquals(surfaceForms[i], tokens.get(i).getSurfaceForm());
+            assertEquals(features[i], tokens.get(i).getAllFeatures());
+        }
+    }
+
+    @Test
+    public void testLatticeBrokenAfterUserDictEntryInSentence() throws IOException {
+        String userDictionaryEntry = "クロ,クロ,クロ,カスタム名詞,a,a,a";
+        buildTokenizerWithUserDictionary(userDictionaryEntry);
+
+        String input = "この丘の名前はアクロアだ。";
+        String[] surfaceForms = {"この", "丘", "の", "名前", "は", "ア", "クロ", "ア", "だ", "。"};
+        String[] features = {
+            "連体詞,*,*,*,*,*,この,コノ,コノ",
+            "名詞,一般,*,*,*,*,丘,オカ,オカ",
+            "助詞,連体化,*,*,*,*,の,ノ,ノ",
+            "名詞,一般,*,*,*,*,名前,ナマエ,ナマエ",
+            "助詞,係助詞,*,*,*,*,は,ハ,ワ",
+            "*,*,*,*,*,*,*,*,*",
+            "カスタム名詞,*,*,*,*,*,*,クロ,*",
+            "*,*,*,*,*,*,*,*,*",
+            "助動詞,*,*,*,特殊・ダ,基本形,だ,ダ,ダ",
+            "記号,句点,*,*,*,*,。,。,。"
+        };
+        List<Token> tokens = tokenizer.tokenize(input);
+
+        for (int i = 0; i < tokens.size(); i++) {
+            assertEquals(surfaceForms[i], tokens.get(i).getSurfaceForm());
+            assertEquals(features[i], tokens.get(i).getAllFeatures());
+        }
+    }
+
+
+    @Test
+    public void testShinKyuseishu() throws IOException {
+        String userDictionaryEntry = "真救世主,真救世主,シンキュウセイシュ,カスタム名詞";
+        buildTokenizerWithUserDictionary(userDictionaryEntry);
+
+        assertEquals("シンキュウセイシュ", given("真救世主伝説"));
+    }
+
+    @Test
+    public void testShinKyuseishuDensetsu() throws IOException {
+        String userDictionaryEntry = "真救世主伝説,真救世主伝説,シンキュウセイシュデンセツ,カスタム名詞";
+        buildTokenizerWithUserDictionary(userDictionaryEntry);
+
+        assertEquals("シンキュウセイシュデンセツ", given("真救世主伝説"));
+    }
+
+    @Test
+    public void testCheckDifferentSpelling() throws IOException {
+        String input = "北斗の拳は真救世主伝説の名曲である。";
+        List<Token> tokens = tokenizer.tokenize(input);
+        String[] expectedReadings = {"ホクトノケン", "ハ", "シンキュウセイシュデンセツ", "ノ", "メイキョク", "デ", "アル", "。"};
+
+        for (int i = 0; i < tokens.size(); i++) {
+            assertEquals(expectedReadings[i], tokens.get(i).getReading());
+        }
+    }
+
+    @Test
+    public void testLongestActualJapaneseWord() throws IOException {
+        String userDictionaryEntry = "竜宮の乙姫の元結の切り外し,竜宮の乙姫の元結の切り外し,リュウグウノオトヒメノモトユイノキリハズシ,カスタム名詞";
+        buildTokenizerWithUserDictionary(userDictionaryEntry);
+
+        assertEquals("リュウグウノオトヒメノモトユイノキリハズシ", given("竜宮の乙姫の元結の切り外し"));
+    }
+
+    @Test
+    public void testLongestMovieTitle() throws IOException {
+        String userDictionaryEntry = "マルキ・ド・サドの演出のもとにシャラントン精神病院患者たちによって演じられたジャン＝ポール・マラーの迫害と暗殺,"
+            + "マルキ・ド・サドの演出のもとにシャラントン精神病院患者たちによって演じられたジャン＝ポール・マラーの迫害と暗殺,"
+            + "マルキ・ド・サドノエンシュツノモトニシャラントンセイシンビョウインカンジャタチニヨッテエンジラレタジャン＝ポール・マラーノハクガイトアンサツ,"
+            + "カスタム名詞";
+        buildTokenizerWithUserDictionary(userDictionaryEntry);
+
+        assertEquals("マルキ・ド・サドノエンシュツノモトニシャラントンセイシンビョウインカンジャタチニヨッテエンジラレタジャン＝ポール・マラーノハクガイトアンサツ",
+            given("マルキ・ド・サドの演出のもとにシャラントン精神病院患者たちによって演じられたジャン＝ポール・マラーの迫害と暗殺"));
+    }
+
+    private String given(String input) {
+        return tokenizer.tokenize(input).get(0).getReading();
+    }
+
+    private void buildTokenizerWithUserDictionary(String userDictionaryEntry) throws IOException {
+        tokenizer = Tokenizer.builder().userDictionary(getUserDictionaryFromString(userDictionaryEntry)).build();
+    }
+
+    private ByteArrayInputStream getUserDictionaryFromString(String userDictionaryEntry) throws UnsupportedEncodingException {
+        return new ByteArrayInputStream(userDictionaryEntry.getBytes("UTF-8"));
+    }
 }
