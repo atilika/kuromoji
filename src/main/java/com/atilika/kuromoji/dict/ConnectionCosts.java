@@ -16,6 +16,7 @@
  */
 package com.atilika.kuromoji.dict;
 
+import java.io.BufferedInputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -60,7 +61,7 @@ public class ConnectionCosts {
     }
 
     public static ConnectionCosts read(InputStream is) throws IOException, ClassNotFoundException {
-        DataInputStream dais = new DataInputStream(is);
+        DataInputStream dais = new DataInputStream(new BufferedInputStream(is));
         ConnectionCosts instance = new ConnectionCosts(0, 0);
         instance.costs = new short[dais.readInt()][];
         for (int i = 0; i < instance.costs.length; i++) {

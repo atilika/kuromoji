@@ -74,7 +74,7 @@ public class TokenInfoDictionary implements Dictionary {
 	 */
 	public int put(String[] entry) {
         int posStart = 4;
-        int featureStart = entry.length - 3;
+        int featureStart = 10;//entry.length - 3;
 
 		short leftId = Short.parseShort(entry[1]);
 		short rightId = Short.parseShort(entry[2]);
@@ -84,7 +84,7 @@ public class TokenInfoDictionary implements Dictionary {
         String features = extractFeatures(entry, featureStart, entry.length);
         int featuresSize = features.length()* 2;
 
-        extendBufferIfNecessary(featuresSize);
+        extendBufferIfNecessary(featuresSize * 2);
 
         buffer.putShort(leftId);
         buffer.putShort(rightId);
@@ -105,7 +105,11 @@ public class TokenInfoDictionary implements Dictionary {
         for (int i = start; i < end; i++) {
             sb.append(entry[i]).append(INTERNAL_SEPARATOR);
         }
+	if (sb.length() > 0) {
         return sb.deleteCharAt(sb.length() - 1).toString();
+	} else {
+		return sb.toString();
+	}
     }
 
     private void extendBufferIfNecessary(int featuresSize) {

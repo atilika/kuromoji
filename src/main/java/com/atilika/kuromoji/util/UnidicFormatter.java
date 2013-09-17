@@ -48,7 +48,7 @@ public class UnidicFormatter implements Formatter {
     public String[] formatEntry(String[] features) {
         String[] uniDicFeatures = new String[features.length];
 
-        for (int i = 0; i < 9; i++) {
+        for (int i = 0; i <= 9; i++) {
             uniDicFeatures[i] = features[i];
         }
 
