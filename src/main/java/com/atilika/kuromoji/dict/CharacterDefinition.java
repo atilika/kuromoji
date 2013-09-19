@@ -16,6 +16,7 @@
  */
 package com.atilika.kuromoji.dict;
 
+import java.io.BufferedInputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -132,7 +133,7 @@ public final class CharacterDefinition {
      * Reconstruct an instance of this class from a stream.
      */
     static CharacterDefinition read(InputStream is) throws IOException {
-        DataInputStream dais = new DataInputStream(is);
+        DataInputStream dais = new DataInputStream(new BufferedInputStream(is));
 
         CharacterClass[] fromOrdinal = new CharacterClass[CharacterClass.values().length];
         for (CharacterClass cc : CharacterClass.values()) {

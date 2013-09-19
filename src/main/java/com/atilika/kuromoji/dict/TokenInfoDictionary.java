@@ -80,20 +80,23 @@ public class TokenInfoDictionary implements Dictionary {
 		short rightId = Short.parseShort(entry[2]);
 		short wordCost = Short.parseShort(entry[3]);
 
-        String posFeatures = extractFeatures(entry, posStart, featureStart);
+        String posFeatures = extractPosFeatures(entry, posStart, featureStart);
+        short partOfSpeechId = createPartOfSpeech(posFeatures);
         String features = extractFeatures(entry, featureStart, entry.length);
         int featuresSize = features.length()* 2;
+        int otherFieldSize = 2 * 5; // Buffer space needed by leftId, rightId, wordCost, partOfSpeechId and featuresSize
 
-        extendBufferIfNecessary(featuresSize * 2);
+        extendBufferIfNecessary(featuresSize + otherFieldSize);
 
         buffer.putShort(leftId);
         buffer.putShort(rightId);
         buffer.putShort(wordCost);
 
-        buffer.putShort(createPartOfSpeech(posFeatures));
+        buffer.putShort(partOfSpeechId);
+
 		buffer.putShort((short)featuresSize);
 
-		for (char c : features.toCharArray()){
+        for (char c : features.toCharArray()){
 			buffer.putChar(c);
 		}
 
@@ -102,20 +105,44 @@ public class TokenInfoDictionary implements Dictionary {
 
     private String extractFeatures(String[] entry, int start, int end) {
         StringBuilder sb = new StringBuilder();
+
+        int readingIndex = start + 1;
+        String baseForm = (end > start) ? entry[start] : null;
+        String reading = (end > readingIndex) ? entry[readingIndex] : null;
+
         for (int i = start; i < end; i++) {
-            sb.append(entry[i]).append(INTERNAL_SEPARATOR);
+            if (entry[i].equals(baseForm) && i > readingIndex) {
+                sb.append(REPEATED_BASEFORM);
+            } else if (entry[i].equals(reading) && i > readingIndex) {
+                sb.append(REPEATED_TERM);
+            } else {
+                sb.append(entry[i]);
+            }
+
+            if (i < end - 1) {
+                sb.append(INTERNAL_SEPARATOR);
+            }
         }
-	if (sb.length() > 0) {
-        return sb.deleteCharAt(sb.length() - 1).toString();
-	} else {
-		return sb.toString();
-	}
+
+        return sb.toString();
     }
 
-    private void extendBufferIfNecessary(int featuresSize) {
-        // extend buffer if necessary
-        int left = buffer.limit() - buffer.position();
-        if (8 + featuresSize > left) { // four short and features
+    private String extractPosFeatures(String[] entry, int start, int end) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = start; i < end; i++) {
+            sb.append(entry[i]);
+
+            if (i < end - 1) {
+                sb.append(INTERNAL_SEPARATOR);
+            }
+        }
+		return sb.toString();
+    }
+
+    private void extendBufferIfNecessary(int neededSize) {
+        int leftInBuffer = buffer.limit() - buffer.position();
+
+        if (neededSize > leftInBuffer) { // four short and features
             ByteBuffer newBuffer = ByteBuffer.allocate(buffer.limit() * 2);
             buffer.flip();
             newBuffer.put(buffer);
@@ -188,10 +215,27 @@ public class TokenInfoDictionary implements Dictionary {
         char[] charBuffer = new char[size];
         int position = 0;
 
+        String reading = null;
+        String baseForm = null;
+        String feature = null;
+
         for (int i = 0; i < size; i++) {
             char c = buffer.getChar(offset + i * 2);
             if (c == INTERNAL_SEPARATOR) {
-                features.add(new String(charBuffer, 0, position));
+                feature = new String(charBuffer, 0, position);
+                if (features.size() == 6) {
+                    baseForm = feature;
+                } else if (features.size() == 7) {
+                    reading = feature;
+                }
+                if (features.size() > 6) {
+                    if (charBuffer[0] == REPEATED_TERM) {
+                        feature = reading;
+                    } else if (charBuffer[0] == REPEATED_BASEFORM) {
+                        feature = baseForm;
+                    }
+                }
+                features.add(feature);
                 position = 0;
             } else {
                 charBuffer[position++] = c;
@@ -199,7 +243,15 @@ public class TokenInfoDictionary implements Dictionary {
         }
 
         if (position > 0) {
-            features.add(new String(charBuffer, 0, position));
+            feature = new String(charBuffer, 0, position);
+            if (features.size() > 7) {
+                if (charBuffer[0] == REPEATED_TERM) {
+                    feature = reading;
+                } else if (charBuffer[0] == REPEATED_BASEFORM) {
+                    feature = baseForm;
+                }
+            }
+            features.add(feature);
         }
     }
 
@@ -334,7 +386,7 @@ public class TokenInfoDictionary implements Dictionary {
     }
 
 	protected void loadTargetMap(InputStream is) throws IOException, ClassNotFoundException {
-		DataInputStream dais = new DataInputStream(is);
+		DataInputStream dais = new DataInputStream(new BufferedInputStream(is));
 		targetMap = new int [dais.readInt()][];
 		int index;
 		while ((index = dais.readInt()) >= 0) {
@@ -347,14 +399,15 @@ public class TokenInfoDictionary implements Dictionary {
 	}
 
 	protected void loadDictionary(InputStream is) throws IOException {
-		DataInputStream dis = new DataInputStream(is);
+        BufferedInputStream bis = new BufferedInputStream(is);
+		DataInputStream dis = new DataInputStream(bis);
 		int size = dis.readInt();
 
 		ByteBuffer tmpBuffer = ByteBuffer.allocateDirect(size);
 
-		ReadableByteChannel channel = Channels.newChannel(is);
+		ReadableByteChannel channel = Channels.newChannel(bis);
 		channel.read(tmpBuffer);
-		is.close();
+		dis.close();
 		buffer = tmpBuffer.asReadOnlyBuffer();
 	}
 
@@ -367,6 +420,6 @@ public class TokenInfoDictionary implements Dictionary {
             partOfSpeech.add(line);
         }
         pos = partOfSpeech;
-        is.close();
+        isr.close();
     }
 }

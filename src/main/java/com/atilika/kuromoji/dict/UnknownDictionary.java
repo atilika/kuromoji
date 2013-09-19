@@ -16,6 +16,7 @@
  */
 package com.atilika.kuromoji.dict;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -137,7 +138,7 @@ public class UnknownDictionary extends TokenInfoDictionary {
 	}
 
 	protected void loadCharDef(InputStream is) throws IOException, ClassNotFoundException {
-		characterDefinition = CharacterDefinition.read(is);
+		characterDefinition = CharacterDefinition.read(new BufferedInputStream(is));
 		is.close();
 	}
 	

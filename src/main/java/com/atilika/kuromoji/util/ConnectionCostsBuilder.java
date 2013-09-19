@@ -47,9 +47,9 @@ public class ConnectionCostsBuilder {
 
 			assert fields.length == 3;
 			
-			int forwardId = Integer.parseInt(fields[0]);
-			int backwardId = Integer.parseInt(fields[1]);
-			int cost = Integer.parseInt(fields[2]);
+			short forwardId = Short.parseShort(fields[0]);
+			short backwardId = Short.parseShort(fields[1]);
+			short cost = Short.parseShort(fields[2]);
 
 			costs.add(forwardId, backwardId, cost);
 		}

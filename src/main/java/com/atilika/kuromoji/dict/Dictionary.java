@@ -20,6 +20,10 @@ public interface Dictionary {
 
 	public static final char INTERNAL_SEPARATOR = '\u0000';
 
+    public static final char REPEATED_TERM = '\u0002';
+
+    public static final char REPEATED_BASEFORM = '\u0003';
+
 	/**
 	 * Get left id of specified word
 	 * @param wordId

@@ -16,6 +16,9 @@
  */
 package com.atilika.kuromoji.dict;
 
+import com.atilika.kuromoji.ClassLoaderResolver;
+import com.atilika.kuromoji.ResourceResolver;
+
 import java.io.BufferedInputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -23,24 +26,25 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import com.atilika.kuromoji.ClassLoaderResolver;
-import com.atilika.kuromoji.ResourceResolver;
-
 public class ConnectionCosts {
+
     public static final String FILENAME = "cc.dat";
 
-    private short[][] costs; // array is backward IDs first since get is called using the same backward ID consecutively. maybe doesn't matter.
+    private int dimension;
+
+    private short[] costs;
 
     public ConnectionCosts(int forwardSize, int backwardSize) {
-        this.costs = new short[backwardSize][forwardSize];
+        this.costs = new short[backwardSize * forwardSize];
+        this.dimension = backwardSize;
     }
 
-    public void add(int forwardId, int backwardId, int cost) {
-        this.costs[backwardId][forwardId] = (short) cost;
+    public void add(short forwardId, short backwardId, short cost) {
+        this.costs[backwardId + forwardId * dimension] = cost;
     }
 
     public int get(int forwardId, int backwardId) {
-        return costs[backwardId][forwardId];
+        return costs[backwardId + forwardId * dimension];
     }
 
     public static ConnectionCosts newInstance(ResourceResolver resolver) throws IOException, ClassNotFoundException {
@@ -53,22 +57,22 @@ public class ConnectionCosts {
 
     public void write(OutputStream stream) throws IOException {
         DataOutputStream daos = new DataOutputStream(stream);
+        daos.writeShort(dimension);
         daos.writeInt(costs.length);
-        for (short[] cost : costs) {
-            daos.writeInt(cost.length);
-            for (short s : cost) daos.writeShort(s);
+
+        for (short s : costs) {
+            daos.writeShort(s);
         }
     }
 
     public static ConnectionCosts read(InputStream is) throws IOException, ClassNotFoundException {
         DataInputStream dais = new DataInputStream(new BufferedInputStream(is));
         ConnectionCosts instance = new ConnectionCosts(0, 0);
-        instance.costs = new short[dais.readInt()][];
+        instance.dimension = dais.readShort();
+        instance.costs = new short[dais.readInt()];
+
         for (int i = 0; i < instance.costs.length; i++) {
-            instance.costs[i] = new short[dais.readInt()];
-            for (int j = 0, max = instance.costs[i].length; j < max; j++) {
-                instance.costs[i][j] = dais.readShort();
-            }
+            instance.costs[i] = dais.readShort();
         }
         return instance;
     }

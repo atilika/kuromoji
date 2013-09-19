@@ -1,7 +1,7 @@
 CHANGES
 =======
 
-Snapshot 0.8-SNAPSHOT (2013-09-13)
+Snapshot 0.8-SNAPSHOT (2013-09-19)
 
 * Improvements to how dictionary data is located and read/written: No Java serialization
   is used so classes can be freely renamed or relocated.　 Custom resolvers can be passed
@@ -15,15 +15,19 @@ Snapshot 0.8-SNAPSHOT (2013-09-13)
 
 * Fixed issue with TokenInfoDictionary#getAllFeaturesArray not returning all features. (Masaru Hasegawa)
 
-* Fixed issue with broken Viterbi paths. (Gaute Lambertsen)
+* Fixed issue with broken Viterbi paths.
 
-* Fixed user dictionary features format. (Gaute Lambertsen)
+* Fixed user dictionary features format.
 
-* Added compaction to DoubleArrayTrie for improved memory footprint. (Gaute Lambertsen)
+* Added compaction to DoubleArrayTrie for improved memory footprint.
 
-* Split part of speech from feature to improve memory footprint. (Gaute Lambertsen)
+* Split part of speech from feature to improve memory footprint.
 
-* Added unit tests testing all features, as well as user dictionary entries. (Gaute Lambertsen)
+* Added unit tests testing all features, as well as user dictionary entries.
+
+* Added buffering to input streams for faster loading of files.
+
+* Compacted duplicated fields in TokenInfoDictionary.
 
 
 Release 0.7.7 (2012-01-30)
