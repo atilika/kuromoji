@@ -295,15 +295,7 @@ public class DoubleArrayTrie {
                 int nextIndex = index + base + node.getKey();
 
 				if(baseBuffer.capacity() <= nextIndex) {
-					int newLength = nextIndex + 1;
-					IntBuffer newBaseBuffer = ByteBuffer.allocate(newLength * 4).asIntBuffer();
-					baseBuffer.rewind();
-					newBaseBuffer.put(baseBuffer);
-					baseBuffer = newBaseBuffer;
-					IntBuffer newCheckBuffer = ByteBuffer.allocate(newLength * 4).asIntBuffer();
-					checkBuffer.rewind();
-					newCheckBuffer.put(checkBuffer);
-					checkBuffer = newCheckBuffer;
+                    extendBuffers(nextIndex);
 				}
 
 				if(baseBuffer.get(nextIndex) != 0) {	// already taken
@@ -325,6 +317,18 @@ public class DoubleArrayTrie {
 
 		return base;
 	}
+
+    private void extendBuffers(int nextIndex) {
+        int newLength = nextIndex + 1;
+        IntBuffer newBaseBuffer = ByteBuffer.allocate(newLength * 4).asIntBuffer();
+        baseBuffer.rewind();
+        newBaseBuffer.put(baseBuffer);
+        baseBuffer = newBaseBuffer;
+        IntBuffer newCheckBuffer = ByteBuffer.allocate(newLength * 4).asIntBuffer();
+        checkBuffer.rewind();
+        newCheckBuffer.put(checkBuffer);
+        checkBuffer = newCheckBuffer;
+    }
 
     /**
 	 * Add characters(nodes) to tail array

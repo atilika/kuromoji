@@ -41,6 +41,21 @@ public class UserDictionaryTokenizerTest {
     }
 
     @Test
+    public void testWhitespace() throws IOException {
+        String entry = "iPhone4 S,iPhone4 S,iPhone4 S,カスタム名詞";
+        buildTokenizerWithUserDictionary(entry);
+        List<Token> tokens = tokenizer.tokenize("iPhone4 S");
+
+        assertEquals("iPhone4 S", tokens.get(0).getSurfaceForm());
+    }
+
+    @Test(expected = RuntimeException.class)
+    public void testBadlyFormattedEntry() throws IOException {
+        String entry = "関西国際空港,関西 国際 空,カンサイ コクサイクウコウ,カスタム名詞";
+        buildTokenizerWithUserDictionary(entry);
+    }
+
+    @Test
     public void testAcropolis() throws IOException {
         String userDictionaryEntry = "クロ,クロ,クロ,カスタム名詞";
         buildTokenizerWithUserDictionary(userDictionaryEntry);
@@ -60,10 +75,8 @@ public class UserDictionaryTokenizerTest {
         String input = "シロクロ";
         String[] surfaceForms = {"シロ", "クロ"};
         List<Token> tokens = tokenizer.tokenize(input);
-        assertEquals(surfaceForms.length, tokens.size());
 
-        // Check features length.
-        // Get token of "クロ".
+        assertEquals(surfaceForms.length, tokens.size());
         Token token = tokens.get(1);
         String actual = token.getSurfaceForm() + "\t" + token.getAllFeatures();
         assertEquals("クロ\tカスタム名詞,*,*,*,*,*,*,クロ,*", actual);
@@ -86,7 +99,6 @@ public class UserDictionaryTokenizerTest {
         assertEquals(surfaceForms.length, tokens.size());
     }
 
-    //    @Ignore
     @Test
     public void testLatticeBrokenAfterUserDictEntry() throws IOException {
         String userDictionaryEntry = "クロ,クロ,クロ,カスタム名詞";

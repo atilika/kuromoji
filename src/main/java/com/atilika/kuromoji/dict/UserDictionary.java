@@ -183,6 +183,7 @@ public class UserDictionary implements Dictionary {
 		BufferedReader reader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
 		String line;
 		int wordId = CUSTOM_DICTIONARY_WORD_ID_OFFSET;
+
 		while ((line = reader.readLine()) != null) {
 			// Remove comments
 			line = line.replaceAll("#.*$", "");
@@ -193,13 +194,17 @@ public class UserDictionary implements Dictionary {
 			}
 
 			String[] values = CSVUtil.parse(line);
-			String[] segmentation = values[1].replaceAll("  *", " ").split(" ");
-			String[] readings = values[2].replaceAll("  *", " ").split(" ");
-			String pos = values[3];
+            String[] segmentation = { values[1] };
+            String[] readings = { values[2] };
+            String pos = values[3];
+
+            if (isCustomSegmentationEntry(values)) {
+                segmentation = splitOnSpace(values[1]);
+                readings = splitOnSpace(values[2]);
+            }
 
 			if (segmentation.length != readings.length) {
-				// FIXME: Should probably deal with this differently.  Exception?
-				System.out.println("This entry is not properly formatted : " + line);
+                throw new RuntimeException("User dictionary entry not properly formatted: " + line);
 			}
 
 			int[] wordIdAndLength = new int[segmentation.length + 1]; // wordId offset, length, length....
@@ -210,9 +215,19 @@ public class UserDictionary implements Dictionary {
 				wordId++;
 			}
             dictionary.entries.put(values[0], wordIdAndLength);
-		}
+
+        }
+
 		reader.close();
 		return dictionary;
 	}
+
+    private static String[] splitOnSpace(String input) {
+        return input.replaceAll("  *", " ").split(" ");
+    }
+
+    private static boolean isCustomSegmentationEntry(String[] values) {
+        return splitOnSpace(values[1]).length > splitOnSpace(values[0]).length;
+    }
 
 }
