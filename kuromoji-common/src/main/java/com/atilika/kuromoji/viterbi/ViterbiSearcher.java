@@ -148,7 +148,7 @@ public class ViterbiSearcher {
 
     int getLongNodeAdditionalCost(ViterbiNode node) {
         int pathCost = 0;
-        // System.out.print(""); // If this line exists, kuromoji runs faster for some reason when searchMode == false.
+        // System.out.print(""); // If this line exists, com.atilika.kuromoji.kuromoji runs faster for some reason when searchMode == false.
         String surfaceForm = node.getSurfaceForm();
         int length = surfaceForm.length();
         if (length > searchModeKanjiLength) {

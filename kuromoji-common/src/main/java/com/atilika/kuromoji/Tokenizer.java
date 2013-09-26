@@ -40,7 +40,7 @@ import java.util.List;
  */
 public class Tokenizer {
 	/** @see Builder#defaultPrefix */
-    public static final String DEFAULT_DICT_PREFIX_PROPERTY = "kuromoji.dict.targetdir";
+    public static final String DEFAULT_DICT_PREFIX_PROPERTY = "com.atilika.kuromoji.dict.targetdir";
 
     /** @see Builder#defaultPrefix */
     public static final String DEFAULT_DICT_PREFIX = "ipadic/";
@@ -207,7 +207,7 @@ public class Tokenizer {
 
         /**
          * The default resource prefix, also configurable via
-         * system property <code>kuromoji.dict.targetdir</code>.
+         * system property <code>com.atilika.kuromoji.dict.targetdir</code>.
          */
         private String defaultPrefix = System.getProperty(
                 DEFAULT_DICT_PREFIX_PROPERTY,

@@ -4,7 +4,7 @@ README
 Building
 --------
 
-In order to build kuromoji from source, please do as follows:
+In order to build com.atilika.kuromoji.kuromoji from source, please do as follows:
 
 1. Provide Java with 512MB heap size
 
@@ -18,7 +18,7 @@ In order to build kuromoji from source, please do as follows:
 
 3. A distribution should now be available as
 
-    `target/kuromoji-<version>.tar.gz` (and .zip)
+    `target/com.atilika.kuromoji.kuromoji-<version>.tar.gz` (and .zip)
 
   and a jar file should also be available in the target directory
 
@@ -26,5 +26,5 @@ In order to build kuromoji from source, please do as follows:
 Contact us
 ----------
 
-kuromoji@atilika.com
+com.atilika.kuromoji.kuromoji@atilika.com
 

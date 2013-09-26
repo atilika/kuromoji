@@ -71,7 +71,7 @@ public class DebugTokenizer {
 
         /**
          * The default resource prefix, also configurable via
-         * system property <code>kuromoji.dict.targetdir</code>.
+         * system property <code>com.atilika.kuromoji.dict.targetdir</code>.
          */
         private String defaultPrefix = System.getProperty(
             Tokenizer.DEFAULT_DICT_PREFIX_PROPERTY,

@@ -20,6 +20,7 @@ import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -29,7 +30,7 @@ public class UserDictionaryTest {
 
 	@Test
 	public void testLookup() throws IOException {
-		UserDictionary dictionary = UserDictionary.read("src/test/resources/userdict.txt");
+		UserDictionary dictionary = UserDictionary.read(getResource("userdict.txt"));// "../resources/userdict.txt");
 		int[][] dictionaryEntryResult = dictionary.locateUserDefinedWordsInText("関西国際空港に行った");
 		// Length should be three 関西, 国際, 空港
 		assertEquals(3, dictionaryEntryResult.length);
@@ -49,30 +50,30 @@ public class UserDictionaryTest {
 		assertEquals(6, dictionaryEntryResult2.length);
 	}
 
-	@Test
+    @Test
 	public void testReadings() throws IOException {
-		UserDictionary dictionary = UserDictionary.read("src/test/resources/userdict.txt");
+		UserDictionary dictionary = UserDictionary.read(getResource("userdict.txt"));
 		int wordIdNihon = 100000000; // wordId of 日本 in 日本経済新聞
 		assertEquals("ニホン", dictionary.getReading(wordIdNihon));
 
 		int wordIdAsashoryu = 100000006; // wordId for 朝青龍
 		assertEquals("アサショウリュウ", dictionary.getReading(wordIdAsashoryu));
-		
+
 		int wordIdNotExist = 1;
 		assertNull(dictionary.getReading(wordIdNotExist));
 	}
-	
+
 	@Test
 	public void testPartOfSpeech() throws IOException {
-		UserDictionary dictionary = UserDictionary.read("src/test/resources/userdict.txt");
+		UserDictionary dictionary = UserDictionary.read(getResource("userdict.txt"));
 		int wordIdKeizai = 100000001; // wordId of 経済 in 日本経済新聞
 		assertEquals("カスタム名詞", dictionary.getPartOfSpeech(wordIdKeizai));
 	}
-	
+
 	@Test
 	public void testRead() throws IOException {
-		UserDictionary dictionary = UserDictionary.read("src/test/resources/userdict.txt");
-		assertNotNull(dictionary);		
+		UserDictionary dictionary = UserDictionary.read(getResource("userdict.txt"));
+		assertNotNull(dictionary);
 	}
 
     @Test
@@ -96,6 +97,10 @@ public class UserDictionaryTest {
         assertEquals(indexForAcro, calculatedIndex);
         assertEquals(2, positions.length);
 
+    }
+
+    private InputStream getResource(String s) {
+        return this.getClass().getClassLoader().getResourceAsStream(s);
     }
 
 }

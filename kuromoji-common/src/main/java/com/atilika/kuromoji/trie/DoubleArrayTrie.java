@@ -52,7 +52,7 @@ public class DoubleArrayTrie {
 
     private int tailIndex = TAIL_OFFSET;
 
-    private boolean compact = true;
+    private boolean compact = false;
 
     public DoubleArrayTrie() {
 		
