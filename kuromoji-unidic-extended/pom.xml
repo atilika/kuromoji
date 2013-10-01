@@ -66,8 +66,8 @@
                                 <get src="${com.atilika.kuromoji.dict.url}"
                                      dest="dictionary/${com.atilika.kuromoji.dict.file}"
                                      verbose="true"/>
-                                <untar src="dictionary/${com.atilika.kuromoji.dict.file}"
-                                       dest="dictionary" compression="zip"/>
+                                <unzip src="dictionary/${com.atilika.kuromoji.dict.file}"
+                                       dest="dictionary"/>
                             </target>
                         </configuration>
                         <goals>
