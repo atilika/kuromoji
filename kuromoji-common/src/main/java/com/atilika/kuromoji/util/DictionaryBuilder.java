@@ -29,31 +29,33 @@ import java.util.Map.Entry;
 
 public class DictionaryBuilder {
 	
-	public enum DictionaryFormat { IPADIC, UNIDIC }
+	public enum DictionaryFormat { IPADIC, UNIDIC, UNIDIC_EXTENDED, NAIST_JDIC }
 	
 	public DictionaryBuilder() {
 		
 	}
 	
 	public void build(DictionaryFormat format,
-					  String inputDirname,
-					  String outputDirname,
-					  String encoding,
-					  boolean normalizeEntry) throws IOException {
+                      String inputDirname,
+                      String outputDirname,
+                      String encoding,
+                      boolean normalizeEntry,
+                      boolean compactTries,
+                      String dictionaryFilter) throws IOException {
         File outputDir = new File(outputDirname);
         outputDir.mkdir();
-        buildTokenInfoDictionary(format, inputDirname, outputDirname, encoding, normalizeEntry);
+        buildTokenInfoDictionary(format, inputDirname, outputDirname, encoding, normalizeEntry, compactTries, dictionaryFilter);
         buildUnknownWordDictionary(inputDirname, outputDirname, encoding);
         buildConnectionCosts(inputDirname, outputDirname);
 	}
 
-    private void buildTokenInfoDictionary(DictionaryFormat format, String inputDirname, String outputDirname, String encoding, boolean normalizeEntry) throws IOException {
+    private void buildTokenInfoDictionary(DictionaryFormat format, String inputDirname, String outputDirname, String encoding, boolean normalizeEntry, boolean compactTries, String dictionaryFilter) throws IOException {
         System.out.println("building tokeninfo dict...");
-        TokenInfoDictionaryBuilder tokenInfoBuilder = new TokenInfoDictionaryBuilder(format, encoding, normalizeEntry);
+        TokenInfoDictionaryBuilder tokenInfoBuilder = new TokenInfoDictionaryBuilder(format, encoding, normalizeEntry, dictionaryFilter);
         TokenInfoDictionary tokenInfoDictionary = tokenInfoBuilder.build(inputDirname);
 
         System.out.print("  building double array trie...");
-        DoubleArrayTrie trie = DoubleArrayTrieBuilder.build(tokenInfoBuilder.entrySet());
+        DoubleArrayTrie trie = DoubleArrayTrieBuilder.build(tokenInfoBuilder.entrySet(), compactTries);
         trie.write(outputDirname);
         System.out.println("  done");
 
@@ -96,8 +98,12 @@ public class DictionaryBuilder {
 			format = DictionaryFormat.IPADIC;
 		} else if (args[0].equalsIgnoreCase("unidic")) {
 			format = DictionaryFormat.UNIDIC;
-		} else {
-			System.err.println("Illegal format " + args[0] + " using unidic instead");
+		} else if (args[0].equalsIgnoreCase("unidic-extended")) {
+            format = DictionaryFormat.UNIDIC_EXTENDED;
+        } else if (args[0].equalsIgnoreCase("naist-jdic")) {
+            format = DictionaryFormat.NAIST_JDIC;
+        } else {
+			System.err.println("Illegal format " + args[0] + " using ipadic instead");
 			format = DictionaryFormat.IPADIC;
 		}
 
@@ -105,6 +111,12 @@ public class DictionaryBuilder {
 		String outputDirname = args[2];
 		String inputEncoding = args[3];
 		boolean normalizeEntries = Boolean.parseBoolean(args[4]);
+        boolean compactTries = Boolean.parseBoolean(args[5]);
+
+        String dictionaryFilter = "";
+        if (args.length == 7) {
+            dictionaryFilter = args[6];
+        }
 		
 		DictionaryBuilder builder = new DictionaryBuilder();
 		System.out.println("dictionary builder");
@@ -114,8 +126,10 @@ public class DictionaryBuilder {
 		System.out.println("output directory: " + outputDirname);
 		System.out.println("input encoding: " + inputEncoding);
 		System.out.println("normalize entries: " + normalizeEntries);
-		System.out.println("");
-		builder.build(format, inputDirname, outputDirname, inputEncoding, normalizeEntries);
+        System.out.println("compat tries: " + compactTries);
+        System.out.println("dictionary filter: " + dictionaryFilter);
+        System.out.println("");
+		builder.build(format, inputDirname, outputDirname, inputEncoding, normalizeEntries, compactTries, dictionaryFilter);
 	}
 	
 }

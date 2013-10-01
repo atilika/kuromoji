@@ -14,8 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.atilika.kuromoji;
+package com.atilika.kuromoji.ipadic;
 
+import com.atilika.kuromoji.Token;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -199,7 +200,7 @@ public class UserDictionaryTokenizerTest {
     }
 
     private void buildTokenizerWithUserDictionary(String userDictionaryEntry) throws IOException {
-        tokenizer = Tokenizer.builder().userDictionary(getUserDictionaryFromString(userDictionaryEntry)).build();
+        tokenizer = new Tokenizer.Builder().userDictionary(getUserDictionaryFromString(userDictionaryEntry)).build();
     }
 
     private ByteArrayInputStream getUserDictionaryFromString(String userDictionaryEntry) throws UnsupportedEncodingException {

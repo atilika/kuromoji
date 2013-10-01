@@ -25,6 +25,11 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.ByteBuffer;
+import java.nio.ShortBuffer;
+import java.nio.channels.Channels;
+import java.nio.channels.ReadableByteChannel;
+import java.nio.channels.WritableByteChannel;
 
 public class ConnectionCosts {
 
@@ -32,19 +37,19 @@ public class ConnectionCosts {
 
     private int dimension;
 
-    private short[] costs;
+    private ShortBuffer costs;
 
     public ConnectionCosts(int forwardSize, int backwardSize) {
-        this.costs = new short[backwardSize * forwardSize];
+        this.costs = ShortBuffer.allocate(backwardSize * forwardSize);
         this.dimension = backwardSize;
     }
 
     public void add(short forwardId, short backwardId, short cost) {
-        this.costs[backwardId + forwardId * dimension] = cost;
+        this.costs.put(backwardId + forwardId * dimension, cost);
     }
 
     public int get(int forwardId, int backwardId) {
-        return costs[backwardId + forwardId * dimension];
+        return costs.get(backwardId + forwardId * dimension);
     }
 
     public static ConnectionCosts newInstance(ResourceResolver resolver) throws IOException, ClassNotFoundException {
@@ -58,22 +63,38 @@ public class ConnectionCosts {
     public void write(OutputStream stream) throws IOException {
         DataOutputStream daos = new DataOutputStream(stream);
         daos.writeShort(dimension);
-        daos.writeInt(costs.length);
+        daos.writeInt(costs.array().length * 2);
 
-        for (short s : costs) {
-            daos.writeShort(s);
+        ByteBuffer outBuffer = ByteBuffer.allocate(costs.array().length * 2);
+
+        for (short s : costs.array()) {
+            outBuffer.putShort(s);
         }
+
+        WritableByteChannel channel = Channels.newChannel(stream);
+
+        outBuffer.flip();
+        channel.write(outBuffer);
+        stream.close();
     }
 
     public static ConnectionCosts read(InputStream is) throws IOException, ClassNotFoundException {
-        DataInputStream dais = new DataInputStream(new BufferedInputStream(is));
+        BufferedInputStream bis = new BufferedInputStream(is);
+        DataInputStream dais = new DataInputStream(bis);
+
         ConnectionCosts instance = new ConnectionCosts(0, 0);
         instance.dimension = dais.readShort();
-        instance.costs = new short[dais.readInt()];
+        int size = dais.readInt();
 
-        for (int i = 0; i < instance.costs.length; i++) {
-            instance.costs[i] = dais.readShort();
-        }
+        ByteBuffer tmpBuffer = ByteBuffer.allocate(size);
+        ReadableByteChannel channel = Channels.newChannel(bis);
+
+        channel.read(tmpBuffer);
+        dais.close();
+
+        tmpBuffer.rewind();
+        instance.costs = tmpBuffer.asShortBuffer();
+
         return instance;
     }
 }

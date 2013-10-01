@@ -14,20 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.atilika.kuromoji;
+package com.atilika.kuromoji.ipadic;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import com.atilika.kuromoji.Token;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.util.List;
 
-import org.junit.BeforeClass;
-import org.junit.Ignore;
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 public class TokenizerTest {
 
@@ -35,7 +35,7 @@ public class TokenizerTest {
 
     @BeforeClass
     public static void setUpBeforeClass() throws Exception {
-        tokenizer = Tokenizer.builder().build();
+        tokenizer = new Tokenizer.Builder().build();
     }
 
     @Test
@@ -61,7 +61,6 @@ public class TokenizerTest {
         assertEquals(tokens.get(5).getReading(), "。");
     }
 
-    @Ignore
     @Test
     public void testSimpleReading() {
         List<Token> tokens = tokenizer.tokenize("郵税");
@@ -77,11 +76,9 @@ public class TokenizerTest {
 
     }
 
-    @Ignore
     @Test
     public void testSimpleBaseFormUnknownWord() {
         List<Token> tokens = tokenizer.tokenize("アティリカ株式会社");
-        System.out.println(tokens.toString());
         assertTrue(tokens.size() == 2);
         assertTrue(tokens.get(0).isUnknown());
         assertNull(tokens.get(0).getBaseForm());
@@ -105,7 +102,7 @@ public class TokenizerTest {
 
     @Test
     public void testCustomPenalties() {
-        Tokenizer customTokenizer = Tokenizer.builder().mode(Tokenizer.Mode.SEARCH).penalties(3, 10000, Integer.MAX_VALUE, 0).build();
+        Tokenizer customTokenizer = new Tokenizer.Builder().mode(Tokenizer.Mode.SEARCH).penalties(3, 10000, Integer.MAX_VALUE, 0).build();
         String input = "シニアソフトウェアエンジニアを探しています";
         String[] expected1 = {"シニアソフトウェアエンジニア", "を", "探し", "て", "い", "ます"};
         List<Token> tokens = customTokenizer.tokenize(input);
@@ -114,7 +111,7 @@ public class TokenizerTest {
             assertEquals(expected1[i], tokens.get(i).getSurfaceForm());
         }
 
-        Tokenizer searchTokenizer = Tokenizer.builder().mode(Tokenizer.Mode.SEARCH).build();
+        Tokenizer searchTokenizer = new Tokenizer.Builder().mode(Tokenizer.Mode.SEARCH).build();
         String[] expected2 = {"シニア", "ソフトウェア", "エンジニア", "を", "探し", "て", "い", "ます"};
         tokens = searchTokenizer.tokenize(input);
         assertTrue(tokens.size() == expected2.length);
@@ -125,7 +122,7 @@ public class TokenizerTest {
 
     @Test
     public void testAllFeatures() {
-        Tokenizer tokenizer = Tokenizer.builder().build();
+        Tokenizer tokenizer = new Tokenizer.Builder().build();
         String input = "寿司が食べたいです。";
 
         List<Token> tokens = tokenizer.tokenize(input);
@@ -145,7 +142,7 @@ public class TokenizerTest {
     public void testBocchan() throws IOException, InterruptedException {
         int runs = 3;
         LineNumberReader reader = new LineNumberReader(new InputStreamReader(
-                this.getClass().getClassLoader().getResourceAsStream("bocchan.utf-8.txt")));
+            this.getClass().getClassLoader().getResourceAsStream("bocchan.utf-8.txt")));
 
         String text = reader.readLine();
         reader.close();

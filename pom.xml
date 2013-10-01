@@ -17,6 +17,9 @@
     <modules>
         <module>kuromoji-common</module>
         <module>kuromoji-ipadic</module>
+        <module>kuromoji-unidic</module>
+        <module>kuromoji-unidic-extended</module>
+        <module>kuromoji-naist-jdic</module>
     </modules>
 
     <developers>
@@ -44,6 +47,40 @@
         </developer>
     </developers>
 
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    </properties>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>2.3.2</version>
+                <inherited>true</inherited>
+                <configuration>
+                    <source>1.6</source>
+                    <target>1.6</target>
+                    <encoding>UTF-8</encoding>
+                    <excludes>
+                        <exclude>**/example/*.java</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.4.3</version>
+                <configuration>
+                    <argLine>-Xmx512m -Dfile.encoding=UTF-8</argLine>
+                    <includes>
+                        <include>**/*Test*.java</include>
+                    </includes>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
     <distributionManagement>
         <!-- atilika.org repositories -->

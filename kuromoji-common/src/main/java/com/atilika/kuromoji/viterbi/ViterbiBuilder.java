@@ -16,7 +16,7 @@
  */
 package com.atilika.kuromoji.viterbi;
 
-import com.atilika.kuromoji.Tokenizer.Mode;
+import com.atilika.kuromoji.AbstractTokenizer.Mode;
 import com.atilika.kuromoji.dict.CharacterDefinition;
 import com.atilika.kuromoji.dict.TokenInfoDictionary;
 import com.atilika.kuromoji.dict.UnknownDictionary;

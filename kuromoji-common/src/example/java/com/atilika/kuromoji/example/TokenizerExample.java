@@ -21,24 +21,24 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.List;
 
+import com.atilika.kuromoji.AbstractTokenizer;
 import com.atilika.kuromoji.Token;
-import com.atilika.kuromoji.Tokenizer;
-import com.atilika.kuromoji.Tokenizer.Mode;
+import com.atilika.kuromoji.AbstractTokenizer.Mode;
 
 public class TokenizerExample {
 
 	public static void main(String[] args) throws IOException {
-		Tokenizer tokenizer;
+		AbstractTokenizer tokenizer;
 		if (args.length == 1) {
 			Mode mode = Mode.valueOf(args[0].toUpperCase());
-			tokenizer = Tokenizer.builder().mode(mode).build();
+			tokenizer = AbstractTokenizer.builder().mode(mode).build();
 		} else if (args.length == 2) {
 			Mode mode = Mode.valueOf(args[0].toUpperCase());
-			tokenizer = Tokenizer.builder().mode(mode).userDictionary(args[1]).build();
+			tokenizer = AbstractTokenizer.builder().mode(mode).userDictionary(args[1]).build();
 		} else {
-			tokenizer = Tokenizer.builder().build();
+			tokenizer = AbstractTokenizer.builder().build();
 		}
-		System.out.println("Tokenizer ready.  Provide input text and press RET.");
+		System.out.println("AbstractTokenizer ready.  Provide input text and press RET.");
 		BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 		String line;
 		while ((line = reader.readLine()) != null) {

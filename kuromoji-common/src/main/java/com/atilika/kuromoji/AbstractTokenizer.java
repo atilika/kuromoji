@@ -35,10 +35,10 @@ import java.util.EnumMap;
 import java.util.List;
 
 /**
- * Tokenizer main class.
+ * AbstractTokenizer main class.
  * Thread safe.
  */
-public class Tokenizer {
+public class AbstractTokenizer {
 	/** @see Builder#defaultPrefix */
     public static final String DEFAULT_DICT_PREFIX_PROPERTY = "com.atilika.kuromoji.dict.targetdir";
 
@@ -57,7 +57,7 @@ public class Tokenizer {
 
     private final boolean split;
 
-    protected Tokenizer(DynamicDictionaries dictionaries, UserDictionary userDictionary, Mode mode, boolean split) {
+    protected AbstractTokenizer(DynamicDictionaries dictionaries, UserDictionary userDictionary, Mode mode, boolean split) {
 
         this.viterbiBuilder = new ViterbiBuilder(dictionaries.getTrie(),
                 dictionaries.getDictionary(),
@@ -78,9 +78,9 @@ public class Tokenizer {
         dictionaryMap.put(ViterbiNode.Type.INSERTED, new InsertedDictionary());
     }
 
-    protected Tokenizer(DynamicDictionaries dictionaries, UserDictionary userDictionary, Mode mode, boolean split,
-                        int searchModeKanjiLength, int searchModeKanjiPenalty,
-                        int searchModeOtherLength, int searchModeOtherPenalty) {
+    protected AbstractTokenizer(DynamicDictionaries dictionaries, UserDictionary userDictionary, Mode mode, boolean split,
+                                int searchModeKanjiLength, int searchModeKanjiPenalty,
+                                int searchModeOtherLength, int searchModeOtherPenalty) {
 
         this.viterbiBuilder = new ViterbiBuilder(dictionaries.getTrie(),
                 dictionaries.getDictionary(),
@@ -185,7 +185,7 @@ public class Tokenizer {
     }
 
     /**
-     * Get Builder to create Tokenizer instance.
+     * Get Builder to create AbstractTokenizer instance.
      *
      * @return Builder
      */
@@ -194,7 +194,7 @@ public class Tokenizer {
     }
 
     /**
-     * Builder class used to create Tokenizer instance.
+     * Builder class used to create AbstractTokenizer instance.
      */
     public static class Builder {
         private Mode mode = Mode.NORMAL;
@@ -297,11 +297,11 @@ public class Tokenizer {
         }
 
         /**
-         * Create Tokenizer instance
+         * Create AbstractTokenizer instance
          *
-         * @return Tokenizer
+         * @return AbstractTokenizer
          */
-        public synchronized Tokenizer build() {
+        public synchronized AbstractTokenizer build() {
             if (defaultPrefix != null) {
                 resolver = new PrefixDecoratorResolver(defaultPrefix, resolver);
             }
@@ -312,11 +312,11 @@ public class Tokenizer {
                     && searchModeKanjiLength != null && searchModeKanjiPenalty != null
                     && searchModeOtherLength != null && searchModeOtherPenalty != null) {
 
-                return new Tokenizer(dictionaries, userDictionary, mode, split,
+                return new AbstractTokenizer(dictionaries, userDictionary, mode, split,
                         searchModeKanjiLength, searchModeKanjiPenalty,
                         searchModeOtherLength, searchModeOtherPenalty);
             } else {
-                return new Tokenizer(dictionaries, userDictionary, mode, split);
+                return new AbstractTokenizer(dictionaries, userDictionary, mode, split);
             }
         }
     }

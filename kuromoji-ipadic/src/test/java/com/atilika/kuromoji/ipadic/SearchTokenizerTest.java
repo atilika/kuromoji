@@ -14,42 +14,42 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.atilika.kuromoji;
+package com.atilika.kuromoji.ipadic;
 
 import static org.junit.Assert.assertEquals;
 
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.util.Arrays;
 import java.util.List;
 
+import com.atilika.kuromoji.Token;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
-import com.atilika.kuromoji.Tokenizer.Mode;
+import com.atilika.kuromoji.AbstractTokenizer.Mode;
 
-@Ignore
 public class SearchTokenizerTest {
 
     private static Tokenizer tokenizer;
 
     @BeforeClass
     public static void beforeClass() throws Exception {
-        tokenizer = Tokenizer.builder()
+        tokenizer = new Tokenizer.Builder()
             .mode(Mode.SEARCH)
             .build();
     }
 
     @Test
     public void testCompoundSplitting() throws IOException {
-        assertSegmentation(tokenizer, "src/test/resources/search-segmentation-tests.txt");
+        assertSegmentation("search-segmentation-tests.txt");
     }
 
-    public void assertSegmentation(Tokenizer tokenizer, String testFilename) throws IOException {
-        LineNumberReader reader = new LineNumberReader(new InputStreamReader(new FileInputStream(testFilename), "UTF-8"));
+    public void assertSegmentation(String testFilename) throws IOException {
+        LineNumberReader reader = new LineNumberReader(new InputStreamReader(getResourceAsStream(testFilename), "UTF-8"));
+
         String line;
         while ((line = reader.readLine()) != null) {
             // Remove comments
@@ -58,24 +58,26 @@ public class SearchTokenizerTest {
             if (line.trim().isEmpty()) {
                 continue;
             }
+
             String[] fields = line.split("\t", 2);
             String text = fields[0];
-            List<String> tokens = Arrays.asList(fields[1].split("\\s+"));
-            System.out.println(tokens);
-            assertSegmentation(tokenizer, text, tokens);
+            List<String> expectedSurfaces = Arrays.asList(fields[1].split("\\s+"));
+
+            assertSegmentation(text, expectedSurfaces);
         }
     }
 
-    public void assertSegmentation(Tokenizer tokenizer, String text, List<String> expectedTokens) {
+    public void assertSegmentation(String text, List<String> expectedSurfaces) {
         List<Token> tokens = tokenizer.tokenize(text);
-        System.out.println(text);
-        for (Token token : tokens) {
-            System.out.println(token.getSurfaceForm());
-            System.out.println(token.getAllFeatures());
-        }
-        assertEquals("Input: " + text, expectedTokens.size(), tokens.size());
+
+        assertEquals("Input: " + text, expectedSurfaces.size(), tokens.size());
+
         for (int i = 0; i < tokens.size(); i++) {
-            assertEquals(expectedTokens.get(i), tokens.get(i).getSurfaceForm());
+            assertEquals(expectedSurfaces.get(i), tokens.get(i).getSurfaceForm());
         }
+    }
+
+    private InputStream getResourceAsStream(String filename) {
+        return this.getClass().getClassLoader().getResourceAsStream(filename);
     }
 }

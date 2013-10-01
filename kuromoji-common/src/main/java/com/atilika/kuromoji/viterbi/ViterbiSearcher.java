@@ -16,7 +16,7 @@
  */
 package com.atilika.kuromoji.viterbi;
 
-import com.atilika.kuromoji.Tokenizer;
+import com.atilika.kuromoji.AbstractTokenizer;
 import com.atilika.kuromoji.dict.CharacterDefinition;
 import com.atilika.kuromoji.dict.ConnectionCosts;
 import com.atilika.kuromoji.dict.UnknownDictionary;
@@ -42,7 +42,7 @@ public class ViterbiSearcher {
     private static final int DEFAULT_COST = 10000000;
 
     public ViterbiSearcher(ViterbiBuilder viterbi,
-                           Tokenizer.Mode mode,
+                           AbstractTokenizer.Mode mode,
                            ConnectionCosts costs,
                            UnknownDictionary unknownDictionary,
                            int searchModeKanjiLength,
@@ -74,7 +74,7 @@ public class ViterbiSearcher {
 
     }
 
-    public ViterbiSearcher(ViterbiBuilder viterbi, Tokenizer.Mode mode, ConnectionCosts costs, UnknownDictionary unknownDictionary) {
+    public ViterbiSearcher(ViterbiBuilder viterbi, AbstractTokenizer.Mode mode, ConnectionCosts costs, UnknownDictionary unknownDictionary) {
         this(viterbi, mode, costs, unknownDictionary,
                 SEARCH_MODE_KANJI_LENGTH_DEFAULT, SEARCH_MODE_KANJI_PENALTY_DEFAULT,
                 SEARCH_MODE_OTHER_LENGTH_DEFAULT, SEARCH_MODE_OTHER_PENALTY_DEFAULT);

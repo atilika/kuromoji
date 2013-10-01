@@ -22,11 +22,11 @@ import java.io.InputStream;
 /**
  * Applies a given prefix to the resources passed to a given resolver.
  */
-final class PrefixDecoratorResolver implements ResourceResolver {
+public final class PrefixDecoratorResolver implements ResourceResolver {
     private final ResourceResolver delegate;
     private final String prefix;
 
-    PrefixDecoratorResolver(String prefix, ResourceResolver resolver) {
+    public PrefixDecoratorResolver(String prefix, ResourceResolver resolver) {
         assert prefix != null;
         assert resolver != null;
 

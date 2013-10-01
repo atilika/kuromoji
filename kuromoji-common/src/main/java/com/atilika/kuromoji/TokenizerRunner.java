@@ -16,34 +16,22 @@
  */
 package com.atilika.kuromoji;
 
-import com.atilika.kuromoji.Tokenizer.Mode;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.List;
 
 public class TokenizerRunner {
-	public static void main(String[] args) throws IOException {
-		Tokenizer tokenizer;
-		if (args.length == 1) {
-			Mode mode = Mode.valueOf(args[0].toUpperCase());
-			tokenizer = Tokenizer.builder().mode(mode).build();
-		} else if (args.length == 2) {
-			Mode mode = Mode.valueOf(args[0].toUpperCase());
-			tokenizer = Tokenizer.builder().mode(mode).userDictionary(args[1]).build();
-		} else {
-			tokenizer = Tokenizer.builder().build();
-		}
-		
-		System.out.println("Tokenizer ready.");
-		BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-		String line;
-		while ((line = reader.readLine()) != null) {
-			List<Token> result = tokenizer.tokenize(line);
-			for(Token token : result) {
-				System.out.println(token.getSurfaceForm() + "\t" + token.getAllFeatures());
-			}
-		}
-	}
+
+    public void run(AbstractTokenizer tokenizer) throws IOException {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+        String line;
+        while ((line = reader.readLine()) != null) {
+            List<Token> result = tokenizer.tokenize(line);
+            for(Token token : result) {
+                System.out.println(token.getSurfaceForm() + "\t" + token.getAllFeatures());
+            }
+        }
+    }
+
 }

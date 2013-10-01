@@ -25,7 +25,7 @@ public class DebugTokenizerRunner {
 	public static void main(String[] args) throws IOException {
 //		DebugTokenizer tokenizer;
 //		if (args.length == 1) {
-//			Mode mode = Tokenizer.Mode.valueOf(args[0].toUpperCase());
+//			Mode mode = AbstractTokenizer.Mode.valueOf(args[0].toUpperCase());
 //			tokenizer = DebugTokenizer.builder().mode(mode).build();
 //		} else if (args.length == 2) {
 //			Mode mode = Mode.valueOf(args[0].toUpperCase());

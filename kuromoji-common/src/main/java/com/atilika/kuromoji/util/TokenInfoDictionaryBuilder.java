@@ -18,6 +18,7 @@ package com.atilika.kuromoji.util;
 
 import com.atilika.kuromoji.dict.TokenInfoDictionary;
 import com.atilika.kuromoji.util.DictionaryBuilder.DictionaryFormat;
+import sun.misc.Regexp;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -31,6 +32,8 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class TokenInfoDictionaryBuilder {
 
@@ -45,10 +48,12 @@ public class TokenInfoDictionaryBuilder {
 
     private boolean shouldAddNormalizedEntries = false;
 
-//    private DictionaryFormat format = DictionaryFormat.IPADIC;
+    private Pattern dictionaryFilter = null;
+
+    //    private DictionaryFormat format = DictionaryFormat.IPADIC;
     private Formatter formatter = new IpadicFormatter();
 
-    public TokenInfoDictionaryBuilder(DictionaryFormat format, String encoding, boolean shouldAddNormalizedEntries) {
+    public TokenInfoDictionaryBuilder(DictionaryFormat format, String encoding, boolean shouldAddNormalizedEntries, String dictionaryFilter) {
 //        this.format = format;
         if (format == DictionaryFormat.UNIDIC) {
             this.formatter = new UnidicFormatter();
@@ -56,6 +61,9 @@ public class TokenInfoDictionaryBuilder {
         this.encoding = encoding;
         this.dictionaryEntries = new TreeMap<Integer, String>();
         this.shouldAddNormalizedEntries = shouldAddNormalizedEntries;
+        if (dictionaryFilter != null && !dictionaryFilter.isEmpty()) {
+            this.dictionaryFilter = Pattern.compile(dictionaryFilter);
+        }
     }
 
     public TokenInfoDictionary build(String dirname) throws IOException {
@@ -83,6 +91,13 @@ public class TokenInfoDictionaryBuilder {
 
             String line = null;
             while ((line = reader.readLine()) != null) {
+                if (dictionaryFilter != null) {
+                    Matcher matcher = dictionaryFilter.matcher(line);
+                    if (matcher.find()) {
+//                    System.out.println("Skips line: " + line);
+                        continue;
+                    }
+                }
                 String[] entry = CSVUtil.parse(line);
                 if (entry.length < 13) {
                     System.out.println("Entry in CSV is not valid: " + line);

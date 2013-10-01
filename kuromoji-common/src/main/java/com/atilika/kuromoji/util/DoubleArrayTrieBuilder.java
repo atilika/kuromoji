@@ -24,9 +24,9 @@ import java.util.Set;
 
 public class DoubleArrayTrieBuilder {
 
-	public static DoubleArrayTrie build(Set<Entry<Integer, String>> entries) {
+	public static DoubleArrayTrie build(Set<Entry<Integer, String>> entries, boolean compactTries) {
 		Trie tempTrie = buildTrie(entries);
-		DoubleArrayTrie daTrie = new DoubleArrayTrie();
+		DoubleArrayTrie daTrie = new DoubleArrayTrie(compactTries);
 		daTrie.build(tempTrie);
 		return daTrie;
 	}

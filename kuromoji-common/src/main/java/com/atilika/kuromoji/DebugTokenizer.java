@@ -16,7 +16,7 @@
  */
 package com.atilika.kuromoji;
 
-import com.atilika.kuromoji.Tokenizer.Mode;
+import com.atilika.kuromoji.AbstractTokenizer.Mode;
 import com.atilika.kuromoji.dict.DynamicDictionaries;
 import com.atilika.kuromoji.dict.UserDictionary;
 import com.atilika.kuromoji.viterbi.ViterbiBuilder;
@@ -74,8 +74,8 @@ public class DebugTokenizer {
          * system property <code>com.atilika.kuromoji.dict.targetdir</code>.
          */
         private String defaultPrefix = System.getProperty(
-            Tokenizer.DEFAULT_DICT_PREFIX_PROPERTY,
-            Tokenizer.DEFAULT_DICT_PREFIX);
+            AbstractTokenizer.DEFAULT_DICT_PREFIX_PROPERTY,
+            AbstractTokenizer.DEFAULT_DICT_PREFIX);
 
         /**
          * The default resource resolver (relative to this class).

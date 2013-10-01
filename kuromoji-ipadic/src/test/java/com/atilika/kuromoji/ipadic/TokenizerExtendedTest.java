@@ -14,36 +14,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.atilika.kuromoji;
 
-import static org.junit.Assert.assertEquals;
+package com.atilika.kuromoji.ipadic;
+
+import com.atilika.kuromoji.Token;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.util.List;
 
-import org.junit.BeforeClass;
-import org.junit.Ignore;
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
 
-@Ignore
-public class TokenizerTestUnidic {
+public class TokenizerExtendedTest {
 
     private static Tokenizer tokenizer;
 
     @BeforeClass
     public static void setUpBeforeClass() throws Exception {
-        tokenizer = Tokenizer
-            .builder()
-            .prefix("unidic/")
-            .build();
+        tokenizer = new Tokenizer.Builder().build();
     }
 
     @Test
-    public void testBocchanTokenizationForUniDic() throws IOException {
+    public void testBocchanTokenizationForIpadic() throws IOException {
         int numberOfTokens = 10000;
-        String expected = expect("bocchan-tokenized-unidic.utf-8.txt", numberOfTokens);
+        String expected = expect("bocchan-tokenized-features-ipadic.utf-8.txt", numberOfTokens);
         assertEquals(expected, given("bocchan.utf-8.txt", numberOfTokens));
     }
 
@@ -69,10 +66,11 @@ public class TokenizerTestUnidic {
         int numberOfLines = 0;
         for (Token token : tokens) {
             if (numberOfTokens == 0 || numberOfLines < numberOfTokens) {
-                result += token.getSurfaceForm().trim() + "\n";
+                result += token.getSurfaceForm().trim() + "\t" + token.getAllFeatures() + "\n";
             }
             numberOfLines++;
         }
         return result;
     }
+
 }
