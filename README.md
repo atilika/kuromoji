@@ -26,5 +26,5 @@ In order to build com.atilika.kuromoji.kuromoji from source, please do as follow
 Contact us
 ----------
 
-com.atilika.kuromoji.kuromoji@atilika.com
+kuromoji@atilika.com
 
