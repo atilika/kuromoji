@@ -1,21 +1,11 @@
 CHANGES
 =======
 
-Snapshot 0.8-SNAPSHOT (2013-09-19)
+Snapshot 0.8-SNAPSHOT (2013-10-09)
 
-* Improvements to how dictionary data is located and read/written: No Java serialization
-  is used so classes can be freely renamed or relocated.　 Custom resolvers can be passed
-  to locate dictionary data (and manipulate it along the way). (Dawid Weiss)
-  
-* Added DebugTokenizerRunner to generate Viterbi debug output
+* Added ability to discard non-normalized entries in DictionaryBuilder
 
-* Added ability to customise Viterbi penalities (expert feature). (Masaru Hasegawa)
-
-* Performance improvements to TokenInfoDictionary#getAllFeaturesArray. (Masaru Hasegawa)
-
-* Fixed issue with TokenInfoDictionary#getAllFeaturesArray not returning all features. (Masaru Hasegawa)
-
-* Fixed issue with broken Viterbi paths.
+* Fixed issue with broken Viterbi paths in certain cases with user dictionaries.
 
 * Fixed user dictionary features format.
 
@@ -28,6 +18,18 @@ Snapshot 0.8-SNAPSHOT (2013-09-19)
 * Added buffering to input streams for faster loading of files.
 
 * Compacted duplicated fields in TokenInfoDictionary.
+
+* Added DebugTokenizerRunner to generate Viterbi debug output
+
+* Added ability to customise Viterbi penalities (expert feature). (Masaru Hasegawa)
+
+* Performance improvements to TokenInfoDictionary#getAllFeaturesArray. (Masaru Hasegawa)
+
+* Fixed issue with TokenInfoDictionary#getAllFeaturesArray not returning all features. (Masaru Hasegawa)
+
+* Improvements to how dictionary data is located and read/written: No Java serialization
+  is used so classes can be freely renamed or relocated.　 Custom resolvers can be passed
+  to locate dictionary data (and manipulate it along the way). (Dawid Weiss)
 
 
 Release 0.7.7 (2012-01-30)

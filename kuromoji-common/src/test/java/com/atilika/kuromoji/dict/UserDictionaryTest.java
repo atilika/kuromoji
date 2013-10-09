@@ -102,5 +102,4 @@ public class UserDictionaryTest {
     private InputStream getResource(String s) {
         return this.getClass().getClassLoader().getResourceAsStream(s);
     }
-
 }

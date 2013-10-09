@@ -30,40 +30,37 @@ import java.util.Map.Entry;
 public class DictionaryBuilder {
 	
 	public enum DictionaryFormat { IPADIC, UNIDIC, UNIDIC_EXTENDED, NAIST_JDIC }
-	
-	public DictionaryBuilder() {
 		
-	}
-	
 	public void build(DictionaryFormat format,
                       String inputDirname,
                       String outputDirname,
                       String encoding,
-                      boolean normalizeEntry,
+                      boolean normalizeEntries,
+                      boolean addUnnormalizedEntries,
                       boolean compactTries,
                       String dictionaryFilter) throws IOException {
         File outputDir = new File(outputDirname);
         outputDir.mkdir();
-        buildTokenInfoDictionary(format, inputDirname, outputDirname, encoding, normalizeEntry, compactTries, dictionaryFilter);
+        buildTokenInfoDictionary(format, inputDirname, outputDirname, encoding, normalizeEntries, addUnnormalizedEntries, compactTries, dictionaryFilter);
         buildUnknownWordDictionary(inputDirname, outputDirname, encoding);
         buildConnectionCosts(inputDirname, outputDirname);
 	}
 
-    private void buildTokenInfoDictionary(DictionaryFormat format, String inputDirname, String outputDirname, String encoding, boolean normalizeEntry, boolean compactTries, String dictionaryFilter) throws IOException {
+    private void buildTokenInfoDictionary(DictionaryFormat format, String inputDirname, String outputDirname, String encoding, boolean normalizeEntries, boolean addUnnormalizedEntries, boolean compactTrie, String dictionaryFilter) throws IOException {
         System.out.println("building tokeninfo dict...");
-        TokenInfoDictionaryBuilder tokenInfoBuilder = new TokenInfoDictionaryBuilder(format, encoding, normalizeEntry, dictionaryFilter);
+        TokenInfoDictionaryBuilder tokenInfoBuilder = new TokenInfoDictionaryBuilder(format, encoding, normalizeEntries, addUnnormalizedEntries, dictionaryFilter);
         TokenInfoDictionary tokenInfoDictionary = tokenInfoBuilder.build(inputDirname);
 
         System.out.print("  building double array trie...");
-        DoubleArrayTrie trie = DoubleArrayTrieBuilder.build(tokenInfoBuilder.entrySet(), compactTries);
+        DoubleArrayTrie trie = DoubleArrayTrieBuilder.build(tokenInfoBuilder.entrySet(), compactTrie);
         trie.write(outputDirname);
         System.out.println("  done");
 
         System.out.print("  processing target map...");
         for (Entry<Integer, String> entry : tokenInfoBuilder.entrySet()) {
             int tokenInfoId = entry.getKey();
-            String surfaceform = entry.getValue();
-            int doubleArrayId = trie.lookup(surfaceform);
+            String surfaceForm = entry.getValue();
+            int doubleArrayId = trie.lookup(surfaceForm);
             assert doubleArrayId > 0;
             tokenInfoDictionary.addMapping(doubleArrayId, tokenInfoId);
         }
@@ -83,15 +80,13 @@ public class DictionaryBuilder {
 
     private void buildConnectionCosts(String inputDirname, String outputDirname) throws IOException {
         System.out.print("building connection costs...");
-        ConnectionCosts connectionCosts
-            = ConnectionCostsBuilder.build(inputDirname + File.separator + "matrix.def");
-        OutputStream os = new FileOutputStream(
-        		outputDirname + File.separator + ConnectionCosts.FILENAME);
+        ConnectionCosts connectionCosts = ConnectionCostsBuilder.build(inputDirname + File.separator + "matrix.def");
+        OutputStream os = new FileOutputStream(outputDirname + File.separator + ConnectionCosts.FILENAME);
         connectionCosts.write(os);
         os.close();
         System.out.println("done");
     }
-
+    
     public static void main(String[] args) throws IOException, ClassNotFoundException {
 		DictionaryFormat format;
 		if (args[0].equalsIgnoreCase("ipadic")) {
@@ -111,11 +106,12 @@ public class DictionaryBuilder {
 		String outputDirname = args[2];
 		String inputEncoding = args[3];
 		boolean normalizeEntries = Boolean.parseBoolean(args[4]);
-        boolean compactTries = Boolean.parseBoolean(args[5]);
+		boolean addUnnormalizedEntries = Boolean.parseBoolean(args[5]);
+        boolean compactTries = Boolean.parseBoolean(args[6]);
 
         String dictionaryFilter = "";
-        if (args.length == 7) {
-            dictionaryFilter = args[6];
+        if (args.length == 8) {
+            dictionaryFilter = args[7];
         }
 		
 		DictionaryBuilder builder = new DictionaryBuilder();
@@ -126,10 +122,11 @@ public class DictionaryBuilder {
 		System.out.println("output directory: " + outputDirname);
 		System.out.println("input encoding: " + inputEncoding);
 		System.out.println("normalize entries: " + normalizeEntries);
-        System.out.println("compat tries: " + compactTries);
+		System.out.println("add unnormalised entries: " + addUnnormalizedEntries);
+        System.out.println("compact tries: " + compactTries);
         System.out.println("dictionary filter: " + dictionaryFilter);
         System.out.println("");
-		builder.build(format, inputDirname, outputDirname, inputEncoding, normalizeEntries, compactTries, dictionaryFilter);
+		builder.build(format, inputDirname, outputDirname, inputEncoding, normalizeEntries, addUnnormalizedEntries, compactTries, dictionaryFilter);
 	}
 	
 }

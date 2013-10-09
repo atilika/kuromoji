@@ -20,6 +20,7 @@
         <com.atilika.kuromoji.dict.targetdir>${project.basedir}/target/classes/naist-jdic</com.atilika.kuromoji.dict.targetdir>
         <com.atilika.kuromoji.dict.encoding>euc-jp</com.atilika.kuromoji.dict.encoding>
         <com.atilika.kuromoji.dict.normalize>false</com.atilika.kuromoji.dict.normalize>
+        <com.atilika.kuromoji.dict.addunnormalized>false</com.atilika.kuromoji.dict.addunnormalized>
         <com.atilika.kuromoji.dict.compact>false</com.atilika.kuromoji.dict.compact>
     </properties>
 
@@ -46,6 +47,7 @@
                         <argument>${com.atilika.kuromoji.dict.targetdir}</argument>
                         <argument>${com.atilika.kuromoji.dict.encoding}</argument>
                         <argument>${com.atilika.kuromoji.dict.normalize}</argument>
+                        <argument>${com.atilika.kuromoji.dict.addunnormalized}</argument>
                         <argument>${com.atilika.kuromoji.dict.compact}</argument>
                     </arguments>
                 </configuration>

@@ -18,11 +18,11 @@ package com.atilika.kuromoji.util;
 
 import com.atilika.kuromoji.dict.TokenInfoDictionary;
 import com.atilika.kuromoji.util.DictionaryBuilder.DictionaryFormat;
-import sun.misc.Regexp;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -37,30 +37,28 @@ import java.util.regex.Pattern;
 
 public class TokenInfoDictionaryBuilder {
 
-    /**
-     * Internal word id - incrementally assigned as entries are read and added. This will be byte offset of dictionary file
-     */
-    private int offset = 0;
+    private TreeMap<Integer, String> dictionaryEntries = new TreeMap<Integer, String>(); // wordId, surface form
 
-    private TreeMap<Integer, String> dictionaryEntries; // wordId, surface form
+    private String encoding;
 
-    private String encoding = "euc-jp";
+    private boolean normalizeEntries;
 
-    private boolean shouldAddNormalizedEntries = false;
+    private boolean addUnnormalizedEntries;
 
-    private Pattern dictionaryFilter = null;
+    private Pattern dictionaryFilter;
 
-    //    private DictionaryFormat format = DictionaryFormat.IPADIC;
-    private Formatter formatter = new IpadicFormatter();
+    private Formatter formatter;
 
-    public TokenInfoDictionaryBuilder(DictionaryFormat format, String encoding, boolean shouldAddNormalizedEntries, String dictionaryFilter) {
-//        this.format = format;
+    public TokenInfoDictionaryBuilder(DictionaryFormat format, String encoding, boolean normalizeEntries, boolean addUnnormalizedEntries, String dictionaryFilter) {
         if (format == DictionaryFormat.UNIDIC) {
             this.formatter = new UnidicFormatter();
+        } else {
+            this.formatter = new IpadicFormatter();
         }
+
         this.encoding = encoding;
-        this.dictionaryEntries = new TreeMap<Integer, String>();
-        this.shouldAddNormalizedEntries = shouldAddNormalizedEntries;
+        this.normalizeEntries = normalizeEntries;
+        this.addUnnormalizedEntries = addUnnormalizedEntries;
         if (dictionaryFilter != null && !dictionaryFilter.isEmpty()) {
             this.dictionaryFilter = Pattern.compile(dictionaryFilter);
         }
@@ -82,15 +80,15 @@ public class TokenInfoDictionaryBuilder {
     }
 
     public TokenInfoDictionary buildDictionary(List<File> csvFiles) throws IOException {
-        TokenInfoDictionary dictionary = new TokenInfoDictionary(10 * 1024 * 1024);
+        TokenInfoDictionary dictionary = new TokenInfoDictionary(10 * 1024 * 1024); // Start with 10MB buffer (can grow)
+        int offset = 0; // Internal word id - incrementally assigned as entries are read and added (byte offset in the dictionary file)
 
         for (File file : csvFiles) {
-            FileInputStream inputStream = new FileInputStream(file);
-            InputStreamReader streamReader = new InputStreamReader(inputStream, encoding);
-            BufferedReader reader = new BufferedReader(streamReader);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), encoding));
+            String line;
 
-            String line = null;
             while ((line = reader.readLine()) != null) {
+
                 if (dictionaryFilter != null) {
                     Matcher matcher = dictionaryFilter.matcher(line);
                     if (matcher.find()) {
@@ -98,51 +96,50 @@ public class TokenInfoDictionaryBuilder {
                         continue;
                     }
                 }
+
                 String[] entry = CSVUtil.parse(line);
+
                 if (entry.length < 13) {
                     System.out.println("Entry in CSV is not valid: " + line);
                     continue;
                 }
 
-                int next = dictionary.put(formatter.formatEntry(entry));
-
-                if (next == offset) {
-                    System.out.println("Failed to process line: " + line);
-                    continue;
-                }
-
-                dictionaryEntries.put(offset, entry[0]);
-                offset = next;
-
-                // NFKC normalize dictionary entry
-                if (shouldAddNormalizedEntries) {
-                    addNormalizedEntry(dictionary, entry);
+                if (normalizeEntries) {
+                    String[] normalizedEntry = normalizeEntry(entry);
+                    offset = addEntry(normalizedEntry, dictionary, dictionaryEntries, offset);
+                    
+                    if (!isNormalized(entry[0]) && addUnnormalizedEntries) {
+                        offset = addEntry(entry, dictionary, dictionaryEntries, offset);
+                    }
+                } else {
+                    offset = addEntry(entry, dictionary, dictionaryEntries, offset);
                 }
             }
+            reader.close();
         }
-
         return dictionary;
     }
 
-    private void addNormalizedEntry(TokenInfoDictionary dictionary, String[] entry) {
+    private int addEntry(String[] entry, TokenInfoDictionary dictionary, TreeMap<Integer, String> entries, int offset) {        
+        entries.put(offset, entry[0]);
+        return dictionary.put(formatter.formatEntry(entry));       
+    }
+    
+    private String[] normalizeEntry(String[] entry) {
+        String[] normalizedEntry = new String[entry.length];
 
-        if (!isNormalized(entry[0])) {
-            int next;
-
-            String[] normalizedEntry = new String[entry.length];
-
-            for (int i = 0; i < entry.length; i++) {
-                normalizedEntry[i] = Normalizer.normalize(entry[i], Normalizer.Form.NFKC);
-            }
-
-            next = dictionary.put(formatter.formatEntry(normalizedEntry));
-            dictionaryEntries.put(offset, normalizedEntry[0]);
-            offset = next;
+        for (int i = 0; i < entry.length; i++) {
+            normalizedEntry[i] = normalize(entry[i]);
         }
+        return normalizedEntry;
     }
 
-    private boolean isNormalized(String s) {
-        return s.equals(Normalizer.normalize(s, Normalizer.Form.NFKC));
+    private boolean isNormalized(String input) {
+        return input.equals(normalize(input));
+    }
+
+    private String normalize(String input) {
+        return Normalizer.normalize(input, Normalizer.Form.NFKC);
     }
 
     public Set<Entry<Integer, String>> entrySet() {

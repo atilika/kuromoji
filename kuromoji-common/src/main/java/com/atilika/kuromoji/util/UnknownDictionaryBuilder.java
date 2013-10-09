@@ -25,7 +25,7 @@ import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 
 public class UnknownDictionaryBuilder {
-	private static final String NGRAM_DICTIONARY_ENTRY = "NGRAM,5,5,-32768,-,*,*,*,*,*,*";
+	private static final String NGRAM_DICTIONARY_ENTRY = "NGRAM,5,5,-32768,-,*,*,*,*,*,*"; // TODO: Is this correct for other dictionaries than IPADIC?  -Christian
 	
 	private String encoding = "euc-jp";
 

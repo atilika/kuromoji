@@ -157,6 +157,5 @@ public class NodeTest {
 		assertEquals(2, node.getChildren().length);
 		assertEquals('b', node.getChildren()[0].getKey());
 		assertEquals('x', node.getChildren()[1].getKey());
-		
 	}
 }
