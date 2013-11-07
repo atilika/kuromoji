@@ -35,7 +35,9 @@ import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.WritableByteChannel;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class TokenInfoDictionary implements Dictionary {
 
@@ -55,16 +57,19 @@ public class TokenInfoDictionary implements Dictionary {
 
 	protected int[][] targetMap;
 
-    protected List<String> pos;
+    protected Map<String, Short> pos;
 
+    protected List<String> posList;
+    
 	public TokenInfoDictionary() {
-        pos = new ArrayList<String>();
+        pos = new HashMap<String, Short>();
+        posList = new ArrayList<String>();
+        targetMap = new int[1][];
 	}
 
 	public TokenInfoDictionary(int size) {
-		targetMap = new int[1][];
+        this();
 		buffer = ByteBuffer.allocate(size);
-        pos = new ArrayList<String>();
 	}
 
 	/**
@@ -151,10 +156,14 @@ public class TokenInfoDictionary implements Dictionary {
     }
 
     protected short createPartOfSpeech(String features) {
-        if (!pos.contains(features)) {
-            pos.add(features);
+        Short posId = pos.get(features);
+        
+        if (posId == null) {
+            posId = (short) pos.size();
+            pos.put(features, posId);
+            posList.add(posId, features);
         }
-        return (short) pos.indexOf(features);
+        return posId;
     }
 
     public void addMapping(int sourceId, int wordId) {
@@ -257,7 +266,7 @@ public class TokenInfoDictionary implements Dictionary {
 
     private void attachPosInfo(int wordId, List<String> features) {
         int posDetail = buffer.getShort(wordId + POS_OFFSET);
-        String posInfo = pos.get(posDetail);
+        String posInfo = posList.get(posDetail);
 
         int size = posInfo.length();
         char[] charBuffer = new char[size];
@@ -378,7 +387,7 @@ public class TokenInfoDictionary implements Dictionary {
 
     protected void writePosVector(String filename) throws IOException {
         FileWriter writer = new FileWriter(filename);
-        for (String s : pos) {
+        for (String s : posList) {
             writer.write(s);
             writer.write('\n');
         }
@@ -419,7 +428,7 @@ public class TokenInfoDictionary implements Dictionary {
         while ((line = reader.readLine()) != null) {
             partOfSpeech.add(line);
         }
-        pos = partOfSpeech;
+        posList = partOfSpeech;
         isr.close();
     }
 }

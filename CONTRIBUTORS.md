@@ -9,3 +9,5 @@ CONTRIBUTORS
 
 * Dawid Weiss
 * Masaru Hasegawa
+* Yong-woon Lee
+* Yungho Yu

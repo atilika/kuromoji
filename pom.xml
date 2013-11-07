@@ -20,6 +20,7 @@
         <module>kuromoji-unidic</module>
         <module>kuromoji-unidic-extended</module>
         <module>kuromoji-naist-jdic</module>
+        <module>kuromoji-korean</module>
     </modules>
 
     <developers>

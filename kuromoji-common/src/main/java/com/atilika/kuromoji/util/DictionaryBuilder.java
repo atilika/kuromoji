@@ -29,7 +29,7 @@ import java.util.Map.Entry;
 
 public class DictionaryBuilder {
 	
-	public enum DictionaryFormat { IPADIC, UNIDIC, UNIDIC_EXTENDED, NAIST_JDIC }
+	public enum DictionaryFormat { IPADIC, UNIDIC, UNIDIC_EXTENDED, NAIST_JDIC, KOREAN }
 		
 	public void build(DictionaryFormat format,
                       String inputDirname,
@@ -97,6 +97,8 @@ public class DictionaryBuilder {
             format = DictionaryFormat.UNIDIC_EXTENDED;
         } else if (args[0].equalsIgnoreCase("naist-jdic")) {
             format = DictionaryFormat.NAIST_JDIC;
+        } else if (args[0].equalsIgnoreCase("korean")) {
+            format = DictionaryFormat.KOREAN;
         } else {
 			System.err.println("Illegal format " + args[0] + " using ipadic instead");
 			format = DictionaryFormat.IPADIC;

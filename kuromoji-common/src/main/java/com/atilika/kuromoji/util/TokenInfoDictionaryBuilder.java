@@ -26,6 +26,7 @@ import java.io.FileReader;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.Reader;
 import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.List;
@@ -49,9 +50,15 @@ public class TokenInfoDictionaryBuilder {
 
     private Formatter formatter;
 
+    private int bufferOffset = 0; // Internal word id - incrementally assigned as entries are read and added (byte offset in the dictionary file)
+
+    private TokenInfoDictionary dictionary;
+
     public TokenInfoDictionaryBuilder(DictionaryFormat format, String encoding, boolean normalizeEntries, boolean addUnnormalizedEntries, String dictionaryFilter) {
         if (format == DictionaryFormat.UNIDIC) {
             this.formatter = new UnidicFormatter();
+        } else if (format == DictionaryFormat.KOREAN) {
+            this.formatter = new KoreanFormatter();
         } else {
             this.formatter = new IpadicFormatter();
         }
@@ -62,6 +69,9 @@ public class TokenInfoDictionaryBuilder {
         if (dictionaryFilter != null && !dictionaryFilter.isEmpty()) {
             this.dictionaryFilter = Pattern.compile(dictionaryFilter);
         }
+
+        dictionary = new TokenInfoDictionary(10 * 1024 * 1024);
+
     }
 
     public TokenInfoDictionary build(String dirname) throws IOException {
@@ -80,51 +90,59 @@ public class TokenInfoDictionaryBuilder {
     }
 
     public TokenInfoDictionary buildDictionary(List<File> csvFiles) throws IOException {
-        TokenInfoDictionary dictionary = new TokenInfoDictionary(10 * 1024 * 1024); // Start with 10MB buffer (can grow)
-        int offset = 0; // Internal word id - incrementally assigned as entries are read and added (byte offset in the dictionary file)
 
         for (File file : csvFiles) {
-            BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), encoding));
-            String line;
+            Reader reader = new InputStreamReader(new FileInputStream(file), encoding);
 
-            while ((line = reader.readLine()) != null) {
-
-                if (dictionaryFilter != null) {
-                    Matcher matcher = dictionaryFilter.matcher(line);
-                    if (matcher.find()) {
-//                    System.out.println("Skips line: " + line);
-                        continue;
-                    }
-                }
-
-                String[] entry = CSVUtil.parse(line);
-
-                if (entry.length < 13) {
-                    System.out.println("Entry in CSV is not valid: " + line);
-                    continue;
-                }
-
-                if (normalizeEntries) {
-                    String[] normalizedEntry = normalizeEntry(entry);
-                    offset = addEntry(normalizedEntry, dictionary, dictionaryEntries, offset);
-                    
-                    if (!isNormalized(entry[0]) && addUnnormalizedEntries) {
-                        offset = addEntry(entry, dictionary, dictionaryEntries, offset);
-                    }
-                } else {
-                    offset = addEntry(entry, dictionary, dictionaryEntries, offset);
-                }
-            }
+            buildDictionary(reader);
+            
             reader.close();
         }
         return dictionary;
     }
 
-    private int addEntry(String[] entry, TokenInfoDictionary dictionary, TreeMap<Integer, String> entries, int offset) {        
-        entries.put(offset, entry[0]);
-        return dictionary.put(formatter.formatEntry(entry));       
+    public void buildDictionary(Reader reader) throws IOException {
+
+        BufferedReader bufferedReader = new BufferedReader(reader);
+
+        String line;
+
+        while ((line = bufferedReader.readLine()) != null) {
+
+            if (dictionaryFilter != null) {
+                Matcher matcher = dictionaryFilter.matcher(line);
+                if (matcher.find()) {
+                    continue;
+                }
+            }
+
+            String[] entry = CSVUtil.parse(line);
+
+//                if (entry.length < 13) {
+//                    System.out.println("Entry in CSV is not valid: " + line);
+//                    continue;
+//                }
+
+            if (normalizeEntries) {
+                String[] normalizedEntry = normalizeEntry(entry);
+                bufferOffset = addEntry(normalizedEntry, dictionary, dictionaryEntries, bufferOffset);
+
+                if (!isNormalized(entry[0]) && addUnnormalizedEntries) {
+                    bufferOffset = addEntry(entry, dictionary, dictionaryEntries, bufferOffset);
+                }
+            } else {
+                bufferOffset = addEntry(entry, dictionary, dictionaryEntries, bufferOffset);
+            }
+        }
     }
-    
+
+    private int addEntry(String[] entry, TokenInfoDictionary dictionary, TreeMap<Integer, String> entries, int offset) {
+        entries.put(offset, entry[0]);
+        return dictionary.put(formatter.formatEntry(entry));
+//        formatter.formatEntry(entry);
+//        return 0;
+    }
+
     private String[] normalizeEntry(String[] entry) {
         String[] normalizedEntry = new String[entry.length];
 

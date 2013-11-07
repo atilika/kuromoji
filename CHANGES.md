@@ -1,7 +1,9 @@
 CHANGES
 =======
 
-Snapshot 0.8-SNAPSHOT (2013-10-09)
+Snapshot 0.8-SNAPSHOT (2013-11-07)
+
+* Added preliminary and experimental Korean language support
 
 * Added ability to discard non-normalized entries in DictionaryBuilder
 

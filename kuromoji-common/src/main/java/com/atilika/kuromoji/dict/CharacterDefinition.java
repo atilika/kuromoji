@@ -32,7 +32,7 @@ public final class CharacterDefinition {
     private final EnumMap<CharacterClass, int[]> invokeDefinitionMap;
 
     public static enum CharacterClass {
-        NGRAM, DEFAULT, SPACE, SYMBOL, NUMERIC, ALPHA, CYRILLIC, GREEK, HIRAGANA, KATAKANA, KANJI, KANJINUMERIC;
+        NGRAM, DEFAULT, SPACE, SYMBOL, NUMERIC, ALPHA, CYRILLIC, GREEK, HIRAGANA, KATAKANA, KANJI, KANJINUMERIC, HANGUL, HANJA, HANJANUMERIC;
 
         public int getId() {
             return ordinal();
