@@ -25,11 +25,12 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
@@ -79,9 +80,12 @@ public class TokenInfoDictionary implements Dictionary {
 	 */
 	public int put(String[] entry) {
         int posStart = 4;
-        int featureStart = 10;//entry.length - 3;
+        // Ugly hack for Jumandic, smaller features, only last field.
+        int featureStart = entry.length > 11 ? 10 : 7;//entry.length - 3;
 
-		short leftId = Short.parseShort(entry[1]);
+        featureStart = 10;
+
+        short leftId = Short.parseShort(entry[1]);
 		short rightId = Short.parseShort(entry[2]);
 		short wordCost = Short.parseShort(entry[3]);
 
@@ -386,7 +390,7 @@ public class TokenInfoDictionary implements Dictionary {
 	}
 
     protected void writePosVector(String filename) throws IOException {
-        FileWriter writer = new FileWriter(filename);
+        Writer writer = new OutputStreamWriter(new FileOutputStream(filename), "UTF-8");
         for (String s : posList) {
             writer.write(s);
             writer.write('\n');
@@ -421,7 +425,7 @@ public class TokenInfoDictionary implements Dictionary {
 	}
 
     protected void loadPosVector(InputStream is) throws IOException {
-        InputStreamReader isr = new InputStreamReader(new BufferedInputStream(is));
+        InputStreamReader isr = new InputStreamReader(new BufferedInputStream(is), "UTF-8");
         LineNumberReader reader = new LineNumberReader(isr);
         String line;
         List<String> partOfSpeech = new ArrayList<String>();
