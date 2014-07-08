@@ -114,4 +114,16 @@ public class Token {
 		return position;
 	}
 
+    @Override
+    public String toString() {
+        return "Token{" +
+            "surfaceForm='" + surfaceForm + '\'' +
+            ", baseForm='" + getBaseForm() + '\'' +
+            ", partOfSpeech=" + getPartOfSpeech() +
+            ", position=" + position +
+            ", type=" + type +
+            ", dictionary=" + dictionary +
+            ", wordId=" + wordId +
+            '}';
+    }
 }
