@@ -1,7 +1,9 @@
 CHANGES
 =======
 
-Snapshot 0.8-SNAPSHOT (2013-11-07)
+Snapshot 0.8-SNAPSHOT (2014-07-08)
+
+* Moved binary dictionaries into com.atilika.kuromoji package space
 
 * Added preliminary and experimental Korean language support
 

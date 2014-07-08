@@ -17,7 +17,7 @@
         <com.atilika.kuromoji.dict.file>mecab-naist-jdic-0.6.3b-20111013.tar.gz</com.atilika.kuromoji.dict.file>
         <com.atilika.kuromoji.dict.url>http://atilika.com/releases/mecab-naist-jdic/${com.atilika.kuromoji.dict.file}</com.atilika.kuromoji.dict.url>
         <com.atilika.kuromoji.dict.dir>${project.basedir}/dictionary/mecab-naist-jdic-0.6.3b-20111013</com.atilika.kuromoji.dict.dir>
-        <com.atilika.kuromoji.dict.targetdir>${project.basedir}/target/classes/naist-jdic</com.atilika.kuromoji.dict.targetdir>
+        <com.atilika.kuromoji.dict.targetdir>${project.basedir}/target/classes/com/atilika/kuromoji/naist-jdic</com.atilika.kuromoji.dict.targetdir>
         <com.atilika.kuromoji.dict.encoding>euc-jp</com.atilika.kuromoji.dict.encoding>
         <com.atilika.kuromoji.dict.normalize>false</com.atilika.kuromoji.dict.normalize>
         <com.atilika.kuromoji.dict.addunnormalized>false</com.atilika.kuromoji.dict.addunnormalized>

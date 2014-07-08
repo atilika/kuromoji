@@ -32,7 +32,7 @@ import java.io.InputStream;
 
 public class Tokenizer extends AbstractTokenizer {
 
-    public static final String DEFAULT_DICT_PREFIX = "naist-jdic/";
+    public static final String DEFAULT_DICT_PREFIX = "com/atilika/kuromoji/naist-jdic/";
 
     protected Tokenizer(DynamicDictionaries dictionaries, UserDictionary userDictionary, Mode mode, boolean split) {
         super(dictionaries, userDictionary, mode, split);

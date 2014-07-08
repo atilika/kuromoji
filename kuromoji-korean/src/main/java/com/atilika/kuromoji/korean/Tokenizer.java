@@ -31,7 +31,7 @@ import java.io.InputStream;
 
 public class Tokenizer extends AbstractTokenizer {
 
-    public static final String DEFAULT_DICT_PREFIX = "mecab-ko/";
+    public static final String DEFAULT_DICT_PREFIX = "com/atilika/kuromoji/mecab-ko/";
 
     protected Tokenizer(DynamicDictionaries dictionaries, UserDictionary userDictionary, Mode mode, boolean split) {
         super(dictionaries, userDictionary, mode, split);

@@ -17,7 +17,7 @@
         <com.atilika.kuromoji.dict.file>unidic-mecab-2.1.2_src.zip</com.atilika.kuromoji.dict.file>
         <com.atilika.kuromoji.dict.url>http://atilika.com/releases/unidic-mecab/${com.atilika.kuromoji.dict.file}</com.atilika.kuromoji.dict.url>
         <com.atilika.kuromoji.dict.dir>${project.basedir}/dictionary/unidic-mecab-2.1.2_src</com.atilika.kuromoji.dict.dir>
-        <com.atilika.kuromoji.dict.targetdir>${project.basedir}/target/classes/unidic</com.atilika.kuromoji.dict.targetdir>
+        <com.atilika.kuromoji.dict.targetdir>${project.basedir}/target/classes/com/atilika/kuromoji/unidic</com.atilika.kuromoji.dict.targetdir>
         <com.atilika.kuromoji.dict.encoding>utf-8</com.atilika.kuromoji.dict.encoding>
         <com.atilika.kuromoji.dict.normalize>false</com.atilika.kuromoji.dict.normalize>
         <com.atilika.kuromoji.dict.addunnormalized>false</com.atilika.kuromoji.dict.addunnormalized>

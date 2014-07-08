@@ -43,7 +43,7 @@ public class AbstractTokenizer {
     public static final String DEFAULT_DICT_PREFIX_PROPERTY = "com.atilika.kuromoji.dict.targetdir";
 
     /** @see Builder#defaultPrefix */
-    public static final String DEFAULT_DICT_PREFIX = "ipadic/";
+    public static final String DEFAULT_DICT_PREFIX = "com/atilika/kuromoji/ipadic/";
 
     public enum Mode {
         NORMAL, SEARCH, EXTENDED
