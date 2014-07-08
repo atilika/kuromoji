@@ -3,6 +3,8 @@ CHANGES
 
 Snapshot 0.8-SNAPSHOT (2014-07-08)
 
+* Filtering in TokenInfoDictionaryBuilder is now also done after normalization
+
 * Moved binary dictionaries into com.atilika.kuromoji package space
 
 * Added preliminary and experimental Korean language support

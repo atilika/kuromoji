@@ -31,6 +31,7 @@ public class CSVUtil {
 
     /**
      * Parse CSV line
+     *
      * @param line
      * @return Array of values
      */
@@ -39,15 +40,15 @@ public class CSVUtil {
         ArrayList<String> result = new ArrayList<String>();
         int quoteCount = 0;
         StringBuilder sb = new StringBuilder();
-        for(int i = 0; i < line.length(); i++) {
+        for (int i = 0; i < line.length(); i++) {
             char c = line.charAt(i);
 
-            if(c == QUOTE) {
+            if (c == QUOTE) {
                 insideQuote = !insideQuote;
                 quoteCount++;
             }
 
-            if(c == COMMA && !insideQuote) {
+            if (c == COMMA && !insideQuote) {
                 String value = sb.toString();
                 value = unQuoteUnEscape(value);
                 result.add(value);
@@ -68,12 +69,27 @@ public class CSVUtil {
         return result.toArray(new String[result.size()]);
     }
 
+    public static String unparse(String[] parsedLine) {
+        StringBuilder builder = new StringBuilder();
+
+        for (int i = 0; i < parsedLine.length; i++) {
+
+            builder.append(parsedLine[i]);
+
+            if (i < parsedLine.length - 1) {
+                builder.append(COMMA);
+            }
+        }
+
+        return builder.toString();
+    }
+
     private static String unQuoteUnEscape(String original) {
         String result = original;
 
         // Unquote
         Matcher m = QUOTE_REPLACE_PATTERN.matcher(original);
-        if(m.matches()) {
+        if (m.matches()) {
             result = m.group(1);
         }
 
@@ -86,6 +102,7 @@ public class CSVUtil {
 
     /**
      * Quote and escape input value for CSV
+     *
      * @param original
      * @return
      */

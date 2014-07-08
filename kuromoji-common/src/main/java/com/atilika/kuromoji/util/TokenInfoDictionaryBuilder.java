@@ -22,11 +22,9 @@ import com.atilika.kuromoji.util.DictionaryBuilder.DictionaryFormat;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileReader;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.Reader;
 import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.List;
@@ -90,57 +88,67 @@ public class TokenInfoDictionaryBuilder {
     }
 
     public TokenInfoDictionary buildDictionary(List<File> csvFiles) throws IOException {
+        TokenInfoDictionary dictionary = new TokenInfoDictionary(10 * 1024 * 1024); // Start with 10MB buffer (can grow)
+        int offset = 0; // Internal word id - incrementally assigned as entries are read and added (byte offset in the dictionary file)
 
         for (File file : csvFiles) {
-            Reader reader = new InputStreamReader(new FileInputStream(file), encoding);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), encoding));
+            String line;
 
-            buildDictionary(reader);
-            
-            reader.close();
-        }
-        return dictionary;
-    }
+            while ((line = reader.readLine()) != null) {
 
-    public void buildDictionary(Reader reader) throws IOException {
-
-        BufferedReader bufferedReader = new BufferedReader(reader);
-
-        String line;
-
-        while ((line = bufferedReader.readLine()) != null) {
-
-            if (dictionaryFilter != null) {
-                Matcher matcher = dictionaryFilter.matcher(line);
-                if (matcher.find()) {
+                if (isSkipEntry(line)) {
+                    System.out.println("Skipping line: " + line);
                     continue;
                 }
-            }
 
-            String[] entry = CSVUtil.parse(line);
+                String[] entry = CSVUtil.parse(line);
 
 //                if (entry.length < 13) {
 //                    System.out.println("Entry in CSV is not valid: " + line);
 //                    continue;
 //                }
 
-            if (normalizeEntries) {
-                String[] normalizedEntry = normalizeEntry(entry);
-                bufferOffset = addEntry(normalizedEntry, dictionary, dictionaryEntries, bufferOffset);
+                if (normalizeEntries) {
+                    String[] normalizedEntry = normalizeEntry(entry);
+                    String normalizedLineEntry = CSVUtil.unparse(normalizedEntry);
 
-                if (!isNormalized(entry[0]) && addUnnormalizedEntries) {
-                    bufferOffset = addEntry(entry, dictionary, dictionaryEntries, bufferOffset);
+                    if (isSkipEntry(normalizedLineEntry)) {
+                        System.out.println("Skipping line because it normalised to a skip: " + line); // + " (normalize line is: " + normalizedLineEntry + ")");
+                        continue;
+                    }
+
+                    offset = addEntry(normalizedEntry, dictionary, dictionaryEntries, offset);
+
+                    if (!isNormalized(entry[0]) && addUnnormalizedEntries) {
+                        offset = addEntry(entry, dictionary, dictionaryEntries, offset);
+                    }
+                } else {
+                    offset = addEntry(entry, dictionary, dictionaryEntries, offset);
                 }
-            } else {
-                bufferOffset = addEntry(entry, dictionary, dictionaryEntries, bufferOffset);
             }
+            reader.close();
         }
+        return dictionary;
+    }
+
+    private boolean isSkipEntry(String lineEntry) {
+
+        if (dictionaryFilter == null) {
+            return false;
+        }
+
+        Matcher matcher = dictionaryFilter.matcher(lineEntry);
+        if (matcher.find()) {
+            return true;
+        }
+
+        return false;
     }
 
     private int addEntry(String[] entry, TokenInfoDictionary dictionary, TreeMap<Integer, String> entries, int offset) {
         entries.put(offset, entry[0]);
         return dictionary.put(formatter.formatEntry(entry));
-//        formatter.formatEntry(entry);
-//        return 0;
     }
 
     private String[] normalizeEntry(String[] entry) {
