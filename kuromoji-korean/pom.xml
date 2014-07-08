@@ -17,7 +17,7 @@
         <com.atilika.kuromoji.dict.file>mecab-ko-dic-1.4.3-20131008.tar.gz</com.atilika.kuromoji.dict.file>
         <com.atilika.kuromoji.dict.url>http://atilika.com/releases/mecab-ko/${com.atilika.kuromoji.dict.file}</com.atilika.kuromoji.dict.url>
         <com.atilika.kuromoji.dict.dir>${project.basedir}/dictionary/mecab-ko-dic-1.4.3-20131008</com.atilika.kuromoji.dict.dir>
-        <com.atilika.kuromoji.dict.targetdir>${project.basedir}/target/classes/com/atilika/kuromoji/mecab-ko</com.atilika.kuromoji.dict.targetdir>
+        <com.atilika.kuromoji.dict.targetdir>${project.basedir}/target/classes/com/atilika/kuromoji/korean</com.atilika.kuromoji.dict.targetdir>
         <com.atilika.kuromoji.dict.encoding>utf-8</com.atilika.kuromoji.dict.encoding>
         <com.atilika.kuromoji.dict.normalize>false</com.atilika.kuromoji.dict.normalize>
         <com.atilika.kuromoji.dict.addunnormalized>false</com.atilika.kuromoji.dict.addunnormalized>
