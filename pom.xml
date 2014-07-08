@@ -16,6 +16,7 @@
 
     <modules>
         <module>kuromoji-common</module>
+        <module>kuromoji-entities</module>
         <module>kuromoji-ipadic</module>
         <module>kuromoji-unidic</module>
         <module>kuromoji-unidic-extended</module>
@@ -51,6 +52,8 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <maven.compiler.source>1.6</maven.compiler.source>
+        <maven.compiler.target>1.6</maven.compiler.target>
     </properties>
 
     <build>
