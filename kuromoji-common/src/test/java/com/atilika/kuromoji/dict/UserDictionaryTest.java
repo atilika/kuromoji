@@ -78,7 +78,7 @@ public class UserDictionaryTest {
 
     @Test
     public void testUserDictionaryEntries() throws IOException {
-        String userDictionaryEntry = "クロ,クロ,クロ,カスタム名詞";
+        String userDictionaryEntry = "クロ,クロ,クロ,カスタム名詞,100";
         UserDictionary dictionary = UserDictionary.read(new ByteArrayInputStream(userDictionaryEntry.getBytes("UTF-8")));
         int[][] positions = dictionary.locateUserDefinedWordsInText("この丘はアクロポリスと呼ばれている");
         int indexForKuro = 5;
@@ -88,14 +88,31 @@ public class UserDictionaryTest {
 
     @Test
     public void testOverlappingUserDictionaryEntries() throws IOException {
-        String userDictionaryEntries = "クロ,クロ,クロ,カスタム名詞\n" +
-            "アクロ,アクロ,アクロ,カスタム名詞";
+        String userDictionaryEntries = "クロ,クロ,クロ,カスタム名詞,100\n" +
+            "アクロ,アクロ,アクロ,カスタム名詞,100";
         UserDictionary dictionary = UserDictionary.read(new ByteArrayInputStream(userDictionaryEntries.getBytes("UTF-8")));
         int[][] positions = dictionary.locateUserDefinedWordsInText("この丘はアクロポリスと呼ばれている");
         int indexForAcro = 4;
         int calculatedIndex = positions[0][1];
         assertEquals(indexForAcro, calculatedIndex);
         assertEquals(2, positions.length);
+
+    }
+
+
+    @Test
+    public void testUserDefinedCost() throws Exception {
+        // TODO: Check whether the cost is acutally working
+        String userDictionaryEntry = "クロ,クロ,クロ,カスタム名詞,100"; // adding a cost
+        UserDictionary dictionary = UserDictionary.read(new ByteArrayInputStream(userDictionaryEntry.getBytes("UTF-8")));
+        int[][] positions = dictionary.locateUserDefinedWordsInText("この丘はアクロポリスと呼ばれている");
+        int indexForCro = 5;
+        int calculatedIndex = positions[0][1];
+        assertEquals(indexForCro, calculatedIndex);
+        assertEquals(1, positions.length); // the offset of クロ is one
+
+        int userAddedWordID = 100000000; // always start from this word ID
+        assertEquals(100, dictionary.getWordCost(userAddedWordID));
 
     }
 
