@@ -55,8 +55,6 @@ public class TokenInfoDictionaryBuilder {
     public TokenInfoDictionaryBuilder(DictionaryFormat format, String encoding, boolean normalizeEntries, boolean addUnnormalizedEntries, String dictionaryFilter) {
         if (format == DictionaryFormat.UNIDIC) {
             this.formatter = new UnidicFormatter();
-        } else if (format == DictionaryFormat.KOREAN) {
-            this.formatter = new KoreanFormatter();
         } else {
             this.formatter = new IpadicFormatter();
         }
