@@ -16,7 +16,9 @@
  */
 package com.atilika.kuromoji.ipadic;
 
-import static org.junit.Assert.assertEquals;
+import com.atilika.kuromoji.AbstractTokenizer.Mode;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,11 +27,7 @@ import java.io.LineNumberReader;
 import java.util.Arrays;
 import java.util.List;
 
-import com.atilika.kuromoji.Token;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
-import com.atilika.kuromoji.AbstractTokenizer.Mode;
+import static org.junit.Assert.assertEquals;
 
 public class SearchTokenizerTest {
 

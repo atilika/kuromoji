@@ -18,421 +18,304 @@ package com.atilika.kuromoji.dict;
 
 import com.atilika.kuromoji.ClassLoaderResolver;
 import com.atilika.kuromoji.ResourceResolver;
-import com.atilika.kuromoji.util.CSVUtil;
+import com.atilika.kuromoji.util.DictionaryEntryLineParser;
+import com.atilika.kuromoji.util.FeatureInfoMap;
+import com.atilika.kuromoji.util.StringValueMapBuffer;
+import com.atilika.kuromoji.util.TokenInfoBuffer;
+import com.atilika.kuromoji.util.WordIdMap;
 
-import java.io.BufferedInputStream;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.LineNumberReader;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
-import java.nio.ByteBuffer;
-import java.nio.channels.Channels;
-import java.nio.channels.ReadableByteChannel;
-import java.nio.channels.WritableByteChannel;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 public class TokenInfoDictionary implements Dictionary {
 
-	public static final String FILENAME = "tid.dat";
+    public static final String FILENAME = "tid.dat";
 
-	public static final String TARGETMAP_FILENAME = "tid_map.dat";
+    private static final String FEATURE_MAP_FILENAME = "tid_fet.dat";
 
-    public static final String PART_OF_SPEECH_FILENAME = "tid_pos.dat";
+    public static final String POS_MAP_FILENAME = "tid_pos.dat";
 
-    public static final int POS_OFFSET = 6;
+    public static final String TARGETMAP_FILENAME = "tid_map.dat";
 
-    public static final int SIZE_OFFSET = POS_OFFSET + 2;
+    public static final int LEFT_ID = 0;
+    public static final int RIGHT_ID = 1;
+    public static final int WORD_COST = 2;
+    public static final int TOKEN_INFO_OFFSET = 3;
 
-    public static final int FEATURE_OFFSET = SIZE_OFFSET + 2;
-
-	protected ByteBuffer buffer;
-
-	protected int[][] targetMap;
+    protected WordIdMap wordIdMap;
 
     protected Map<String, Short> pos;
 
-    protected List<String> posList;
-    
-	public TokenInfoDictionary() {
-        pos = new HashMap<String, Short>();
-        posList = new ArrayList<String>();
-        targetMap = new int[1][];
-	}
+    List<BufferEntry> entries;
 
-	public TokenInfoDictionary(int size) {
-        this();
-		buffer = ByteBuffer.allocate(size);
-	}
+    protected FeatureInfoMap posInfo;
+    protected FeatureInfoMap otherInfo;
 
-	/**
-	 * put the entry in map
-	 * @param entry
-	 * @return current position of buffer, which will be wordId of next entry
-	 */
-	public int put(String[] entry) {
-        int posStart = 4;
-        // Ugly hack for Jumandic, smaller features, only last field.
-        int featureStart = entry.length > 11 ? 10 : 7;//entry.length - 3;
+    private List<String> surfaces;
+    private List<GenericDictionaryEntry> dictionaryEntries;
+    protected TokenInfoBuffer tokenInfoBuffer;
+    protected StringValueMapBuffer stringValues;
+    protected StringValueMapBuffer posValues;
 
-        featureStart = 10;
+    public TokenInfoDictionary() {
+        entries = new ArrayList<>();
+        surfaces = new ArrayList<>();
+        posInfo = new FeatureInfoMap();
+        otherInfo = new FeatureInfoMap();
+        dictionaryEntries = new ArrayList<>();
+        wordIdMap = new WordIdMap();
+    }
 
-        short leftId = Short.parseShort(entry[1]);
-		short rightId = Short.parseShort(entry[2]);
-		short wordCost = Short.parseShort(entry[3]);
+    /**
+     * put the entry in map
+     *
+     * @param dictionaryEntry
+     * 
+     */
+    public void put(GenericDictionaryEntry dictionaryEntry) {
+        dictionaryEntries.add(dictionaryEntry);
+    }
 
-        String posFeatures = extractPosFeatures(entry, posStart, featureStart);
-        short partOfSpeechId = createPartOfSpeech(posFeatures);
-        String features = extractFeatures(entry, featureStart, entry.length);
-        int featuresSize = features.length()* 2;
-        int otherFieldSize = 2 * 5; // Buffer space needed by leftId, rightId, wordCost, partOfSpeechId and featuresSize
 
-        extendBufferIfNecessary(featuresSize + otherFieldSize);
+    public void generateBufferEntries() {
+        for (GenericDictionaryEntry dictionaryEntry : dictionaryEntries) {
+            posInfo.mapFeatures(dictionaryEntry.getPosFeatures());
+        }
 
-        buffer.putShort(leftId);
-        buffer.putShort(rightId);
-        buffer.putShort(wordCost);
+        int entryCount = posInfo.getEntryCount();
 
-        buffer.putShort(partOfSpeechId);
+        for (GenericDictionaryEntry dictionaryEntry : dictionaryEntries) {
 
-		buffer.putShort((short)featuresSize);
+            short leftId = dictionaryEntry.getLeftId();
+            short rightId = dictionaryEntry.getRightId();
+            short wordCost = dictionaryEntry.getWordCost();
 
-        for (char c : features.toCharArray()){
-			buffer.putChar(c);
-		}
+            List<String> allPosFeatures = dictionaryEntry.getPosFeatures();
 
-		return buffer.position();
-	}
+            List<Integer> posFeatureIds = posInfo.mapFeatures(allPosFeatures);
 
-    private String extractFeatures(String[] entry, int start, int end) {
-        StringBuilder sb = new StringBuilder();
+            List<String> featureList = dictionaryEntry.getFeatures();
+            List<Integer> otherFeatureIds = otherInfo.mapFeatures(featureList);
 
-        int readingIndex = start + 1;
-        String baseForm = (end > start) ? entry[start] : null;
-        String reading = (end > readingIndex) ? entry[readingIndex] : null;
+            BufferEntry bufferEntry = new BufferEntry();
+            bufferEntry.tokenInfo.add(leftId);
+            bufferEntry.tokenInfo.add(rightId);
+            bufferEntry.tokenInfo.add(wordCost);
 
-        for (int i = start; i < end; i++) {
-            if (entry[i].equals(baseForm) && i > readingIndex) {
-                sb.append(REPEATED_BASEFORM);
-            } else if (entry[i].equals(reading) && i > readingIndex) {
-                sb.append(REPEATED_TERM);
+            if (entriesFitInAByte(entryCount)) {
+                List<Byte> posFeatureIdBytes = createPosFeatureIds(posFeatureIds);
+                bufferEntry.posInfo.addAll(posFeatureIdBytes);
             } else {
-                sb.append(entry[i]);
+                for (Integer posFeatureId : posFeatureIds) {
+                    bufferEntry.tokenInfo.add(posFeatureId.shortValue());
+                }
             }
 
-            if (i < end - 1) {
-                sb.append(INTERNAL_SEPARATOR);
-            }
-        }
+            bufferEntry.features.addAll(otherFeatureIds);
 
-        return sb.toString();
-    }
-
-    private String extractPosFeatures(String[] entry, int start, int end) {
-        StringBuilder sb = new StringBuilder();
-        for (int i = start; i < end; i++) {
-            sb.append(entry[i]);
-
-            if (i < end - 1) {
-                sb.append(INTERNAL_SEPARATOR);
-            }
-        }
-		return sb.toString();
-    }
-
-    private void extendBufferIfNecessary(int neededSize) {
-        int leftInBuffer = buffer.limit() - buffer.position();
-
-        if (neededSize > leftInBuffer) { // four short and features
-            ByteBuffer newBuffer = ByteBuffer.allocate(buffer.limit() * 2);
-            buffer.flip();
-            newBuffer.put(buffer);
-            buffer = newBuffer;
+            entries.add(bufferEntry);
+            surfaces.add(dictionaryEntry.getSurface());
         }
     }
 
-    protected short createPartOfSpeech(String features) {
-        Short posId = pos.get(features);
-        
-        if (posId == null) {
-            posId = (short) pos.size();
-            pos.put(features, posId);
-            posList.add(posId, features);
+    private boolean entriesFitInAByte(int entryCount) {
+        return entryCount <= 0xff;
+    }
+
+    private List<Byte> createPosFeatureIds(List<Integer> posFeatureIds) {
+        List<Byte> posFeatureIdBytes = new ArrayList<>();
+        for (Integer posFeatureId : posFeatureIds) {
+            posFeatureIdBytes.add(posFeatureId.byteValue());
         }
-        return posId;
+        return posFeatureIdBytes;
     }
 
     public void addMapping(int sourceId, int wordId) {
-		if(targetMap.length <= sourceId) {
-			int[][] newArray = new int[sourceId + 1][];
-			System.arraycopy(targetMap, 0, newArray, 0, targetMap.length);
-			targetMap = newArray;
-		}
+        wordIdMap.addMapping(sourceId, wordId);
+    }
 
-		// Prepare array -- extend the length of array by one
-		int[] current = targetMap[sourceId];
-		if (current == null) {
-			current = new int[1];
-		} else {
-			int[] newArray = new int[current.length + 1];
-			System.arraycopy(current, 0, newArray, 0, current.length);
-			current = newArray;
-		}
-		targetMap[sourceId] = current;
+    public int[] lookupWordIds(int sourceId) {
+        return wordIdMap.lookUp(sourceId);
+    }
 
-		int[] targets = targetMap[sourceId];
-		targets[targets.length - 1] = wordId;
-	}
+    @Override
+    public int getLeftId(int wordId) {
+        return tokenInfoBuffer.lookupTokenInfo(wordId, LEFT_ID);
+    }
 
-	public int[] lookupWordIds(int sourceId) {
-		return targetMap[sourceId];
-	}
+    @Override
+    public int getRightId(int wordId) {
+        return tokenInfoBuffer.lookupTokenInfo(wordId, RIGHT_ID);
+    }
 
-	@Override
-	public int getLeftId(int wordId) {
-		return buffer.getShort(wordId);
-	}
 
-	@Override
-	public int getRightId(int wordId) {
-		return buffer.getShort(wordId + 2);	// Skip left id
-	}
-
-	@Override
-	public int getWordCost(int wordId) {
-		return buffer.getShort(wordId + 4);	// Skip left id and right id
-	}
-
+    @Override
+    public int getWordCost(int wordId) {
+        return tokenInfoBuffer.lookupTokenInfo(wordId, WORD_COST);
+    }
 
     @Override
     public String[] getAllFeaturesArray(int wordId) {
-        List<String> features = new ArrayList<String>(16);
+        BufferEntry bufferEntry = tokenInfoBuffer.lookupEntry(wordId);
 
-        attachPosInfo(wordId, features);
-        attachFeatures(wordId, features);
+        int posLength = bufferEntry.posInfos.length;
+        int featureLength = bufferEntry.featureInfos.length;
 
-        return features.toArray(new String[features.size()]);
-    }
+        if (posLength == 0) {
+            posLength = bufferEntry.tokenInfos.length - TOKEN_INFO_OFFSET;
+        }
+        String[] result = new String[posLength + featureLength];
 
-    private void attachFeatures(int wordId, List<String> features) {
-        int size = buffer.getShort(wordId + SIZE_OFFSET) / 2; // Read length of feature String. Skip 6 bytes, see data structure.
-        int offset = wordId + FEATURE_OFFSET;
-        char[] charBuffer = new char[size];
-        int position = 0;
+        for (int i = 0; i < bufferEntry.posInfos.length; i++) {
+            int feature = bufferEntry.posInfos[i] & 0xff;
+            String s = posValues.get(feature);
+            result[i] = s;
+        }
 
-        String reading = null;
-        String baseForm = null;
-        String feature = null;
+        if (bufferEntry.posInfos.length == 0) {
+            posLength = bufferEntry.tokenInfos.length - TOKEN_INFO_OFFSET;
 
-        for (int i = 0; i < size; i++) {
-            char c = buffer.getChar(offset + i * 2);
-            if (c == INTERNAL_SEPARATOR) {
-                feature = new String(charBuffer, 0, position);
-                if (features.size() == 6) {
-                    baseForm = feature;
-                } else if (features.size() == 7) {
-                    reading = feature;
-                }
-                if (features.size() > 6) {
-                    if (charBuffer[0] == REPEATED_TERM) {
-                        feature = reading;
-                    } else if (charBuffer[0] == REPEATED_BASEFORM) {
-                        feature = baseForm;
-                    }
-                }
-                features.add(feature);
-                position = 0;
-            } else {
-                charBuffer[position++] = c;
+            for (int i = 0; i < posLength; i++) {
+                int feature = bufferEntry.tokenInfos[i + TOKEN_INFO_OFFSET];
+                String s = posValues.get(feature);
+                result[i] = s;
             }
         }
 
-        if (position > 0) {
-            feature = new String(charBuffer, 0, position);
-            if (features.size() > 7) {
-                if (charBuffer[0] == REPEATED_TERM) {
-                    feature = reading;
-                } else if (charBuffer[0] == REPEATED_BASEFORM) {
-                    feature = baseForm;
-                }
-            }
-            features.add(feature);
-        }
-    }
-
-    private void attachPosInfo(int wordId, List<String> features) {
-        int posDetail = buffer.getShort(wordId + POS_OFFSET);
-        String posInfo = posList.get(posDetail);
-
-        int size = posInfo.length();
-        char[] charBuffer = new char[size];
-        int position = 0;
-
-        for (int i = 0; i < size; i++){
-            char c = posInfo.charAt(i);
-            if (c == INTERNAL_SEPARATOR) {
-                features.add(new String(charBuffer, 0, position));
-                position = 0;
-            } else {
-                charBuffer[position++] = c;
-            }
+        for (int i = 0; i < featureLength; i++) {
+            int feature = bufferEntry.featureInfos[i];
+            String s = stringValues.get(feature);
+            result[i + posLength] = s;
         }
 
-        if (position > 0) {
-            features.add(new String(charBuffer, 0, position));
-        }
+        return result;
     }
 
     @Override
-	public String getFeature(int wordId, int... fields) {
-		String[] allFeatures = getAllFeaturesArray(wordId);
-		StringBuilder sb = new StringBuilder();
+    public String getFeature(int wordId, int... fields) {
+        if (fields.length == 1) {
+            return extractSingleFeature(wordId, fields[0]);
+        }
 
-		if(fields.length == 0){ // All features
-			for(String feature : allFeatures) {
-				sb.append(CSVUtil.quoteEscape(feature)).append(",");
-			}
-		} else if(fields.length == 1) { // One feature doesn't need to escape value
-			sb.append(allFeatures[fields[0]]).append(",");
-		} else {
-			for(int field : fields){
-				sb.append(CSVUtil.quoteEscape(allFeatures[field])).append(",");
-			}
-		}
+        return extractMultipleFeatures(wordId, fields);
+    }
 
-		return sb.deleteCharAt(sb.length() - 1).toString();
-	}
+    private String extractSingleFeature(int wordId, int field) {
+        String feature;
 
-	@Override
-	public String getReading(int wordId) {
-		return getFeature(wordId, 7);
-	}
+        if (tokenInfoBuffer.isPosFeature(field)) {
+            int featureId = tokenInfoBuffer.lookupPosFeature(wordId, field);
+            feature = posValues.get(featureId);
+        } else {
+            int featureId = tokenInfoBuffer.lookupFeature(wordId, field);
+            feature = stringValues.get(featureId);
+        }
 
-	@Override
-	public String getAllFeatures(int wordId) {
-		return getFeature(wordId);
-	}
+        return feature;
+    }
 
-	@Override
-	public String getPartOfSpeech(int wordId) {
-		return getFeature(wordId, 0, 1, 2, 3);
-	}
+    private String extractMultipleFeatures(int wordId, int[] fields) {
+        String[] allFeatures = getAllFeaturesArray(wordId);
+        StringBuilder sb = new StringBuilder();
 
-	@Override
-	public String getBaseForm(int wordId) {
-		return getFeature(wordId, 6);
-	}
+        if (fields.length == 0) { // All features
+            for (String feature : allFeatures) {
+                // TODO: Should this be quoted?
+//                sb.append(feature).append(",");
+                sb.append(DictionaryEntryLineParser.quoteEscape(feature)).append(",");
+            }
+        } else {
+            for (int field : fields) {
+                sb.append(DictionaryEntryLineParser.quoteEscape(allFeatures[field])).append(",");
+            }
+        }
+        return sb.deleteCharAt(sb.length() - 1).toString();
+    }
 
-	/**
-	 * Write dictionary in file
-	 * Dictionary format is:
-	 * [Size of dictionary(int)], [entry:{left id(short)}{right id(short)}{word cost(short)}{length of pos info(short)}{pos info(char)}], [entry...], [entry...].....
-	 * @param directoryName
-	 * @throws IOException
-	 */
-	public void write(String directoryName) throws IOException {
-		writeDictionary(directoryName + File.separator + FILENAME);
-		writeTargetMap(directoryName + File.separator + TARGETMAP_FILENAME);
-        writePosVector(directoryName + File.separator + PART_OF_SPEECH_FILENAME);
-	}
+    @Override
+    public String getReading(int wordId) {
+        return getFeature(wordId, 7);
+    }
+
+    @Override
+    public String getAllFeatures(int wordId) {
+        return getFeature(wordId);
+    }
+
+    @Override
+    public String getPartOfSpeech(int wordId) {
+        return getFeature(wordId, 0, 1, 2, 3);
+    }
+
+    @Override
+    public String getBaseForm(int wordId) {
+        return getFeature(wordId, 6);
+    }
+
+    /**
+     * Write dictionary in file
+     * Dictionary format is:
+     * [Size of dictionary(int)], [entry:{left id(short)}{right id(short)}{word cost(short)}{length of pos info(short)}{pos info(char)}], [entry...], [entry...].....
+     *
+     * @param directoryName
+     * @throws IOException
+     */
+    public void write(String directoryName) throws IOException {
+        writeDictionary(directoryName + File.separator + FILENAME);
+        writeMap(directoryName + File.separator + POS_MAP_FILENAME, posInfo);
+        writeMap(directoryName + File.separator + FEATURE_MAP_FILENAME, otherInfo);
+        writeTargetMap(directoryName + File.separator + TARGETMAP_FILENAME);
+    }
+
+
+    protected void writeMap(String filename, FeatureInfoMap map) throws IOException {
+        TreeMap<Integer, String> features = map.invert();
+
+        StringValueMapBuffer mapBuffer = new StringValueMapBuffer(features);
+        FileOutputStream fos = new FileOutputStream(filename);
+        mapBuffer.write(fos);
+    }
 
     protected void writeDictionary(String filename) throws IOException {
-		FileOutputStream fos = new FileOutputStream(filename);
-		DataOutputStream dos = new DataOutputStream(fos);
-		dos.writeInt(buffer.position());
-		WritableByteChannel channel = Channels.newChannel(fos);
-		// Write Buffer
-		buffer.flip();  // set position to 0, set limit to current position
-		channel.write(buffer);
-		fos.close();
-	}
+        TokenInfoBuffer tokenInfoBuffer = new TokenInfoBuffer(entries);
+        FileOutputStream fos = new FileOutputStream(filename);
+        tokenInfoBuffer.write(fos);
+    }
 
-	/**
-	 * Read dictionary into directly allocated buffer.
-	 * @return TokenInfoDictionary instance
-	 * @throws IOException
-	 * @throws ClassNotFoundException
-	 */
-	public static TokenInfoDictionary newInstance(ResourceResolver resolver) throws IOException, ClassNotFoundException {
-		TokenInfoDictionary dictionary = new TokenInfoDictionary();
-		dictionary.loadDictionary(resolver.resolve(FILENAME));
-		dictionary.loadTargetMap(resolver.resolve(TARGETMAP_FILENAME));
-        dictionary.loadPosVector(resolver.resolve(PART_OF_SPEECH_FILENAME));
-		return dictionary;
-	}
+    protected void writeTargetMap(String filename) throws IOException {
+        wordIdMap.write(new FileOutputStream(filename));
+    }
+
+    /**
+     * Read dictionary into directly allocated buffer.
+     *
+     * @return TokenInfoDictionary instance
+     * @throws IOException
+     * @throws ClassNotFoundException
+     */
+    public static TokenInfoDictionary newInstance(ResourceResolver resolver) throws IOException, ClassNotFoundException {
+        TokenInfoDictionary dictionary = new TokenInfoDictionary();
+        dictionary.setup(resolver);
+        return dictionary;
+    }
+
+    private void setup(ResourceResolver resolver) throws IOException, ClassNotFoundException {
+        tokenInfoBuffer = new TokenInfoBuffer(resolver.resolve(FILENAME));
+        stringValues = new StringValueMapBuffer(resolver.resolve(FEATURE_MAP_FILENAME));
+        posValues = new StringValueMapBuffer(resolver.resolve(POS_MAP_FILENAME));
+        wordIdMap = new WordIdMap(resolver.resolve(TARGETMAP_FILENAME));
+    }
 
     public static TokenInfoDictionary newInstance() throws IOException, ClassNotFoundException {
         return newInstance(new ClassLoaderResolver(TokenInfoDictionary.class));
     }
 
-	protected void writeTargetMap(String filename) throws IOException {
-		DataOutputStream daos = new DataOutputStream(new FileOutputStream(filename));
-		daos.writeInt(targetMap.length);
-		// The array is mostly sparse so we'll save only non-null members.
-		for (int i = 0; i < targetMap.length; i++) {
-			if (targetMap[i] != null) {
-				int[] arr = targetMap[i];
-				daos.writeInt(i);
-				daos.writeInt(arr.length);
-				for (int j : arr) daos.writeInt(j);
-			}
-		}
-		daos.writeInt(-1); // End index marker.
-		daos.close();
-	}
-
-    protected void writePosVector(String filename) throws IOException {
-        Writer writer = new OutputStreamWriter(new FileOutputStream(filename), "UTF-8");
-        for (String s : posList) {
-            writer.write(s);
-            writer.write('\n');
-        }
-        writer.close();
-    }
-
-	protected void loadTargetMap(InputStream is) throws IOException, ClassNotFoundException {
-		DataInputStream dais = new DataInputStream(new BufferedInputStream(is));
-		targetMap = new int [dais.readInt()][];
-		int index;
-		while ((index = dais.readInt()) >= 0) {
-			int length = dais.readInt();
-			targetMap[index] = new int[length];
-			for (int j = 0; j < length; j++) {
-				targetMap[index][j] = dais.readInt();
-			}
-		}
-	}
-
-	protected void loadDictionary(InputStream is) throws IOException {
-        BufferedInputStream bis = new BufferedInputStream(is);
-		DataInputStream dis = new DataInputStream(bis);
-		int size = dis.readInt();
-
-		ByteBuffer tmpBuffer = ByteBuffer.allocateDirect(size);
-
-		ReadableByteChannel channel = Channels.newChannel(bis);
-		channel.read(tmpBuffer);
-		dis.close();
-		buffer = tmpBuffer.asReadOnlyBuffer();
-	}
-
-    protected void loadPosVector(InputStream is) throws IOException {
-        InputStreamReader isr = new InputStreamReader(new BufferedInputStream(is), "UTF-8");
-        LineNumberReader reader = new LineNumberReader(isr);
-        String line;
-        List<String> partOfSpeech = new ArrayList<String>();
-        while ((line = reader.readLine()) != null) {
-            partOfSpeech.add(line);
-        }
-        posList = partOfSpeech;
-        isr.close();
+    public List<String> getSurfaces() {
+        return surfaces;
     }
 }

@@ -19,23 +19,21 @@ package com.atilika.kuromoji.util;
 import com.atilika.kuromoji.trie.DoubleArrayTrie;
 import com.atilika.kuromoji.trie.Trie;
 
-import java.util.Map.Entry;
-import java.util.Set;
+import java.util.List;
 
 public class DoubleArrayTrieBuilder {
 
-	public static DoubleArrayTrie build(Set<Entry<Integer, String>> entries, boolean compactTries) {
-		Trie tempTrie = buildTrie(entries);
+	public static DoubleArrayTrie build(List<String> surfaces, boolean compactTries) {
+		Trie tempTrie = buildTrie(surfaces);
 		DoubleArrayTrie daTrie = new DoubleArrayTrie(compactTries);
 		daTrie.build(tempTrie);
 		return daTrie;
 	}
 	
-	public static Trie buildTrie(Set<Entry<Integer, String>> entries) {
+	public static Trie buildTrie(List<String> surfaces) {
 		Trie trie = new Trie();
-		for (Entry<Integer, String> entry : entries) {
-			String surfaceForm = entry.getValue();
-			trie.add(surfaceForm);
+		for (String surface : surfaces) {
+			trie.add(surface);
 		}
 		return trie;
 	}

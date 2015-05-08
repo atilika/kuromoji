@@ -16,6 +16,13 @@
  */
 package com.atilika.kuromoji.dict;
 
+import com.atilika.kuromoji.ClassLoaderResolver;
+import com.atilika.kuromoji.ResourceResolver;
+import com.atilika.kuromoji.dict.CharacterDefinition.CharacterClass;
+import com.atilika.kuromoji.util.StringValueMapBuffer;
+import com.atilika.kuromoji.util.TokenInfoBuffer;
+import com.atilika.kuromoji.util.WordIdMap;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -24,22 +31,20 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import com.atilika.kuromoji.ClassLoaderResolver;
-import com.atilika.kuromoji.ResourceResolver;
-import com.atilika.kuromoji.dict.CharacterDefinition.CharacterClass;
-
 public class UnknownDictionary extends TokenInfoDictionary {
 
 	public static final String FILENAME = "unk.dat";
-	
+
 	public static final String TARGETMAP_FILENAME = "unk_map.dat";
 
 	public static final String CHARDEF_FILENAME = "cd.dat";
 
-    public static final String PART_OF_SPEECH_FILENAME = "unk_pos.dat";
+	private static final String FEATURE_MAP_FILENAME = "unk_fet.dat";
+
+	public static final String POS_MAP_FILENAME = "unk_pos.dat";
 
 	private CharacterDefinition characterDefinition;
-	
+
 	/**
 	 * Constructor
 	 */
@@ -48,22 +53,24 @@ public class UnknownDictionary extends TokenInfoDictionary {
     }
     
     public UnknownDictionary(int size) {
-    	super(size);
+    	super();
 		characterDefinition = new CharacterDefinition();    	
     }
 
+	int index = 0;
     @Override
-    public int put(String[] entry) {
+    public void put(GenericDictionaryEntry dictionaryEntry) {
     	// Get wordId of current entry
-    	int wordId = buffer.position();
+//    	int wordId = buffer.position();
     	
     	// Put entry
-		int result = super.put(entry);
+		super.put(dictionaryEntry);
 
 		// Put entry in targetMap
-		int characterId = CharacterClass.valueOf(entry[0]).getId();
-		addMapping(characterId, wordId);
-		return result;
+		int characterId = CharacterClass.valueOf(dictionaryEntry.getSurface()).getId();
+//		addMapping(characterId, wordId);
+		addMapping(characterId, index++);
+//		return result;
     }
     
     public int lookup(String text) {
@@ -113,17 +120,19 @@ public class UnknownDictionary extends TokenInfoDictionary {
 	 */
 	public void write(String directoryName) throws IOException {
 		writeDictionary(directoryName + File.separator + FILENAME);
+		writeMap(directoryName + File.separator + POS_MAP_FILENAME, posInfo);
+		writeMap(directoryName + File.separator + FEATURE_MAP_FILENAME, otherInfo);
 		writeTargetMap(directoryName + File.separator + TARGETMAP_FILENAME);
 		writeCharDef(directoryName + File.separator + CHARDEF_FILENAME);
-        writePosVector(directoryName + File.separator + PART_OF_SPEECH_FILENAME);
 	}
 
 	public static UnknownDictionary newInstance(ResourceResolver resolver) throws IOException, ClassNotFoundException {
 		UnknownDictionary dictionary = new UnknownDictionary();
-		dictionary.loadDictionary(resolver.resolve(FILENAME));
-		dictionary.loadTargetMap(resolver.resolve(TARGETMAP_FILENAME));
+        dictionary.tokenInfoBuffer = new TokenInfoBuffer(resolver.resolve(FILENAME));
+        dictionary.stringValues = new StringValueMapBuffer(resolver.resolve(FEATURE_MAP_FILENAME));
+        dictionary.posValues = new StringValueMapBuffer(resolver.resolve(POS_MAP_FILENAME));
+        dictionary.wordIdMap = new WordIdMap(resolver.resolve(TARGETMAP_FILENAME));
 		dictionary.loadCharDef(resolver.resolve(CHARDEF_FILENAME));
-        dictionary.loadPosVector(resolver.resolve(PART_OF_SPEECH_FILENAME));
         return dictionary;
 	}
 

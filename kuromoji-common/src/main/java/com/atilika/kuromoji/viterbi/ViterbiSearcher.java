@@ -45,6 +45,45 @@ public class ViterbiSearcher {
                            AbstractTokenizer.Mode mode,
                            ConnectionCosts costs,
                            UnknownDictionary unknownDictionary,
+                           List<Integer> penalties) {
+        this.viterbi = viterbi;
+        if (penalties.isEmpty()) {
+            this.searchModeKanjiLength = SEARCH_MODE_KANJI_LENGTH_DEFAULT;
+            this.searchModeKanjiPenalty = SEARCH_MODE_KANJI_PENALTY_DEFAULT;
+            this.searchModeOtherLength = SEARCH_MODE_OTHER_LENGTH_DEFAULT;
+            this.searchModeOtherPenalty = SEARCH_MODE_OTHER_PENALTY_DEFAULT;
+
+        } else {
+            this.searchModeKanjiLength = penalties.get(0);
+            this.searchModeKanjiPenalty = penalties.get(1);
+            this.searchModeOtherLength = penalties.get(2);
+            this.searchModeOtherPenalty = penalties.get(3);
+        }
+        this.costs = costs;
+        this.unknownDictionary = unknownDictionary;
+
+        switch (mode) {
+            case SEARCH:
+                searchMode = true;
+                extendedMode = false;
+                break;
+            case EXTENDED:
+                searchMode = true;
+                extendedMode = true;
+                break;
+            default:
+                searchMode = false;
+                extendedMode = false;
+                break;
+        }
+
+
+    }
+
+    public ViterbiSearcher(ViterbiBuilder viterbi,
+                           AbstractTokenizer.Mode mode,
+                           ConnectionCosts costs,
+                           UnknownDictionary unknownDictionary,
                            int searchModeKanjiLength,
                            int searchModeKanjiPenalty,
                            int searchModeOtherLength,
@@ -76,8 +115,8 @@ public class ViterbiSearcher {
 
     public ViterbiSearcher(ViterbiBuilder viterbi, AbstractTokenizer.Mode mode, ConnectionCosts costs, UnknownDictionary unknownDictionary) {
         this(viterbi, mode, costs, unknownDictionary,
-                SEARCH_MODE_KANJI_LENGTH_DEFAULT, SEARCH_MODE_KANJI_PENALTY_DEFAULT,
-                SEARCH_MODE_OTHER_LENGTH_DEFAULT, SEARCH_MODE_OTHER_PENALTY_DEFAULT);
+            SEARCH_MODE_KANJI_LENGTH_DEFAULT, SEARCH_MODE_KANJI_PENALTY_DEFAULT,
+            SEARCH_MODE_OTHER_LENGTH_DEFAULT, SEARCH_MODE_OTHER_PENALTY_DEFAULT);
     }
 
     /**
@@ -175,7 +214,7 @@ public class ViterbiSearcher {
     LinkedList<ViterbiNode> backtrackBestPath(ViterbiNode eos) {
         // track best path
         ViterbiNode node = eos;    // EOS
-        LinkedList<ViterbiNode> result = new LinkedList<ViterbiNode>();
+        LinkedList<ViterbiNode> result = new LinkedList<>();
 
         result.add(node);
 
@@ -199,7 +238,7 @@ public class ViterbiSearcher {
     }
 
     LinkedList<ViterbiNode> convertUnknownWordToUnigramNode(ViterbiNode node) {
-        LinkedList<ViterbiNode> uniGramNodes = new LinkedList<ViterbiNode>();
+        LinkedList<ViterbiNode> uniGramNodes = new LinkedList<>();
         int unigramWordId = CharacterDefinition.CharacterClass.NGRAM.getId();
         String surfaceForm = node.getSurfaceForm();
 

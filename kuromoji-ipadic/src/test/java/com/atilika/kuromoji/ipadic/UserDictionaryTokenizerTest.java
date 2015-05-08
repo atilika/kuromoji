@@ -16,7 +16,6 @@
  */
 package com.atilika.kuromoji.ipadic;
 
-import com.atilika.kuromoji.Token;
 import org.junit.Before;
 import org.junit.Test;
 

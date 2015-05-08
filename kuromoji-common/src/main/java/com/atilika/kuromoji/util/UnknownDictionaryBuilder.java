@@ -25,8 +25,7 @@ import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 
 public class UnknownDictionaryBuilder {
-	private static final String NGRAM_DICTIONARY_ENTRY = "NGRAM,5,5,-32768,-,*,*,*,*,*,*"; // TODO: Is this correct for other dictionaries than IPADIC?  -Christian
-	
+
 	private String encoding = "euc-jp";
 
     public UnknownDictionaryBuilder(String encoding) {
@@ -48,19 +47,21 @@ public class UnknownDictionaryBuilder {
 	public UnknownDictionary readDictionaryFile(String filename, String encoding)
 		throws IOException {
 		UnknownDictionary dictionary = new UnknownDictionary(5 * 1024 * 1024);
+		UnknownDictionaryEntryParser dictionaryEntryParser = new UnknownDictionaryEntryParser();
 		
 		FileInputStream inputStream = new FileInputStream(filename);
 		InputStreamReader streamReader = new InputStreamReader(inputStream, encoding);
 		LineNumberReader lineReader = new LineNumberReader(streamReader);
-		
-		dictionary.put(CSVUtil.parse(NGRAM_DICTIONARY_ENTRY));
 
 		String line = null;
 		while ((line = lineReader.readLine()) != null) {
-			dictionary.put(CSVUtil.parse(line)); // Probably we don't need to validate entry
+			dictionary.put(dictionaryEntryParser.parse(line)); // Probably we don't need to validate entry
 		}
-		
+
 		lineReader.close();
+
+		dictionary.generateBufferEntries();
+
 		return dictionary;
 	}
 	

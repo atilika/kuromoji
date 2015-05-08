@@ -16,8 +16,10 @@
 
     <modules>
         <module>kuromoji-common</module>
+        <module>kuromoji-chinese</module>
         <module>kuromoji-entities</module>
         <module>kuromoji-ipadic</module>
+        <module>kuromoji-jumandic</module>
         <module>kuromoji-unidic</module>
         <module>kuromoji-unidic-extended</module>
         <module>kuromoji-naist-jdic</module>
@@ -51,8 +53,8 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <maven.compiler.source>1.6</maven.compiler.source>
-        <maven.compiler.target>1.6</maven.compiler.target>
+        <maven.compiler.source>1.7</maven.compiler.source>
+        <maven.compiler.target>1.7</maven.compiler.target>
     </properties>
 
     <build>
@@ -63,12 +65,9 @@
                 <version>2.3.2</version>
                 <inherited>true</inherited>
                 <configuration>
-                    <source>1.6</source>
-                    <target>1.6</target>
+                    <source>1.7</source>
+                    <target>1.7</target>
                     <encoding>UTF-8</encoding>
-                    <excludes>
-                        <exclude>**/example/*.java</exclude>
-                    </excludes>
                 </configuration>
             </plugin>
             <plugin>

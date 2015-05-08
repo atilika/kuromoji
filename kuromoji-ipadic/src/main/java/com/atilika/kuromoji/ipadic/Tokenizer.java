@@ -18,37 +18,42 @@
 package com.atilika.kuromoji.ipadic;
 
 import com.atilika.kuromoji.AbstractTokenizer;
-import com.atilika.kuromoji.TokenizerRunner;
 import com.atilika.kuromoji.ClassLoaderResolver;
 import com.atilika.kuromoji.PrefixDecoratorResolver;
 import com.atilika.kuromoji.ResourceResolver;
+import com.atilika.kuromoji.TokenizerRunner;
 import com.atilika.kuromoji.dict.DynamicDictionaries;
 import com.atilika.kuromoji.dict.UserDictionary;
+import com.atilika.kuromoji.viterbi.ViterbiNode;
 
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Tokenizer extends AbstractTokenizer {
-    protected Tokenizer(DynamicDictionaries dictionaries, UserDictionary userDictionary, Mode mode, boolean split) {
-        super(dictionaries, userDictionary, mode, split);
+
+    public Tokenizer(Builder builder) {
+        super(builder.getDictionaries(), builder.getUserDictionary(), builder.getMode(), builder.getSplit(), builder.getPenalties());
     }
 
-    protected Tokenizer(DynamicDictionaries dictionaries, UserDictionary userDictionary, Mode mode, boolean split, int searchModeKanjiLength, int searchModeKanjiPenalty, int searchModeOtherLength, int searchModeOtherPenalty) {
-        super(dictionaries, userDictionary, mode, split, searchModeKanjiLength, searchModeKanjiPenalty, searchModeOtherLength, searchModeOtherPenalty);
+    @Override
+    protected Token createToken(int offset, ViterbiNode node, int wordId) {
+        return new Token(wordId, node.getSurfaceForm(), node.getType(), offset + node.getStartIndex(), dictionaryMap.get(node.getType()));
     }
 
     private static Tokenizer init(String[] args) throws IOException {
         Tokenizer tokenizer;
         if (args.length == 1) {
             Tokenizer.Mode mode = AbstractTokenizer.Mode.valueOf(args[0].toUpperCase());
-            tokenizer = new Tokenizer.Builder().mode(mode).build();
+            tokenizer = new Builder().mode(mode).build();
         } else if (args.length == 2) {
             AbstractTokenizer.Mode mode = AbstractTokenizer.Mode.valueOf(args[0].toUpperCase());
-            tokenizer = new Tokenizer.Builder().mode(mode).userDictionary(args[1]).build();
+            tokenizer = new Builder().mode(mode).userDictionary(args[1]).build();
         } else {
-            tokenizer = new Tokenizer.Builder().build();
+            tokenizer = new Builder().build();
         }
         return tokenizer;
     }
@@ -57,8 +62,9 @@ public class Tokenizer extends AbstractTokenizer {
         Tokenizer tokenizer = init(args);
         new TokenizerRunner().run(tokenizer);
     }
+
     /**
-     * Builder class used to create AbstractTokenizer instance.
+     * Builder class used to create Tokenizer instance.
      */
     public static class Builder {
         private Mode mode = Mode.NORMAL;
@@ -145,6 +151,7 @@ public class Tokenizer extends AbstractTokenizer {
 
         /**
          * Sets the default {@link ResourceResolver} used to locate dictionaries.
+         *
          * @see #prefix(String)
          */
         public void resolver(ResourceResolver resolver) {
@@ -161,27 +168,46 @@ public class Tokenizer extends AbstractTokenizer {
         }
 
         /**
-         * Create AbstractTokenizer instance
+         * Create Tokenizer instance
          *
-         * @return AbstractTokenizer
+         * @return Tokenizer
          */
         public synchronized Tokenizer build() {
             if (defaultPrefix != null) {
                 resolver = new PrefixDecoratorResolver(defaultPrefix, resolver);
             }
 
-            DynamicDictionaries dictionaries = new DynamicDictionaries(resolver);
+            return new Tokenizer(this);
+        }
 
+        public DynamicDictionaries getDictionaries() {
+            return new DynamicDictionaries(resolver);
+        }
+
+        public UserDictionary getUserDictionary() {
+            return userDictionary;
+        }
+
+        public Mode getMode() {
+            return mode;
+        }
+
+        public boolean getSplit() {
+            return split;
+        }
+
+        public List<Integer> getPenalties() {
+            List<Integer> penalties = new ArrayList<>();
             if (this.mode != Mode.NORMAL
                 && searchModeKanjiLength != null && searchModeKanjiPenalty != null
                 && searchModeOtherLength != null && searchModeOtherPenalty != null) {
+                penalties.add(searchModeKanjiLength);
+                penalties.add(searchModeKanjiPenalty);
+                penalties.add(searchModeOtherLength);
+                penalties.add(searchModeOtherPenalty);
 
-                return new Tokenizer(dictionaries, userDictionary, mode, split,
-                    searchModeKanjiLength, searchModeKanjiPenalty,
-                    searchModeOtherLength, searchModeOtherPenalty);
-            } else {
-                return new Tokenizer(dictionaries, userDictionary, mode, split);
             }
+            return penalties;
         }
     }
 

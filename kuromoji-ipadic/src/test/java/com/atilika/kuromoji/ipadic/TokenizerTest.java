@@ -16,7 +16,6 @@
  */
 package com.atilika.kuromoji.ipadic;
 
-import com.atilika.kuromoji.Token;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -101,6 +100,54 @@ public class TokenizerTest {
     }
 
     @Test
+    public void testIpadicTokenAPIs() throws Exception {
+        List<Token> tokens = tokenizer.tokenize("お寿司が食べたい！");
+        String[] pronunciations = {"オ", "スシ", "ガ", "タベ", "タイ", "！"};
+
+        assertEquals(pronunciations.length, tokens.size());
+
+        for (int i = 0; i < tokens.size(); i++) {
+            assertEquals(pronunciations[i], tokens.get(i).getPronunciation());
+        }
+
+        String[] conjugationForms = {"*", "*", "*", "連用形", "基本形", "*"};
+
+        for (int i = 0; i < tokens.size(); i++) {
+            assertEquals(conjugationForms[i], tokens.get(i).getConjugationForm());
+        }
+
+        String[] conjugationTypes = {"*", "*", "*", "一段", "特殊・タイ", "*"};
+
+        for (int i = 0; i < tokens.size(); i++) {
+            assertEquals(conjugationTypes[i], tokens.get(i).getConjugationType());
+        }
+
+        String[] posLevel1 = {"接頭詞", "名詞", "助詞", "動詞", "助動詞", "記号"};
+
+        for (int i = 0; i < tokens.size(); i++) {
+            assertEquals(posLevel1[i], tokens.get(i).getPosLevel1());
+        }
+
+        String[] posLevel2 = {"名詞接続", "一般", "格助詞", "自立", "*", "一般"};
+
+        for (int i = 0; i < tokens.size(); i++) {
+            assertEquals(posLevel2[i], tokens.get(i).getPosLevel2());
+        }
+
+        String[] posLevel3 = {"*", "*", "一般", "*", "*", "*"};
+
+        for (int i = 0; i < tokens.size(); i++) {
+            assertEquals(posLevel3[i], tokens.get(i).getPosLevel3());
+        }
+
+        String[] posLevel4 = {"*", "*", "*", "*", "*", "*"};
+
+        for (int i = 0; i < tokens.size(); i++) {
+            assertEquals(posLevel4[i], tokens.get(i).getPosLevel4());
+        }
+    }
+
+    @Test
     public void testCustomPenalties() {
         Tokenizer customTokenizer = new Tokenizer.Builder().mode(Tokenizer.Mode.SEARCH).penalties(3, 10000, Integer.MAX_VALUE, 0).build();
         String input = "シニアソフトウェアエンジニアを探しています";
@@ -137,7 +184,6 @@ public class TokenizerTest {
         return token.getSurfaceForm() + "\t" +  token.getAllFeatures();
     }
 
-    //	@Ignore
     @Test
     public void testBocchan() throws IOException, InterruptedException {
         int runs = 3;
@@ -148,6 +194,7 @@ public class TokenizerTest {
         reader.close();
 
         System.out.println("Test for Bocchan without pre-splitting sentences");
+
         long totalStart = System.currentTimeMillis();
         for (int i = 0; i < runs; i++) {
             List<Token> tokens = tokenizer.tokenize(text);
@@ -163,7 +210,6 @@ public class TokenizerTest {
         String[] sentences = text.split("、|。");
 
         totalStart = System.currentTimeMillis();
-
         for (int i = 0; i < runs; i++) {
             for (String sentence : sentences) {
                 List<Token> tokens = tokenizer.tokenize(sentence);

@@ -18,12 +18,13 @@
 package com.atilika.kuromoji.entities;
 
 import com.atilika.kuromoji.AbstractTokenizer;
-import com.atilika.kuromoji.TokenizerRunner;
 import com.atilika.kuromoji.ClassLoaderResolver;
 import com.atilika.kuromoji.PrefixDecoratorResolver;
 import com.atilika.kuromoji.ResourceResolver;
+import com.atilika.kuromoji.TokenizerRunner;
 import com.atilika.kuromoji.dict.DynamicDictionaries;
 import com.atilika.kuromoji.dict.UserDictionary;
+import com.atilika.kuromoji.viterbi.ViterbiNode;
 
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
@@ -34,20 +35,21 @@ public class Tokenizer extends AbstractTokenizer {
 
     public static final String DEFAULT_DICT_PREFIX = "com/atilika/kuromoji/entities/";
 
-    protected Tokenizer(DynamicDictionaries dictionaries, UserDictionary userDictionary, boolean split) {
-        super(dictionaries, userDictionary, Mode.NORMAL, split);
+    public Tokenizer(Builder builder) {
+        super(builder.getDictionaries(), builder.getUserDictionary());
+    }
+
+    @Override
+    protected Token createToken(int offset, ViterbiNode node, int wordId) {
+        return new Token(wordId, node.getSurfaceForm(), node.getType(), offset + node.getStartIndex(), dictionaryMap.get(node.getType()));
     }
 
     private static Tokenizer init(String[] args) throws IOException {
-        Tokenizer tokenizer;
-        if (args.length == 0) {
-            tokenizer = new Builder().build();
-        } else if (args.length == 1) {
-            tokenizer = new Builder().userDictionary(args[1]).build();
-        } else {
-            tokenizer = new Builder().build();
+        if (args.length == 1) {
+            return new Builder().userDictionary(args[0]).build();
         }
-        return tokenizer;
+
+        return new Builder().build();
     }
 
     public static void main(String[] args) throws IOException {
@@ -56,11 +58,9 @@ public class Tokenizer extends AbstractTokenizer {
     }
 
     /**
-     * Builder class used to create AbstractTokenizer instance.
+     * Builder class used to create Tokenizer instance.
      */
     public static class Builder {
-
-        private boolean split = true;
 
         private UserDictionary userDictionary = null;
 
@@ -77,19 +77,6 @@ public class Tokenizer extends AbstractTokenizer {
          * The default resource resolver (relative to this class).
          */
         private ResourceResolver resolver = new ClassLoaderResolver(this.getClass());
-
-        /**
-         * Set if tokenizer should split input string at "。" and "、" before tokenize to increase performance.
-         * Splitting shouldn't change the result of tokenization most of the cases.
-         * Default: true
-         *
-         * @param split whether tokenizer should split input string
-         * @return Builder
-         */
-        public synchronized Builder split(boolean split) {
-            this.split = split;
-            return this;
-        }
 
         /**
          * Set user dictionary input stream
@@ -139,18 +126,24 @@ public class Tokenizer extends AbstractTokenizer {
         }
 
         /**
-         * Create AbstractTokenizer instance
+         * Create Tokenizer instance
          *
-         * @return AbstractTokenizer
+         * @return Tokenizer
          */
         public synchronized Tokenizer build() {
             if (defaultPrefix != null) {
                 resolver = new PrefixDecoratorResolver(defaultPrefix, resolver);
             }
 
-            DynamicDictionaries dictionaries = new DynamicDictionaries(resolver);
+            return new Tokenizer(this);
+        }
 
-            return new Tokenizer(dictionaries, userDictionary, split);
+        public DynamicDictionaries getDictionaries() {
+            return new DynamicDictionaries(resolver);
+        }
+
+        public UserDictionary getUserDictionary() {
+            return userDictionary;
         }
     }
 }

@@ -117,8 +117,8 @@ public class ViterbiBuilder {
 
     private boolean processIndex(ViterbiLattice lattice, int startIndex, String suffix) {
         boolean found = false;
-        int result = 0;
         for (int endIndex = 1; endIndex < suffix.length() + 1; endIndex++) {
+            int result = 0;
             String prefix = suffix.substring(0, endIndex);
 
             result = trie.lookup(prefix, result, (result > 0) ? endIndex-1 : 0);
@@ -126,6 +126,7 @@ public class ViterbiBuilder {
             if (result > 0) {    // Found match in double array trie
                 found = true;    // Don't produce unknown word starting from this index
                 for (int wordId : dictionary.lookupWordIds(result)) {
+//                    System.out.println("Known, Result: " + result + ", wordId: " + wordId);
                     ViterbiNode node = new ViterbiNode(wordId, prefix, dictionary, startIndex, ViterbiNode.Type.KNOWN);
                     lattice.addNode(node, startIndex + 1, startIndex + 1 + endIndex);
                 }
@@ -151,6 +152,7 @@ public class ViterbiBuilder {
             int[] wordIds = unkDictionary.lookupWordIds(characterId); // characters in input text are supposed to be the same
 
             for (int wordId : wordIds) {
+//                System.out.println("Unknown, CharacterId: " + characterId + ", wordId: " + wordId);
                 ViterbiNode node = new ViterbiNode(wordId, unkWord, unkDictionary, startIndex, ViterbiNode.Type.UNKNOWN);
                 lattice.addNode(node, startIndex + 1, startIndex + 1 + unknownWordLength);
             }

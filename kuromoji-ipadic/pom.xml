@@ -13,14 +13,11 @@
     <packaging>jar</packaging>
 
     <properties>
-        <com.atilika.kuromoji.dict.format>ipadic</com.atilika.kuromoji.dict.format>
         <com.atilika.kuromoji.dict.file>mecab-ipadic-2.7.0-20070801.tar.gz</com.atilika.kuromoji.dict.file>
         <com.atilika.kuromoji.dict.url>http://atilika.com/releases/mecab-ipadic/${com.atilika.kuromoji.dict.file}</com.atilika.kuromoji.dict.url>
         <com.atilika.kuromoji.dict.dir>${project.basedir}/dictionary/mecab-ipadic-2.7.0-20070801</com.atilika.kuromoji.dict.dir>
         <com.atilika.kuromoji.dict.targetdir>${project.basedir}/target/classes/com/atilika/kuromoji/ipadic</com.atilika.kuromoji.dict.targetdir>
         <com.atilika.kuromoji.dict.encoding>euc-jp</com.atilika.kuromoji.dict.encoding>
-        <com.atilika.kuromoji.dict.normalize>false</com.atilika.kuromoji.dict.normalize>
-        <com.atilika.kuromoji.dict.addunnormalized>false</com.atilika.kuromoji.dict.addunnormalized>
         <com.atilika.kuromoji.dict.compact>false</com.atilika.kuromoji.dict.compact>
     </properties>
 
@@ -40,14 +37,11 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <mainClass>com.atilika.kuromoji.util.DictionaryBuilder</mainClass>
+                    <mainClass>com.atilika.kuromoji.ipadic.dict.DictionaryBuilder</mainClass>
                     <arguments>
-                        <argument>${com.atilika.kuromoji.dict.format}</argument>
                         <argument>${com.atilika.kuromoji.dict.dir}</argument>
                         <argument>${com.atilika.kuromoji.dict.targetdir}</argument>
                         <argument>${com.atilika.kuromoji.dict.encoding}</argument>
-                        <argument>${com.atilika.kuromoji.dict.normalize}</argument>
-                        <argument>${com.atilika.kuromoji.dict.addunnormalized}</argument>
                         <argument>${com.atilika.kuromoji.dict.compact}</argument>
                     </arguments>
                 </configuration>
@@ -74,24 +68,6 @@
                         <goals>
                             <goal>run</goal>
                         </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <version>2.2-beta-2</version>
-                <executions>
-                    <execution>
-                        <id>create-project-bundle</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>single</goal>
-                        </goals>
-                        <configuration>
-                            <descriptors>
-                                <descriptor>dist/assembly.xml</descriptor>
-                            </descriptors>
-                        </configuration>
                     </execution>
                 </executions>
             </plugin>

@@ -16,7 +16,7 @@
  */
 package com.atilika.kuromoji.dict;
 
-import com.atilika.kuromoji.util.CSVUtil;
+import com.atilika.kuromoji.util.DictionaryEntryLineParser;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -31,9 +31,9 @@ import java.util.TreeMap;
 
 public class UserDictionary implements Dictionary {
 
-	private TreeMap<String, int[]> entries = new TreeMap<String, int[]>();
+	private TreeMap<String, int[]> entries = new TreeMap<>();
 
-	private HashMap<Integer, String> featureEntries = new HashMap<Integer, String>();
+	private HashMap<Integer, String> featureEntries = new HashMap<>();
 
 	private static final int CUSTOM_DICTIONARY_WORD_ID_OFFSET = 100000000;
 
@@ -49,7 +49,7 @@ public class UserDictionary implements Dictionary {
 	 * @return array of {wordId, position, length}
 	 */
 	public int[][] locateUserDefinedWordsInText(String text) {
-		TreeMap<Integer, int[]> positions = new TreeMap<Integer, int[]>(); // index, [length, length...]
+		TreeMap<Integer, int[]> positions = new TreeMap<>(); // index, [length, length...]
 
 		for (String entry : entries.descendingKeySet()) {
             checkUserDefinedWord(text, entry, positions);
@@ -76,7 +76,7 @@ public class UserDictionary implements Dictionary {
 	 * @return array of {wordId, index, length}
 	 */
 	private int[][] toIndexArray(Map<Integer, int[]> input) {
-		ArrayList<int[]> result = new ArrayList<int[]>();
+		ArrayList<int[]> result = new ArrayList<>();
 		for (int i : input.keySet()) {
 			int[] wordIdAndLength = input.get(i);
 			int wordId = wordIdAndLength[0];
@@ -140,7 +140,7 @@ public class UserDictionary implements Dictionary {
             return null;
         }
 
-        List<String> features = new ArrayList<String>();
+        List<String> features = new ArrayList<>();
         int start = 0;
         for (int i = 0; i < allFeatures.length(); i++) {
             if (allFeatures.charAt(i) == INTERNAL_SEPARATOR) {
@@ -162,13 +162,13 @@ public class UserDictionary implements Dictionary {
 		StringBuilder sb = new StringBuilder();
 		if (fields.length == 0) { // All features
 			for (String feature : allFeatures) {
-				sb.append(CSVUtil.quoteEscape(feature)).append(",");
+				sb.append(DictionaryEntryLineParser.quoteEscape(feature)).append(",");
 			}
 		} else if (fields.length == 1) { // One feature doesn't need to escape value
 			sb.append(allFeatures[fields[0]]).append(",");
 		} else {
 			for (int field : fields){
-				sb.append(CSVUtil.quoteEscape(allFeatures[field])).append(",");
+				sb.append(DictionaryEntryLineParser.quoteEscape(allFeatures[field])).append(",");
 			}
 		}
 		return sb.deleteCharAt(sb.length() - 1).toString();
@@ -193,7 +193,7 @@ public class UserDictionary implements Dictionary {
 				continue;
 			}
 
-			String[] values = CSVUtil.parse(line);
+			String[] values = DictionaryEntryLineParser.parseLine(line);
             String[] segmentation = { values[1] };
             String[] readings = { values[2] };
             String pos = values[3];

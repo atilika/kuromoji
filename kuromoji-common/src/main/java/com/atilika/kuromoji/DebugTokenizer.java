@@ -33,42 +33,43 @@ import java.util.List;
 
 public class DebugTokenizer {
 
-	private ViterbiFormatter formatter;
+    private ViterbiFormatter formatter;
 
-	private ViterbiBuilder viterbiBuilder;
+    private ViterbiBuilder viterbiBuilder;
 
     private ViterbiSearcher viterbiSearcher;
 
-	protected DebugTokenizer(DynamicDictionaries dictionaries, UserDictionary userDictionary, Mode mode) {
+    protected DebugTokenizer(DynamicDictionaries dictionaries, UserDictionary userDictionary, Mode mode) {
 
         this.viterbiBuilder = new ViterbiBuilder(dictionaries.getTrie(),
-								   dictionaries.getDictionary(),
-								   dictionaries.getUnknownDictionary(),
-								   userDictionary,
-								   mode);
+            dictionaries.getDictionary(),
+            dictionaries.getUnknownDictionary(),
+            userDictionary,
+            mode);
 
         this.viterbiSearcher = new ViterbiSearcher(this.viterbiBuilder, mode, dictionaries.getCosts(), dictionaries.getUnknownDictionary());
-		this.formatter = new ViterbiFormatter(dictionaries.getCosts());
-	}
+        this.formatter = new ViterbiFormatter(dictionaries.getCosts());
+    }
 
-	public String debugTokenize(String text) {
-		ViterbiLattice lattice = this.viterbiBuilder.build(text);
-		List<ViterbiNode> bestPath = this.viterbiSearcher.search(lattice);
-		return this.formatter.format(lattice, bestPath);
-	}
+    public String debugTokenize(String text) {
+        ViterbiLattice lattice = this.viterbiBuilder.build(text);
+        List<ViterbiNode> bestPath = this.viterbiSearcher.search(lattice);
+        return this.formatter.format(lattice, bestPath);
+    }
 
-	public static Builder builder() {
-		return new Builder();
-	}
+    public static Builder builder() {
+        return new Builder();
+    }
 
-	public static class Builder {
+    public static class Builder {
 
-		private Mode mode = Mode.NORMAL;
+        private Mode mode = Mode.NORMAL;
 
-		private UserDictionary userDictionary = null;
+        private UserDictionary userDictionary = null;
 
         private String directory = "ipadic";
 
+        private DynamicDictionaries dictionaries = null;
         /**
          * The default resource prefix, also configurable via
          * system property <code>com.atilika.kuromoji.dict.targetdir</code>.
@@ -83,27 +84,35 @@ public class DebugTokenizer {
         private ResourceResolver resolver = new ClassLoaderResolver(this.getClass());
 
         public synchronized Builder mode(Mode mode) {
-			this.mode = mode;
-			return this;
-		}
+            this.mode = mode;
+            return this;
+        }
 
-		public synchronized Builder userDictionary(InputStream userDictionaryInputStream) throws IOException {
-			this.userDictionary = UserDictionary.read(userDictionaryInputStream);
-			return this;
-		}
+        public synchronized Builder userDictionary(InputStream userDictionaryInputStream) throws IOException {
+            this.userDictionary = UserDictionary.read(userDictionaryInputStream);
+            return this;
+        }
 
-		public synchronized Builder userDictionary(String userDictionaryPath) throws IOException {
-			this.userDictionary(new BufferedInputStream(new FileInputStream(userDictionaryPath)));
-			return this;
-		}
+        public synchronized Builder userDictionary(String userDictionaryPath) throws IOException {
+            this.userDictionary(new BufferedInputStream(new FileInputStream(userDictionaryPath)));
+            return this;
+        }
 
-		public synchronized DebugTokenizer build() {
-            if (defaultPrefix != null) {
-                resolver = new PrefixDecoratorResolver(defaultPrefix, resolver);
+        public synchronized Builder setDictionaries(DynamicDictionaries dictionaries) {
+            this.dictionaries = dictionaries;
+            return this;
+        }
+
+        public synchronized DebugTokenizer build() {
+
+            if (dictionaries == null) {
+                if (defaultPrefix != null) {
+                    resolver = new PrefixDecoratorResolver(defaultPrefix, resolver);
+                }
+
+                dictionaries = new DynamicDictionaries(resolver);
             }
-
-            DynamicDictionaries dictionaries = new DynamicDictionaries(resolver);
-			return new DebugTokenizer(dictionaries, userDictionary, mode);
-		}
-	}
+            return new DebugTokenizer(dictionaries, userDictionary, mode);
+        }
+    }
 }

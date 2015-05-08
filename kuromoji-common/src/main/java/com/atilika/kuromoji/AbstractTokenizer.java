@@ -25,11 +25,6 @@ import com.atilika.kuromoji.viterbi.ViterbiLattice;
 import com.atilika.kuromoji.viterbi.ViterbiNode;
 import com.atilika.kuromoji.viterbi.ViterbiSearcher;
 
-import java.io.BufferedInputStream;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
@@ -38,37 +33,43 @@ import java.util.List;
  * AbstractTokenizer main class.
  * Thread safe.
  */
-public class AbstractTokenizer {
-	/** @see Builder#defaultPrefix */
+public abstract class AbstractTokenizer {
+
     public static final String DEFAULT_DICT_PREFIX_PROPERTY = "com.atilika.kuromoji.dict.targetdir";
 
-    /** @see Builder#defaultPrefix */
     public static final String DEFAULT_DICT_PREFIX = "com/atilika/kuromoji/ipadic/";
 
     public enum Mode {
         NORMAL, SEARCH, EXTENDED
     }
-
     private final ViterbiBuilder viterbiBuilder;
 
     private final ViterbiSearcher viterbiSearcher;
 
-    private final EnumMap<ViterbiNode.Type, Dictionary> dictionaryMap = new EnumMap<ViterbiNode.Type, Dictionary>(ViterbiNode.Type.class);
+    // FIXME: Protected at the moment for access from Subclass
+    protected final EnumMap<ViterbiNode.Type, Dictionary> dictionaryMap = new EnumMap<>(ViterbiNode.Type.class);
 
     private final boolean split;
 
-    protected AbstractTokenizer(DynamicDictionaries dictionaries, UserDictionary userDictionary, Mode mode, boolean split) {
+    private final DynamicDictionaries dictionaries;
+
+    protected AbstractTokenizer(DynamicDictionaries dictionaries, UserDictionary userDictionary, Mode mode, boolean split, List<Integer> penalties) {
+        this.dictionaries = dictionaries;
 
         this.viterbiBuilder = new ViterbiBuilder(dictionaries.getTrie(),
-                dictionaries.getDictionary(),
-                dictionaries.getUnknownDictionary(),
-                userDictionary,
-                mode);
+            dictionaries.getDictionary(),
+            dictionaries.getUnknownDictionary(),
+            userDictionary,
+            mode);
 
         this.split = split;
-
-        this.viterbiSearcher = new ViterbiSearcher(this.viterbiBuilder, mode, dictionaries.getCosts(), dictionaries.getUnknownDictionary());
         setupDictionaries(dictionaries, userDictionary);
+
+        this.viterbiSearcher = new ViterbiSearcher(this.viterbiBuilder, mode, dictionaries.getCosts(), dictionaries.getUnknownDictionary(), penalties);
+    }
+
+    public AbstractTokenizer(DynamicDictionaries dictionaries, UserDictionary userDictionary) {
+        this(dictionaries, userDictionary, Mode.NORMAL, true, new ArrayList<Integer>());
     }
 
     private void setupDictionaries(DynamicDictionaries dictionaries, UserDictionary userDictionary) {
@@ -81,18 +82,23 @@ public class AbstractTokenizer {
     protected AbstractTokenizer(DynamicDictionaries dictionaries, UserDictionary userDictionary, Mode mode, boolean split,
                                 int searchModeKanjiLength, int searchModeKanjiPenalty,
                                 int searchModeOtherLength, int searchModeOtherPenalty) {
+        this.dictionaries = dictionaries;
 
         this.viterbiBuilder = new ViterbiBuilder(dictionaries.getTrie(),
-                dictionaries.getDictionary(),
-                dictionaries.getUnknownDictionary(),
-                userDictionary,
-                mode);
+            dictionaries.getDictionary(),
+            dictionaries.getUnknownDictionary(),
+            userDictionary,
+            mode);
 
         this.split = split;
+        setupDictionaries(dictionaries, userDictionary);
 
         this.viterbiSearcher = new ViterbiSearcher(this.viterbiBuilder, mode, dictionaries.getCosts(), dictionaries.getUnknownDictionary(),
                 searchModeKanjiLength, searchModeKanjiPenalty, searchModeOtherLength, searchModeOtherPenalty);
-        setupDictionaries(dictionaries, userDictionary);
+    }
+
+    public DynamicDictionaries getDictionaries() {
+        return dictionaries;
     }
 
     /**
@@ -101,7 +107,7 @@ public class AbstractTokenizer {
      * @param text
      * @return list of Token
      */
-    public List<Token> tokenize(String text) {
+    public <T extends AbstractToken> List<T> tokenize(String text) {
 
         if (!split) {
             return doTokenize(0, text);
@@ -113,15 +119,15 @@ public class AbstractTokenizer {
             return doTokenize(0, text);
         }
 
-        ArrayList<Token> result = new ArrayList<Token>();
+        ArrayList<T> result = new ArrayList<>();
         int offset = 0;
         for (int position : splitPositions) {
-            result.addAll(doTokenize(offset, text.substring(offset, position + 1)));
+            result.addAll(this.<T>doTokenize(offset, text.substring(offset, position + 1)));
             offset = position + 1;
         }
 
         if (offset < text.length()) {
-            result.addAll(doTokenize(offset, text.substring(offset)));
+            result.addAll(this.<T>doTokenize(offset, text.substring(offset)));
         }
 
         return result;
@@ -134,7 +140,7 @@ public class AbstractTokenizer {
      * @return list of split position
      */
     private List<Integer> getSplitPositions(String text) {
-        ArrayList<Integer> splitPositions = new ArrayList<Integer>();
+        ArrayList<Integer> splitPositions = new ArrayList<>();
 
         int position = 0;
         int currentPosition = 0;
@@ -167,157 +173,26 @@ public class AbstractTokenizer {
      * @param sentence sentence to tokenize
      * @return list of Token
      */
-    private List<Token> doTokenize(int offset, String sentence) {
-        ArrayList<Token> result = new ArrayList<Token>();
+    private <T extends AbstractToken> List<T> doTokenize(int offset, String sentence) {
+        ArrayList<T> result = new ArrayList<>();
 
         ViterbiLattice lattice = viterbiBuilder.build(sentence);
         List<ViterbiNode> bestPath = viterbiSearcher.search(lattice);
+
+//        ViterbiFormatter formatter = new ViterbiFormatter(this.dictionaries.getCosts());
+//        System.out.println(formatter.format(lattice, bestPath));
+
         for (ViterbiNode node : bestPath) {
             int wordId = node.getWordId();
             if (node.getType() == ViterbiNode.Type.KNOWN && wordId == -1) { // Do not include BOS/EOS
                 continue;
             }
-            Token token = new Token(wordId, node.getSurfaceForm(), node.getType(), offset + node.getStartIndex(), dictionaryMap.get(node.getType()));    // Pass different dictionary based on the type of node
+            T token = createToken(offset, node, wordId);    // Pass different dictionary based on the type of node
             result.add(token);
         }
 
         return result;
     }
 
-    /**
-     * Get Builder to create AbstractTokenizer instance.
-     *
-     * @return Builder
-     */
-    public static Builder builder() {
-        return new Builder();
-    }
-
-    /**
-     * Builder class used to create AbstractTokenizer instance.
-     */
-    public static class Builder {
-        private Mode mode = Mode.NORMAL;
-        private boolean split = true;
-        private UserDictionary userDictionary = null;
-        private Integer searchModeKanjiLength;
-        private Integer searchModeKanjiPenalty;
-        private Integer searchModeOtherLength;
-        private Integer searchModeOtherPenalty;
-
-        /**
-         * The default resource prefix, also configurable via
-         * system property <code>com.atilika.kuromoji.dict.targetdir</code>.
-         */
-        private String defaultPrefix = System.getProperty(
-                DEFAULT_DICT_PREFIX_PROPERTY,
-                DEFAULT_DICT_PREFIX);
-
-        /**
-         * The default resource resolver (relative to this class).
-         */
-        private ResourceResolver resolver = new ClassLoaderResolver(this.getClass());
-
-        /**
-         * Set tokenization mode
-         * Default: NORMAL
-         *
-         * @param mode tokenization mode
-         * @return Builder
-         */
-        public synchronized Builder mode(Mode mode) {
-            this.mode = mode;
-            return this;
-        }
-
-        /**
-         * Set if tokenizer should split input string at "。" and "、" before tokenize to increase performance.
-         * Splitting shouldn't change the result of tokenization most of the cases.
-         * Default: true
-         *
-         * @param split whether tokenizer should split input string
-         * @return Builder
-         */
-        public synchronized Builder split(boolean split) {
-            this.split = split;
-            return this;
-        }
-
-        /**
-         * Set user dictionary input stream
-         *
-         * @param userDictionaryInputStream dictionary file as input stream
-         * @return Builder
-         * @throws IOException
-         */
-        public synchronized Builder userDictionary(InputStream userDictionaryInputStream) throws IOException {
-            this.userDictionary = UserDictionary.read(userDictionaryInputStream);
-            return this;
-        }
-
-        /**
-         * Set user dictionary path
-         *
-         * @param userDictionaryPath path to dictionary file
-         * @return Builder
-         * @throws IOException
-         * @throws FileNotFoundException
-         */
-        public synchronized Builder userDictionary(String userDictionaryPath) throws IOException {
-            if (userDictionaryPath != null && !userDictionaryPath.isEmpty()) {
-                this.userDictionary(new BufferedInputStream(new FileInputStream(userDictionaryPath)));
-            }
-            return this;
-        }
-
-        /**
-         * Sets the default prefix applied to resources at lookup time if classloader-relative
-         * {@link ResourceResolver} is used.
-         */
-        public synchronized Builder prefix(String resourcePrefix) {
-            this.defaultPrefix = resourcePrefix;
-            return this;
-        }
-
-        /**
-         * Sets the default {@link ResourceResolver} used to locate dictionaries.
-         * @see #prefix(String)
-         */
-        public void resolver(ResourceResolver resolver) {
-            if (resolver == null) throw new IllegalArgumentException();
-            this.resolver = resolver;
-        }
-
-        public synchronized Builder penalties(int kanjiLength, int kanjiPenalty, int otherLength, int otherPenalty) {
-            this.searchModeKanjiLength = kanjiLength;
-            this.searchModeKanjiPenalty = kanjiPenalty;
-            this.searchModeOtherLength = otherLength;
-            this.searchModeOtherPenalty = otherPenalty;
-            return this;
-        }
-
-        /**
-         * Create AbstractTokenizer instance
-         *
-         * @return AbstractTokenizer
-         */
-        public synchronized AbstractTokenizer build() {
-            if (defaultPrefix != null) {
-                resolver = new PrefixDecoratorResolver(defaultPrefix, resolver);
-            }
-
-            DynamicDictionaries dictionaries = new DynamicDictionaries(resolver);
-
-            if (this.mode != Mode.NORMAL
-                    && searchModeKanjiLength != null && searchModeKanjiPenalty != null
-                    && searchModeOtherLength != null && searchModeOtherPenalty != null) {
-
-                return new AbstractTokenizer(dictionaries, userDictionary, mode, split,
-                        searchModeKanjiLength, searchModeKanjiPenalty,
-                        searchModeOtherLength, searchModeOtherPenalty);
-            } else {
-                return new AbstractTokenizer(dictionaries, userDictionary, mode, split);
-            }
-        }
-    }
+    protected abstract <T extends AbstractToken> T createToken(int offset, ViterbiNode node, int wordId);
 }
