@@ -16,12 +16,6 @@ In order to build com.atilika.kuromoji.kuromoji from source, please do as follow
 
    to download the dictionary data and build a distribution
 
-3. A distribution should now be available as
-
-    `target/com.atilika.kuromoji.kuromoji-<version>.tar.gz` (and .zip)
-
-  and a jar file should also be available in the target directory
-
 
 Contact us
 ----------
