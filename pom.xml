@@ -16,7 +16,6 @@
 
     <modules>
         <module>kuromoji-common</module>
-        <module>kuromoji-chinese</module>
         <module>kuromoji-entities</module>
         <module>kuromoji-ipadic</module>
         <module>kuromoji-jumandic</module>
