@@ -31,7 +31,6 @@
 
     <modules>
         <module>kuromoji-common</module>
-        <module>kuromoji-entities</module>
         <module>kuromoji-ipadic</module>
         <module>kuromoji-jumandic</module>
         <module>kuromoji-unidic</module>
