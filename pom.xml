@@ -7,12 +7,27 @@
     <version>0.8-SNAPSHOT</version>
     <packaging>pom</packaging>
 
-    <name>kuromoji</name>
+    <name>Kuromoji</name>
+    <description>A Japanese morphological analyzer</description>
+    <url>https://github.com/atilika/kuromoji</url>
 
     <organization>
-        <name>Atilika</name>
-        <url>http://www.atilika.org</url>
+        <name>Atilika Inc.</name>
+        <url>http://www.atilika.com</url>
     </organization>
+
+    <licenses>
+        <license>
+            <name>The Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </licenses>
+
+    <scm>
+        <connection>scm:git:git@github.com:atilika/kuromoji.git</connection>
+        <developerConnection>scm:git:git@github.com:atilika/kuromoji.git</developerConnection>
+        <url>git@github.com:atilika/kuromoji.git</url>
+    </scm>
 
     <modules>
         <module>kuromoji-common</module>
@@ -26,9 +41,9 @@
 
     <developers>
         <developer>
-            <id>gl</id>
+            <id>gaute</id>
             <name>Gaute Lambertsen</name>
-            <email>gl@atilika.com</email>
+            <email>gaute@atilika.com</email>
             <organization>Atilika Inc.</organization>
             <organizationUrl>http://www.atilika.com</organizationUrl>
             <roles>
@@ -37,9 +52,9 @@
             <timezone>JST</timezone>
         </developer>
         <developer>
-            <id>cm</id>
+            <id>christian</id>
             <name>Christian Moen</name>
-            <email>cm@atilika.com</email>
+            <email>christian@atilika.com</email>
             <organization>Atilika Inc.</organization>
             <organizationUrl>http://www.atilika.com</organizationUrl>
             <roles>
@@ -82,20 +97,4 @@
             </plugin>
         </plugins>
     </build>
-
-    <distributionManagement>
-        <!-- atilika.org repositories -->
-        <repository>
-            <id>atilika</id>
-            <name>Atilika Open Source</name>
-            <url>http://atilika.org/nexus/content/repositories/atilika/</url>
-        </repository>
-
-        <snapshotRepository>
-            <id>atilika-snapshots</id>
-            <name>Atilika Open Source Snaphots</name>
-            <url>http://atilika.org/nexus/content/repositories/atilika-snapshots/</url>
-        </snapshotRepository>
-    </distributionManagement>
-
 </project>

@@ -9,6 +9,8 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
+    <name>Kuromoji NAIST-jdic</name>
+
     <artifactId>kuromoji-naist-jdic</artifactId>
     <packaging>jar</packaging>
 

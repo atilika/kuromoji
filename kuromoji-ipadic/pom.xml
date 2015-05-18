@@ -9,6 +9,8 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
+    <name>Kuromoji IPADIC</name>
+
     <artifactId>kuromoji-ipadic</artifactId>
     <packaging>jar</packaging>
 

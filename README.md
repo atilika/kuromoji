@@ -1,8 +1,6 @@
-README
-======
+# README
 
-Building
---------
+## Building
 
 In order to build Kuromoji from source, please do as follows:
 
@@ -17,8 +15,7 @@ In order to build Kuromoji from source, please do as follows:
    to download the dictionary data and build Kuromoji with all dictionaries.
 
 
-Contact us
-----------
+# Contact us
 
-kuromoji@atilika.com
+Please feel free to contact us on kuromoji@atilika.com if you have any questions.
 
