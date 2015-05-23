@@ -4,7 +4,7 @@
 
     <groupId>com.atilika.kuromoji</groupId>
     <artifactId>kuromoji</artifactId>
-    <version>0.8-SNAPSHOT</version>
+    <version>0.9-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>Kuromoji</name>
@@ -33,9 +33,9 @@
         <module>kuromoji-common</module>
         <module>kuromoji-ipadic</module>
         <module>kuromoji-jumandic</module>
+        <module>kuromoji-naist-jdic</module>
         <module>kuromoji-unidic</module>
         <module>kuromoji-unidic-extended</module>
-        <module>kuromoji-naist-jdic</module>
     </modules>
 
     <developers>
@@ -70,30 +70,78 @@
         <maven.compiler.target>1.7</maven.compiler.target>
     </properties>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>2.3.2</version>
-                <inherited>true</inherited>
-                <configuration>
-                    <source>1.7</source>
-                    <target>1.7</target>
-                    <encoding>UTF-8</encoding>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.4.3</version>
-                <configuration>
-                    <argLine>-Xmx512m -Dfile.encoding=UTF-8</argLine>
-                    <includes>
-                        <include>**/*Test*.java</include>
-                    </includes>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
+    <distributionManagement>
+        <repository>
+            <id>atilika</id>
+            <name>Atilika</name>
+            <url>http://aji.atilika.net:8081/nexus/content/repositories/atilika/</url>
+        </repository>
+        <snapshotRepository>
+            <id>atilika-snapshots</id>
+            <name>Atilika Snaphots</name>
+            <url>http://aji.atilika.net:8081/nexus/content/repositories/atilika-snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>
+
+    <profiles>
+        <profile>
+            <id>release</id>
+            <activation>
+                <property>
+                    <name>performRelease</name>
+                    <value>true</value>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <!--<plugin>-->
+                    <!--<groupId>org.apache.maven.plugins</groupId>-->
+                    <!--<artifactId>maven-compiler-plugin</artifactId>-->
+                    <!--<version>3.3</version>-->
+                    <!--</plugin>-->
+                    <!--<plugin>-->
+                    <!--<groupId>org.apache.maven.plugins</groupId>-->
+                    <!--<artifactId>maven-source-plugin</artifactId>-->
+                    <!--<version>2.2.1</version>-->
+                    <!--<executions>-->
+                    <!--<execution>-->
+                    <!--<id>attach-sources</id>-->
+                    <!--<goals>-->
+                    <!--<goal>jar-no-fork</goal>-->
+                    <!--</goals>-->
+                    <!--</execution>-->
+                    <!--</executions>-->
+                    <!--</plugin>-->
+                    <!--<plugin>-->
+                    <!--<groupId>org.apache.maven.plugins</groupId>-->
+                    <!--<artifactId>maven-javadoc-plugin</artifactId>-->
+                    <!--<version>2.9.1</version>-->
+                    <!--<executions>-->
+                    <!--<execution>-->
+                    <!--<id>attach-javadocs</id>-->
+                    <!--<goals>-->
+                    <!--<goal>jar</goal>-->
+                    <!--</goals>-->
+                    <!--</execution>-->
+                    <!--</executions>-->
+                    <!--</plugin>-->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>1.5</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
 </project>

@@ -5,7 +5,7 @@
     <parent>
         <artifactId>kuromoji</artifactId>
         <groupId>com.atilika.kuromoji</groupId>
-        <version>0.8-SNAPSHOT</version>
+        <version>0.9-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -15,72 +15,99 @@
     <packaging>jar</packaging>
 
     <properties>
-        <com.atilika.kuromoji.dict.file>mecab-naist-jdic-0.6.3b-20111013.tar.gz</com.atilika.kuromoji.dict.file>
-        <com.atilika.kuromoji.dict.url>http://atilika.com/releases/mecab-naist-jdic/${com.atilika.kuromoji.dict.file}</com.atilika.kuromoji.dict.url>
-        <com.atilika.kuromoji.dict.dir>${project.basedir}/dictionary/mecab-naist-jdic-0.6.3b-20111013</com.atilika.kuromoji.dict.dir>
-        <com.atilika.kuromoji.dict.targetdir>${project.basedir}/target/classes/com/atilika/kuromoji/naist-jdic</com.atilika.kuromoji.dict.targetdir>
-        <com.atilika.kuromoji.dict.encoding>euc-jp</com.atilika.kuromoji.dict.encoding>
-        <com.atilika.kuromoji.dict.compact>false</com.atilika.kuromoji.dict.compact>
+        <kuromoji.dict.file>mecab-naist-jdic-0.6.3b-20111013.tar.gz</kuromoji.dict.file>
+        <kuromoji.dict.url>http://atilika.com/releases/mecab-naist-jdic/${kuromoji.dict.file}</kuromoji.dict.url>
+        <kuromoji.dict.dir>${project.basedir}/dictionary/mecab-naist-jdic-0.6.3b-20111013</kuromoji.dict.dir>
+        <kuromoji.dict.targetdir>${project.basedir}/src/main/resources/com/atilika/kuromoji/naist-jdic</kuromoji.dict.targetdir>
+        <kuromoji.dict.encoding>euc-jp</kuromoji.dict.encoding>
+        <kuromoji.dict.compact>false</kuromoji.dict.compact>
     </properties>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>exec-maven-plugin</artifactId>
-                <version>1.2.1</version>
-                <executions>
-                    <execution>
-                        <id>compile-dictionary</id>
-                        <phase>compile</phase>
-                        <goals>
-                            <goal>java</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <mainClass>com.atilika.kuromoji.naist.jdic.dict.DictionaryBuilder</mainClass>
-                    <arguments>
-                        <argument>${com.atilika.kuromoji.dict.dir}</argument>
-                        <argument>${com.atilika.kuromoji.dict.targetdir}</argument>
-                        <argument>${com.atilika.kuromoji.dict.encoding}</argument>
-                        <argument>${com.atilika.kuromoji.dict.compact}</argument>
-                    </arguments>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-antrun-plugin</artifactId>
-                <version>1.6</version>
-                <executions>
-                    <execution>
-                        <id>download-dictionary</id>
-                        <phase>generate-resources</phase>
+    <profiles>
+        <profile>
+            <id>build-dictionary</id>
+            <activation>
+                <property>
+                    <name>!skipBuildDictionary</name>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <version>1.6</version>
+                        <executions>
+                            <execution>
+                                <id>download-dictionary</id>
+                                <phase>generate-resources</phase>
+                                <configuration>
+                                    <target unless="skipDownloadDictionary">
+                                        <echo message="Downloading dictionary"/>
+                                        <delete dir="dictionary"/>
+                                        <mkdir dir="dictionary"/>
+                                        <get src="${kuromoji.dict.url}"
+                                             dest="dictionary/${kuromoji.dict.file}"
+                                             verbose="true"/>
+                                        <untar src="dictionary/${kuromoji.dict.file}"
+                                               dest="dictionary" compression="gzip"/>
+                                    </target>
+                                </configuration>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-compiler-plugin</artifactId>
+                        <version>3.3</version>
+                        <executions>
+                            <execution>
+                                <id>compile-dictionary-builder</id>
+                                <phase>generate-resources</phase>
+                                <goals>
+                                    <goal>compile</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <version>1.2.1</version>
+                        <executions>
+                            <execution>
+                                <id>run-dictionary-builder</id>
+                                <phase>generate-resources</phase>
+                                <goals>
+                                    <goal>java</goal>
+                                </goals>
+                            </execution>
+                        </executions>
                         <configuration>
-                            <target if="download">
-                                <echo message="Downloading dictionary"/>
-                                <delete dir="dictionary"/>
-                                <mkdir dir="dictionary"/>
-                                <get src="${com.atilika.kuromoji.dict.url}" dest="dictionary/${com.atilika.kuromoji.dict.file}"
-                                     verbose="true"/>
-                                <untar src="dictionary/${com.atilika.kuromoji.dict.file}"
-                                       dest="dictionary" compression="gzip"/>
-                            </target>
+                            <mainClass>com.atilika.kuromoji.naist.jdic.dict.DictionaryBuilder</mainClass>
+                            <arguments>
+                                <argument>${kuromoji.dict.dir}</argument>
+                                <argument>${kuromoji.dict.targetdir}</argument>
+                                <argument>${kuromoji.dict.encoding}</argument>
+                                <argument>${kuromoji.dict.compact}</argument>
+                            </arguments>
                         </configuration>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 
     <dependencies>
         <dependency>
             <groupId>com.atilika.kuromoji</groupId>
             <artifactId>kuromoji-common</artifactId>
-            <version>0.8-SNAPSHOT</version>
+            <version>0.9-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
         <dependency>

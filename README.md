@@ -10,10 +10,15 @@ In order to build Kuromoji from source, please do as follows:
   
 2. Run Maven using
 
-    `% mvn -Ddownload=true clean package`
+    `% mvn clean package`
 
-   to download the dictionary data and build Kuromoji with all dictionaries.
+   which downloads source dictionary data and builds Kuromoji with all dictionaries.
 
+These additional build options are available:
+
+* Use to `-DskipBuildDictionary` to not recompile dictionaries on each build
+* Use to `-DskipDownloadDictionary` to not download source dictionaries on dictionary build (used with
+  with `-DskipBuildDictionary`)
 
 # Contact us
 
