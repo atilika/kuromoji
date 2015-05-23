@@ -31,7 +31,7 @@ public abstract class AbstractDictionaryBuilder {
 
     public void build(String inputDirname, String outputDirname, String encoding, boolean compactTries) throws IOException {
         File outputDir = new File(outputDirname);
-        outputDir.mkdir();
+        outputDir.mkdirs();
         buildTokenInfoDictionary(inputDirname, outputDirname, encoding, compactTries);
         buildUnknownWordDictionary(inputDirname, outputDirname, encoding);
         buildConnectionCosts(inputDirname, outputDirname);
