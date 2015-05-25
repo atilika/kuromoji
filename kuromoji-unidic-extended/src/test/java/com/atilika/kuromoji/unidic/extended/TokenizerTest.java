@@ -86,7 +86,7 @@ public class TokenizerTest {
 
     @Test
     public void testUserDictionary() throws IOException {
-        String entries = "北斗の拳,北斗の拳,ホクトノケン,カスタム名詞";
+        String entries = "北斗の拳,北斗の拳,ホクトノケン,カスタム名詞,-100";
 
         buildTokenizerWithUserDictionary(entries);
         List<Token> tokens = tokenizer.tokenize("北斗の拳は非常に面白かった。");

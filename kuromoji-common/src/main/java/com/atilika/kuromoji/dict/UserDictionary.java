@@ -37,7 +37,7 @@ public class UserDictionary implements Dictionary {
 
 	private static final int CUSTOM_DICTIONARY_WORD_ID_OFFSET = 100000000;
 
-	public static final int WORD_COST = -100000;
+//	public static final int WORD_COST = -100000;
 
 	public static final int LEFT_ID = 5;
 
@@ -103,8 +103,11 @@ public class UserDictionary implements Dictionary {
 
 	@Override
 	public int getWordCost(int wordId) {
-		return WORD_COST;
+		return Integer.parseInt(getFeature(wordId, 1));
 	}
+    //	public int getWordCost(int wordId) {
+//		return WORD_COST;
+//	}
 
 	@Override
 	public String getReading(int wordId) {
@@ -118,7 +121,7 @@ public class UserDictionary implements Dictionary {
 
 	@Override
 	public String getPartOfSpeech(int wordId) {
-		return getFeature(wordId, 1);
+        return getFeature(wordId, 2);
 	}
 
 	@Override
@@ -197,6 +200,7 @@ public class UserDictionary implements Dictionary {
             String[] segmentation = { values[1] };
             String[] readings = { values[2] };
             String pos = values[3];
+            String cost = values[4];
 
             if (isCustomSegmentationEntry(values)) {
                 segmentation = splitOnSpace(values[1]);
@@ -211,7 +215,7 @@ public class UserDictionary implements Dictionary {
 			wordIdAndLength[0] = wordId;
 			for (int i = 0; i < segmentation.length; i++) {
 				wordIdAndLength[i + 1] = segmentation[i].length();
-                dictionary.featureEntries.put(wordId, readings[i] + INTERNAL_SEPARATOR + pos);
+                dictionary.featureEntries.put(wordId, readings[i] + INTERNAL_SEPARATOR + cost + INTERNAL_SEPARATOR + pos);
 				wordId++;
 			}
             dictionary.entries.put(values[0], wordIdAndLength);

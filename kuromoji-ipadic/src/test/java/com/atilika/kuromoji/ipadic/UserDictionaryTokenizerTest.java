@@ -32,17 +32,17 @@ public class UserDictionaryTokenizerTest {
 
     @Before
     public void setUp() throws IOException {
-        String userDictionary = "クロ,クロ,クロ,カスタム名詞\n"
-            + "真救世主,真救世主,シンキュウセイシュ,カスタム名詞\n"
-            + "真救世主伝説,真救世主伝説,シンキュウセイシュデンセツ,カスタム名詞\n"
-            + "北斗の拳,北斗の拳,ホクトノケン,カスタム名詞";
+        String userDictionary = "クロ,クロ,クロ,カスタム名詞,100\n"
+            + "真救世主,真救世主,シンキュウセイシュ,カスタム名詞,100\n"
+            + "真救世主伝説,真救世主伝説,シンキュウセイシュデンセツ,カスタム名詞,100\n"
+            + "北斗の拳,北斗の拳,ホクトノケン,カスタム名詞,100";
 
         buildTokenizerWithUserDictionary(userDictionary);
     }
 
     @Test
     public void testWhitespace() throws IOException {
-        String entry = "iPhone4 S,iPhone4 S,iPhone4 S,カスタム名詞";
+        String entry = "iPhone4 S,iPhone4 S,iPhone4 S,カスタム名詞,100";
         buildTokenizerWithUserDictionary(entry);
         List<Token> tokens = tokenizer.tokenize("iPhone4 S");
 
@@ -51,17 +51,32 @@ public class UserDictionaryTokenizerTest {
 
     @Test(expected = RuntimeException.class)
     public void testBadlyFormattedEntry() throws IOException {
-        String entry = "関西国際空港,関西 国際 空,カンサイ コクサイクウコウ,カスタム名詞";
+        String entry = "関西国際空港,関西 国際 空,カンサイ コクサイクウコウ,カスタム名詞,100";
         buildTokenizerWithUserDictionary(entry);
     }
 
     @Test
-    public void testAcropolis() throws IOException {
-        String userDictionaryEntry = "クロ,クロ,クロ,カスタム名詞";
+    public void testAcropolisWithLowCost() throws IOException {
+        String userDictionaryEntry = "クロ,クロ,クロ,カスタム名詞,100";
         buildTokenizerWithUserDictionary(userDictionaryEntry);
 
         String input = "アクロポリス";
         String[] surfaceForms = {"ア", "クロ", "ポリス"};
+
+        List<Token> tokens = tokenizer.tokenize(input);
+
+        for (int i = 0; i < tokens.size(); i++) {
+            assertEquals(surfaceForms[i], tokens.get(i).getSurfaceForm());
+        }
+    }
+
+    @Test
+    public void testAcropolisWithHighCost() throws IOException {
+        String userDictionaryEntry = "クロ,クロ,クロ,カスタム名詞,100000";
+        buildTokenizerWithUserDictionary(userDictionaryEntry);
+
+        String input = "アクロポリス";
+        String[] surfaceForms = {"アクロポリス"};
 
         List<Token> tokens = tokenizer.tokenize(input);
 
@@ -85,7 +100,7 @@ public class UserDictionaryTokenizerTest {
 
     @Test
     public void testAcropolisInSentence() throws IOException {
-        String userDictionaryEntry = "クロ,クロ,クロ,カスタム名詞";
+        String userDictionaryEntry = "クロ,クロ,クロ,カスタム名詞,100";
         buildTokenizerWithUserDictionary(userDictionaryEntry);
 
         String input = "この丘はアクロポリスと呼ばれている。";
@@ -101,7 +116,7 @@ public class UserDictionaryTokenizerTest {
 
     @Test
     public void testLatticeBrokenAfterUserDictEntry() throws IOException {
-        String userDictionaryEntry = "クロ,クロ,クロ,カスタム名詞";
+        String userDictionaryEntry = "クロ,クロ,クロ,カスタム名詞,-10000";
         buildTokenizerWithUserDictionary(userDictionaryEntry);
 
         String input = "アクロア";
@@ -121,7 +136,7 @@ public class UserDictionaryTokenizerTest {
 
     @Test
     public void testLatticeBrokenAfterUserDictEntryInSentence() throws IOException {
-        String userDictionaryEntry = "クロ,クロ,クロ,カスタム名詞,a,a,a";
+        String userDictionaryEntry = "クロ,クロ,クロ,カスタム名詞,-10000";
         buildTokenizerWithUserDictionary(userDictionaryEntry);
 
         String input = "この丘の名前はアクロアだ。";
@@ -149,7 +164,7 @@ public class UserDictionaryTokenizerTest {
 
     @Test
     public void testShinKyuseishu() throws IOException {
-        String userDictionaryEntry = "真救世主,真救世主,シンキュウセイシュ,カスタム名詞";
+        String userDictionaryEntry = "真救世主,真救世主,シンキュウセイシュ,カスタム名詞,100";
         buildTokenizerWithUserDictionary(userDictionaryEntry);
 
         assertEquals("シンキュウセイシュ", given("真救世主伝説"));
@@ -157,7 +172,7 @@ public class UserDictionaryTokenizerTest {
 
     @Test
     public void testShinKyuseishuDensetsu() throws IOException {
-        String userDictionaryEntry = "真救世主伝説,真救世主伝説,シンキュウセイシュデンセツ,カスタム名詞";
+        String userDictionaryEntry = "真救世主伝説,真救世主伝説,シンキュウセイシュデンセツ,カスタム名詞,100";
         buildTokenizerWithUserDictionary(userDictionaryEntry);
 
         assertEquals("シンキュウセイシュデンセツ", given("真救世主伝説"));
@@ -176,7 +191,7 @@ public class UserDictionaryTokenizerTest {
 
     @Test
     public void testLongestActualJapaneseWord() throws IOException {
-        String userDictionaryEntry = "竜宮の乙姫の元結の切り外し,竜宮の乙姫の元結の切り外し,リュウグウノオトヒメノモトユイノキリハズシ,カスタム名詞";
+        String userDictionaryEntry = "竜宮の乙姫の元結の切り外し,竜宮の乙姫の元結の切り外し,リュウグウノオトヒメノモトユイノキリハズシ,カスタム名詞,100";
         buildTokenizerWithUserDictionary(userDictionaryEntry);
 
         assertEquals("リュウグウノオトヒメノモトユイノキリハズシ", given("竜宮の乙姫の元結の切り外し"));
@@ -187,7 +202,8 @@ public class UserDictionaryTokenizerTest {
         String userDictionaryEntry = "マルキ・ド・サドの演出のもとにシャラントン精神病院患者たちによって演じられたジャン＝ポール・マラーの迫害と暗殺,"
             + "マルキ・ド・サドの演出のもとにシャラントン精神病院患者たちによって演じられたジャン＝ポール・マラーの迫害と暗殺,"
             + "マルキ・ド・サドノエンシュツノモトニシャラントンセイシンビョウインカンジャタチニヨッテエンジラレタジャン＝ポール・マラーノハクガイトアンサツ,"
-            + "カスタム名詞";
+            + "カスタム名詞,"
+            + "100";
         buildTokenizerWithUserDictionary(userDictionaryEntry);
 
         assertEquals("マルキ・ド・サドノエンシュツノモトニシャラントンセイシンビョウインカンジャタチニヨッテエンジラレタジャン＝ポール・マラーノハクガイトアンサツ",
