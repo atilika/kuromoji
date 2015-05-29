@@ -4,7 +4,7 @@
 
 In order to build Kuromoji from source, please do as follows:
   
-    `% mvn clean package`
+    % mvn clean package
 
    which downloads source dictionary data and builds Kuromoji with all dictionaries.
 
