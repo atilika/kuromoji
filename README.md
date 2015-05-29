@@ -3,13 +3,7 @@
 ## Building
 
 In order to build Kuromoji from source, please do as follows:
-
-1. Provide Java with 2GB heap size
-
-    `% export MAVEN_OPTS=-Xmx2g`
   
-2. Run Maven using
-
     `% mvn clean package`
 
    which downloads source dictionary data and builds Kuromoji with all dictionaries.
