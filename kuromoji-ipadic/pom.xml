@@ -18,7 +18,8 @@
         <kuromoji.dict.file>mecab-ipadic-2.7.0-20070801.tar.gz</kuromoji.dict.file>
         <kuromoji.dict.url>http://atilika.com/releases/mecab-ipadic/${kuromoji.dict.file}</kuromoji.dict.url>
         <kuromoji.dict.dir>${project.basedir}/dictionary/mecab-ipadic-2.7.0-20070801</kuromoji.dict.dir>
-        <kuromoji.dict.targetdir>${project.basedir}/src/main/resources/com/atilika/kuromoji/ipadic</kuromoji.dict.targetdir>
+        <kuromoji.dict.targetdir>${project.basedir}/src/main/resources/com/atilika/kuromoji/ipadic
+        </kuromoji.dict.targetdir>
         <kuromoji.dict.encoding>euc-jp</kuromoji.dict.encoding>
         <kuromoji.dict.compact>false</kuromoji.dict.compact>
     </properties>
@@ -33,6 +34,41 @@
             </activation>
             <build>
                 <plugins>
+                    <plugin>
+                        <artifactId>maven-resources-plugin</artifactId>
+                        <version>2.7</version>
+                        <executions>
+                            <execution>
+                                <id>copy-license-resources</id>
+                                <phase>generate-resources</phase>
+                                <goals>
+                                    <goal>copy-resources</goal>
+                                </goals>
+                                <configuration>
+                                    <outputDirectory>${project.build.outputDirectory}/META-INF</outputDirectory>
+                                    <resources>
+                                        <resource>
+                                            <!-- Becomes top level directory. Is there a better way to do this? -->
+                                            <directory>${project.basedir}/..</directory>
+                                            <filtering>false</filtering>
+                                            <includes>
+                                                <include>LICENSE.md</include>
+                                                <include>CONTRIBUTORS.md</include>
+                                            </includes>
+                                        </resource>
+                                        <resource>
+                                            <directory>${project.basedir}</directory>
+                                            <filtering>false</filtering>
+                                            <includes>
+                                                <include>NOTICE.md</include>
+                                            </includes>
+                                        </resource>
+                                    </resources>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-antrun-plugin</artifactId>

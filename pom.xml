@@ -48,7 +48,7 @@
             <roles>
                 <role>developer</role>
             </roles>
-            <timezone>JST</timezone>
+            <timezone>Asia/Tokyo</timezone>
         </developer>
         <developer>
             <id>christian</id>
@@ -59,7 +59,7 @@
             <roles>
                 <role>developer</role>
             </roles>
-            <timezone>JST</timezone>
+            <timezone>Asia/Tokyo</timezone>
         </developer>
     </developers>
 
@@ -68,18 +68,20 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <maven.compiler.source>1.7</maven.compiler.source>
         <maven.compiler.target>1.7</maven.compiler.target>
+
     </properties>
+
 
     <distributionManagement>
         <repository>
-            <id>atilika</id>
-            <name>Atilika</name>
-            <url>http://aji.atilika.net:8081/nexus/content/repositories/atilika/</url>
+            <id>sonatype-nexus-staging</id>
+            <name>Nexus Release Repository</name>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
         </repository>
         <snapshotRepository>
-            <id>atilika-snapshots</id>
-            <name>Atilika Snaphots</name>
-            <url>http://aji.atilika.net:8081/nexus/content/repositories/atilika-snapshots/</url>
+            <id>sonatype-nexus-snapshots</id>
+            <name>Nexus Snapshot Repository</name>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
         </snapshotRepository>
     </distributionManagement>
 
@@ -94,37 +96,37 @@
             </activation>
             <build>
                 <plugins>
-                    <!--<plugin>-->
-                    <!--<groupId>org.apache.maven.plugins</groupId>-->
-                    <!--<artifactId>maven-compiler-plugin</artifactId>-->
-                    <!--<version>3.3</version>-->
-                    <!--</plugin>-->
-                    <!--<plugin>-->
-                    <!--<groupId>org.apache.maven.plugins</groupId>-->
-                    <!--<artifactId>maven-source-plugin</artifactId>-->
-                    <!--<version>2.2.1</version>-->
-                    <!--<executions>-->
-                    <!--<execution>-->
-                    <!--<id>attach-sources</id>-->
-                    <!--<goals>-->
-                    <!--<goal>jar-no-fork</goal>-->
-                    <!--</goals>-->
-                    <!--</execution>-->
-                    <!--</executions>-->
-                    <!--</plugin>-->
-                    <!--<plugin>-->
-                    <!--<groupId>org.apache.maven.plugins</groupId>-->
-                    <!--<artifactId>maven-javadoc-plugin</artifactId>-->
-                    <!--<version>2.9.1</version>-->
-                    <!--<executions>-->
-                    <!--<execution>-->
-                    <!--<id>attach-javadocs</id>-->
-                    <!--<goals>-->
-                    <!--<goal>jar</goal>-->
-                    <!--</goals>-->
-                    <!--</execution>-->
-                    <!--</executions>-->
-                    <!--</plugin>-->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-compiler-plugin</artifactId>
+                        <version>3.3</version>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                        <version>2.2.1</version>
+                        <executions>
+                            <execution>
+                                <id>attach-sources</id>
+                                <goals>
+                                    <goal>jar-no-fork</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <version>2.9.1</version>
+                        <executions>
+                            <execution>
+                                <id>attach-javadocs</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-gpg-plugin</artifactId>
@@ -138,6 +140,11 @@
                                 </goals>
                             </execution>
                         </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-deploy-plugin</artifactId>
+                        <version>2.8.2</version>
                     </plugin>
                 </plugins>
             </build>
