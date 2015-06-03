@@ -18,10 +18,10 @@
 package com.atilika.kuromoji.unidic;
 
 import com.atilika.kuromoji.AbstractTokenizer;
-import com.atilika.kuromoji.TokenizerRunner;
 import com.atilika.kuromoji.ClassLoaderResolver;
 import com.atilika.kuromoji.PrefixDecoratorResolver;
 import com.atilika.kuromoji.ResourceResolver;
+import com.atilika.kuromoji.TokenizerRunner;
 import com.atilika.kuromoji.dict.DynamicDictionaries;
 import com.atilika.kuromoji.dict.UserDictionary;
 import com.atilika.kuromoji.viterbi.ViterbiNode;

@@ -19,7 +19,12 @@ package com.atilika.kuromoji.trie;
 import com.atilika.kuromoji.ResourceResolver;
 import com.atilika.kuromoji.io.ProgressLog;
 
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.DataInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.IntBuffer;
