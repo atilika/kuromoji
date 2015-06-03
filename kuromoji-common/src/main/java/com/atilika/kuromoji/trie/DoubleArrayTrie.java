@@ -16,15 +16,10 @@
  */
 package com.atilika.kuromoji.trie;
 
-import com.atilika.kuromoji.ClassLoaderResolver;
 import com.atilika.kuromoji.ResourceResolver;
+import com.atilika.kuromoji.io.ProgressLog;
 
-import java.io.BufferedInputStream;
-import java.io.DataInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.RandomAccessFile;
+import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.IntBuffer;
@@ -34,26 +29,20 @@ import java.nio.channels.ReadableByteChannel;
 
 public class DoubleArrayTrie {
 
-    public static final String FILENAME = "dat.dat";
-
+    public static final String DOUBLE_ARRAY_TRIE_FILENAME = "dat.dat";
     public static final char TERMINATING_CHARACTER = '\u0001';
 
     private static final int BASE_CHECK_INITIAL_SIZE = 700000; //1000000;
-
     private static final int TAIL_INITIAL_SIZE = 10000;
-
     private static final int TAIL_OFFSET = 100000000;
 
     private IntBuffer baseBuffer;
-
     private IntBuffer checkBuffer;
-
     private CharBuffer tailBuffer;
 
     private int tailIndex = TAIL_OFFSET;
 
     private final boolean compact;
-    private int maxIndex;
 
     public DoubleArrayTrie() {
         this(false);
@@ -70,7 +59,7 @@ public class DoubleArrayTrie {
      * @throws IOException
      */
     public void write(String directoryName) throws IOException {
-        String filename = directoryName + File.separator + FILENAME;
+        String filename = directoryName + File.separator + DOUBLE_ARRAY_TRIE_FILENAME;
 
         baseBuffer.rewind();
         checkBuffer.rewind();
@@ -109,11 +98,7 @@ public class DoubleArrayTrie {
     }
 
     public static DoubleArrayTrie newInstance(ResourceResolver resolver) throws IOException {
-        return read(resolver.resolve(FILENAME));
-    }
-
-    public static DoubleArrayTrie newInstance() throws IOException {
-        return newInstance(new ClassLoaderResolver(DoubleArrayTrie.class));
+        return read(resolver.resolve(DOUBLE_ARRAY_TRIE_FILENAME));
     }
 
     /**
@@ -156,14 +141,14 @@ public class DoubleArrayTrie {
      * @param trie normal trie which contains all dictionary words
      */
     public void build(Trie trie) {
-        System.out.println("\n    building " + (compact ? "compact" : "sparse") + " trie...");
+        ProgressLog.begin("building " + (compact ? "compact" : "sparse") + " trie");
         baseBuffer = ByteBuffer.allocate(BASE_CHECK_INITIAL_SIZE * 4).asIntBuffer();
         baseBuffer.put(0, 1);
         checkBuffer = ByteBuffer.allocate(BASE_CHECK_INITIAL_SIZE * 4).asIntBuffer();
         tailBuffer = ByteBuffer.allocate(TAIL_INITIAL_SIZE * 2).asCharBuffer();
         add(-1, 0, trie.getRoot());
-
         reportUtilizationRate();
+        ProgressLog.end();
     }
 
     private void reportUtilizationRate() {
@@ -173,7 +158,7 @@ public class DoubleArrayTrie {
                 zeros++;
             }
         }
-        System.out.println("    trie memory utilization ratio (" + (!compact ? "not " : "") + "compacted): " + ((baseBuffer.limit() - zeros) / (float) baseBuffer.limit()));
+        ProgressLog.println("trie memory utilization ratio (" + (!compact ? "not " : "") + "compacted): " + ((baseBuffer.limit() - zeros) / (float) baseBuffer.limit()));
     }
 
     /**
@@ -202,9 +187,6 @@ public class DoubleArrayTrie {
             checkBuffer.put(index, previous);    // Set check value
         }
 
-//        if (index > maxIndex) {
-//            maxIndex = index;
-//        }
         for (Trie.Node child : children) {    // For each child to double array trie
             if (compact) {
                 add(index, base + child.getKey(), child);
@@ -221,7 +203,6 @@ public class DoubleArrayTrie {
      * @param key key to match
      * @return index value of last character in baseBuffer(double array id) if it is complete match. Negative value if it doesn't match. 0 if it is prefix match.
      */
-
     public int lookup(String key) {
         return lookup(key, 0, 0);
     }
@@ -334,13 +315,14 @@ public class DoubleArrayTrie {
     }
 
     private void extendBuffers(int nextIndex) {
-        int newLength = nextIndex + 1;
-        IntBuffer newBaseBuffer = ByteBuffer.allocate(newLength * 4 * 2 * 2).asIntBuffer();
+        int newLength = (nextIndex + 1) * 16;
+
+        IntBuffer newBaseBuffer = ByteBuffer.allocate(newLength).asIntBuffer();
         baseBuffer.rewind();
         newBaseBuffer.put(baseBuffer);
         baseBuffer = newBaseBuffer;
 
-        IntBuffer newCheckBuffer = ByteBuffer.allocate(newLength * 4 * 2 * 2).asIntBuffer();
+        IntBuffer newCheckBuffer = ByteBuffer.allocate(newLength).asIntBuffer();
         checkBuffer.rewind();
         newCheckBuffer.put(checkBuffer);
         checkBuffer = newCheckBuffer;
@@ -361,10 +343,10 @@ public class DoubleArrayTrie {
             }
             tailBuffer.put(tailIndex++ - TAIL_OFFSET, node.getKey());// set character of current node
 
-            if (node.getChildren().length == 0) {    // if it reached the end of input, break.
+            if (node.getChildren().length == 0) { // if it reached the end of input, break.
                 break;
             }
-            node = node.getChildren()[0];    // Move to next node
+            node = node.getChildren()[0]; // Move to next node
         }
     }
 }

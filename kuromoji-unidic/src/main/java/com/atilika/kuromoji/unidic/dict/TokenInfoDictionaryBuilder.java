@@ -26,15 +26,13 @@ import java.util.List;
 
 public class TokenInfoDictionaryBuilder extends AbstractTokenInfoDictionaryBuilder<DictionaryEntry> {
 
-    private final DictionaryEntryLineParser lineParser = new DictionaryEntryLineParser();
-
     public TokenInfoDictionaryBuilder(String encoding) {
         super(encoding);
     }
 
     @Override
     protected DictionaryEntry parse(String line) {
-        String[] fields = lineParser.parseLine(line);
+        String[] fields = DictionaryEntryLineParser.parseLine(line);
         DictionaryEntry entry = new DictionaryEntry(fields);
         return entry;
     }

@@ -113,16 +113,6 @@ public class Tokenizer extends AbstractTokenizer {
         }
 
         /**
-         * Sets the default {@link ResourceResolver} used to locate dictionaries.
-         *
-         * @see #prefix(String)
-         */
-        public void resolver(ResourceResolver resolver) {
-            if (resolver == null) throw new IllegalArgumentException();
-            this.resolver = resolver;
-        }
-
-        /**
          * Create Tokenizer instance
          *
          * @return Tokenizer

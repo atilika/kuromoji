@@ -25,15 +25,11 @@ import java.util.Map;
 public class ViterbiFormatter {
 
 	private final static String BOS_LABEL = "BOS";
-
 	private final static String EOS_LABEL = "EOS";
-
 	private final static String FONT_NAME = "Helvetica";
 
 	private ConnectionCosts costs;
-
 	private Map<String, ViterbiNode> nodeMap;
-
 	private Map<String, String> bestPathMap;
 
 	private boolean foundBOS;
@@ -56,7 +52,6 @@ public class ViterbiFormatter {
 
 	public String format(ViterbiLattice lattice, List<ViterbiNode> bestPath) {
 
-//		List<ViterbiNode> bestPathWithBOSAndEOS = new ArrayList<ViterbiNode>(bastPath);
 		initBestPathMap(bestPath);
 
 		StringBuilder sb = new StringBuilder();
@@ -196,9 +191,6 @@ public class ViterbiFormatter {
 		sb.append(node.getWordCost());
 		sb.append("</font>");
 		sb.append("</td></tr>");
-//		sb.append("<tr><td>");
-//		sb.append(this.dictionary.get(node.getWordId()).getPosInfo());
-//		sb.append("</td></tr>");
 		sb.append("</table>>");
 		return sb.toString();
 	}

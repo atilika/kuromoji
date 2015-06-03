@@ -34,9 +34,7 @@ import java.util.List;
 public class DebugTokenizer {
 
     private ViterbiFormatter formatter;
-
     private ViterbiBuilder viterbiBuilder;
-
     private ViterbiSearcher viterbiSearcher;
 
     protected DebugTokenizer(DynamicDictionaries dictionaries, UserDictionary userDictionary, Mode mode) {
@@ -67,8 +65,6 @@ public class DebugTokenizer {
 
         private UserDictionary userDictionary = null;
 
-        private String directory = "ipadic";
-
         private DynamicDictionaries dictionaries = null;
         /**
          * The default resource prefix, also configurable via
@@ -95,11 +91,6 @@ public class DebugTokenizer {
 
         public synchronized Builder userDictionary(String userDictionaryPath) throws IOException {
             this.userDictionary(new BufferedInputStream(new FileInputStream(userDictionaryPath)));
-            return this;
-        }
-
-        public synchronized Builder setDictionaries(DynamicDictionaries dictionaries) {
-            this.dictionaries = dictionaries;
             return this;
         }
 

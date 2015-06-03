@@ -23,6 +23,7 @@ import com.atilika.kuromoji.jumandic.dict.DictionaryField;
 import com.atilika.kuromoji.viterbi.ViterbiNode;
 
 public class Token extends AbstractToken {
+
     public Token(int wordId, String surfaceForm, ViterbiNode.Type type, int position, Dictionary dictionary) {
         super(wordId, surfaceForm, type, position, dictionary);
     }

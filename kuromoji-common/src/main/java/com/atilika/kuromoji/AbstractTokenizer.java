@@ -36,22 +36,19 @@ import java.util.List;
 public abstract class AbstractTokenizer {
 
     public static final String DEFAULT_DICT_PREFIX_PROPERTY = "com.atilika.kuromoji.dict.targetdir";
-
     public static final String DEFAULT_DICT_PREFIX = "com/atilika/kuromoji/ipadic/";
 
     public enum Mode {
         NORMAL, SEARCH, EXTENDED
     }
+
     private final ViterbiBuilder viterbiBuilder;
-
     private final ViterbiSearcher viterbiSearcher;
-
-    // FIXME: Protected at the moment for access from Subclass
-    protected final EnumMap<ViterbiNode.Type, Dictionary> dictionaryMap = new EnumMap<>(ViterbiNode.Type.class);
-
     private final boolean split;
 
     private final DynamicDictionaries dictionaries;
+
+    protected final EnumMap<ViterbiNode.Type, Dictionary> dictionaryMap = new EnumMap<>(ViterbiNode.Type.class);
 
     protected AbstractTokenizer(DynamicDictionaries dictionaries, UserDictionary userDictionary, Mode mode, boolean split, List<Integer> penalties) {
         this.dictionaries = dictionaries;
@@ -94,11 +91,7 @@ public abstract class AbstractTokenizer {
         setupDictionaries(dictionaries, userDictionary);
 
         this.viterbiSearcher = new ViterbiSearcher(this.viterbiBuilder, mode, dictionaries.getCosts(), dictionaries.getUnknownDictionary(),
-                searchModeKanjiLength, searchModeKanjiPenalty, searchModeOtherLength, searchModeOtherPenalty);
-    }
-
-    public DynamicDictionaries getDictionaries() {
-        return dictionaries;
+            searchModeKanjiLength, searchModeKanjiPenalty, searchModeOtherLength, searchModeOtherPenalty);
     }
 
     /**
@@ -178,9 +171,6 @@ public abstract class AbstractTokenizer {
 
         ViterbiLattice lattice = viterbiBuilder.build(sentence);
         List<ViterbiNode> bestPath = viterbiSearcher.search(lattice);
-
-//        ViterbiFormatter formatter = new ViterbiFormatter(this.dictionaries.getCosts());
-//        System.out.println(formatter.format(lattice, bestPath));
 
         for (ViterbiNode node : bestPath) {
             int wordId = node.getWordId();

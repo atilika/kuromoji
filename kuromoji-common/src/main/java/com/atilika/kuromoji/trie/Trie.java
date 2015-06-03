@@ -21,7 +21,10 @@ package com.atilika.kuromoji.trie;
  */
 public class Trie {
 
-    private Node root;// Root node of Trie
+    /**
+     * Root node of Trie
+     */
+    private Node root;
 
     /**
      * Constructor
@@ -54,9 +57,9 @@ public class Trie {
      * Trie Node
      */
     public class Node {
-        char key;                        // key(char) of this node
+        char key; /// key(char) of this node
 
-        Node[] children = new Node[0];    // Array to hold children nodes
+        Node[] children = new Node[0]; // Array to hold children nodes
 
         /**
          * Constructor

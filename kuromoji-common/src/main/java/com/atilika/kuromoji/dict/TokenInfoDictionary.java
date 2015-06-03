@@ -34,33 +34,27 @@ import java.util.TreeMap;
 
 public class TokenInfoDictionary implements Dictionary {
 
-    public static final String FILENAME = "tid.dat";
-
+    private static final String TOKEN_INFO_DICTIONARY_FILENAME = "tid.dat";
     private static final String FEATURE_MAP_FILENAME = "tid_fet.dat";
+    private static final String POS_MAP_FILENAME = "tid_pos.dat";
+    private static final String TARGETMAP_FILENAME = "tid_map.dat";
 
-    public static final String POS_MAP_FILENAME = "tid_pos.dat";
-
-    public static final String TARGETMAP_FILENAME = "tid_map.dat";
-
-    public static final int LEFT_ID = 0;
-    public static final int RIGHT_ID = 1;
-    public static final int WORD_COST = 2;
-    public static final int TOKEN_INFO_OFFSET = 3;
+    private static final int LEFT_ID = 0;
+    private static final int RIGHT_ID = 1;
+    private static final int WORD_COST = 2;
+    private static final int TOKEN_INFO_OFFSET = 3;
 
     protected WordIdMap wordIdMap;
-
     protected Map<String, Short> pos;
-
-    List<BufferEntry> entries;
-
     protected FeatureInfoMap posInfo;
     protected FeatureInfoMap otherInfo;
-
-    private List<String> surfaces;
-    private List<GenericDictionaryEntry> dictionaryEntries;
     protected TokenInfoBuffer tokenInfoBuffer;
     protected StringValueMapBuffer stringValues;
     protected StringValueMapBuffer posValues;
+
+    private List<BufferEntry> entries;
+    private List<String> surfaces;
+    private List<GenericDictionaryEntry> dictionaryEntries;
 
     public TokenInfoDictionary() {
         entries = new ArrayList<>();
@@ -225,8 +219,6 @@ public class TokenInfoDictionary implements Dictionary {
 
         if (fields.length == 0) { // All features
             for (String feature : allFeatures) {
-                // TODO: Should this be quoted?
-//                sb.append(feature).append(",");
                 sb.append(DictionaryEntryLineParser.quoteEscape(feature)).append(",");
             }
         } else {
@@ -266,7 +258,7 @@ public class TokenInfoDictionary implements Dictionary {
      * @throws IOException
      */
     public void write(String directoryName) throws IOException {
-        writeDictionary(directoryName + File.separator + FILENAME);
+        writeDictionary(directoryName + File.separator + TOKEN_INFO_DICTIONARY_FILENAME);
         writeMap(directoryName + File.separator + POS_MAP_FILENAME, posInfo);
         writeMap(directoryName + File.separator + FEATURE_MAP_FILENAME, otherInfo);
         writeTargetMap(directoryName + File.separator + TARGETMAP_FILENAME);
@@ -305,7 +297,7 @@ public class TokenInfoDictionary implements Dictionary {
     }
 
     private void setup(ResourceResolver resolver) throws IOException, ClassNotFoundException {
-        tokenInfoBuffer = new TokenInfoBuffer(resolver.resolve(FILENAME));
+        tokenInfoBuffer = new TokenInfoBuffer(resolver.resolve(TOKEN_INFO_DICTIONARY_FILENAME));
         stringValues = new StringValueMapBuffer(resolver.resolve(FEATURE_MAP_FILENAME));
         posValues = new StringValueMapBuffer(resolver.resolve(POS_MAP_FILENAME));
         wordIdMap = new WordIdMap(resolver.resolve(TARGETMAP_FILENAME));

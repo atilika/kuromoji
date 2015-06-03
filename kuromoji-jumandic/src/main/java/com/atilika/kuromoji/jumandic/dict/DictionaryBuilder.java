@@ -23,6 +23,7 @@ import com.atilika.kuromoji.util.AbstractTokenInfoDictionaryBuilder;
 import java.io.IOException;
 
 public class DictionaryBuilder extends AbstractDictionaryBuilder {
+
     @Override
     protected AbstractTokenInfoDictionaryBuilder getTokenInfoDictionaryBuilder(String encoding) {
         return new TokenInfoDictionaryBuilder(encoding);

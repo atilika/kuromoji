@@ -16,15 +16,9 @@
  */
 package com.atilika.kuromoji.dict;
 
-import com.atilika.kuromoji.ClassLoaderResolver;
 import com.atilika.kuromoji.ResourceResolver;
 
-import java.io.BufferedInputStream;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.ShortBuffer;
 import java.nio.channels.Channels;
@@ -33,10 +27,9 @@ import java.nio.channels.WritableByteChannel;
 
 public class ConnectionCosts {
 
-    public static final String FILENAME = "cc.dat";
+    public static final String CONNECTION_COSTS_FILENAME = "cc.dat";
 
     private int dimension;
-
     private ShortBuffer costs;
 
     public ConnectionCosts(int forwardSize, int backwardSize) {
@@ -53,11 +46,7 @@ public class ConnectionCosts {
     }
 
     public static ConnectionCosts newInstance(ResourceResolver resolver) throws IOException, ClassNotFoundException {
-        return read(resolver.resolve(FILENAME));
-    }
-
-    public static ConnectionCosts newInstance() throws IOException, ClassNotFoundException {
-        return newInstance(new ClassLoaderResolver(ConnectionCosts.class));
+        return read(resolver.resolve(CONNECTION_COSTS_FILENAME));
     }
 
     public void write(OutputStream stream) throws IOException {

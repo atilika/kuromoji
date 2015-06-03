@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.atilika.kuromoji.util;
 
 import com.atilika.kuromoji.io.ByteBufferTool;
@@ -29,9 +28,10 @@ import java.util.TreeMap;
 
 public class StringValueMapBuffer {
 
-    public static final int INTEGER_BYTES = Integer.SIZE / Byte.SIZE;
-    public static final int SHORT_BYTES = Short.SIZE / Byte.SIZE;
-    public static final Charset CHARSET = StandardCharsets.UTF_8;
+    private static final int INTEGER_BYTES = Integer.SIZE / Byte.SIZE;
+    private static final int SHORT_BYTES = Short.SIZE / Byte.SIZE;
+    private static final Charset CHARSET = StandardCharsets.UTF_8;
+
     private ByteBuffer buffer;
 
     public StringValueMapBuffer(TreeMap<Integer, String> features) {
@@ -43,7 +43,7 @@ public class StringValueMapBuffer {
     }
 
     private static int getMetaDataSize() {
-        return INTEGER_BYTES * 1;
+        return INTEGER_BYTES;
     }
 
     public void putMap(TreeMap<Integer, String> input) {
@@ -73,7 +73,7 @@ public class StringValueMapBuffer {
         byte[] bytes = s.getBytes(CHARSET);
 
         buffer.position(address);
-        // Todo: The length field in the entry (bytes.length) field can be optimized (shrunk) for most dictionary types.
+        // TODO: The length field in the entry (bytes.length) field can be optimized (shrunk) for most dictionary types.
         buffer.putShort((short) bytes.length);
         buffer.put(bytes);
 

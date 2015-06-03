@@ -33,8 +33,7 @@ public class UnknownDictionaryBuilder {
 	}
 	
 	public UnknownDictionary build(String dirname) throws IOException {
-		UnknownDictionary unkDictionary = null;
-		unkDictionary = readDictionaryFile(dirname + File.separator + "unk.def");  //Should be only one file
+		UnknownDictionary unkDictionary = readDictionaryFile(dirname + File.separator + "unk.def");  //Should be only one file
 		readCharacterDefinition(dirname + File.separator + "char.def", unkDictionary);
 		return unkDictionary;
 	}
@@ -46,7 +45,7 @@ public class UnknownDictionaryBuilder {
 
 	public UnknownDictionary readDictionaryFile(String filename, String encoding)
 		throws IOException {
-		UnknownDictionary dictionary = new UnknownDictionary(5 * 1024 * 1024);
+		UnknownDictionary dictionary = new UnknownDictionary();
 		UnknownDictionaryEntryParser dictionaryEntryParser = new UnknownDictionaryEntryParser();
 		
 		FileInputStream inputStream = new FileInputStream(filename);
@@ -86,12 +85,12 @@ public class UnknownDictionaryBuilder {
 				String[] values = line.split(" ", 2);	// Split only first space
 				
 				if(!values[0].contains("..")) {
-					int cp = Integer.decode(values[0]).intValue();
+					int cp = Integer.decode(values[0]);
 					dictionary.putCharacterCategory(cp, values[1]);					
 				} else {
 					String[] codePoints = values[0].split("\\.\\.");
-					int cpFrom = Integer.decode(codePoints[0]).intValue();
-					int cpTo = Integer.decode(codePoints[1]).intValue();
+					int cpFrom = Integer.decode(codePoints[0]);
+					int cpTo = Integer.decode(codePoints[1]);
 					
 					for(int i = cpFrom; i <= cpTo; i++){
 						dictionary.putCharacterCategory(i, values[1]);					

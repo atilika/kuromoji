@@ -26,16 +26,25 @@ import java.util.EnumMap;
 import java.util.Map;
 
 public final class CharacterDefinition {
-    private final CharacterClass[] characterCategoryMap;
 
     // invoke, group, length
     private final EnumMap<CharacterClass, int[]> invokeDefinitionMap;
+    private final CharacterClass[] characterCategoryMap;
 
     public static enum CharacterClass {
         NGRAM, DEFAULT, SPACE, SYMBOL, NUMERIC, ALPHA, CYRILLIC, GREEK, HIRAGANA, KATAKANA, KANJI, KANJINUMERIC, HANGUL, HANJA, HANJANUMERIC;
 
         public int getId() {
             return ordinal();
+        }
+    }
+
+    public CharacterDefinition() {
+        characterCategoryMap = new CharacterClass[65536];
+        invokeDefinitionMap = new EnumMap<CharacterClass, int[]>(CharacterClass.class);
+
+        for (int i = 0; i < characterCategoryMap.length; i++) {
+            characterCategoryMap[i] = CharacterClass.DEFAULT;
         }
     }
 
@@ -47,24 +56,9 @@ public final class CharacterDefinition {
         this.invokeDefinitionMap = invokeMap;
     }
 
-    /**
-     * Constructor
-     */
-    public CharacterDefinition() {
-        characterCategoryMap = new CharacterClass[65536];
-        invokeDefinitionMap = new EnumMap<CharacterClass, int[]>(CharacterClass.class);
-
-        for (int i = 0; i < characterCategoryMap.length; i++) {
-            characterCategoryMap[i] = CharacterClass.DEFAULT;
-        }
-    }
 
     public int lookup(char c) {
         return characterCategoryMap[c].getId();
-    }
-
-    public CharacterClass getCharacterClass(char c) {
-        return characterCategoryMap[c];
     }
 
     public boolean isInvoke(char c) {

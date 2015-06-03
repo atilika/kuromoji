@@ -31,17 +31,13 @@ import java.util.TreeMap;
 
 public class UserDictionary implements Dictionary {
 
-	private TreeMap<String, int[]> entries = new TreeMap<>();
+    private static final int CUSTOM_DICTIONARY_WORD_ID_OFFSET = 100000000;
+    private static final int WORD_COST = -100000;
+    private static final int LEFT_ID = 5;
+    private static final int RIGHT_ID = 5;
 
+    private TreeMap<String, int[]> entries = new TreeMap<>();
 	private HashMap<Integer, String> featureEntries = new HashMap<>();
-
-	private static final int CUSTOM_DICTIONARY_WORD_ID_OFFSET = 100000000;
-
-	public static final int WORD_COST = -100000;
-
-	public static final int LEFT_ID = 5;
-
-	public static final int RIGHT_ID = 5;
 
 	/**
 	 * Lookup words in text

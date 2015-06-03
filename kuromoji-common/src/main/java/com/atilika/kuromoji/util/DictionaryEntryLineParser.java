@@ -21,12 +21,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class DictionaryEntryLineParser {
+
     private static final char QUOTE = '"';
-
     private static final char COMMA = ',';
-
     private static final Pattern QUOTE_REPLACE_PATTERN = Pattern.compile("^\"([^\"]+)\"$");
-
     private static final String ESCAPED_QUOTE = "\"\"";
 
     /**
