@@ -1,13 +1,14 @@
-AUTHORS
+# Authors
 
 * Gaute Lambertsen
 * Masaru Hasegawa
 * Christian Moen
 
 
-CONTRIBUTORS
+# Contributors
 
 * Dawid Weiss
+* Gerrard Hocks
 * Masaru Hasegawa
 * Yong-woon Lee
 * Yungho Yu
