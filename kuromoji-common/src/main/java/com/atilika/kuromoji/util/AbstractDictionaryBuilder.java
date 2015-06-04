@@ -19,6 +19,7 @@ package com.atilika.kuromoji.util;
 import com.atilika.kuromoji.dict.ConnectionCosts;
 import com.atilika.kuromoji.dict.TokenInfoDictionary;
 import com.atilika.kuromoji.dict.UnknownDictionary;
+import com.atilika.kuromoji.io.ProgressLog;
 import com.atilika.kuromoji.trie.DoubleArrayTrie;
 
 import java.io.File;
@@ -38,48 +39,46 @@ public abstract class AbstractDictionaryBuilder {
     }
 
     private void buildTokenInfoDictionary(String inputDirname, String outputDirname, String encoding, boolean compactTrie) throws IOException {
-        System.out.println("building tokeninfo dict...");
+        ProgressLog.begin("building tokeninfo dict");
         AbstractTokenInfoDictionaryBuilder tokenInfoBuilder = getTokenInfoDictionaryBuilder(encoding);
         TokenInfoDictionary tokenInfoDictionary = tokenInfoBuilder.build(inputDirname);
 
         List<String> surfaces = tokenInfoDictionary.getSurfaces();
 
-        System.out.print("  building double array trie...");
+        ProgressLog.begin("building double array trie");
         DoubleArrayTrie trie = DoubleArrayTrieBuilder.build(surfaces, compactTrie);
         trie.write(outputDirname);
-        System.out.println("  done");
+        ProgressLog.end();
 
-        System.out.print("  processing target map...");
-
+        ProgressLog.begin("processing target map");
         for (int i = 0; i < surfaces.size(); i++) {
             int doubleArrayId = trie.lookup(surfaces.get(i));
             assert doubleArrayId > 0;
             tokenInfoDictionary.addMapping(doubleArrayId, i);
         }
-
         tokenInfoDictionary.write(outputDirname);
+        ProgressLog.end();
 
-        System.out.println("done");
-        System.out.println("done");
+        ProgressLog.end();
     }
 
     abstract protected AbstractTokenInfoDictionaryBuilder getTokenInfoDictionaryBuilder(String encoding);
 
     private void buildUnknownWordDictionary(String inputDirname, String outputDirname, String encoding) throws IOException {
-        System.out.print("building unknown word dict...");
+        ProgressLog.begin("building unknown word dict");
         UnknownDictionaryBuilder unkBuilder = new UnknownDictionaryBuilder(encoding);
         UnknownDictionary unkDictionary = unkBuilder.build(inputDirname);
         unkDictionary.write(outputDirname);
-        System.out.println("done");
+        ProgressLog.end();
     }
 
     private void buildConnectionCosts(String inputDirname, String outputDirname) throws IOException {
-        System.out.print("building connection costs...");
+        ProgressLog.begin("building connection costs");
         ConnectionCosts connectionCosts = ConnectionCostsBuilder.build(inputDirname + File.separator + "matrix.def");
-        OutputStream os = new FileOutputStream(outputDirname + File.separator + ConnectionCosts.FILENAME);
+        OutputStream os = new FileOutputStream(outputDirname + File.separator + ConnectionCosts.CONNECTION_COSTS_FILENAME);
         connectionCosts.write(os);
         os.close();
-        System.out.println("done");
+        ProgressLog.end();
     }
 
     protected void build(String[] args) throws IOException {
@@ -88,13 +87,13 @@ public abstract class AbstractDictionaryBuilder {
         String inputEncoding = args[2];
         boolean compactTries = Boolean.parseBoolean(args[3]);
 
-        System.out.println("dictionary builder");
-        System.out.println("");
-        System.out.println("input directory: " + inputDirname);
-        System.out.println("output directory: " + outputDirname);
-        System.out.println("input encoding: " + inputEncoding);
-        System.out.println("compact tries: " + compactTries);
-        System.out.println("");
+        ProgressLog.println("dictionary builder");
+        ProgressLog.println("");
+        ProgressLog.println("input directory: " + inputDirname);
+        ProgressLog.println("output directory: " + outputDirname);
+        ProgressLog.println("input encoding: " + inputEncoding);
+        ProgressLog.println("compact tries: " + compactTries);
+        ProgressLog.println("");
 
         build(inputDirname, outputDirname, inputEncoding, compactTries);
     }

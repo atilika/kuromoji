@@ -28,7 +28,7 @@ public class TokenizerRunner {
         String line;
         while ((line = reader.readLine()) != null) {
             List<AbstractToken> result = tokenizer.tokenize(line);
-            for(AbstractToken token : result) {
+            for (AbstractToken token : result) {
                 System.out.println(token.getSurfaceForm() + "\t" + token.getAllFeatures());
             }
         }

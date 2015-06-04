@@ -29,17 +29,11 @@ import java.util.List;
 public class ViterbiBuilder {
 
     private final DoubleArrayTrie trie;
-
     private final TokenInfoDictionary dictionary;
-
     private final UnknownDictionary unkDictionary;
-
     private final UserDictionary userDictionary;
-
     private final CharacterDefinition characterDefinition;
-
     private final boolean useUserDictionary;
-
     private boolean searchMode;
 
     public CharacterDefinition getCharacterDefinition() {
@@ -65,11 +59,7 @@ public class ViterbiBuilder {
         this.unkDictionary = unkDictionary;
         this.userDictionary = userDictionary;
 
-        if (userDictionary == null) {
-            this.useUserDictionary = false;
-        } else {
-            this.useUserDictionary = true;
-        }
+        this.useUserDictionary = (userDictionary != null);
 
         if (mode == Mode.SEARCH || mode == Mode.EXTENDED) {
             searchMode = true;
@@ -90,7 +80,7 @@ public class ViterbiBuilder {
 
         lattice.addBos();
 
-        int unknownWordEndIndex = -1;    // index of the last character of unknown word
+        int unknownWordEndIndex = -1; // index of the last character of unknown word
 
         for (int startIndex = 0; startIndex < textLength; startIndex++) {
             // If no token ends where current token starts, skip this index
@@ -118,15 +108,12 @@ public class ViterbiBuilder {
     private boolean processIndex(ViterbiLattice lattice, int startIndex, String suffix) {
         boolean found = false;
         for (int endIndex = 1; endIndex < suffix.length() + 1; endIndex++) {
-            int result = 0;
             String prefix = suffix.substring(0, endIndex);
-
-            result = trie.lookup(prefix, result, (result > 0) ? endIndex-1 : 0);
+            int result = trie.lookup(prefix, 0, 0);
 
             if (result > 0) {    // Found match in double array trie
                 found = true;    // Don't produce unknown word starting from this index
                 for (int wordId : dictionary.lookupWordIds(result)) {
-//                    System.out.println("Known, Result: " + result + ", wordId: " + wordId);
                     ViterbiNode node = new ViterbiNode(wordId, prefix, dictionary, startIndex, ViterbiNode.Type.KNOWN);
                     lattice.addNode(node, startIndex + 1, startIndex + 1 + endIndex);
                 }
@@ -142,17 +129,16 @@ public class ViterbiBuilder {
         char firstCharacter = suffix.charAt(0);
         boolean isInvoke = characterDefinition.isInvoke(firstCharacter);
 
-        if (isInvoke || found == false) {    // Process "invoke"
+        if (isInvoke || found == false) { // Process "invoke"
             unknownWordLength = unkDictionary.lookup(suffix);
         }
 
-        if (unknownWordLength > 0) {      // found unknown word
+        if (unknownWordLength > 0) { // found unknown word
             String unkWord = suffix.substring(0, unknownWordLength);
             int characterId = characterDefinition.lookup(firstCharacter);
             int[] wordIds = unkDictionary.lookupWordIds(characterId); // characters in input text are supposed to be the same
 
             for (int wordId : wordIds) {
-//                System.out.println("Unknown, CharacterId: " + characterId + ", wordId: " + wordId);
                 ViterbiNode node = new ViterbiNode(wordId, unkWord, unkDictionary, startIndex, ViterbiNode.Type.UNKNOWN);
                 lattice.addNode(node, startIndex + 1, startIndex + 1 + unknownWordLength);
             }
@@ -235,7 +221,7 @@ public class ViterbiBuilder {
                 if (glueBase != null) {
                     int length = index + 1 - startIndex;
                     String surface = glueBase.getSurfaceForm().substring(0, length);
-                    ViterbiNode glueNode = createGlueNode(length, startIndex, glueBase, surface);
+                    ViterbiNode glueNode = createGlueNode(startIndex, glueBase, surface);
                     lattice.addNode(glueNode, startIndex, startIndex + glueNode.getSurfaceForm().length());
                     return;
                 }
@@ -259,7 +245,7 @@ public class ViterbiBuilder {
                 if (glueBase != null) {
                     int length = endIndex + 1 - index;
                     String surface = glueBase.getSurfaceForm().substring(length + 1);
-                    ViterbiNode glueNode = createGlueNode(length, index, glueBase, surface);
+                    ViterbiNode glueNode = createGlueNode(index, glueBase, surface);
                     lattice.addNode(glueNode, index, index + glueNode.getSurfaceForm().length());
                     return;
                 }
@@ -318,12 +304,12 @@ public class ViterbiBuilder {
      * The new node takes the same parameters as the node it is based on, but the word is truncated to match the
      * hole in the lattice caused by the new user entry
      *
-     * @param length
      * @param startIndex
      * @param glueBase
+     * @param surface
      * @return new ViterbiNode to be inserted as glue into the lattice
      */
-    private ViterbiNode createGlueNode(int length, int startIndex, ViterbiNode glueBase, String surface) {
+    private ViterbiNode createGlueNode(int startIndex, ViterbiNode glueBase, String surface) {
 
         return new ViterbiNode(
             glueBase.getWordId(),

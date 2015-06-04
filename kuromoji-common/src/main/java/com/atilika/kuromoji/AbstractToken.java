@@ -21,16 +21,12 @@ import com.atilika.kuromoji.viterbi.ViterbiNode.Type;
 
 public abstract class AbstractToken {
 
-    public static final int META_DATA_SIZE = 4;
+    private static final int META_DATA_SIZE = 4;
 
     private final Dictionary dictionary;
-
 	private final int wordId;
-	
 	private final String surfaceForm;
-	
 	private final int position;
-	
 	private final Type type;
 	
 	public AbstractToken(int wordId, String surfaceForm, Type type, int position, Dictionary dictionary) {

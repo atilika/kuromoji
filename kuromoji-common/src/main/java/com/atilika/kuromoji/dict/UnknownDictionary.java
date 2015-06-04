@@ -33,131 +33,117 @@ import java.io.OutputStream;
 
 public class UnknownDictionary extends TokenInfoDictionary {
 
-	public static final String FILENAME = "unk.dat";
+    public static final String UNKNOWN_DICTIONARY_FILENAME = "unk.dat";
+    public static final String TARGETMAP_FILENAME = "unk_map.dat";
+    public static final String CHARDEF_FILENAME = "cd.dat";
+    private static final String FEATURE_MAP_FILENAME = "unk_fet.dat";
+    public static final String POS_MAP_FILENAME = "unk_pos.dat";
 
-	public static final String TARGETMAP_FILENAME = "unk_map.dat";
+    private CharacterDefinition characterDefinition;
 
-	public static final String CHARDEF_FILENAME = "cd.dat";
-
-	private static final String FEATURE_MAP_FILENAME = "unk_fet.dat";
-
-	public static final String POS_MAP_FILENAME = "unk_pos.dat";
-
-	private CharacterDefinition characterDefinition;
-
-	/**
-	 * Constructor
-	 */
     public UnknownDictionary() {
         super();
-    }
-    
-    public UnknownDictionary(int size) {
-    	super();
-		characterDefinition = new CharacterDefinition();    	
+        characterDefinition = new CharacterDefinition();
     }
 
-	int index = 0;
+    int index = 0;
+
     @Override
     public void put(GenericDictionaryEntry dictionaryEntry) {
-    	// Get wordId of current entry
-//    	int wordId = buffer.position();
-    	
-    	// Put entry
-		super.put(dictionaryEntry);
+        // Put entry
+        super.put(dictionaryEntry);
 
-		// Put entry in targetMap
-		int characterId = CharacterClass.valueOf(dictionaryEntry.getSurface()).getId();
-//		addMapping(characterId, wordId);
-		addMapping(characterId, index++);
-//		return result;
+        // Put entry in targetMap
+        int characterId = CharacterClass.valueOf(dictionaryEntry.getSurface()).getId();
+        addMapping(characterId, index++);
     }
-    
+
     public int lookup(String text) {
-    	if(!characterDefinition.isGroup(text.charAt(0))) {
-    		return 1;
-    	}
-    	
-    	// Extract unknown word. Characters with the same character class are considered to be part of unknown word
-    	int characterIdOfFirstCharacter = characterDefinition.lookup(text.charAt(0));
-    	int length = 1;
-    	for (int i = 1; i < text.length(); i++) {
-    		if (characterIdOfFirstCharacter == characterDefinition.lookup(text.charAt(i))){
-        		length++;    			
-    		} else {
-    			break;
-    		}
-    	}
-    	
-    	return length;
+        if (!characterDefinition.isGroup(text.charAt(0))) {
+            return 1;
+        }
+
+        // Extract unknown word. Characters with the same character class are considered to be part of unknown word
+        int characterIdOfFirstCharacter = characterDefinition.lookup(text.charAt(0));
+        int length = 1;
+        for (int i = 1; i < text.length(); i++) {
+            if (characterIdOfFirstCharacter == characterDefinition.lookup(text.charAt(i))) {
+                length++;
+            } else {
+                break;
+            }
+        }
+
+        return length;
     }
 
-	/**
-	 * Put mapping from unicode code point to character class.
-	 * 
-	 * @param codePoint code point
-	 * @param characterClassName character class name
-	 */
-	public void putCharacterCategory(int codePoint, String characterClassName) {
-		characterDefinition.putCharacterCategory(codePoint, characterClassName);
-	}
-	
-	public void putInvokeDefinition(String characterClassName, int invoke, int group, int length) {
-		characterDefinition.putInvokeDefinition(characterClassName, invoke, group, length);
-	}
-	
+    /**
+     * Put mapping from unicode code point to character class.
+     *
+     * @param codePoint          code point
+     * @param characterClassName character class name
+     */
+    public void putCharacterCategory(int codePoint, String characterClassName) {
+        characterDefinition.putCharacterCategory(codePoint, characterClassName);
+    }
 
-	public CharacterDefinition getCharacterDefinition() {
-		return characterDefinition;
-	}
-	
-	/**
-	 * Write dictionary in file
-	 * Dictionary format is:
-	 * [Size of dictionary(int)], [entry:{left id(short)}{right id(short)}{word cost(short)}{length of pos info(short)}{pos info(char)}], [entry...], [entry...].....
-	 * @param directoryName
-	 * @throws IOException
-	 */
-	public void write(String directoryName) throws IOException {
-		writeDictionary(directoryName + File.separator + FILENAME);
-		writeMap(directoryName + File.separator + POS_MAP_FILENAME, posInfo);
-		writeMap(directoryName + File.separator + FEATURE_MAP_FILENAME, otherInfo);
-		writeTargetMap(directoryName + File.separator + TARGETMAP_FILENAME);
-		writeCharDef(directoryName + File.separator + CHARDEF_FILENAME);
-	}
+    public void putInvokeDefinition(String characterClassName, int invoke, int group, int length) {
+        characterDefinition.putInvokeDefinition(characterClassName, invoke, group, length);
+    }
 
-	public static UnknownDictionary newInstance(ResourceResolver resolver) throws IOException, ClassNotFoundException {
-		UnknownDictionary dictionary = new UnknownDictionary();
-        dictionary.tokenInfoBuffer = new TokenInfoBuffer(resolver.resolve(FILENAME));
+
+    public CharacterDefinition getCharacterDefinition() {
+        return characterDefinition;
+    }
+
+    /**
+     * Write dictionary in file
+     * Dictionary format is:
+     * [Size of dictionary(int)], [entry:{left id(short)}{right id(short)}{word cost(short)}{length of pos info(short)}{pos info(char)}], [entry...], [entry...].....
+     *
+     * @param directoryName
+     * @throws IOException
+     */
+    public void write(String directoryName) throws IOException {
+        writeDictionary(directoryName + File.separator + UNKNOWN_DICTIONARY_FILENAME);
+        writeMap(directoryName + File.separator + POS_MAP_FILENAME, posInfo);
+        writeMap(directoryName + File.separator + FEATURE_MAP_FILENAME, otherInfo);
+        writeTargetMap(directoryName + File.separator + TARGETMAP_FILENAME);
+        writeCharDef(directoryName + File.separator + CHARDEF_FILENAME);
+    }
+
+    public static UnknownDictionary newInstance(ResourceResolver resolver) throws IOException, ClassNotFoundException {
+        UnknownDictionary dictionary = new UnknownDictionary();
+        dictionary.tokenInfoBuffer = new TokenInfoBuffer(resolver.resolve(UNKNOWN_DICTIONARY_FILENAME));
         dictionary.stringValues = new StringValueMapBuffer(resolver.resolve(FEATURE_MAP_FILENAME));
         dictionary.posValues = new StringValueMapBuffer(resolver.resolve(POS_MAP_FILENAME));
         dictionary.wordIdMap = new WordIdMap(resolver.resolve(TARGETMAP_FILENAME));
-		dictionary.loadCharDef(resolver.resolve(CHARDEF_FILENAME));
+        dictionary.loadCharDef(resolver.resolve(CHARDEF_FILENAME));
         return dictionary;
-	}
+    }
 
     public static UnknownDictionary newInstance() throws IOException, ClassNotFoundException {
         return newInstance(new ClassLoaderResolver(UnknownDictionary.class));
     }
 
-	protected void writeCharDef(String filename) throws IOException {
-		OutputStream os = new BufferedOutputStream(new FileOutputStream(filename));
-		characterDefinition.write(os);
-		os.close();
-	}
+    protected void writeCharDef(String filename) throws IOException {
+        OutputStream os = new BufferedOutputStream(new FileOutputStream(filename));
+        characterDefinition.write(os);
+        os.close();
+    }
 
-	protected void loadCharDef(InputStream is) throws IOException, ClassNotFoundException {
-		characterDefinition = CharacterDefinition.read(new BufferedInputStream(is));
-		is.close();
-	}
-	
-	@Override
-	public String getReading(int wordId) {
-		return null;
-	}
-	
-	@Override
-	public String getBaseForm(int wordId) {
-		return null;
-	}
+    protected void loadCharDef(InputStream is) throws IOException, ClassNotFoundException {
+        characterDefinition = CharacterDefinition.read(new BufferedInputStream(is));
+        is.close();
+    }
+
+    @Override
+    public String getReading(int wordId) {
+        return null;
+    }
+
+    @Override
+    public String getBaseForm(int wordId) {
+        return null;
+    }
 }

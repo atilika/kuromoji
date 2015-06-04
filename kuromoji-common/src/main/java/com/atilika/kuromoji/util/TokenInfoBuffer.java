@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.atilika.kuromoji.util;
 
 import com.atilika.kuromoji.dict.BufferEntry;
@@ -28,8 +27,8 @@ import java.util.List;
 
 public class TokenInfoBuffer {
 
-    public static final int INTEGER_BYTES = Integer.SIZE / Byte.SIZE;
-    public static final int SHORT_BYTES = Short.SIZE / Byte.SIZE;
+    private static final int INTEGER_BYTES = Integer.SIZE / Byte.SIZE;
+    private static final int SHORT_BYTES = Short.SIZE / Byte.SIZE;
 
     private ByteBuffer buffer;
 

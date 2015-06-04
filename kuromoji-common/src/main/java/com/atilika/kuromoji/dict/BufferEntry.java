@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BufferEntry {
+
     public List<Short> tokenInfo = new ArrayList<>();
     public List<Integer> features = new ArrayList<>();
     public List<Byte> posInfo = new ArrayList<>();
@@ -28,4 +29,5 @@ public class BufferEntry {
     public short[] tokenInfos;
     public int[] featureInfos;
     public byte[] posInfos;
+
 }

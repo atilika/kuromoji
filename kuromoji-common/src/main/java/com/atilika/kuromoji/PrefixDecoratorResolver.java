@@ -23,6 +23,7 @@ import java.io.InputStream;
  * Applies a given prefix to the resources passed to a given resolver.
  */
 public final class PrefixDecoratorResolver implements ResourceResolver {
+
     private final ResourceResolver delegate;
     private final String prefix;
 

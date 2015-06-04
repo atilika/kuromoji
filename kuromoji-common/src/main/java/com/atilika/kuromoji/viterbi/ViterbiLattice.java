@@ -17,10 +17,9 @@
 package com.atilika.kuromoji.viterbi;
 
 public class ViterbiLattice {
+
     private static final String BOS = "BOS";
-
     private static final String EOS = "EOS";
-
 
     private final int dimension;
     private final ViterbiNode[][] startIndexArr;

@@ -18,10 +18,10 @@
 package com.atilika.kuromoji.unidic;
 
 import com.atilika.kuromoji.AbstractTokenizer;
-import com.atilika.kuromoji.TokenizerRunner;
 import com.atilika.kuromoji.ClassLoaderResolver;
 import com.atilika.kuromoji.PrefixDecoratorResolver;
 import com.atilika.kuromoji.ResourceResolver;
+import com.atilika.kuromoji.TokenizerRunner;
 import com.atilika.kuromoji.dict.DynamicDictionaries;
 import com.atilika.kuromoji.dict.UserDictionary;
 import com.atilika.kuromoji.viterbi.ViterbiNode;
@@ -110,16 +110,6 @@ public class Tokenizer extends AbstractTokenizer {
         public synchronized Builder prefix(String resourcePrefix) {
             this.defaultPrefix = resourcePrefix;
             return this;
-        }
-
-        /**
-         * Sets the default {@link ResourceResolver} used to locate dictionaries.
-         *
-         * @see #prefix(String)
-         */
-        public void resolver(ResourceResolver resolver) {
-            if (resolver == null) throw new IllegalArgumentException();
-            this.resolver = resolver;
         }
 
         /**

@@ -100,18 +100,6 @@ public class Tokenizer extends AbstractTokenizer {
             return this;
         }
 
-        /**
-         * Set if tokenizer should split input string at "。" and "、" before tokenize to increase performance.
-         * Splitting shouldn't change the result of tokenization most of the cases.
-         * Default: true
-         *
-         * @param split whether tokenizer should split input string
-         * @return Builder
-         */
-        public synchronized Builder split(boolean split) {
-            this.split = split;
-            return this;
-        }
 
         /**
          * Set user dictionary input stream
@@ -138,25 +126,6 @@ public class Tokenizer extends AbstractTokenizer {
                 this.userDictionary(new BufferedInputStream(new FileInputStream(userDictionaryPath)));
             }
             return this;
-        }
-
-        /**
-         * Sets the default prefix applied to resources at lookup time if classloader-relative
-         * {@link ResourceResolver} is used.
-         */
-        public synchronized Builder prefix(String resourcePrefix) {
-            this.defaultPrefix = resourcePrefix;
-            return this;
-        }
-
-        /**
-         * Sets the default {@link ResourceResolver} used to locate dictionaries.
-         *
-         * @see #prefix(String)
-         */
-        public void resolver(ResourceResolver resolver) {
-            if (resolver == null) throw new IllegalArgumentException();
-            this.resolver = resolver;
         }
 
         public synchronized Builder penalties(int kanjiLength, int kanjiPenalty, int otherLength, int otherPenalty) {

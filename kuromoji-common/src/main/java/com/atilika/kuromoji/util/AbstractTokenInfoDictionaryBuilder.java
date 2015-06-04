@@ -29,11 +29,8 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.TreeMap;
 
 public abstract class AbstractTokenInfoDictionaryBuilder<T extends AbstractDictionaryEntry> {
-
-    protected TreeMap<Integer, String> dictionaryEntries = new TreeMap<>(); // wordId, surface form
 
     private String encoding;
 

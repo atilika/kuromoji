@@ -25,21 +25,24 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class ViterbiSearcher {
+
+    private static final int SEARCH_MODE_KANJI_LENGTH_DEFAULT = 2;
+    private static final int SEARCH_MODE_OTHER_LENGTH_DEFAULT = 7;
+    private static final int SEARCH_MODE_KANJI_PENALTY_DEFAULT = 3000;
+    private static final int SEARCH_MODE_OTHER_PENALTY_DEFAULT = 1700;
+    private static final int DEFAULT_COST = 10000000;
+
     private final ViterbiBuilder viterbi;
-    final boolean extendedMode;
-    static final int SEARCH_MODE_KANJI_LENGTH_DEFAULT = 2;
-    static final int SEARCH_MODE_OTHER_LENGTH_DEFAULT = 7;
-    static final int SEARCH_MODE_KANJI_PENALTY_DEFAULT = 3000;
-    static final int SEARCH_MODE_OTHER_PENALTY_DEFAULT = 1700;
-    final int searchModeKanjiPenalty;
-    final int searchModeOtherPenalty;
-    final int searchModeOtherLength;
-    final int searchModeKanjiLength;
-    private final boolean searchMode;
     private final ConnectionCosts costs;
     private final UnknownDictionary unknownDictionary;
 
-    private static final int DEFAULT_COST = 10000000;
+    private final boolean extendedMode;
+    private final boolean searchMode;
+
+    private final int searchModeKanjiPenalty;
+    private final int searchModeOtherPenalty;
+    private final int searchModeOtherLength;
+    private final int searchModeKanjiLength;
 
     public ViterbiSearcher(ViterbiBuilder viterbi,
                            AbstractTokenizer.Mode mode,
@@ -76,8 +79,6 @@ public class ViterbiSearcher {
                 extendedMode = false;
                 break;
         }
-
-
     }
 
     public ViterbiSearcher(ViterbiBuilder viterbi,
@@ -110,7 +111,6 @@ public class ViterbiSearcher {
                 extendedMode = false;
                 break;
         }
-
     }
 
     public ViterbiSearcher(ViterbiBuilder viterbi, AbstractTokenizer.Mode mode, ConnectionCosts costs, UnknownDictionary unknownDictionary) {
@@ -163,7 +163,6 @@ public class ViterbiSearcher {
             // If array doesn't contain any more ViterbiNodes, continue to next index
             if (leftNode == null) {
                 return;
-//                break;
             } else {
                 // cost = [total cost from BOS to previous node] + [connection cost between previous node and current node] + [word cost]
                 int pathCost = leftNode.getPathCost() +
@@ -187,7 +186,6 @@ public class ViterbiSearcher {
 
     int getLongNodeAdditionalCost(ViterbiNode node) {
         int pathCost = 0;
-        // System.out.print(""); // If this line exists, com.atilika.kuromoji.kuromoji runs faster for some reason when searchMode == false.
         String surfaceForm = node.getSurfaceForm();
         int length = surfaceForm.length();
         if (length > searchModeKanjiLength) {
@@ -213,7 +211,7 @@ public class ViterbiSearcher {
 
     LinkedList<ViterbiNode> backtrackBestPath(ViterbiNode eos) {
         // track best path
-        ViterbiNode node = eos;    // EOS
+        ViterbiNode node = eos; // EOS
         LinkedList<ViterbiNode> result = new LinkedList<>();
 
         result.add(node);

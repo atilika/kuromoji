@@ -19,10 +19,6 @@ package com.atilika.kuromoji.viterbi;
 import com.atilika.kuromoji.dict.Dictionary;
 
 public class ViterbiNode {
-    
-    public ViterbiNode(int wordId, String word, Dictionary dictionary, int startIndex, Type type) {
-        this(wordId, word, dictionary.getLeftId(wordId), dictionary.getRightId(wordId), dictionary.getWordCost(wordId), startIndex, type);
-    }
 
     public enum Type {
         KNOWN,
@@ -32,11 +28,8 @@ public class ViterbiNode {
     }
 
     private final int wordId;
-
     private final String surfaceForm;
-
     private final int leftId;
-
     private final int rightId;
 
     /**
@@ -48,11 +41,8 @@ public class ViterbiNode {
      * minimum path cost found thus far
      */
     private int pathCost;
-
     private ViterbiNode leftNode;
-
     private final Type type;
-
     private final int startIndex;
 
     public ViterbiNode(int wordId, String surfaceForm, int leftId, int rightId, int wordCost, int startIndex, Type type) {
@@ -65,6 +55,9 @@ public class ViterbiNode {
         this.type = type;
     }
 
+    public ViterbiNode(int wordId, String word, Dictionary dictionary, int startIndex, Type type) {
+        this(wordId, word, dictionary.getLeftId(wordId), dictionary.getRightId(wordId), dictionary.getWordCost(wordId), startIndex, type);
+    }
 
     /**
      * @return the wordId

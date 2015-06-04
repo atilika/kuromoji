@@ -14,12 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.atilika.kuromoji.dict;
 
 public class DictionaryField {
+
     public static final int SURFACE = 0;
     public static final int LEFT_ID = 1;
     public static final int RIGHT_ID = 2;
     public static final int WORD_COST = 3;
+
 }

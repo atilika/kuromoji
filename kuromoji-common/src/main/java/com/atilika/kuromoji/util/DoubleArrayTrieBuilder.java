@@ -23,18 +23,14 @@ import java.util.List;
 
 public class DoubleArrayTrieBuilder {
 
-	public static DoubleArrayTrie build(List<String> surfaces, boolean compactTries) {
-		Trie tempTrie = buildTrie(surfaces);
-		DoubleArrayTrie daTrie = new DoubleArrayTrie(compactTries);
-		daTrie.build(tempTrie);
-		return daTrie;
-	}
-	
-	public static Trie buildTrie(List<String> surfaces) {
-		Trie trie = new Trie();
-		for (String surface : surfaces) {
-			trie.add(surface);
-		}
-		return trie;
-	}
+    public static DoubleArrayTrie build(List<String> surfaces, boolean compactTries) {
+        Trie trie = new Trie();
+        for (String surface : surfaces) {
+            trie.add(surface);
+        }
+        DoubleArrayTrie daTrie = new DoubleArrayTrie(compactTries);
+        daTrie.build(trie);
+        return daTrie;
+    }
+
 }

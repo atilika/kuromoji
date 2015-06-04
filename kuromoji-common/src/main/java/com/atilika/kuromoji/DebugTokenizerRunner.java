@@ -22,29 +22,19 @@ import java.io.PrintStream;
 import java.util.Scanner;
 
 public class DebugTokenizerRunner {
-	public static void main(String[] args) throws IOException {
-//		DebugTokenizer tokenizer;
-//		if (args.length == 1) {
-//			Mode mode = AbstractTokenizer.Mode.valueOf(args[0].toUpperCase());
-//			tokenizer = DebugTokenizer.builder().mode(mode).build();
-//		} else if (args.length == 2) {
-//			Mode mode = Mode.valueOf(args[0].toUpperCase());
-//			tokenizer = DebugTokenizer.builder().mode(mode).userDictionary(args[1]).build();
-//		} else {
-//			tokenizer = DebugTokenizer.builder().build();
-//		}
+
+    public static void main(String[] args) throws IOException {
 
         if (args.length > 2) {
             usage();
         }
-        
+
         PrintStream out;
         if (args.length == 0) {
             out = System.out;
         } else {
             out = new PrintStream(new File(args[0]), "utf-8");
         }
-
 
         DebugTokenizer tokenizer = DebugTokenizer.builder().userDictionary(args[1]).build();
 
@@ -55,9 +45,9 @@ public class DebugTokenizerRunner {
 
         out.print(output);
         out.flush();
-	}
-    
+    }
+
     public static void usage() {
-        System.out.println("Usage: DebugTokenizerRunner [OUTPUT FILENAME]");
+        System.out.println("Usage: DebugTokenizerRunner [OUTPUT CONNECTION_COSTS_FILENAME]");
     }
 }

@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.atilika.kuromoji.util;
 
 import com.atilika.kuromoji.io.TwoDimensionalArrayTool;

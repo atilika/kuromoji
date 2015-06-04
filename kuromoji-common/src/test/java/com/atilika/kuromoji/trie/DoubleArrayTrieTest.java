@@ -77,7 +77,7 @@ public class DoubleArrayTrieTest {
             file.deleteOnExit();
         }
 
-		doubleArrayTrie = DoubleArrayTrie.read(new FileInputStream(dir.getCanonicalPath() + File.separator + DoubleArrayTrie.FILENAME));
+		doubleArrayTrie = DoubleArrayTrie.read(new FileInputStream(dir.getCanonicalPath() + File.separator + DoubleArrayTrie.DOUBLE_ARRAY_TRIE_FILENAME));
 
         assertEquals(0, doubleArrayTrie.lookup("a"));
         assertTrue(doubleArrayTrie.lookup("abc") > 0);

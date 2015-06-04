@@ -17,11 +17,7 @@
 
 package com.atilika.kuromoji.dict;
 
-import com.atilika.kuromoji.TokenEntry;
-
-import static java.lang.Short.parseShort;
-
-public abstract class AbstractDictionaryEntry implements TokenEntry {
+public abstract class AbstractDictionaryEntry {
 
     protected final String surface;
     protected final short leftId;
@@ -38,9 +34,9 @@ public abstract class AbstractDictionaryEntry implements TokenEntry {
     public AbstractDictionaryEntry(String[] fields) {
         this(
             fields[DictionaryField.SURFACE],
-            parseShort(fields[DictionaryField.LEFT_ID]),
-            parseShort(fields[DictionaryField.RIGHT_ID]),
-            parseShort(fields[DictionaryField.WORD_COST])
+            Short.parseShort(fields[DictionaryField.LEFT_ID]),
+            Short.parseShort(fields[DictionaryField.RIGHT_ID]),
+            Short.parseShort(fields[DictionaryField.WORD_COST])
         );
     }
 
