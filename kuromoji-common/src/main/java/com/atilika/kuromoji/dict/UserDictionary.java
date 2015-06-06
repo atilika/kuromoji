@@ -19,46 +19,79 @@ package com.atilika.kuromoji.dict;
 import com.atilika.kuromoji.util.DictionaryEntryLineParser;
 
 import java.io.BufferedReader;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
 public class UserDictionary implements Dictionary {
 
+    private static final String DEFAULT_FEATURE = "*";
+
+    private static final String FEATURE_SEPARATOR = ",";
+
     private static final int CUSTOM_DICTIONARY_WORD_ID_OFFSET = 100000000;
+
     private static final int WORD_COST = -100000;
+
     private static final int LEFT_ID = 5;
+
     private static final int RIGHT_ID = 5;
 
+    private int wordId = CUSTOM_DICTIONARY_WORD_ID_OFFSET;
+
+    // The word id below is the word id for the source string
+    // surface string => [ word id, 1st token length, 2nd token length, ... , nth token length
     private TreeMap<String, int[]> entries = new TreeMap<>();
-	private HashMap<Integer, String> featureEntries = new HashMap<>();
 
-	/**
-	 * Lookup words in text
-	 * @param text
-	 * @return array of {wordId, position, length}
-	 */
-	public int[][] locateUserDefinedWordsInText(String text) {
-		TreeMap<Integer, int[]> positions = new TreeMap<>(); // index, [length, length...]
+    // Maps wordId to reading
+    private Map<Integer, String> readings = new HashMap<>();
 
-		for (String entry : entries.descendingKeySet()) {
+    // Maps wordId to part-of-speech
+    private Map<Integer, String> partOfSpeech = new HashMap<>();
+
+    private final int readingFeature;
+
+    private final int partOfSpeechFeature;
+
+    private final int totalFeatures;
+
+    public UserDictionary(InputStream inputStream, int totalFeatures, int readingFeauture, int partOfSpeechFeature) throws IOException {
+        this.totalFeatures = totalFeatures;
+        this.readingFeature = readingFeauture;
+        this.partOfSpeechFeature = partOfSpeechFeature;
+        read(inputStream);
+    }
+
+    // TODO: This contructor should be removes - used by DebugTokenizer
+    public UserDictionary(InputStream inputStream) throws IOException {
+        this(inputStream, 2, 0, 1);
+    }
+
+    /**
+     * Lookup words in text
+     *
+     * @param text
+     * @return array of {wordId, position, length}
+     */
+    public int[][] locateUserDefinedWordsInText(String text) {
+        TreeMap<Integer, int[]> positions = new TreeMap<>(); // index, [length, length...]
+
+        for (String entry : entries.descendingKeySet()) {
             checkUserDefinedWord(text, entry, positions);
-		}
+        }
 
-		return toIndexArray(positions);
-	}
+        return toIndexArray(positions);
+    }
 
     private void checkUserDefinedWord(final String text, final String entry, TreeMap<Integer, int[]> positions) {
         int offset = 0;
         int pos = text.indexOf(entry, offset);
         while (offset < text.length() && pos >= 0) {
-            if(!positions.containsKey(pos)){
+            if (!positions.containsKey(pos)) {
                 positions.put(pos, entries.get(entry));
             }
             offset += pos + entry.length();
@@ -67,163 +100,165 @@ public class UserDictionary implements Dictionary {
     }
 
     /**
-	 * Convert Map of index and wordIdAndLength to array of {wordId, index, length}
-	 * @param input
-	 * @return array of {wordId, index, length}
-	 */
-	private int[][] toIndexArray(Map<Integer, int[]> input) {
-		ArrayList<int[]> result = new ArrayList<>();
-		for (int i : input.keySet()) {
-			int[] wordIdAndLength = input.get(i);
-			int wordId = wordIdAndLength[0];
-			// convert length to index
-			int current = i;
-			for (int j = 1; j < wordIdAndLength.length; j++) { // first entry is wordId offset
-				int[] token = { wordId + j - 1, current, wordIdAndLength[j] };
-				result.add(token);
-				current += wordIdAndLength[j];
-			}
-		}
-		return result.toArray(new int[result.size()][]);
-	}
-
-	@Override
-	public int getLeftId(int wordId) {
-		return LEFT_ID;
-	}
-
-	@Override
-	public int getRightId(int wordId) {
-		return RIGHT_ID;
-	}
-
-	@Override
-	public int getWordCost(int wordId) {
-		return WORD_COST;
-	}
-
-	@Override
-	public String getReading(int wordId) {
-		return getFeature(wordId, 0);
-	}
-
-	@Override
-	public String getBaseForm(int wordId) {
-		return null; // NOTE: Currently unsupported
-	}
-
-	@Override
-	public String getPartOfSpeech(int wordId) {
-		return getFeature(wordId, 1);
-	}
-
-	@Override
-	public String getAllFeatures(int wordId) {
-        StringBuilder sb = new StringBuilder();
-        sb.append(getPartOfSpeech(wordId));
-        for (int i = 0; i < 6; i++) {
-            sb.append(",").append("*");
-        }
-        sb.append(",").append(getReading(wordId));
-        sb.append(",").append("*");
-        return sb.toString();
-	}
-
-	@Override
-	public String[] getAllFeaturesArray(int wordId) {
-        String allFeatures = featureEntries.get(wordId);
-        if(allFeatures == null) {
-            return null;
-        }
-
-        List<String> features = new ArrayList<>();
-        int start = 0;
-        for (int i = 0; i < allFeatures.length(); i++) {
-            if (allFeatures.charAt(i) == INTERNAL_SEPARATOR) {
-                features.add(allFeatures.substring(start, i));
-                start = i + 1;
+     * Convert Map of index and wordIdAndLength to array of {wordId, index, length}
+     *
+     * @param input
+     * @return array of {wordId, index, length}
+     */
+    private int[][] toIndexArray(Map<Integer, int[]> input) {
+        ArrayList<int[]> result = new ArrayList<>();
+        for (int i : input.keySet()) {
+            int[] wordIdAndLength = input.get(i);
+            int wordId = wordIdAndLength[0];
+            // convert length to index
+            int current = i;
+            for (int j = 1; j < wordIdAndLength.length; j++) { // first entry is wordId offset
+                int[] token = {wordId + j - 1, current, wordIdAndLength[j]};
+                result.add(token);
+                current += wordIdAndLength[j];
             }
         }
-        features.add(allFeatures.substring(start, allFeatures.length())); // The last feature.
-        return features.toArray(new String[features.size()]);
+        return result.toArray(new int[result.size()][]);
     }
 
+    @Override
+    public int getLeftId(int wordId) {
+        return LEFT_ID;
+    }
 
-	@Override
-	public String getFeature(int wordId, int... fields) {
-		String[] allFeatures = getAllFeaturesArray(wordId);
-		if (allFeatures == null) {
-			return null;
-		}
-		StringBuilder sb = new StringBuilder();
-		if (fields.length == 0) { // All features
-			for (String feature : allFeatures) {
-				sb.append(DictionaryEntryLineParser.quoteEscape(feature)).append(",");
-			}
-		} else if (fields.length == 1) { // One feature doesn't need to escape value
-			sb.append(allFeatures[fields[0]]).append(",");
-		} else {
-			for (int field : fields){
-				sb.append(DictionaryEntryLineParser.quoteEscape(allFeatures[field])).append(",");
-			}
-		}
-		return sb.deleteCharAt(sb.length() - 1).toString();
-	}
+    @Override
+    public int getRightId(int wordId) {
+        return RIGHT_ID;
+    }
 
-	public static UserDictionary read(String filename) throws IOException {
-		return read(new FileInputStream(filename));
-	}
+    @Override
+    public int getWordCost(int wordId) {
+        return WORD_COST;
+    }
 
-	public static UserDictionary read(InputStream is) throws IOException {
-		UserDictionary dictionary = new UserDictionary();
-		BufferedReader reader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
-		String line;
-		int wordId = CUSTOM_DICTIONARY_WORD_ID_OFFSET;
+    @Override
+    public String[] getAllFeaturesArray(int wordId) {
+        String[] features = new String[totalFeatures];
 
-		while ((line = reader.readLine()) != null) {
-			// Remove comments
-			line = line.replaceAll("#.*$", "");
-
-			// Skip empty lines or comment lines
-			if (line.trim().length() == 0) {
-				continue;
-			}
-
-			String[] values = DictionaryEntryLineParser.parseLine(line);
-            String[] segmentation = { values[1] };
-            String[] readings = { values[2] };
-            String pos = values[3];
-
-            if (isCustomSegmentationEntry(values)) {
-                segmentation = splitOnSpace(values[1]);
-                readings = splitOnSpace(values[2]);
-            }
-
-			if (segmentation.length != readings.length) {
-                throw new RuntimeException("User dictionary entry not properly formatted: " + line);
-			}
-
-			int[] wordIdAndLength = new int[segmentation.length + 1]; // wordId offset, length, length....
-			wordIdAndLength[0] = wordId;
-			for (int i = 0; i < segmentation.length; i++) {
-				wordIdAndLength[i + 1] = segmentation[i].length();
-                dictionary.featureEntries.put(wordId, readings[i] + INTERNAL_SEPARATOR + pos);
-				wordId++;
-			}
-            dictionary.entries.put(values[0], wordIdAndLength);
-
+        for (int i = 0; i < totalFeatures; i++) {
+            features[i] = getFeature(wordId, i);
         }
 
-		reader.close();
-		return dictionary;
-	}
-
-    private static String[] splitOnSpace(String input) {
-        return input.replaceAll("  *", " ").split(" ");
+        return features;
     }
 
-    private static boolean isCustomSegmentationEntry(String[] values) {
-        return splitOnSpace(values[1]).length > splitOnSpace(values[0]).length;
+    @Override
+    public String getAllFeatures(int wordId) {
+        return join(getAllFeaturesArray(wordId));
     }
 
+    @Override
+    public String getFeature(int wordId, int... fields) {
+
+        if (fields.length == 0 || fields.length == totalFeatures) {
+            return getAllFeatures(wordId);
+        }
+
+        String[] features = new String[fields.length];
+
+        for (int i = 0; i < fields.length; i++) {
+
+            int featureNumber = fields[i];
+
+            if (featureNumber == readingFeature) {
+                features[i] = readings.get(wordId);
+            } else if (featureNumber == partOfSpeechFeature) {
+                features[i] = partOfSpeech.get(wordId);
+            } else {
+                features[i] = DEFAULT_FEATURE;
+            }
+        }
+
+        return join(features);
+
+    }
+
+    private String join(String[] values) {
+        StringBuilder builder = new StringBuilder();
+
+        for (int i = 0; i < values.length; i++) {
+            builder.append(values[i]);
+
+            if (i < values.length - 1) {
+                builder.append(FEATURE_SEPARATOR);
+            }
+        }
+
+        return builder.toString();
+    }
+
+    public void read(InputStream input) throws IOException {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(input, "UTF-8"));
+        String line;
+
+        while ((line = reader.readLine()) != null) {
+            // Remove comments
+            line = line.replaceAll("#.*$", "");
+
+            // Trim leading and trailing whitespace
+            line = line.trim();
+
+            // Skip empty lines or comment lines
+            if (line.isEmpty()) {
+                continue;
+            }
+
+            addEntry(line);
+        }
+
+        reader.close();
+    }
+
+    public void addEntry(String entry) {
+
+        String[] values = DictionaryEntryLineParser.parseLine(entry);
+
+        String surface = values[0];
+        String segmentationValue = values[1];
+        String readingsValue = values[2];
+        String partOfSpeech = values[3];
+
+        String[] segmentation;
+        String[] readings;
+
+        if (isCustomSegmentation(surface, segmentationValue)) {
+            segmentation = split(segmentationValue);
+            readings = split(readingsValue);
+        } else {
+            segmentation = new String[]{ segmentationValue };
+            readings = new String[]{ readingsValue };
+        }
+
+        if (segmentation.length != readings.length) {
+            throw new RuntimeException("User dictionary entry not properly formatted: " + entry);
+        }
+
+
+        int[] wordIdAndLengths = new int[segmentation.length + 1]; // wordId offset, length, length....
+
+        wordIdAndLengths[0] = wordId;
+
+        for (int i = 0; i < segmentation.length; i++) {
+            wordIdAndLengths[i + 1] = segmentation[i].length();
+
+            this.readings.put(wordId, readings[i]);
+            this.partOfSpeech.put(wordId, partOfSpeech);
+
+            wordId++;
+        }
+        entries.put(surface, wordIdAndLengths);
+    }
+
+    private boolean isCustomSegmentation(String surface, String segmentation) {
+        return !surface.equals(segmentation);
+    }
+
+    private String[] split(String input) {
+        return input.split("\\s+");
+    }
 }

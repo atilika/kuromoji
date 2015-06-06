@@ -56,6 +56,14 @@ public class Token extends AbstractToken {
         return this.getFeature(DictionaryField.CONJUGATION_FORM);
     }
 
+    public String getBaseForm() {
+        return this.getFeature(DictionaryField.BASE_FORM);
+    }
+
+    public String getReading() {
+        return this.getFeature(DictionaryField.READING);
+    }
+
     public String getTranscriptionVariation() {
         return this.getFeature(DictionaryField.TRANSCRIPTION_VARIATION);
     }

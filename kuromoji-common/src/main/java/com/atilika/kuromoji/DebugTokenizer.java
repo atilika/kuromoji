@@ -85,7 +85,7 @@ public class DebugTokenizer {
         }
 
         public synchronized Builder userDictionary(InputStream userDictionaryInputStream) throws IOException {
-            this.userDictionary = UserDictionary.read(userDictionaryInputStream);
+            this.userDictionary = new UserDictionary(userDictionaryInputStream);
             return this;
         }
 

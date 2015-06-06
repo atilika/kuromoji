@@ -146,7 +146,6 @@ public class UserDictionaryTokenizerTest {
         }
     }
 
-
     @Test
     public void testShinKyuseishu() throws IOException {
         String userDictionaryEntry = "真救世主,真救世主,シンキュウセイシュ,カスタム名詞";
@@ -195,7 +194,9 @@ public class UserDictionaryTokenizerTest {
     }
 
     private String given(String input) {
-        return tokenizer.tokenize(input).get(0).getReading();
+        List<Token> tokens = tokenizer.tokenize(input);
+        Token token = tokens.get(0);
+        return token.getReading();
     }
 
     private void buildTokenizerWithUserDictionary(String userDictionaryEntry) throws IOException {

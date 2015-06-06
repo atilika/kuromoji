@@ -50,21 +50,6 @@ public class InsertedDictionary implements Dictionary {
     }
 
     @Override
-    public String getPartOfSpeech(int wordId) {
-        return null;
-    }
-
-    @Override
-    public String getReading(int wordId) {
-        return null;
-    }
-
-    @Override
-    public String getBaseForm(int wordId) {
-        return null;
-    }
-
-    @Override
     public String getFeature(int wordId, int... fields) {
         return null;
     }

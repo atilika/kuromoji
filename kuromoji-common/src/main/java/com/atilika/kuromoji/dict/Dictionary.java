@@ -61,30 +61,6 @@ public interface Dictionary {
     public String[] getAllFeaturesArray(int wordId);
 
     /**
-     * Get Part-Of-Speech of tokens
-     *
-     * @param wordId word ID of token
-     * @return Part-Of-Speech of the token
-     */
-    public String getPartOfSpeech(int wordId);
-
-    /**
-     * Get reading of tokens
-     *
-     * @param wordId word ID of token
-     * @return Reading of the token
-     */
-    public String getReading(int wordId);
-
-    /**
-     * Get base form of word
-     *
-     * @param wordId word ID of token
-     * @return Base form (only different for inflected words, otherwise null)
-     */
-    public String getBaseForm(int wordId);
-
-    /**
      * Get feature(s) of tokens
      *
      * @param wordId word ID token

@@ -25,7 +25,6 @@ import java.io.LineNumberReader;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 public class TokenizerTest {
@@ -80,7 +79,7 @@ public class TokenizerTest {
         List<Token> tokens = tokenizer.tokenize("アティリカ株式会社");
         assertTrue(tokens.size() == 2);
         assertTrue(tokens.get(0).isUnknown());
-        assertNull(tokens.get(0).getBaseForm());
+        assertEquals("*", tokens.get(0).getBaseForm());
         assertTrue(tokens.get(1).isKnown());
         assertEquals("株式会社", tokens.get(1).getBaseForm());
     }

@@ -100,7 +100,12 @@ public class TokenizerTest {
         };
 
         for (int i = 0; i < tokens.size(); i++) {
-            assertEquals(expectedPos[i], tokens.get(i).getPartOfSpeech());
+            Token token = tokens.get(i);
+            String partOfSpeech = token.getPosLevel1()
+                + "," + token.getPosLevel2()
+                + "," + token.getPosLevel3()
+                + "," + token.getPosLevel4();
+            assertEquals(expectedPos[i], partOfSpeech);
         }
     }
 

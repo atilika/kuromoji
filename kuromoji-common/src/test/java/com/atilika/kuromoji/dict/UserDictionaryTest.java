@@ -28,58 +28,91 @@ import static org.junit.Assert.assertNull;
 
 public class UserDictionaryTest {
 
-	@Test
-	public void testLookup() throws IOException {
-		UserDictionary dictionary = UserDictionary.read(getResource("userdict.txt"));// "../resources/userdict.txt");
-		int[][] dictionaryEntryResult = dictionary.locateUserDefinedWordsInText("関西国際空港に行った");
-		// Length should be three 関西, 国際, 空港
-		assertEquals(3, dictionaryEntryResult.length);
+    @Test
+    public void testLookup() throws IOException {
+        UserDictionary dictionary = new UserDictionary(getResource("userdict.txt"));
+        int[][] dictionaryEntryResult = dictionary.locateUserDefinedWordsInText("関西国際空港に行った");
+        // Length should be three 関西, 国際, 空港
+        assertEquals(3, dictionaryEntryResult.length);
 
-		// Test positions
-		assertEquals(0, dictionaryEntryResult[0][1]); // index of 関西
-		assertEquals(2, dictionaryEntryResult[1][1]); // index of 国際
-		assertEquals(4, dictionaryEntryResult[2][1]); // index of 空港
+        // Test positions
+        assertEquals(0, dictionaryEntryResult[0][1]); // index of 関西
+        assertEquals(2, dictionaryEntryResult[1][1]); // index of 国際
+        assertEquals(4, dictionaryEntryResult[2][1]); // index of 空港
 
-		// Test lengths
-		assertEquals(2, dictionaryEntryResult[0][2]); // length of 関西
-		assertEquals(2, dictionaryEntryResult[1][2]); // length of 国際
-		assertEquals(2, dictionaryEntryResult[2][2]); // length of 空港
+        // Test lengths
+        assertEquals(2, dictionaryEntryResult[0][2]); // length of 関西
+        assertEquals(2, dictionaryEntryResult[1][2]); // length of 国際
+        assertEquals(2, dictionaryEntryResult[2][2]); // length of 空港
 
-		int[][] dictionaryEntryResult2 = dictionary.locateUserDefinedWordsInText("関西国際空港と関西国際空港に行った");
-		// Length should be six 
-		assertEquals(6, dictionaryEntryResult2.length);
-	}
+        int[][] dictionaryEntryResult2 = dictionary.locateUserDefinedWordsInText("関西国際空港と関西国際空港に行った");
+        assertEquals(6, dictionaryEntryResult2.length);
+    }
 
     @Test
-	public void testReadings() throws IOException {
-		UserDictionary dictionary = UserDictionary.read(getResource("userdict.txt"));
-		int wordIdNihon = 100000000; // wordId of 日本 in 日本経済新聞
-		assertEquals("ニホン", dictionary.getReading(wordIdNihon));
+    public void testIpadicFeatures() throws IOException {
+        UserDictionary dictionary = new UserDictionary(
+            getResource("userdict.txt"),
+            9, 7, 0
+        );
 
-		int wordIdAsashoryu = 100000006; // wordId for 朝青龍
-		assertEquals("アサショウリュウ", dictionary.getReading(wordIdAsashoryu));
+        assertEquals("カスタム名詞,*,*,*,*,*,*,ニホン,*", dictionary.getAllFeatures(100000000));
+    }
 
-		int wordIdNotExist = 1;
-		assertNull(dictionary.getReading(wordIdNotExist));
-	}
+    @Test
+    public void testJumanDicFeatures() throws IOException {
+        UserDictionary dictionary = new UserDictionary(
+            getResource("userdict.txt"),
+            7, 5, 0
+        );
 
-	@Test
-	public void testPartOfSpeech() throws IOException {
-		UserDictionary dictionary = UserDictionary.read(getResource("userdict.txt"));
-		int wordIdKeizai = 100000001; // wordId of 経済 in 日本経済新聞
-		assertEquals("カスタム名詞", dictionary.getPartOfSpeech(wordIdKeizai));
-	}
+        assertEquals("カスタム名詞,*,*,*,*,ニホン,*", dictionary.getAllFeatures(100000000));
+    }
 
-	@Test
-	public void testRead() throws IOException {
-		UserDictionary dictionary = UserDictionary.read(getResource("userdict.txt"));
-		assertNotNull(dictionary);
-	}
+    @Test
+    public void testNaistJDicFeatures() throws IOException {
+        UserDictionary dictionary = new UserDictionary(
+            getResource("userdict.txt"),
+            11, 7, 0
+        );
+        // This is a sample naist-jdic entry:
+        //
+        //   葦登,1358,1358,4975,名詞,一般,*,*,*,*,葦登,ヨシノボリ,ヨシノボリ,,
+        //
+        // How should we treat the last features in the user dictionary?  They seem empty, but we return * for them...
+        assertEquals("カスタム名詞,*,*,*,*,*,*,ニホン,*,*,*", dictionary.getAllFeatures(100000000));
+    }
+
+    @Test
+    public void testUniDicFeatures() throws IOException {
+        UserDictionary dictionary = new UserDictionary(
+            getResource("userdict.txt"),
+            13, 7, 0
+        );
+
+        assertEquals("カスタム名詞,*,*,*,*,*,*,ニホン,*,*,*,*,*", dictionary.getAllFeatures(100000000));
+    }
+
+    @Test
+    public void testUniDicExtendedFeatures() throws IOException {
+        UserDictionary dictionary = new UserDictionary(
+            getResource("userdict.txt"),
+            22, 13, 0
+        );
+
+        assertEquals("カスタム名詞,*,*,*,*,*,*,*,*,*,*,*,*,ニホン,*,*,*,*,*,*,*,*", dictionary.getAllFeatures(100000000));
+    }
+
+    @Test
+    public void testRead() throws IOException {
+        UserDictionary dictionary = new UserDictionary(getResource("userdict.txt"));
+        assertNotNull(dictionary);
+    }
 
     @Test
     public void testUserDictionaryEntries() throws IOException {
         String userDictionaryEntry = "クロ,クロ,クロ,カスタム名詞";
-        UserDictionary dictionary = UserDictionary.read(new ByteArrayInputStream(userDictionaryEntry.getBytes("UTF-8")));
+        UserDictionary dictionary = new UserDictionary(new ByteArrayInputStream(userDictionaryEntry.getBytes("UTF-8")));
         int[][] positions = dictionary.locateUserDefinedWordsInText("この丘はアクロポリスと呼ばれている");
         int indexForKuro = 5;
         int calculatedIndex = positions[0][1];
@@ -90,7 +123,7 @@ public class UserDictionaryTest {
     public void testOverlappingUserDictionaryEntries() throws IOException {
         String userDictionaryEntries = "クロ,クロ,クロ,カスタム名詞\n" +
             "アクロ,アクロ,アクロ,カスタム名詞";
-        UserDictionary dictionary = UserDictionary.read(new ByteArrayInputStream(userDictionaryEntries.getBytes("UTF-8")));
+        UserDictionary dictionary = new UserDictionary(new ByteArrayInputStream(userDictionaryEntries.getBytes("UTF-8")));
         int[][] positions = dictionary.locateUserDefinedWordsInText("この丘はアクロポリスと呼ばれている");
         int indexForAcro = 4;
         int calculatedIndex = positions[0][1];
@@ -99,7 +132,7 @@ public class UserDictionaryTest {
 
     }
 
-    private InputStream getResource(String s) {
-        return this.getClass().getClassLoader().getResourceAsStream(s);
+    private InputStream getResource(String resource) {
+        return this.getClass().getClassLoader().getResourceAsStream(resource);
     }
 }

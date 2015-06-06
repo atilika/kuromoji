@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.atilika.kuromoji.unidic.extended;
 
 import com.atilika.kuromoji.AbstractTokenizer;
@@ -84,7 +83,10 @@ public class Tokenizer extends AbstractTokenizer {
          * @throws java.io.IOException
          */
         public synchronized Builder userDictionary(InputStream userDictionaryInputStream) throws IOException {
-            this.userDictionary = UserDictionary.read(userDictionaryInputStream);
+            this.userDictionary = new UserDictionary(
+                userDictionaryInputStream,
+                22, 13, 0
+            );
             return this;
         }
 

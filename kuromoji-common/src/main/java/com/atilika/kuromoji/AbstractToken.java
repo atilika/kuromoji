@@ -28,7 +28,7 @@ public abstract class AbstractToken {
 	private final String surfaceForm;
 	private final int position;
 	private final Type type;
-	
+
 	public AbstractToken(int wordId, String surfaceForm, Type type, int position, Dictionary dictionary) {
 		this.wordId = wordId;
 		this.surfaceForm = surfaceForm;
@@ -42,43 +42,6 @@ public abstract class AbstractToken {
 	 */
 	public String getSurfaceForm() {
 		return surfaceForm;
-	}
-
-	/**
-	 * Returns base form or null if it doens't exist, i.e. for unknown words of user dictionary terms
-	 * 
-	 * @return base form or null if non-existent
-	 */
-	public String getBaseForm() {
-		return dictionary.getBaseForm(wordId);
-	}
-
-	/**
-	 * @return all features
-	 */
-	public String getAllFeatures() {
-		return dictionary.getAllFeatures(wordId);
-	}
-
-	/**
-	 * @return all features as array
-	 */
-	public String[] getAllFeaturesArray() {
-		return dictionary.getAllFeaturesArray(wordId);
-	}
-
-	/**
-	 * @return reading. null if token doesn't have reading.
-	 */
-	public String getReading() {
-		return dictionary.getReading(wordId);
-	}
-
-	/**
-	 * @return part of speech.
-	 */
-	public String getPartOfSpeech() {
-		return dictionary.getPartOfSpeech(wordId);
 	}
 
 	/**
@@ -96,7 +59,7 @@ public abstract class AbstractToken {
 	public boolean isUnknown() {
 		return type == Type.UNKNOWN;
 	}
-	
+
 	/**
 	 * Returns true if this token is defined in user dictionary
 	 * @return true if this token is in user dictionary. false if not.
@@ -104,7 +67,7 @@ public abstract class AbstractToken {
 	public boolean isUser() {
 		return type == Type.USER;
 	}
-	
+
 	/**
 	 * Get index of this token in input text
 	 * @return position of token
@@ -117,12 +80,18 @@ public abstract class AbstractToken {
 		return dictionary.getFeature(wordId, feature - META_DATA_SIZE);
 	}
 
+	public String getAllFeatures() {
+		return dictionary.getAllFeatures(wordId);
+	}
+
+	public String[] getAllFeaturesArray() {
+		return dictionary.getAllFeaturesArray(wordId);
+	}
+
     @Override
     public String toString() {
         return "Token{" +
             "surfaceForm='" + surfaceForm + '\'' +
-            ", baseForm='" + getBaseForm() + '\'' +
-            ", partOfSpeech=" + getPartOfSpeech() +
             ", position=" + position +
             ", type=" + type +
             ", dictionary=" + dictionary +

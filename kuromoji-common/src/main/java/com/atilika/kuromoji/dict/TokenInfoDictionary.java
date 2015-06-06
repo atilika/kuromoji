@@ -147,7 +147,6 @@ public class TokenInfoDictionary implements Dictionary {
         return tokenInfoBuffer.lookupTokenInfo(wordId, RIGHT_ID);
     }
 
-
     @Override
     public int getWordCost(int wordId) {
         return tokenInfoBuffer.lookupTokenInfo(wordId, WORD_COST);
@@ -191,6 +190,12 @@ public class TokenInfoDictionary implements Dictionary {
     }
 
     @Override
+    public String getAllFeatures(int wordId) {
+        // This extracts all features
+        return getFeature(wordId);
+    }
+
+    @Override
     public String getFeature(int wordId, int... fields) {
         if (fields.length == 1) {
             return extractSingleFeature(wordId, fields[0]);
@@ -227,26 +232,6 @@ public class TokenInfoDictionary implements Dictionary {
             }
         }
         return sb.deleteCharAt(sb.length() - 1).toString();
-    }
-
-    @Override
-    public String getReading(int wordId) {
-        return getFeature(wordId, 7);
-    }
-
-    @Override
-    public String getAllFeatures(int wordId) {
-        return getFeature(wordId);
-    }
-
-    @Override
-    public String getPartOfSpeech(int wordId) {
-        return getFeature(wordId, 0, 1, 2, 3);
-    }
-
-    @Override
-    public String getBaseForm(int wordId) {
-        return getFeature(wordId, 6);
     }
 
     /**

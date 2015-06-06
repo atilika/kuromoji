@@ -94,5 +94,4 @@ public class Token extends AbstractToken {
     public String getFinalSoundAlterationForm() {
         return getFeature(DictionaryField.FINAL_SOUND_ALTERATION_FORM);
     }
-
 }

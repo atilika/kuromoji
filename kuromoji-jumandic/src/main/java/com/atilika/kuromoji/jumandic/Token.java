@@ -44,12 +44,10 @@ public class Token extends AbstractToken {
         return this.getFeature(DictionaryField.POS_LEVEL_4);
     }
 
-    @Override
     public String getBaseForm() {
         return this.getFeature(DictionaryField.BASE_FORM);
     }
 
-    @Override
     public String getReading() {
         return this.getFeature(DictionaryField.READING);
     }

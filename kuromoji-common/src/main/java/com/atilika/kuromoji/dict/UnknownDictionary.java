@@ -136,14 +136,4 @@ public class UnknownDictionary extends TokenInfoDictionary {
         characterDefinition = CharacterDefinition.read(new BufferedInputStream(is));
         is.close();
     }
-
-    @Override
-    public String getReading(int wordId) {
-        return null;
-    }
-
-    @Override
-    public String getBaseForm(int wordId) {
-        return null;
-    }
 }

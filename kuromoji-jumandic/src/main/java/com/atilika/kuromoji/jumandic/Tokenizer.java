@@ -84,7 +84,10 @@ public class Tokenizer extends AbstractTokenizer {
          * @throws java.io.IOException
          */
         public synchronized Builder userDictionary(InputStream userDictionaryInputStream) throws IOException {
-            this.userDictionary = UserDictionary.read(userDictionaryInputStream);
+            this.userDictionary = new UserDictionary(
+                userDictionaryInputStream,
+                7, 5, 0
+            );
             return this;
         }
 
