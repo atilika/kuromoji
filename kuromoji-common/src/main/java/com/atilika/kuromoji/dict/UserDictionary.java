@@ -178,29 +178,13 @@ public class UserDictionary implements Dictionary {
 
     }
 
-    private String join(String[] values) {
-        StringBuilder builder = new StringBuilder();
-
-        for (int i = 0; i < values.length; i++) {
-            builder.append(values[i]);
-
-            if (i < values.length - 1) {
-                builder.append(FEATURE_SEPARATOR);
-            }
-        }
-
-        return builder.toString();
-    }
-
     public void read(InputStream input) throws IOException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(input, "UTF-8"));
         String line;
 
         while ((line = reader.readLine()) != null) {
-            // Remove comments
+            // Remove comments and trim leading and trailing whitespace
             line = line.replaceAll("#.*$", "");
-
-            // Trim leading and trailing whitespace
             line = line.trim();
 
             // Skip empty lines or comment lines
@@ -238,7 +222,6 @@ public class UserDictionary implements Dictionary {
             throw new RuntimeException("User dictionary entry not properly formatted: " + entry);
         }
 
-
         int[] wordIdAndLengths = new int[segmentation.length + 1]; // wordId offset, length, length....
 
         wordIdAndLengths[0] = wordId;
@@ -256,6 +239,20 @@ public class UserDictionary implements Dictionary {
 
     private boolean isCustomSegmentation(String surface, String segmentation) {
         return !surface.equals(segmentation);
+    }
+
+    private String join(String[] values) {
+        StringBuilder builder = new StringBuilder();
+
+        for (int i = 0; i < values.length; i++) {
+            builder.append(values[i]);
+
+            if (i < values.length - 1) {
+                builder.append(FEATURE_SEPARATOR);
+            }
+        }
+
+        return builder.toString();
     }
 
     private String[] split(String input) {

@@ -19,8 +19,10 @@ package com.atilika.kuromoji.jumandic;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import java.io.IOException;
 import java.util.List;
 
+import static com.atilika.kuromoji.TestUtils.assertEqualTokenFeatureLenghts;
 import static org.junit.Assert.assertEquals;
 
 public class TokenizerTest {
@@ -151,6 +153,11 @@ public class TokenizerTest {
             assertEquals(expectedReadings[i], token.getReading());
             assertEquals(expectedRepresentations[i], token.getSemanticInformation());
         }
+    }
+
+    @Test
+    public void testFeatureLengths() throws IOException {
+        assertEqualTokenFeatureLenghts("ahgsfdajhgsfdこの丘はアクロポリスと呼ばれている。", tokenizer);
     }
 
     private String getCombinedPartOfSpeech(Token token) {

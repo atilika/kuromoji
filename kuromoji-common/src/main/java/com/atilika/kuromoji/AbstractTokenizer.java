@@ -50,35 +50,50 @@ public abstract class AbstractTokenizer {
 
     protected final EnumMap<ViterbiNode.Type, Dictionary> dictionaryMap = new EnumMap<>(ViterbiNode.Type.class);
 
-    protected AbstractTokenizer(DynamicDictionaries dictionaries, UserDictionary userDictionary, Mode mode, boolean split, List<Integer> penalties) {
+    protected AbstractTokenizer(DynamicDictionaries dictionaries,
+                                UserDictionary userDictionary,
+                                InsertedDictionary insertedDictionary,
+                                Mode mode,
+                                boolean split,
+                                List<Integer> penalties) {
         this.dictionaries = dictionaries;
-
-        this.viterbiBuilder = new ViterbiBuilder(dictionaries.getTrie(),
+        this.viterbiBuilder = new ViterbiBuilder(
+            dictionaries.getTrie(),
             dictionaries.getDictionary(),
             dictionaries.getUnknownDictionary(),
             userDictionary,
-            mode);
-
+            mode
+        );
         this.split = split;
-        setupDictionaries(dictionaries, userDictionary);
+        setupDictionaries(dictionaries, userDictionary, insertedDictionary);
 
         this.viterbiSearcher = new ViterbiSearcher(this.viterbiBuilder, mode, dictionaries.getCosts(), dictionaries.getUnknownDictionary(), penalties);
     }
 
-    public AbstractTokenizer(DynamicDictionaries dictionaries, UserDictionary userDictionary) {
-        this(dictionaries, userDictionary, Mode.NORMAL, true, new ArrayList<Integer>());
+    public AbstractTokenizer(DynamicDictionaries dictionaries,
+                             UserDictionary userDictionary,
+                             InsertedDictionary insertedDictionary) {
+        this(dictionaries, userDictionary, insertedDictionary, Mode.NORMAL, true, new ArrayList<Integer>());
     }
 
-    private void setupDictionaries(DynamicDictionaries dictionaries, UserDictionary userDictionary) {
+    private void setupDictionaries(DynamicDictionaries dictionaries,
+                                   UserDictionary userDictionary,
+                                   InsertedDictionary insertedDictionary) {
         dictionaryMap.put(ViterbiNode.Type.KNOWN, dictionaries.getDictionary());
         dictionaryMap.put(ViterbiNode.Type.UNKNOWN, dictionaries.getUnknownDictionary());
         dictionaryMap.put(ViterbiNode.Type.USER, userDictionary);
-        dictionaryMap.put(ViterbiNode.Type.INSERTED, new InsertedDictionary());
+        dictionaryMap.put(ViterbiNode.Type.INSERTED, insertedDictionary);
     }
 
-    protected AbstractTokenizer(DynamicDictionaries dictionaries, UserDictionary userDictionary, Mode mode, boolean split,
-                                int searchModeKanjiLength, int searchModeKanjiPenalty,
-                                int searchModeOtherLength, int searchModeOtherPenalty) {
+    protected AbstractTokenizer(DynamicDictionaries dictionaries,
+                                UserDictionary userDictionary,
+                                InsertedDictionary insertedDictionary,
+                                Mode mode,
+                                boolean split,
+                                int searchModeKanjiLength,
+                                int searchModeKanjiPenalty,
+                                int searchModeOtherLength,
+                                int searchModeOtherPenalty) {
         this.dictionaries = dictionaries;
 
         this.viterbiBuilder = new ViterbiBuilder(dictionaries.getTrie(),
@@ -88,10 +103,18 @@ public abstract class AbstractTokenizer {
             mode);
 
         this.split = split;
-        setupDictionaries(dictionaries, userDictionary);
+        setupDictionaries(dictionaries, userDictionary, insertedDictionary);
 
-        this.viterbiSearcher = new ViterbiSearcher(this.viterbiBuilder, mode, dictionaries.getCosts(), dictionaries.getUnknownDictionary(),
-            searchModeKanjiLength, searchModeKanjiPenalty, searchModeOtherLength, searchModeOtherPenalty);
+        this.viterbiSearcher = new ViterbiSearcher(
+            this.viterbiBuilder,
+            mode,
+            dictionaries.getCosts(),
+            dictionaries.getUnknownDictionary(),
+            searchModeKanjiLength,
+            searchModeKanjiPenalty,
+            searchModeOtherLength,
+            searchModeOtherPenalty
+        );
     }
 
     /**
@@ -113,7 +136,9 @@ public abstract class AbstractTokenizer {
         }
 
         ArrayList<T> result = new ArrayList<>();
+
         int offset = 0;
+
         for (int position : splitPositions) {
             result.addAll(this.<T>doTokenize(offset, text.substring(offset, position + 1)));
             offset = position + 1;
@@ -134,7 +159,6 @@ public abstract class AbstractTokenizer {
      */
     private List<Integer> getSplitPositions(String text) {
         ArrayList<Integer> splitPositions = new ArrayList<>();
-
         int position = 0;
         int currentPosition = 0;
 

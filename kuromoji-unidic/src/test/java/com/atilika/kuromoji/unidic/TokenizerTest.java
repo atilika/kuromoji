@@ -25,6 +25,7 @@ import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.util.List;
 
+import static com.atilika.kuromoji.TestUtils.assertEqualTokenFeatureLenghts;
 import static junit.framework.Assert.assertEquals;
 
 public class TokenizerTest {
@@ -215,8 +216,11 @@ public class TokenizerTest {
             assertEquals(expectedFinalSoundAlterationTypes[i], tokens.get(i).getFinalSoundAlterationType());
             assertEquals(expectedFinalSoundAlterationForms[i], tokens.get(i).getFinalSoundAlterationForm());
         }
+    }
 
-
+    @Test
+    public void testFeatureLengths() throws IOException {
+        assertEqualTokenFeatureLenghts("ahgsfdajhgsfdこの丘はアクロポリスと呼ばれている。", tokenizer);
     }
 
     // TODO: Check witch version of unidic is used for test result. Currently there are some segmentation differences.

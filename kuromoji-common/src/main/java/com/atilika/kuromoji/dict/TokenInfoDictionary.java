@@ -16,7 +16,6 @@
  */
 package com.atilika.kuromoji.dict;
 
-import com.atilika.kuromoji.ClassLoaderResolver;
 import com.atilika.kuromoji.ResourceResolver;
 import com.atilika.kuromoji.util.DictionaryEntryLineParser;
 import com.atilika.kuromoji.util.FeatureInfoMap;
@@ -286,10 +285,6 @@ public class TokenInfoDictionary implements Dictionary {
         stringValues = new StringValueMapBuffer(resolver.resolve(FEATURE_MAP_FILENAME));
         posValues = new StringValueMapBuffer(resolver.resolve(POS_MAP_FILENAME));
         wordIdMap = new WordIdMap(resolver.resolve(TARGETMAP_FILENAME));
-    }
-
-    public static TokenInfoDictionary newInstance() throws IOException, ClassNotFoundException {
-        return newInstance(new ClassLoaderResolver(TokenInfoDictionary.class));
     }
 
     public List<String> getSurfaces() {

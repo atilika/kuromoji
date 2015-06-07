@@ -18,7 +18,24 @@ package com.atilika.kuromoji.dict;
 
 public class InsertedDictionary implements Dictionary {
 
-    private static final String INSERTED_FEATURE_SET = "*,*,*,*,*,*,*,*,*";
+    private static final String DEFAULT_FEATURE = "*";
+
+    private static final String FEATURE_SEPARATOR = ",";
+
+    private final String[] featuresArray;
+
+    private final String featuresString;
+
+    public InsertedDictionary(int features) {
+
+        featuresArray = new String[features];
+
+        for (int i = 0; i < features; i++) {
+            featuresArray[i] = DEFAULT_FEATURE;
+        }
+
+        featuresString = join(featuresArray);
+    }
 
     @Override
     public int getLeftId(int wordId) {
@@ -37,20 +54,36 @@ public class InsertedDictionary implements Dictionary {
 
     @Override
     public String getAllFeatures(int wordId) {
-        return INSERTED_FEATURE_SET;
+        return featuresString;
     }
 
     @Override
     public String[] getAllFeaturesArray(int wordId) {
-        String[] features = new String[9];
-        for (int i = 0; i < features.length; i++) {
-            features[i] = "*";
-        }
-        return features;
+        return featuresArray;
     }
 
     @Override
     public String getFeature(int wordId, int... fields) {
-        return null;
+        String[] features = new String[fields.length];
+
+        for (int i = 0; i < features.length; i++) {
+            features[i] = DEFAULT_FEATURE;
+        }
+
+        return join(features);
+    }
+
+    private String join(String[] values) {
+        StringBuilder builder = new StringBuilder();
+
+        for (int i = 0; i < values.length; i++) {
+            builder.append(values[i]);
+
+            if (i < values.length - 1) {
+                builder.append(FEATURE_SEPARATOR);
+            }
+        }
+
+        return builder.toString();
     }
 }

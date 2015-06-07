@@ -16,6 +16,7 @@
  */
 package com.atilika.kuromoji.ipadic;
 
+import com.atilika.kuromoji.TestUtils;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -24,6 +25,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 
+import static com.atilika.kuromoji.TestUtils.assertEqualTokenFeatureLenghts;
 import static org.junit.Assert.assertEquals;
 
 public class UserDictionaryTokenizerTest {
@@ -97,6 +99,14 @@ public class UserDictionaryTokenizerTest {
         }
 
         assertEquals(surfaceForms.length, tokens.size());
+    }
+
+    @Test
+    public void testFeatureLengths() throws IOException {
+        String userDictionaryEntry = "クロ,クロ,クロ,カスタム名詞";
+        buildTokenizerWithUserDictionary(userDictionaryEntry);
+
+        assertEqualTokenFeatureLenghts("ahgsfdajhgsfdこの丘はアクロポリスと呼ばれている。", tokenizer);
     }
 
     @Test

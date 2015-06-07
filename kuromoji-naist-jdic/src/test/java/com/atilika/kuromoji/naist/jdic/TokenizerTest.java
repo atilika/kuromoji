@@ -20,8 +20,10 @@ package com.atilika.kuromoji.naist.jdic;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.IOException;
 import java.util.List;
 
+import static com.atilika.kuromoji.TestUtils.assertEqualTokenFeatureLenghts;
 import static org.junit.Assert.assertEquals;
 
 public class TokenizerTest {
@@ -207,5 +209,10 @@ public class TokenizerTest {
         String expected = "<w orth=\"ああなっ\" form=\"アアナッ\" pos=\"動詞-自立\" ctype=\"五段・ラ行\" cform=\"連用タ接続\" ><w orth=\"ああ\" form=\"アア\" pos=\"副詞-一般\" ctype=\"\" cform=\"\" >ああ</w><w orth=\"なっ\" form=\"ナッ\" pos=\"動詞-自立\" ctype=\"五段・ラ行\" cform=\"連用タ接続\" >なっ</w></w>";
 
         assertEquals(expected, tokens.get(0).getCompoundInformation());
+    }
+
+    @Test
+    public void testFeatureLengths() throws IOException {
+        assertEqualTokenFeatureLenghts("ahgsfdajhgsfdこの丘はアクロポリスと呼ばれている。", tokenizer);
     }
 }

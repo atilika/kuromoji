@@ -16,7 +16,6 @@
  */
 package com.atilika.kuromoji.dict;
 
-import com.atilika.kuromoji.ClassLoaderResolver;
 import com.atilika.kuromoji.ResourceResolver;
 import com.atilika.kuromoji.dict.CharacterDefinition.CharacterClass;
 import com.atilika.kuromoji.util.StringValueMapBuffer;
@@ -91,7 +90,6 @@ public class UnknownDictionary extends TokenInfoDictionary {
         characterDefinition.putInvokeDefinition(characterClassName, invoke, group, length);
     }
 
-
     public CharacterDefinition getCharacterDefinition() {
         return characterDefinition;
     }
@@ -120,10 +118,6 @@ public class UnknownDictionary extends TokenInfoDictionary {
         dictionary.wordIdMap = new WordIdMap(resolver.resolve(TARGETMAP_FILENAME));
         dictionary.loadCharDef(resolver.resolve(CHARDEF_FILENAME));
         return dictionary;
-    }
-
-    public static UnknownDictionary newInstance() throws IOException, ClassNotFoundException {
-        return newInstance(new ClassLoaderResolver(UnknownDictionary.class));
     }
 
     protected void writeCharDef(String filename) throws IOException {

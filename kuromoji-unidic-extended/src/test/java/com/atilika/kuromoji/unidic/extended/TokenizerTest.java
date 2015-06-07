@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 
+import static com.atilika.kuromoji.TestUtils.assertEqualTokenFeatureLenghts;
 import static junit.framework.Assert.assertEquals;
 
 public class TokenizerTest {
@@ -288,6 +289,11 @@ public class TokenizerTest {
             assertEquals(expectedAccentConnectionTypes[i], tokens.get(i).getAccentConnectionType());
             assertEquals(expectedAccentModificationTypes[i], tokens.get(i).getAccentModificationType());
         }
+    }
+
+    @Test
+    public void testFeatureLengths() throws IOException {
+        assertEqualTokenFeatureLenghts("ahgsfdajhgsfdこの丘はアクロポリスと呼ばれている。", tokenizer);
     }
 
     private void buildTokenizerWithUserDictionary(String userDictionaryEntry) throws IOException {

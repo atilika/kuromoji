@@ -23,6 +23,7 @@ import com.atilika.kuromoji.PrefixDecoratorResolver;
 import com.atilika.kuromoji.ResourceResolver;
 import com.atilika.kuromoji.TokenizerRunner;
 import com.atilika.kuromoji.dict.DynamicDictionaries;
+import com.atilika.kuromoji.dict.InsertedDictionary;
 import com.atilika.kuromoji.dict.UserDictionary;
 import com.atilika.kuromoji.viterbi.ViterbiNode;
 
@@ -36,7 +37,11 @@ public class Tokenizer extends AbstractTokenizer {
     public static final String DEFAULT_DICT_PREFIX = "com/atilika/kuromoji/unidic/";
 
     public Tokenizer(Builder builder) {
-        super(builder.getDictionaries(), builder.getUserDictionary());
+        super(
+            builder.getDictionaries(),
+            builder.getUserDictionary(),
+            new InsertedDictionary(13)
+        );
     }
 
     @Override

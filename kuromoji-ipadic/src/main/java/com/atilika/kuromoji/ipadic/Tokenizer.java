@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.atilika.kuromoji.ipadic;
 
 import com.atilika.kuromoji.AbstractTokenizer;
@@ -23,6 +22,7 @@ import com.atilika.kuromoji.PrefixDecoratorResolver;
 import com.atilika.kuromoji.ResourceResolver;
 import com.atilika.kuromoji.TokenizerRunner;
 import com.atilika.kuromoji.dict.DynamicDictionaries;
+import com.atilika.kuromoji.dict.InsertedDictionary;
 import com.atilika.kuromoji.dict.UserDictionary;
 import com.atilika.kuromoji.viterbi.ViterbiNode;
 
@@ -36,7 +36,14 @@ import java.util.List;
 public class Tokenizer extends AbstractTokenizer {
 
     public Tokenizer(Builder builder) {
-        super(builder.getDictionaries(), builder.getUserDictionary(), builder.getMode(), builder.getSplit(), builder.getPenalties());
+        super(
+            builder.getDictionaries(),
+            builder.getUserDictionary(),
+            new InsertedDictionary(9),
+            builder.getMode(),
+            builder.getSplit(),
+            builder.getPenalties()
+        );
     }
 
     @Override
