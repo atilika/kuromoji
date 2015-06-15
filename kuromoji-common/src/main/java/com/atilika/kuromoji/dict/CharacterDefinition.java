@@ -153,4 +153,12 @@ public final class CharacterDefinition {
 
         return new CharacterDefinition(charCatMap, invokeMap);
     }
+
+    public EnumMap<CharacterClass, int[]> getInvokeDefinitionMap() {
+        return invokeDefinitionMap;
+    }
+
+    public CharacterClass[] getCharacterCategoryMap() {
+        return characterCategoryMap;
+    }
 }

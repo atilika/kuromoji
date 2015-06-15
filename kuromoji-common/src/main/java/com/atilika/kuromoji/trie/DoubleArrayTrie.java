@@ -176,9 +176,9 @@ public class DoubleArrayTrie {
     private void add(int previous, int index, Trie.Node node) {
         Trie.Node[] children = node.getChildren();    // nodes following current node
 
-        if (node.getChildren().length > 0 && node.hasSinglePath() && node.getChildren()[0].getKey() != TERMINATING_CHARACTER) {    // If node has only one path, put the rest in tail array
+        if (children.length > 0 && node.hasSinglePath() && children[0].getKey() != TERMINATING_CHARACTER) {    // If node has only one path, put the rest in tail array
             baseBuffer.put(index, tailIndex);    // current index of tail array
-            addToTail(node.children[0]);
+            addToTail(children[0]);
             checkBuffer.put(index, previous);
             return;    // No more child to process
         }
@@ -353,5 +353,17 @@ public class DoubleArrayTrie {
             }
             node = node.getChildren()[0]; // Move to next node
         }
+    }
+
+    public IntBuffer getBaseBuffer() {
+        return baseBuffer;
+    }
+
+    public IntBuffer getCheckBuffer() {
+        return checkBuffer;
+    }
+
+    public CharBuffer getTailBuffer() {
+        return tailBuffer;
     }
 }

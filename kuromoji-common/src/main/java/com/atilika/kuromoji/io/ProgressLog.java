@@ -19,6 +19,8 @@ package com.atilika.kuromoji.io;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Simple progress logger
@@ -28,6 +30,7 @@ public class ProgressLog {
     private static int indent = 0;
     private static boolean atEOL = false;
     private static DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
+    private static Map<Integer, Long> startTimes = new HashMap<Integer, Long>();
 
     public static void begin(String message) {
         newLine();
@@ -35,12 +38,14 @@ public class ProgressLog {
         System.out.flush();
         atEOL = true;
         indent++;
+        startTimes.put(indent, System.currentTimeMillis());
     }
 
     public static void end() {
         newLine();
+        Long start = startTimes.get(indent);
         indent = Math.max(0, indent - 1);
-        System.out.println(leader() + "done");
+        System.out.println(leader() + "done" + (start != null ? " [" + ((System.currentTimeMillis() - start)/1000) + "s]" : ""));
         System.out.flush();
     }
 
