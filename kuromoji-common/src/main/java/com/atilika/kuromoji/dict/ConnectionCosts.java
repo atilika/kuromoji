@@ -91,4 +91,12 @@ public class ConnectionCosts {
 
         return instance;
     }
+
+    public int getDimension() {
+        return dimension;
+    }
+
+    public ShortBuffer getCosts() {
+        return costs;
+    }
 }

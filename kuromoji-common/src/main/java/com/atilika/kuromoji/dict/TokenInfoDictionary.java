@@ -68,7 +68,6 @@ public class TokenInfoDictionary implements Dictionary {
      * put the entry in map
      *
      * @param dictionaryEntry
-     * 
      */
     public void put(GenericDictionaryEntry dictionaryEntry) {
         dictionaryEntries.add(dictionaryEntry);
@@ -290,4 +289,9 @@ public class TokenInfoDictionary implements Dictionary {
     public List<String> getSurfaces() {
         return surfaces;
     }
+
+    public List<GenericDictionaryEntry> getDictionaryEntries() {
+        return dictionaryEntries;
+    }
+
 }
