@@ -16,7 +16,7 @@
  */
 package com.atilika.kuromoji.util;
 
-import com.atilika.kuromoji.io.ByteBufferTool;
+import com.atilika.kuromoji.io.ByteBufferIO;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -39,7 +39,7 @@ public class StringValueMapBuffer {
     }
 
     public StringValueMapBuffer(InputStream is) throws IOException {
-        buffer = ByteBufferTool.read(is);
+        buffer = ByteBufferIO.read(is);
     }
 
     private static int getMetaDataSize() {
@@ -91,7 +91,7 @@ public class StringValueMapBuffer {
     }
 
     public void write(OutputStream os) throws IOException {
-        ByteBufferTool.write(os, buffer);
+        ByteBufferIO.write(os, buffer);
     }
 
 }

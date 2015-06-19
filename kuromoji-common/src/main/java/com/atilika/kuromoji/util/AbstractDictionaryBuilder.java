@@ -1,13 +1,13 @@
 /**
  * Copyright 2010-2015 Atilika Inc. and contributors (see CONTRIBUTORS.md)
- * <p/>
+ *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may
  * not use this file except in compliance with the License.  A copy of the
  * License is distributed with this work in the LICENSE.md file.  You may
  * also obtain a copy of the License from
- * <p/>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p/>
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,13 +16,17 @@
  */
 package com.atilika.kuromoji.util;
 
+import com.atilika.kuromoji.compile.CharacterDefinitionCompiler;
+import com.atilika.kuromoji.compile.UnknownDictionaryCompiler;
 import com.atilika.kuromoji.dict.ConnectionCosts;
 import com.atilika.kuromoji.dict.TokenInfoDictionary;
-import com.atilika.kuromoji.dict.UnknownDictionary;
-import com.atilika.kuromoji.io.ProgressLog;
+import com.atilika.kuromoji.compile.ProgressLog;
 import com.atilika.kuromoji.trie.DoubleArrayTrie;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -66,9 +70,43 @@ public abstract class AbstractDictionaryBuilder {
 
     private void buildUnknownWordDictionary(String inputDirname, String outputDirname, String encoding) throws IOException {
         ProgressLog.begin("building unknown word dict");
-        UnknownDictionaryBuilder unkBuilder = new UnknownDictionaryBuilder(encoding);
-        UnknownDictionary unkDictionary = unkBuilder.build(inputDirname);
-        unkDictionary.write(outputDirname);
+
+        CharacterDefinitionCompiler charDefCompiler = new CharacterDefinitionCompiler(
+            new BufferedOutputStream(
+                new FileOutputStream(
+                    new File(outputDirname, "chardef2.dat")
+                )
+            )
+        );
+        charDefCompiler.readCharacterDefinition(
+            new BufferedInputStream(
+                new FileInputStream(
+                    new File(inputDirname, "char.def")
+                )
+            ),
+            encoding
+        );
+        charDefCompiler.compile();
+
+        UnknownDictionaryCompiler unkDefCompiler = new UnknownDictionaryCompiler(
+            charDefCompiler.makeCharacterCategoryMap(),
+            new FileOutputStream(
+                new File(outputDirname, "unkdef2.dat"
+                )
+            )
+        );
+
+        unkDefCompiler.readUnknownDefinition(
+            new BufferedInputStream(
+                new FileInputStream(
+                    new File(inputDirname, "unk.def")
+                )
+            ),
+            encoding
+        );
+
+        unkDefCompiler.compile();
+
         ProgressLog.end();
     }
 

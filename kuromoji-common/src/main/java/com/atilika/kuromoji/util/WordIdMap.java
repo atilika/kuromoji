@@ -16,7 +16,7 @@
  */
 package com.atilika.kuromoji.util;
 
-import com.atilika.kuromoji.io.TwoDimensionalArrayTool;
+import com.atilika.kuromoji.io.IntegerArrayIO;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -31,13 +31,12 @@ public class WordIdMap {
     }
 
     public WordIdMap(InputStream is) throws IOException {
-        wordIds = TwoDimensionalArrayTool.read(is);
+        wordIds = IntegerArrayIO.readSparseArray2D(is);
     }
 
     public int[] lookUp(int sourceId) {
         return wordIds[sourceId];
     }
-
 
     public void addMapping(int sourceId, int wordId) {
         if (wordIds.length <= sourceId) {
@@ -62,6 +61,6 @@ public class WordIdMap {
     }
 
     public void write(FileOutputStream fos) throws IOException {
-        TwoDimensionalArrayTool.write(fos, wordIds);
+        IntegerArrayIO.writeSparseArray2D(fos, wordIds);
     }
 }

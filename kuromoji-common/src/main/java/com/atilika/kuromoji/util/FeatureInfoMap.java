@@ -55,4 +55,12 @@ public class FeatureInfoMap {
     public int getEntryCount() {
         return maxValue;
     }
+
+    @Override
+    public String toString() {
+        return "FeatureInfoMap{" +
+            "featureMap=" + featureMap +
+            ", maxValue=" + maxValue +
+            '}';
+    }
 }

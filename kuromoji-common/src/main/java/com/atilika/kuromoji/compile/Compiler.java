@@ -14,19 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.atilika.kuromoji.dict;
+package com.atilika.kuromoji.compile;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.io.IOException;
 
-public class BufferEntry {
+public interface Compiler {
 
-    public List<Short> tokenInfo = new ArrayList<>();
-    public List<Integer> features = new ArrayList<>();
-    public List<Byte> posInfo = new ArrayList<>();
-
-    public short[] tokenInfos; // left id, right id, word cost values
-    public int[] featureInfos; // references to string features
-    public byte[] posInfos; // part-of-speech tag values
-
+    void compile() throws IOException;
 }

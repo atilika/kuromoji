@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.atilika.kuromoji.io;
+package com.atilika.kuromoji.compile;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;

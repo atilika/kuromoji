@@ -22,8 +22,11 @@ import com.atilika.kuromoji.trie.DoubleArrayTrie;
 public class DynamicDictionaries {
     
     private final TokenInfoDictionary tokenInfoDictionary;
+
     private final UnknownDictionary unknownDictionary;
+
     private final ConnectionCosts connectionCosts;
+
     private final DoubleArrayTrie doubleArrayTrie;
 
     public DynamicDictionaries(ResourceResolver resolver) {

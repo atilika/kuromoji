@@ -27,6 +27,7 @@ public class UnknownDictionaryEntryParser extends DictionaryEntryLineParser {
     // TODO: Currently this code is the same as the ipadic dictionary entry parser
     public GenericDictionaryEntry parse(String entry) {
         String[] fields = parseLine(entry);
+
         String surface = fields[0];
         short leftId = Short.parseShort(fields[1]);
         short rightId = Short.parseShort(fields[2]);

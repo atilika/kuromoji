@@ -24,7 +24,10 @@ public abstract class AbstractDictionaryEntry {
     protected final short rightId;
     protected final short wordCost;
 
-    public AbstractDictionaryEntry(String surface, short leftId, short rightId, short wordCost) {
+    public AbstractDictionaryEntry(String surface,
+                                   short leftId,
+                                   short rightId,
+                                   short wordCost) {
         this.surface = surface;
         this.rightId = rightId;
         this.leftId = leftId;

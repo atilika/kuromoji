@@ -199,7 +199,6 @@ public class UserDictionary implements Dictionary {
     }
 
     public void addEntry(String entry) {
-
         String[] values = DictionaryEntryLineParser.parseLine(entry);
 
         String surface = values[0];

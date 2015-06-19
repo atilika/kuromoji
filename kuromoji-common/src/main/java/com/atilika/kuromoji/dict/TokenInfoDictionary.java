@@ -158,15 +158,15 @@ public class TokenInfoDictionary implements Dictionary {
         int posLength = bufferEntry.posInfos.length;
         int featureLength = bufferEntry.featureInfos.length;
 
+        // TODO: When can posLength be 0?
         if (posLength == 0) {
             posLength = bufferEntry.tokenInfos.length - TOKEN_INFO_OFFSET;
         }
         String[] result = new String[posLength + featureLength];
 
         for (int i = 0; i < bufferEntry.posInfos.length; i++) {
-            int feature = bufferEntry.posInfos[i] & 0xff;
-            String s = posValues.get(feature);
-            result[i] = s;
+            int feature = bufferEntry.posInfos[i] & 0xff; // TODO: This bitwise AND is a no-op...
+            result[i] = posValues.get(feature);
         }
 
         if (bufferEntry.posInfos.length == 0) {
@@ -174,8 +174,7 @@ public class TokenInfoDictionary implements Dictionary {
 
             for (int i = 0; i < posLength; i++) {
                 int feature = bufferEntry.tokenInfos[i + TOKEN_INFO_OFFSET];
-                String s = posValues.get(feature);
-                result[i] = s;
+                result[i] = posValues.get(feature);
             }
         }
 

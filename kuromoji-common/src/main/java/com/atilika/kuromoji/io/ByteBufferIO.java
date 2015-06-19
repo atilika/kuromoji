@@ -28,7 +28,7 @@ import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.WritableByteChannel;
 
-public class ByteBufferTool {
+public class ByteBufferIO {
 
     public static ByteBuffer read(InputStream is) throws IOException {
         BufferedInputStream bis = new BufferedInputStream(is);

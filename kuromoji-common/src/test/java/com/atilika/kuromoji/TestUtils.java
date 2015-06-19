@@ -16,7 +16,7 @@
  */
 package com.atilika.kuromoji;
 
-import com.atilika.kuromoji.io.ProgressLog;
+import com.atilika.kuromoji.compile.ProgressLog;
 
 import java.util.HashSet;
 import java.util.List;

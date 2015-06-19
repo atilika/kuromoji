@@ -17,7 +17,6 @@
 package com.atilika.kuromoji.viterbi;
 
 import com.atilika.kuromoji.AbstractTokenizer;
-import com.atilika.kuromoji.dict.CharacterDefinition;
 import com.atilika.kuromoji.dict.ConnectionCosts;
 import com.atilika.kuromoji.dict.UnknownDictionary;
 
@@ -202,7 +201,7 @@ public class ViterbiSearcher {
     boolean isOnlyKanji(String surfaceForm) {
 
         for (char c : surfaceForm.toCharArray()) {
-            if (!viterbi.getCharacterDefinition().isKanji(c)) {
+            if (Character.UnicodeBlock.of(c) != Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS) {
                 return false;
             }
         }
@@ -237,7 +236,7 @@ public class ViterbiSearcher {
 
     LinkedList<ViterbiNode> convertUnknownWordToUnigramNode(ViterbiNode node) {
         LinkedList<ViterbiNode> uniGramNodes = new LinkedList<>();
-        int unigramWordId = CharacterDefinition.CharacterClass.NGRAM.getId();
+        int unigramWordId = 0; //  CharacterDefinition.CharacterClass.NGRAM.getId();
         String surfaceForm = node.getSurfaceForm();
 
         for (int i = surfaceForm.length(); i > 0; i--) {

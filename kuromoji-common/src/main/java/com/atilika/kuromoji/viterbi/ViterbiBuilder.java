@@ -17,7 +17,7 @@
 package com.atilika.kuromoji.viterbi;
 
 import com.atilika.kuromoji.AbstractTokenizer.Mode;
-import com.atilika.kuromoji.dict.CharacterDefinition;
+import com.atilika.kuromoji.dict.CharacterDefinitions;
 import com.atilika.kuromoji.dict.TokenInfoDictionary;
 import com.atilika.kuromoji.dict.UnknownDictionary;
 import com.atilika.kuromoji.dict.UserDictionary;
@@ -30,33 +30,28 @@ public class ViterbiBuilder {
 
     private final DoubleArrayTrie trie;
     private final TokenInfoDictionary dictionary;
-    private final UnknownDictionary unkDictionary;
+    private final UnknownDictionary unknownDictionary;
     private final UserDictionary userDictionary;
-    private final CharacterDefinition characterDefinition;
+    private final CharacterDefinitions characterDefinitions;
     private final boolean useUserDictionary;
     private boolean searchMode;
-
-    public CharacterDefinition getCharacterDefinition() {
-        return characterDefinition;
-    }
-
 
     /**
      * Constructor
      *
      * @param trie
      * @param dictionary
-     * @param unkDictionary
+     * @param unknownDictionary
      * @param userDictionary
      */
     public ViterbiBuilder(DoubleArrayTrie trie,
                           TokenInfoDictionary dictionary,
-                          UnknownDictionary unkDictionary,
+                          UnknownDictionary unknownDictionary,
                           UserDictionary userDictionary,
                           Mode mode) {
         this.trie = trie;
         this.dictionary = dictionary;
-        this.unkDictionary = unkDictionary;
+        this.unknownDictionary = unknownDictionary;
         this.userDictionary = userDictionary;
 
         this.useUserDictionary = (userDictionary != null);
@@ -64,7 +59,7 @@ public class ViterbiBuilder {
         if (mode == Mode.SEARCH || mode == Mode.EXTENDED) {
             searchMode = true;
         }
-        this.characterDefinition = unkDictionary.getCharacterDefinition();
+        this.characterDefinitions = unknownDictionary.getCharacterDefinition();
     }
 
 
@@ -91,8 +86,15 @@ public class ViterbiBuilder {
 
                 // In the case of normal mode, it doesn't process unknown word greedily.
                 if (searchMode || unknownWordEndIndex <= startIndex) {
-                    unknownWordEndIndex = processUnknownWord(lattice, unknownWordEndIndex, startIndex, suffix, found);
+
+                    int[] categories = characterDefinitions.lookupCategories(suffix.charAt(0));
+
+                    for (int i = 0; i < categories.length; i++) {
+                        int category = categories[i];
+                        unknownWordEndIndex = processUnknownWord2(category, i, lattice, unknownWordEndIndex, startIndex, suffix, found);
+                    }
                 }
+
             }
         }
 
@@ -124,26 +126,64 @@ public class ViterbiBuilder {
         return found;
     }
 
-    private int processUnknownWord(ViterbiLattice lattice, int unknownWordEndIndex, int startIndex, String suffix, boolean found) {
-        int unknownWordLength = 0;
-        char firstCharacter = suffix.charAt(0);
-        boolean isInvoke = characterDefinition.isInvoke(firstCharacter);
+//    private int processUnknownWord(ViterbiLattice lattice, int unknownWordEndIndex, int startIndex, String suffix, boolean found) {
+//        int unknownWordLength = 0;
+//        char firstCharacter = suffix.charAt(0);
+//        boolean isInvoke = characterDefinition.isInvoke(firstCharacter);
+//
+//        if (isInvoke || found == false) { // Process "invoke"
+//            unknownWordLength = unkDictionary.lookup(suffix);
+//        }
+//
+//        if (unknownWordLength > 0) { // found unknown word
+//            String unkWord = suffix.substring(0, unknownWordLength);
+//            int characterId = characterDefinition.lookup(firstCharacter);
+//            int[] wordIds = unkDictionary.lookupWordIds(characterId); // characters in input text are supposed to be the same
+//
+//            for (int wordId : wordIds) {
+//                ViterbiNode node = new ViterbiNode(wordId, unkWord, unkDictionary, startIndex, ViterbiNode.Type.UNKNOWN);
+//                lattice.addNode(node, startIndex + 1, startIndex + 1 + unknownWordLength);
+//            }
+//            unknownWordEndIndex = startIndex + unknownWordLength;
+//        }
+//        return unknownWordEndIndex;
+//    }
 
-        if (isInvoke || found == false) { // Process "invoke"
-            unknownWordLength = unkDictionary.lookup(suffix);
+    // TODO: Needs cleaning up
+    private int processUnknownWord2(int category, int i, ViterbiLattice lattice, int unknownWordEndIndex, int startIndex, String suffix, boolean found) {
+        int unknownWordLength = 0;
+        int[] definition = characterDefinitions.lookupDefinition(category);
+
+        if (definition[CharacterDefinitions.INVOKE] == 1 || found == false) {
+            if (definition[CharacterDefinitions.GROUP] == 0) {
+                unknownWordLength = 1;
+            } else {
+                unknownWordLength = 1;
+                for (int j = 1; j < suffix.length(); j++) {
+                    char c = suffix.charAt(j);
+
+                    int[] categories = characterDefinitions.lookupCategories(c);
+
+                    if (i < categories.length && category == categories[i]) {
+                        unknownWordLength++;
+                    } else {
+                        break;
+                    }
+                }
+            }
         }
 
-        if (unknownWordLength > 0) { // found unknown word
+        if (unknownWordLength > 0) {
             String unkWord = suffix.substring(0, unknownWordLength);
-            int characterId = characterDefinition.lookup(firstCharacter);
-            int[] wordIds = unkDictionary.lookupWordIds(characterId); // characters in input text are supposed to be the same
+            int[] wordIds = unknownDictionary.lookupWordIds(category); // characters in input text are supposed to be the same
 
             for (int wordId : wordIds) {
-                ViterbiNode node = new ViterbiNode(wordId, unkWord, unkDictionary, startIndex, ViterbiNode.Type.UNKNOWN);
+                ViterbiNode node = new ViterbiNode(wordId, unkWord, unknownDictionary, startIndex, ViterbiNode.Type.UNKNOWN);
                 lattice.addNode(node, startIndex + 1, startIndex + 1 + unknownWordLength);
             }
             unknownWordEndIndex = startIndex + unknownWordLength;
         }
+
         return unknownWordEndIndex;
     }
 
@@ -263,7 +303,7 @@ public class ViterbiBuilder {
      * @return new ViterbiNode that can be inserted to glue the graph if such a node exists, else null
      */
     private ViterbiNode findGlueNodeCandidate(int index, ViterbiNode[] latticeNodes, int startIndex) {
-        List<ViterbiNode> candidates = new ArrayList<ViterbiNode>();
+        List<ViterbiNode> candidates = new ArrayList<>();
 
         for (ViterbiNode viterbiNode : latticeNodes) {
             if (viterbiNode != null) {

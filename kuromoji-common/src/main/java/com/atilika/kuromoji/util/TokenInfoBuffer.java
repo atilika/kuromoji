@@ -17,7 +17,7 @@
 package com.atilika.kuromoji.util;
 
 import com.atilika.kuromoji.dict.BufferEntry;
-import com.atilika.kuromoji.io.ByteBufferTool;
+import com.atilika.kuromoji.io.ByteBufferIO;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -37,7 +37,7 @@ public class TokenInfoBuffer {
     }
 
     public TokenInfoBuffer(InputStream is) throws IOException {
-        buffer = ByteBufferTool.read(is);
+        buffer = ByteBufferIO.read(is);
     }
 
     private void putEntries(List<BufferEntry> entries) {
@@ -96,14 +96,17 @@ public class TokenInfoBuffer {
         int entrySize = getEntrySize(tokenInfoCount, posInfoCount, featureCount);
         int position = getPosition(offset, entrySize);
 
+        // Get left id, right id and word cost
         for (int i = 0; i < tokenInfoCount; i++) {
             entry.tokenInfos[i] = buffer.getShort(position + i * SHORT_BYTES);
         }
 
+        // Get part of speech tags values (not strings yet)
         for (int i = 0; i < posInfoCount; i++) {
             entry.posInfos[i] = buffer.get(position + tokenInfoCount * SHORT_BYTES + i);
         }
 
+        // Get field value references (string references)
         for (int i = 0; i < featureCount; i++) {
             entry.featureInfos[i] = buffer.getInt(position + tokenInfoCount * SHORT_BYTES + posInfoCount + i * INTEGER_BYTES);
         }
@@ -111,6 +114,7 @@ public class TokenInfoBuffer {
         return entry;
     }
 
+    // TODO: Whis is this different than looking up a feature?  Because the value range is a short?
     public int lookupTokenInfo(int offset, int i) {
         int tokenInfoCount = getTokenInfoCount();
         int posInfoCount = getPosInfoCount();
@@ -169,6 +173,6 @@ public class TokenInfoBuffer {
     }
 
     public void write(OutputStream os) throws IOException {
-        ByteBufferTool.write(os, buffer);
+        ByteBufferIO.write(os, buffer);
     }
 }
