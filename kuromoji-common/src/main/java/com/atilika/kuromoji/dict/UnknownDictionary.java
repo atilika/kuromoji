@@ -43,31 +43,6 @@ public class UnknownDictionary implements Dictionary {
         this.features = features;
     }
 
-    // TODO: Only supports a single lookup now
-    public int lookup(String text) {
-        char character = text.charAt(0);
-
-        if (characterDefinition.isGroup(character)[0] == 0) {
-            return 1;
-        }
-
-        // Extract unknown word. Characters with the same character class are considered to be part of unknown word
-        int charDefinition = characterDefinition.lookup(character)[0];
-        int length = 1;
-
-        for (int i = 1; i < text.length(); i++) {
-            character = text.charAt(i);
-
-            if (charDefinition == characterDefinition.lookup(character)[0]) {
-                length++;
-            } else {
-                break;
-            }
-        }
-
-        return length;
-    }
-
     public int[] lookupWordIds(int categoryId) {
         // Returns an array of word ids
         return entries[categoryId];
@@ -104,7 +79,6 @@ public class UnknownDictionary implements Dictionary {
         String[] features = new String[fields.length];
 
         for (int i = 0; i < fields.length; i++) {
-
             int featureNumber = fields[i];
             features[i] = allFeatures[featureNumber];
         }
@@ -116,6 +90,7 @@ public class UnknownDictionary implements Dictionary {
         return characterDefinition;
     }
 
+    // TODO: Should go into a shared utility somewhere
     private String join(String[] values) {
         StringBuilder builder = new StringBuilder();
 

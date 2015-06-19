@@ -104,13 +104,6 @@ public class UnknownDictionaryCompilerTest {
     }
 
     @Test
-    public void testLookup() {
-        assertEquals(6, unknownDictionary.lookup("ABCDEF東京"));
-        assertEquals(4, unknownDictionary.lookup("カタカナ"));
-        assertEquals(4, unknownDictionary.lookup("ひらがな"));
-    }
-
-    @Test
     public void testCostsAndFeatures() {
         int[] categories = characterDefinition.lookupCategories('一');
 
