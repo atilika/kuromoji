@@ -28,10 +28,14 @@ public final class CharacterDefinitions {
 
     private final int[][] codepointMappings;
 
+    private final String[] categorySymbols;
+
     public CharacterDefinitions(int[][] categoryDefinitions,
-                                int[][] codepointMappings) {
+                                int[][] codepointMappings,
+                                String[] categorySymbols) {
         this.categoryDefinitions = categoryDefinitions;
         this.codepointMappings = codepointMappings;
+        this.categorySymbols = categorySymbols;
     }
 
     // TODO: Override Nakaguro

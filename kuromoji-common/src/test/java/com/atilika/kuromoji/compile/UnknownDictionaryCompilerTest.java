@@ -82,10 +82,12 @@ public class UnknownDictionaryCompilerTest {
 
         int[][] definitions = IntegerArrayIO.readSparseArray2D(charDefInput);
         int[][] mappings = IntegerArrayIO.readSparseArray2D(charDefInput);
+        String[] symbols = StringArrayIO.readArray(charDefInput);
 
         characterDefinition = new CharacterDefinitions(
             definitions,
-            mappings
+            mappings,
+            symbols
         );
 
         InputStream unkDefInput = new BufferedInputStream(new FileInputStream(unkDef));

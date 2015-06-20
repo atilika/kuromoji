@@ -18,6 +18,7 @@ package com.atilika.kuromoji.compile;
 
 import com.atilika.kuromoji.dict.CharacterDefinitions;
 import com.atilika.kuromoji.io.IntegerArrayIO;
+import com.atilika.kuromoji.io.StringArrayIO;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -34,7 +35,6 @@ import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
@@ -69,10 +69,12 @@ public class CharacterDefinitionsCompilerTest {
 
         int[][] definitions = IntegerArrayIO.readSparseArray2D(input);
         int[][] mappings = IntegerArrayIO.readSparseArray2D(input);
+        String[] symbols = StringArrayIO.readArray(input);
 
         characterDefinition = new CharacterDefinitions(
             definitions,
-            mappings
+            mappings,
+            symbols
         );
     }
 

@@ -17,6 +17,7 @@
 package com.atilika.kuromoji.compile;
 
 import com.atilika.kuromoji.io.IntegerArrayIO;
+import com.atilika.kuromoji.io.StringArrayIO;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -189,10 +190,28 @@ public class CharacterDefinitionsCompiler implements Compiler {
         return array;
     }
 
+    private String[] makeCharacterCategorySymbols() {
+        Map<String, Integer> categoryMap = makeCharacterCategoryMap();
+        Map<Integer, String> inverted = new TreeMap<>();
+
+        for (String key : categoryMap.keySet()) {
+            inverted.put(categoryMap.get(key), key);
+        }
+
+        String[] categories = new String[inverted.size()];
+
+        for (Integer index : inverted.keySet()) {
+            categories[index] = inverted.get(index);
+        }
+
+        return categories;
+    }
+
     @Override
     public void compile() throws IOException {
         IntegerArrayIO.writeSparseArray2D(output, makeCharacterDefinitions());
         IntegerArrayIO.writeSparseArray2D(output, makeCharacterMappings());
+        StringArrayIO.writeArray(output, makeCharacterCategorySymbols());
         output.close();
     }
 }

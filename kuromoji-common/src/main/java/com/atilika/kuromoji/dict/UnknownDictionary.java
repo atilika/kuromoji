@@ -25,6 +25,10 @@ import java.io.InputStream;
 
 public class UnknownDictionary implements Dictionary {
 
+    private static final String DEFAULT_FEATURE = "*";
+
+    private static final String FEATURE_SEPARATOR = ",";
+
     private final int[][] entries;
 
     private final int[][] costs;
@@ -37,6 +41,7 @@ public class UnknownDictionary implements Dictionary {
                              int[][] entries,
                              int[][] costs,
                              String[][] features) {
+//                             int totalFeatures) {
         this.characterDefinition = characterDefinition;
         this.entries = entries;
         this.costs = costs;
@@ -98,7 +103,7 @@ public class UnknownDictionary implements Dictionary {
             builder.append(values[i]);
 
             if (i < values.length - 1) {
-                builder.append(",");
+                builder.append(FEATURE_SEPARATOR);
             }
         }
         return builder.toString();
@@ -110,10 +115,12 @@ public class UnknownDictionary implements Dictionary {
 
         int[][] definitions = IntegerArrayIO.readSparseArray2D(charDefInput);
         int[][] mappings = IntegerArrayIO.readSparseArray2D(charDefInput);
+        String[] symbols = StringArrayIO.readArray(charDefInput);
 
         CharacterDefinitions characterDefinition = new CharacterDefinitions(
             definitions,
-            mappings
+            mappings,
+            symbols
         );
 
         InputStream unkDefInput = resolver.resolve("unkdef2.dat");

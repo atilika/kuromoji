@@ -59,7 +59,10 @@ public class UserDictionary implements Dictionary {
 
     private final int totalFeatures;
 
-    public UserDictionary(InputStream inputStream, int totalFeatures, int readingFeauture, int partOfSpeechFeature) throws IOException {
+    public UserDictionary(InputStream inputStream,
+                          int totalFeatures,
+                          int readingFeauture,
+                          int partOfSpeechFeature) throws IOException {
         this.totalFeatures = totalFeatures;
         this.readingFeature = readingFeauture;
         this.partOfSpeechFeature = partOfSpeechFeature;
