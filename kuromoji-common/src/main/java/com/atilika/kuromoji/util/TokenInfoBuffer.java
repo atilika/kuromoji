@@ -174,5 +174,6 @@ public class TokenInfoBuffer {
 
     public void write(OutputStream os) throws IOException {
         ByteBufferIO.write(os, buffer);
+        os.close();
     }
 }

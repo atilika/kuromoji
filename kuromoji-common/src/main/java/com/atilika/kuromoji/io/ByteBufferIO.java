@@ -30,34 +30,31 @@ import java.nio.channels.WritableByteChannel;
 
 public class ByteBufferIO {
 
-    public static ByteBuffer read(InputStream is) throws IOException {
-        BufferedInputStream bis = new BufferedInputStream(is);
-        DataInputStream dis = new DataInputStream(bis);
+    public static ByteBuffer read(InputStream input) throws IOException {
+        DataInputStream dataInput = new DataInputStream(
+            new BufferedInputStream(input)
+        );
 
-        int size = dis.readInt();
+        int size = dataInput.readInt();
+        ByteBuffer buffer = ByteBuffer.allocate(size);
 
-        ByteBuffer buffer = ByteBuffer.wrap(new byte[size]);
-
-        ReadableByteChannel channel = Channels.newChannel(bis);
+        ReadableByteChannel channel = Channels.newChannel(dataInput);
         channel.read(buffer);
 
         buffer.rewind();
-
-        dis.close();
-
         return buffer;
     }
 
-    public static void write(OutputStream os, ByteBuffer buffer) throws IOException {
-        BufferedOutputStream bos = new BufferedOutputStream(os);
-        DataOutputStream dos = new DataOutputStream(bos);
+    public static void write(OutputStream output, ByteBuffer buffer) throws IOException {
+        DataOutputStream dataOutput = new DataOutputStream(
+            new BufferedOutputStream(output)
+        );
 
-        dos.writeInt(buffer.position());
+        dataOutput.writeInt(buffer.position());
         buffer.flip();
 
-        WritableByteChannel channel = Channels.newChannel(dos);
+        WritableByteChannel channel = Channels.newChannel(dataOutput);
         channel.write(buffer);
-        dos.flush();
-        dos.close();
+        dataOutput.flush(); // TODO: Do we need this?
     }
 }

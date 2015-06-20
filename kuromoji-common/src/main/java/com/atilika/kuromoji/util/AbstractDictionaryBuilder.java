@@ -16,11 +16,11 @@
  */
 package com.atilika.kuromoji.util;
 
-import com.atilika.kuromoji.compile.CharacterDefinitionCompiler;
-import com.atilika.kuromoji.compile.UnknownDictionaryCompiler;
-import com.atilika.kuromoji.dict.ConnectionCosts;
-import com.atilika.kuromoji.dict.TokenInfoDictionary;
+import com.atilika.kuromoji.compile.CharacterDefinitionsCompiler;
+import com.atilika.kuromoji.compile.ConnectionCostsCompiler;
 import com.atilika.kuromoji.compile.ProgressLog;
+import com.atilika.kuromoji.compile.UnknownDictionaryCompiler;
+import com.atilika.kuromoji.dict.TokenInfoDictionary;
 import com.atilika.kuromoji.trie.DoubleArrayTrie;
 
 import java.io.BufferedInputStream;
@@ -29,7 +29,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.List;
 
 public abstract class AbstractDictionaryBuilder {
@@ -71,7 +70,7 @@ public abstract class AbstractDictionaryBuilder {
     private void buildUnknownWordDictionary(String inputDirname, String outputDirname, String encoding) throws IOException {
         ProgressLog.begin("building unknown word dict");
 
-        CharacterDefinitionCompiler charDefCompiler = new CharacterDefinitionCompiler(
+        CharacterDefinitionsCompiler charDefCompiler = new CharacterDefinitionsCompiler(
             new BufferedOutputStream(
                 new FileOutputStream(
                     new File(outputDirname, "chardef2.dat")
@@ -112,10 +111,14 @@ public abstract class AbstractDictionaryBuilder {
 
     private void buildConnectionCosts(String inputDirname, String outputDirname) throws IOException {
         ProgressLog.begin("building connection costs");
-        ConnectionCosts connectionCosts = ConnectionCostsBuilder.build(inputDirname + File.separator + "matrix.def");
-        OutputStream os = new FileOutputStream(outputDirname + File.separator + ConnectionCosts.CONNECTION_COSTS_FILENAME);
-        connectionCosts.write(os);
-        os.close();
+        ConnectionCostsCompiler connectionCostsCompiler = new ConnectionCostsCompiler(
+            new FileOutputStream(new File(outputDirname, "cc2.dat"))
+        );
+        connectionCostsCompiler.readCosts(
+            new FileInputStream(new File(inputDirname, "matrix.def"))
+        );
+        connectionCostsCompiler.compile();
+
         ProgressLog.end();
     }
 

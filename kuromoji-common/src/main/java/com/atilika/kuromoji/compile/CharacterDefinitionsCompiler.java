@@ -31,7 +31,7 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-public class CharacterDefinitionCompiler implements Compiler {
+public class CharacterDefinitionsCompiler implements Compiler {
 
     private Map<String, int[]> categoryDefinitions = new TreeMap<>();
 
@@ -39,7 +39,7 @@ public class CharacterDefinitionCompiler implements Compiler {
 
     private OutputStream output;
 
-    public CharacterDefinitionCompiler(OutputStream output) {
+    public CharacterDefinitionsCompiler(OutputStream output) {
         this.output = output;
 
         for (int i = 0; i < 65536; i++) {

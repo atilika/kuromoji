@@ -29,7 +29,9 @@ import java.util.TreeMap;
 public class StringValueMapBuffer {
 
     private static final int INTEGER_BYTES = Integer.SIZE / Byte.SIZE;
+
     private static final int SHORT_BYTES = Short.SIZE / Byte.SIZE;
+
     private static final Charset CHARSET = StandardCharsets.UTF_8;
 
     private ByteBuffer buffer;

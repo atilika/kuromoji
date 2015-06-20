@@ -254,6 +254,7 @@ public class TokenInfoDictionary implements Dictionary {
         StringValueMapBuffer mapBuffer = new StringValueMapBuffer(features);
         FileOutputStream fos = new FileOutputStream(filename);
         mapBuffer.write(fos);
+        fos.close();
     }
 
     protected void writeDictionary(String filename) throws IOException {

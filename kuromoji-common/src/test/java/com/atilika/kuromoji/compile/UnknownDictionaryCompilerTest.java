@@ -46,14 +46,14 @@ public class UnknownDictionaryCompilerTest {
         File charDef = File.createTempFile("kuromoji-chardef-", ".dat");
         charDef.deleteOnExit();
 
-        CharacterDefinitionCompiler charDefCompiler = new CharacterDefinitionCompiler(
+        CharacterDefinitionsCompiler charDefCompiler = new CharacterDefinitionsCompiler(
             new BufferedOutputStream(
                 new FileOutputStream(charDef)
             )
         );
         charDefCompiler.readCharacterDefinition(
             new BufferedInputStream(
-                CharacterDefinitionCompilerTest.class.getClassLoader().getResourceAsStream("char.def")
+                CharacterDefinitionsCompilerTest.class.getClassLoader().getResourceAsStream("char.def")
             ),
             "euc-jp"
         );

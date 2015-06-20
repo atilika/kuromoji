@@ -17,78 +17,46 @@
 package com.atilika.kuromoji.dict;
 
 import com.atilika.kuromoji.ResourceResolver;
+import com.atilika.kuromoji.io.ByteBufferIO;
 
 import java.io.BufferedInputStream;
 import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.nio.ShortBuffer;
-import java.nio.channels.Channels;
-import java.nio.channels.ReadableByteChannel;
-import java.nio.channels.WritableByteChannel;
 
 public class ConnectionCosts {
 
-    public static final String CONNECTION_COSTS_FILENAME = "cc.dat";
+    public static final String CONNECTION_COSTS = "cc2.dat";
 
-    private int dimension;
+    private int size;
+
     private ShortBuffer costs;
 
-    public ConnectionCosts(int forwardSize, int backwardSize) {
-        this.costs = ShortBuffer.allocate(backwardSize * forwardSize);
-        this.dimension = backwardSize;
-    }
-
-    public void add(short forwardId, short backwardId, short cost) {
-        this.costs.put(backwardId + forwardId * dimension, cost);
+    public ConnectionCosts(int size, ShortBuffer costs) {
+        this.size = size;
+        this.costs = costs;
     }
 
     public int get(int forwardId, int backwardId) {
-        return costs.get(backwardId + forwardId * dimension);
+        return costs.get(backwardId + forwardId * size);
     }
 
-    public static ConnectionCosts newInstance(ResourceResolver resolver) throws IOException, ClassNotFoundException {
-        return read(resolver.resolve(CONNECTION_COSTS_FILENAME));
+    public static ConnectionCosts newInstance(ResourceResolver resolver) throws IOException {
+        return read(resolver.resolve(CONNECTION_COSTS));
     }
 
-    public void write(OutputStream stream) throws IOException {
-        DataOutputStream daos = new DataOutputStream(stream);
-        daos.writeShort(dimension);
-        daos.writeInt(costs.array().length * 2);
+    private static ConnectionCosts read(InputStream input) throws IOException {
+        DataInputStream dataInput = new DataInputStream(
+            new BufferedInputStream(input)
+        );
 
-        ByteBuffer outBuffer = ByteBuffer.allocate(costs.array().length * 2);
+        int size = dataInput.readInt();
 
-        for (short s : costs.array()) {
-            outBuffer.putShort(s);
-        }
+        ByteBuffer byteBuffer = ByteBufferIO.read(dataInput);
+        ShortBuffer costs = byteBuffer.asShortBuffer();
 
-        WritableByteChannel channel = Channels.newChannel(stream);
-
-        outBuffer.flip();
-        channel.write(outBuffer);
-        stream.close();
-    }
-
-    public static ConnectionCosts read(InputStream is) throws IOException, ClassNotFoundException {
-        BufferedInputStream bis = new BufferedInputStream(is);
-        DataInputStream dais = new DataInputStream(bis);
-
-        ConnectionCosts instance = new ConnectionCosts(0, 0);
-        instance.dimension = dais.readShort();
-        int size = dais.readInt();
-
-        ByteBuffer tmpBuffer = ByteBuffer.allocate(size);
-        ReadableByteChannel channel = Channels.newChannel(bis);
-
-        channel.read(tmpBuffer);
-        dais.close();
-
-        tmpBuffer.rewind();
-        instance.costs = tmpBuffer.asShortBuffer();
-
-        return instance;
+        return new ConnectionCosts(size, costs);
     }
 }

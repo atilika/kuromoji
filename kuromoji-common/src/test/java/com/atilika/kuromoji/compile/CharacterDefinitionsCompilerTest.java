@@ -38,7 +38,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-public class CharacterDefinitionCompilerTest {
+public class CharacterDefinitionsCompilerTest {
 
     private static File charDef;
 
@@ -51,14 +51,14 @@ public class CharacterDefinitionCompilerTest {
         charDef = File.createTempFile("kuromoji-chardef-", ".dat");
         charDef.deleteOnExit();
 
-        CharacterDefinitionCompiler compiler = new CharacterDefinitionCompiler(
+        CharacterDefinitionsCompiler compiler = new CharacterDefinitionsCompiler(
             new BufferedOutputStream(
                 new FileOutputStream(charDef)
             )
         );
         compiler.readCharacterDefinition(
             new BufferedInputStream(
-                CharacterDefinitionCompilerTest.class.getClassLoader().getResourceAsStream("char.def")
+                CharacterDefinitionsCompilerTest.class.getClassLoader().getResourceAsStream("char.def")
             ),
             "euc-jp"
         );

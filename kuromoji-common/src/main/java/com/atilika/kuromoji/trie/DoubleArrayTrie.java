@@ -71,10 +71,10 @@ public class DoubleArrayTrie {
         tailBuffer.rewind();
 
         File file = new File(filename);
-        if (file.exists()) {
-            file.delete();
-        }
 
+        if (file.exists()) {
+            file.delete(); // TODO: Do we need this?  Looks dangerous... -Christian
+        }
 
         RandomAccessFile raf = new RandomAccessFile(filename, "rw");
         FileChannel channel = raf.getChannel();
