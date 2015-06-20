@@ -29,6 +29,7 @@ import com.atilika.kuromoji.viterbi.ViterbiLattice;
 import com.atilika.kuromoji.viterbi.ViterbiNode;
 import com.atilika.kuromoji.viterbi.ViterbiSearcher;
 
+import java.util.Collections;
 import java.util.List;
 
 public class DebugTokenizer {
@@ -67,10 +68,10 @@ public class DebugTokenizer {
             Mode.NORMAL);
 
         this.viterbiSearcher = new ViterbiSearcher(
-            this.viterbiBuilder,
             Mode.NORMAL,
             connectionCosts,
-            unknownDictionary
+            unknownDictionary,
+            Collections.EMPTY_LIST
         );
         this.formatter = new ViterbiFormatter(connectionCosts);
     }

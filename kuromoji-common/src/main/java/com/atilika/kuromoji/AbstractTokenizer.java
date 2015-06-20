@@ -88,11 +88,11 @@ public abstract class AbstractTokenizer {
         );
         this.split = split;
         this.viterbiSearcher = new ViterbiSearcher(
-            this.viterbiBuilder,
             mode,
             connectionCosts,
             unknownDictionary,
-            penalties);
+            penalties
+        );
 
         initDictinaryMap();
     }
