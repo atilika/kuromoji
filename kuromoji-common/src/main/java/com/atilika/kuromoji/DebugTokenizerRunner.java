@@ -16,35 +16,34 @@
  */
 package com.atilika.kuromoji;
 
-import java.io.File;
 import java.io.IOException;
-import java.io.PrintStream;
-import java.util.Scanner;
 
 public class DebugTokenizerRunner {
 
     public static void main(String[] args) throws IOException {
 
-        if (args.length > 2) {
-            usage();
-        }
+        throw new RuntimeException("Sorry -- not yet implemented...");
 
-        PrintStream out;
-        if (args.length == 0) {
-            out = System.out;
-        } else {
-            out = new PrintStream(new File(args[0]), "utf-8");
-        }
-
-        DebugTokenizer tokenizer = DebugTokenizer.builder().userDictionary(args[1]).build();
-
-        // Read entire input from stdin into a String
-        String input = new Scanner(System.in, "utf-8").useDelimiter("\\A").next();
-
-        String output = tokenizer.debugTokenize(input);
-
-        out.print(output);
-        out.flush();
+//        if (args.length > 2) {
+//            usage();
+//        }
+//
+//        PrintStream out;
+//        if (args.length == 0) {
+//            out = System.out;
+//        } else {
+//            out = new PrintStream(new File(args[0]), "utf-8");
+//        }
+//
+//        DebugTokenizer tokenizer = DebugTokenizer.builder().userDictionary(args[1]).build();
+//
+//        // Read entire input from stdin into a String
+//        String input = new Scanner(System.in, "utf-8").useDelimiter("\\A").next();
+//
+//        String output = tokenizer.debugTokenize(input);
+//
+//        out.print(output);
+//        out.flush();
     }
 
     public static void usage() {

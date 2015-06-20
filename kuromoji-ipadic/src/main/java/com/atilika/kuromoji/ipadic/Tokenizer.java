@@ -21,9 +21,12 @@ import com.atilika.kuromoji.ClassLoaderResolver;
 import com.atilika.kuromoji.PrefixDecoratorResolver;
 import com.atilika.kuromoji.ResourceResolver;
 import com.atilika.kuromoji.TokenizerRunner;
-import com.atilika.kuromoji.dict.DynamicDictionaries;
+import com.atilika.kuromoji.dict.ConnectionCosts;
 import com.atilika.kuromoji.dict.InsertedDictionary;
+import com.atilika.kuromoji.dict.TokenInfoDictionary;
+import com.atilika.kuromoji.dict.UnknownDictionary;
 import com.atilika.kuromoji.dict.UserDictionary;
+import com.atilika.kuromoji.trie.DoubleArrayTrie;
 import com.atilika.kuromoji.viterbi.ViterbiNode;
 
 import java.io.BufferedInputStream;
@@ -37,9 +40,12 @@ public class Tokenizer extends AbstractTokenizer {
 
     public Tokenizer(Builder builder) {
         super(
-            builder.getDictionaries(),
-            builder.getUserDictionary(),
-            new InsertedDictionary(9),
+            builder.doubleArrayTrie,
+            builder.connectionCosts,
+            builder.tokenInfoDictionary,
+            builder.unknownDictionary,
+            builder.userDictionary,
+            builder.insertedDictionary,
             builder.getMode(),
             builder.getSplit(),
             builder.getPenalties()
@@ -74,13 +80,28 @@ public class Tokenizer extends AbstractTokenizer {
      * Builder class used to create Tokenizer instance.
      */
     public static class Builder {
+
         private Mode mode = Mode.NORMAL;
+
         private boolean split = true;
+
+        private DoubleArrayTrie doubleArrayTrie;
+
+        private ConnectionCosts connectionCosts;
+
+        private TokenInfoDictionary tokenInfoDictionary;
+
+        private UnknownDictionary unknownDictionary;
+
         private UserDictionary userDictionary = null;
+
+        private InsertedDictionary insertedDictionary;
+
         private Integer searchModeKanjiLength;
         private Integer searchModeKanjiPenalty;
         private Integer searchModeOtherLength;
         private Integer searchModeOtherPenalty;
+
 
         /**
          * The default resource prefix, also configurable via
@@ -95,6 +116,11 @@ public class Tokenizer extends AbstractTokenizer {
          */
         private ResourceResolver resolver = new ClassLoaderResolver(this.getClass());
 
+
+        public Builder() {
+
+        }
+
         /**
          * Set tokenization mode
          * Default: NORMAL
@@ -106,7 +132,6 @@ public class Tokenizer extends AbstractTokenizer {
             this.mode = mode;
             return this;
         }
-
 
         /**
          * Set user dictionary input stream
@@ -156,15 +181,17 @@ public class Tokenizer extends AbstractTokenizer {
                 resolver = new PrefixDecoratorResolver(defaultPrefix, resolver);
             }
 
+            try {
+                doubleArrayTrie = DoubleArrayTrie.newInstance(resolver);
+                connectionCosts = ConnectionCosts.newInstance(resolver);
+                tokenInfoDictionary = TokenInfoDictionary.newInstance(resolver);
+                unknownDictionary = UnknownDictionary.newInstance(resolver);
+                insertedDictionary = new InsertedDictionary(9);
+            } catch (Exception ouch) {
+                throw new RuntimeException("Could not load dictionaries.", ouch);
+            }
+
             return new Tokenizer(this);
-        }
-
-        public DynamicDictionaries getDictionaries() {
-            return new DynamicDictionaries(resolver);
-        }
-
-        public UserDictionary getUserDictionary() {
-            return userDictionary;
         }
 
         public Mode getMode() {

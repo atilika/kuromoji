@@ -19,19 +19,23 @@ package com.atilika.kuromoji;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 public class TokenizerRunner {
 
     public void run(AbstractTokenizer tokenizer) throws IOException {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+        BufferedReader reader = new BufferedReader(
+            new InputStreamReader(System.in, StandardCharsets.UTF_8)
+        );
         String line;
+
         while ((line = reader.readLine()) != null) {
             List<AbstractToken> result = tokenizer.tokenize(line);
+
             for (AbstractToken token : result) {
                 System.out.println(token.getSurfaceForm() + "\t" + token.getAllFeatures());
             }
         }
     }
-
 }

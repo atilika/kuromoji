@@ -16,10 +16,13 @@
  */
 package com.atilika.kuromoji;
 
+import com.atilika.kuromoji.dict.ConnectionCosts;
 import com.atilika.kuromoji.dict.Dictionary;
-import com.atilika.kuromoji.dict.DynamicDictionaries;
 import com.atilika.kuromoji.dict.InsertedDictionary;
+import com.atilika.kuromoji.dict.TokenInfoDictionary;
+import com.atilika.kuromoji.dict.UnknownDictionary;
 import com.atilika.kuromoji.dict.UserDictionary;
+import com.atilika.kuromoji.trie.DoubleArrayTrie;
 import com.atilika.kuromoji.viterbi.ViterbiBuilder;
 import com.atilika.kuromoji.viterbi.ViterbiLattice;
 import com.atilika.kuromoji.viterbi.ViterbiNode;
@@ -46,75 +49,59 @@ public abstract class AbstractTokenizer {
     private final ViterbiSearcher viterbiSearcher;
     private final boolean split;
 
-    private final DynamicDictionaries dictionaries;
+    private final DoubleArrayTrie doubleArrayTrie;
+
+    private final ConnectionCosts connectionCosts;
+
+    private final TokenInfoDictionary tokenInfoDictionary;
+
+    private final UnknownDictionary unknownDictionary;
+
+    private final UserDictionary userDictionary;
+
+    private final InsertedDictionary insertedDictionary;
 
     protected final EnumMap<ViterbiNode.Type, Dictionary> dictionaryMap = new EnumMap<>(ViterbiNode.Type.class);
 
-    protected AbstractTokenizer(DynamicDictionaries dictionaries,
+    protected AbstractTokenizer(DoubleArrayTrie doubleArrayTrie,
+                                ConnectionCosts connectionCosts,
+                                TokenInfoDictionary tokenInfoDictionary,
+                                UnknownDictionary unknownDictionary,
                                 UserDictionary userDictionary,
                                 InsertedDictionary insertedDictionary,
                                 Mode mode,
                                 boolean split,
                                 List<Integer> penalties) {
-        this.dictionaries = dictionaries;
+        this.doubleArrayTrie = doubleArrayTrie;
+        this.connectionCosts = connectionCosts;
+        this.tokenInfoDictionary = tokenInfoDictionary;
+        this.unknownDictionary = unknownDictionary;
+        this.userDictionary = userDictionary;
+        this.insertedDictionary = insertedDictionary;
+
         this.viterbiBuilder = new ViterbiBuilder(
-            dictionaries.getTrie(),
-            dictionaries.getDictionary(),
-            dictionaries.getUnknownDictionary(),
+            doubleArrayTrie,
+            tokenInfoDictionary,
+            unknownDictionary,
             userDictionary,
             mode
         );
         this.split = split;
-        setupDictionaries(dictionaries, userDictionary, insertedDictionary);
-
-        this.viterbiSearcher = new ViterbiSearcher(this.viterbiBuilder, mode, dictionaries.getCosts(), dictionaries.getUnknownDictionary(), penalties);
-    }
-
-    public AbstractTokenizer(DynamicDictionaries dictionaries,
-                             UserDictionary userDictionary,
-                             InsertedDictionary insertedDictionary) {
-        this(dictionaries, userDictionary, insertedDictionary, Mode.NORMAL, true, new ArrayList<Integer>());
-    }
-
-    private void setupDictionaries(DynamicDictionaries dictionaries,
-                                   UserDictionary userDictionary,
-                                   InsertedDictionary insertedDictionary) {
-        dictionaryMap.put(ViterbiNode.Type.KNOWN, dictionaries.getDictionary());
-        dictionaryMap.put(ViterbiNode.Type.UNKNOWN, dictionaries.getUnknownDictionary());
-        dictionaryMap.put(ViterbiNode.Type.USER, userDictionary);
-        dictionaryMap.put(ViterbiNode.Type.INSERTED, insertedDictionary);
-    }
-
-    protected AbstractTokenizer(DynamicDictionaries dictionaries,
-                                UserDictionary userDictionary,
-                                InsertedDictionary insertedDictionary,
-                                Mode mode,
-                                boolean split,
-                                int searchModeKanjiLength,
-                                int searchModeKanjiPenalty,
-                                int searchModeOtherLength,
-                                int searchModeOtherPenalty) {
-        this.dictionaries = dictionaries;
-
-        this.viterbiBuilder = new ViterbiBuilder(dictionaries.getTrie(),
-            dictionaries.getDictionary(),
-            dictionaries.getUnknownDictionary(),
-            userDictionary,
-            mode);
-
-        this.split = split;
-        setupDictionaries(dictionaries, userDictionary, insertedDictionary);
-
         this.viterbiSearcher = new ViterbiSearcher(
             this.viterbiBuilder,
             mode,
-            dictionaries.getCosts(),
-            dictionaries.getUnknownDictionary(),
-            searchModeKanjiLength,
-            searchModeKanjiPenalty,
-            searchModeOtherLength,
-            searchModeOtherPenalty
-        );
+            connectionCosts,
+            unknownDictionary,
+            penalties);
+
+        initDictinaryMap();
+    }
+
+    private void initDictinaryMap() {
+        dictionaryMap.put(ViterbiNode.Type.KNOWN, tokenInfoDictionary);
+        dictionaryMap.put(ViterbiNode.Type.UNKNOWN, unknownDictionary);
+        dictionaryMap.put(ViterbiNode.Type.USER, userDictionary);
+        dictionaryMap.put(ViterbiNode.Type.INSERTED, insertedDictionary);
     }
 
     /**

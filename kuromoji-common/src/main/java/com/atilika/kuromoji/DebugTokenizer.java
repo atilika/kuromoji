@@ -17,36 +17,62 @@
 package com.atilika.kuromoji;
 
 import com.atilika.kuromoji.AbstractTokenizer.Mode;
-import com.atilika.kuromoji.dict.DynamicDictionaries;
+import com.atilika.kuromoji.dict.ConnectionCosts;
+import com.atilika.kuromoji.dict.InsertedDictionary;
+import com.atilika.kuromoji.dict.TokenInfoDictionary;
+import com.atilika.kuromoji.dict.UnknownDictionary;
 import com.atilika.kuromoji.dict.UserDictionary;
+import com.atilika.kuromoji.trie.DoubleArrayTrie;
 import com.atilika.kuromoji.viterbi.ViterbiBuilder;
 import com.atilika.kuromoji.viterbi.ViterbiFormatter;
 import com.atilika.kuromoji.viterbi.ViterbiLattice;
 import com.atilika.kuromoji.viterbi.ViterbiNode;
 import com.atilika.kuromoji.viterbi.ViterbiSearcher;
 
-import java.io.BufferedInputStream;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
 
 public class DebugTokenizer {
 
     private ViterbiFormatter formatter;
+
     private ViterbiBuilder viterbiBuilder;
+
     private ViterbiSearcher viterbiSearcher;
 
-    protected DebugTokenizer(DynamicDictionaries dictionaries, UserDictionary userDictionary, Mode mode) {
+    private final DoubleArrayTrie doubleArrayTrie;
 
-        this.viterbiBuilder = new ViterbiBuilder(dictionaries.getTrie(),
-            dictionaries.getDictionary(),
-            dictionaries.getUnknownDictionary(),
+    private final ConnectionCosts connectionCosts;
+
+    private final TokenInfoDictionary tokenInfoDictionary;
+
+    private final UnknownDictionary unknownDictionary;
+
+    private final UserDictionary userDictionary;
+
+    private final InsertedDictionary insertedDictionary;
+
+    protected DebugTokenizer(Builder builder) {
+        this.doubleArrayTrie = builder.doubleArrayTrie;
+        this.connectionCosts = builder.connectionCosts;
+        this.tokenInfoDictionary = builder.tokenInfoDictionary;
+        this.unknownDictionary = builder.unknownDictionary;
+        this.userDictionary = builder.userDictionary;
+        this.insertedDictionary = builder.insertedDictionary;
+
+        this.viterbiBuilder = new ViterbiBuilder(
+            doubleArrayTrie,
+            tokenInfoDictionary,
+            unknownDictionary,
             userDictionary,
-            mode);
+            Mode.NORMAL);
 
-        this.viterbiSearcher = new ViterbiSearcher(this.viterbiBuilder, mode, dictionaries.getCosts(), dictionaries.getUnknownDictionary());
-        this.formatter = new ViterbiFormatter(dictionaries.getCosts());
+        this.viterbiSearcher = new ViterbiSearcher(
+            this.viterbiBuilder,
+            Mode.NORMAL,
+            connectionCosts,
+            unknownDictionary
+        );
+        this.formatter = new ViterbiFormatter(connectionCosts);
     }
 
     public String debugTokenize(String text) {
@@ -61,49 +87,46 @@ public class DebugTokenizer {
 
     public static class Builder {
 
-        private Mode mode = Mode.NORMAL;
+        private DoubleArrayTrie doubleArrayTrie;
+
+        private ConnectionCosts connectionCosts;
+
+        private TokenInfoDictionary tokenInfoDictionary;
+
+        private UnknownDictionary unknownDictionary;
 
         private UserDictionary userDictionary = null;
 
-        private DynamicDictionaries dictionaries = null;
-        /**
-         * The default resource prefix, also configurable via
-         * system property <code>com.atilika.kuromoji.dict.targetdir</code>.
-         */
-        private String defaultPrefix = System.getProperty(
-            AbstractTokenizer.DEFAULT_DICT_PREFIX_PROPERTY,
-            AbstractTokenizer.DEFAULT_DICT_PREFIX);
+        private InsertedDictionary insertedDictionary;
 
-        /**
-         * The default resource resolver (relative to this class).
-         */
+        private String defaultPrefix = System.getProperty(
+            "Dummy"
+        );
+
         private ResourceResolver resolver = new ClassLoaderResolver(this.getClass());
 
-        public synchronized Builder mode(Mode mode) {
-            this.mode = mode;
-            return this;
-        }
-
-        public synchronized Builder userDictionary(InputStream userDictionaryInputStream) throws IOException {
-            this.userDictionary = new UserDictionary(userDictionaryInputStream);
-            return this;
-        }
-
-        public synchronized Builder userDictionary(String userDictionaryPath) throws IOException {
-            this.userDictionary(new BufferedInputStream(new FileInputStream(userDictionaryPath)));
+        public synchronized Builder prefix(String resourcePrefix) {
+            this.defaultPrefix = resourcePrefix;
             return this;
         }
 
         public synchronized DebugTokenizer build() {
-
-            if (dictionaries == null) {
-                if (defaultPrefix != null) {
-                    resolver = new PrefixDecoratorResolver(defaultPrefix, resolver);
-                }
-
-                dictionaries = new DynamicDictionaries(resolver);
+            if (defaultPrefix != null) {
+                resolver = new PrefixDecoratorResolver(defaultPrefix, resolver);
             }
-            return new DebugTokenizer(dictionaries, userDictionary, mode);
+
+//            try {
+//                doubleArrayTrie = DoubleArrayTrie.newInstance(resolver);
+//                connectionCosts = ConnectionCosts.newInstance(resolver);
+//                tokenInfoDictionary = TokenInfoDictionary.newInstance(resolver);
+//                unknownDictionary = UnknownDictionary.newInstance(resolver);
+//                insertedDictionary = new InsertedDictionary(9);
+//            } catch (Exception ouch) {
+//                throw new RuntimeException("Could not load dictionaries.", ouch);
+//            }
+
+//            return new DebugTokenizer(this);
+            throw new RuntimeException("Sorry -- not yet implemented...");
         }
     }
 }

@@ -35,18 +35,34 @@ public class UnknownDictionary implements Dictionary {
 
     private final String[][] features;
 
+    private final int totalFeatures;
+
     private final CharacterDefinitions characterDefinition;
 
     public UnknownDictionary(CharacterDefinitions characterDefinition,
                              int[][] entries,
                              int[][] costs,
-                             String[][] features) {
-//                             int totalFeatures) {
+                             String[][] features,
+                             int totalFeatures) {
         this.characterDefinition = characterDefinition;
         this.entries = entries;
         this.costs = costs;
         this.features = features;
+        this.totalFeatures = totalFeatures;
     }
+
+    public UnknownDictionary(CharacterDefinitions characterDefinition,
+                             int[][] entries,
+                             int[][] costs,
+                             String[][] features) {
+        this(characterDefinition,
+            entries,
+            costs,
+            features,
+            features.length
+        );
+    }
+
 
     public int[] lookupWordIds(int categoryId) {
         // Returns an array of word ids

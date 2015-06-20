@@ -36,10 +36,10 @@ public final class ClassLoaderResolver implements ResourceResolver {
 
     @Override
     public InputStream resolve(String resourceName) throws IOException {
-        InputStream is = loader.getResourceAsStream(resourceName);
-        if (is == null) {
+        InputStream input = loader.getResourceAsStream(resourceName);
+        if (input == null) {
             throw new IOException("Classpath resource not found: " + resourceName);
         }
-        return is;
+        return input;
     }
 }

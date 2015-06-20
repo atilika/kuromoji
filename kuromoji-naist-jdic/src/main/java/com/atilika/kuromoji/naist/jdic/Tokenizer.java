@@ -22,15 +22,19 @@ import com.atilika.kuromoji.ClassLoaderResolver;
 import com.atilika.kuromoji.PrefixDecoratorResolver;
 import com.atilika.kuromoji.ResourceResolver;
 import com.atilika.kuromoji.TokenizerRunner;
-import com.atilika.kuromoji.dict.DynamicDictionaries;
+import com.atilika.kuromoji.dict.ConnectionCosts;
 import com.atilika.kuromoji.dict.InsertedDictionary;
+import com.atilika.kuromoji.dict.TokenInfoDictionary;
+import com.atilika.kuromoji.dict.UnknownDictionary;
 import com.atilika.kuromoji.dict.UserDictionary;
+import com.atilika.kuromoji.trie.DoubleArrayTrie;
 import com.atilika.kuromoji.viterbi.ViterbiNode;
 
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collections;
 
 public class Tokenizer extends AbstractTokenizer {
 
@@ -38,15 +42,27 @@ public class Tokenizer extends AbstractTokenizer {
 
     public Tokenizer(Builder builder) {
         super(
-            builder.getDictionaries(),
-            builder.getUserDictionary(),
-            new InsertedDictionary(11)
+            builder.doubleArrayTrie,
+            builder.connectionCosts,
+            builder.tokenInfoDictionary,
+            builder.unknownDictionary,
+            builder.userDictionary,
+            builder.insertedDictionary,
+            Mode.NORMAL,
+            true, // split,
+            Collections.EMPTY_LIST
         );
     }
 
     @Override
     protected Token createToken(int offset, ViterbiNode node, int wordId) {
-        return new Token(wordId, node.getSurfaceForm(), node.getType(), offset + node.getStartIndex(), dictionaryMap.get(node.getType()));
+        return new Token(
+            wordId,
+            node.getSurfaceForm(),
+            node.getType(),
+            offset + node.getStartIndex(),
+            dictionaryMap.get(node.getType())
+        );
     }
 
     private static Tokenizer init(String[] args) throws IOException {
@@ -62,32 +78,26 @@ public class Tokenizer extends AbstractTokenizer {
         new TokenizerRunner().run(tokenizer);
     }
 
-    /**
-     * Builder class used to create Tokenizer instance.
-     */
     public static class Builder {
+
+        private DoubleArrayTrie doubleArrayTrie;
+
+        private ConnectionCosts connectionCosts;
+
+        private TokenInfoDictionary tokenInfoDictionary;
+
+        private UnknownDictionary unknownDictionary;
+
         private UserDictionary userDictionary = null;
 
-        /**
-         * The default resource prefix, also configurable via
-         * system property <code>com.atilika.kuromoji.dict.targetdir</code>.
-         */
+        private InsertedDictionary insertedDictionary;
+
         private String defaultPrefix = System.getProperty(
             DEFAULT_DICT_PREFIX_PROPERTY,
             DEFAULT_DICT_PREFIX);
 
-        /**
-         * The default resource resolver (relative to this class).
-         */
         private ResourceResolver resolver = new ClassLoaderResolver(this.getClass());
 
-        /**
-         * Set user dictionary input stream
-         *
-         * @param userDictionaryInputStream dictionary file as input stream
-         * @return Builder
-         * @throws java.io.IOException
-         */
         public synchronized Builder userDictionary(InputStream userDictionaryInputStream) throws IOException {
             this.userDictionary = new UserDictionary(
                 userDictionaryInputStream,
@@ -96,14 +106,6 @@ public class Tokenizer extends AbstractTokenizer {
             return this;
         }
 
-        /**
-         * Set user dictionary path
-         *
-         * @param userDictionaryPath path to dictionary file
-         * @return Builder
-         * @throws IOException
-         * @throws java.io.FileNotFoundException
-         */
         public synchronized Builder userDictionary(String userDictionaryPath) throws IOException {
             if (userDictionaryPath != null && !userDictionaryPath.isEmpty()) {
                 this.userDictionary(new BufferedInputStream(new FileInputStream(userDictionaryPath)));
@@ -111,35 +113,27 @@ public class Tokenizer extends AbstractTokenizer {
             return this;
         }
 
-        /**
-         * Sets the default prefix applied to resources at lookup time if classloader-relative
-         * {@link ResourceResolver} is used.
-         */
         public synchronized Builder prefix(String resourcePrefix) {
             this.defaultPrefix = resourcePrefix;
             return this;
         }
 
-        /**
-         * Create Tokenizer instance
-         *
-         * @return Tokenizer
-         */
         public synchronized Tokenizer build() {
             if (defaultPrefix != null) {
                 resolver = new PrefixDecoratorResolver(defaultPrefix, resolver);
             }
 
+            try {
+                doubleArrayTrie = DoubleArrayTrie.newInstance(resolver);
+                connectionCosts = ConnectionCosts.newInstance(resolver);
+                tokenInfoDictionary = TokenInfoDictionary.newInstance(resolver);
+                unknownDictionary = UnknownDictionary.newInstance(resolver);
+                insertedDictionary = new InsertedDictionary(11);
+            } catch (Exception ouch) {
+                throw new RuntimeException("Could not load dictionaries.", ouch);
+            }
+
             return new Tokenizer(this);
         }
-
-        public DynamicDictionaries getDictionaries() {
-            return new DynamicDictionaries(resolver);
-        }
-
-        public UserDictionary getUserDictionary() {
-            return userDictionary;
-        }
     }
-
 }

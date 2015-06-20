@@ -29,7 +29,11 @@ public class UserDictionaryTest {
 
     @Test
     public void testLookup() throws IOException {
-        UserDictionary dictionary = new UserDictionary(getResource("userdict.txt"));
+        UserDictionary dictionary = new UserDictionary(
+            getResource("userdict.txt"),
+            9, 7, 0
+        );
+
         int[][] dictionaryEntryResult = dictionary.locateUserDefinedWordsInText("関西国際空港に行った");
         // Length should be three 関西, 国際, 空港
         assertEquals(3, dictionaryEntryResult.length);
@@ -103,15 +107,12 @@ public class UserDictionaryTest {
     }
 
     @Test
-    public void testRead() throws IOException {
-        UserDictionary dictionary = new UserDictionary(getResource("userdict.txt"));
-        assertNotNull(dictionary);
-    }
-
-    @Test
     public void testUserDictionaryEntries() throws IOException {
         String userDictionaryEntry = "クロ,クロ,クロ,カスタム名詞";
-        UserDictionary dictionary = new UserDictionary(new ByteArrayInputStream(userDictionaryEntry.getBytes("UTF-8")));
+        UserDictionary dictionary = new UserDictionary(
+            new ByteArrayInputStream(userDictionaryEntry.getBytes("UTF-8")),
+            9, 7, 0
+        );
         int[][] positions = dictionary.locateUserDefinedWordsInText("この丘はアクロポリスと呼ばれている");
         int indexForKuro = 5;
         int calculatedIndex = positions[0][1];
@@ -122,7 +123,10 @@ public class UserDictionaryTest {
     public void testOverlappingUserDictionaryEntries() throws IOException {
         String userDictionaryEntries = "クロ,クロ,クロ,カスタム名詞\n" +
             "アクロ,アクロ,アクロ,カスタム名詞";
-        UserDictionary dictionary = new UserDictionary(new ByteArrayInputStream(userDictionaryEntries.getBytes("UTF-8")));
+        UserDictionary dictionary = new UserDictionary(
+            new ByteArrayInputStream(userDictionaryEntries.getBytes("UTF-8")),
+            9, 7, 0
+        );
         int[][] positions = dictionary.locateUserDefinedWordsInText("この丘はアクロポリスと呼ばれている");
         int indexForAcro = 4;
         int calculatedIndex = positions[0][1];

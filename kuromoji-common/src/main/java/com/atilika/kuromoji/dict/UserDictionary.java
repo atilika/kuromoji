@@ -69,11 +69,6 @@ public class UserDictionary implements Dictionary {
         read(inputStream);
     }
 
-    // TODO: This contructor should be removes - used by DebugTokenizer
-    public UserDictionary(InputStream inputStream) throws IOException {
-        this(inputStream, 2, 0, 1);
-    }
-
     /**
      * Lookup words in text
      *
@@ -158,7 +153,7 @@ public class UserDictionary implements Dictionary {
     @Override
     public String getFeature(int wordId, int... fields) {
 
-        if (fields.length == 0 || fields.length == totalFeatures) {
+        if (fields.length == 0 || fields.length == totalFeatures) { // Is this latter test correct?  There can be duplicate features... -Christian
             return getAllFeatures(wordId);
         }
 
