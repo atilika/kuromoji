@@ -91,7 +91,22 @@ public class UnknownDictionary implements Dictionary {
 
     @Override
     public String[] getAllFeaturesArray(int wordId) {
-        return features[wordId];
+        if (totalFeatures == features.length) {
+            return features[wordId];
+        }
+
+        String[] allFeatures = new String[totalFeatures];
+        String[] basicFeatures = features[wordId];
+
+        for (int i = 0; i < basicFeatures.length; i++) {
+            allFeatures[i] = basicFeatures[i];
+        }
+
+        for (int i = basicFeatures.length; i < totalFeatures; i++) {
+            allFeatures[i] = DEFAULT_FEATURE;
+        }
+
+        return allFeatures;
     }
 
     @Override
@@ -125,7 +140,7 @@ public class UnknownDictionary implements Dictionary {
         return builder.toString();
     }
 
-    public static UnknownDictionary newInstance(ResourceResolver resolver) throws IOException {
+    public static UnknownDictionary newInstance(ResourceResolver resolver, int totalFeatures) throws IOException {
 
         InputStream charDefInput = resolver.resolve("chardef2.dat");
 
@@ -149,7 +164,8 @@ public class UnknownDictionary implements Dictionary {
             characterDefinition,
             references,
             costs,
-            features
+            features,
+            totalFeatures
         );
 
         return unknownDictionary;

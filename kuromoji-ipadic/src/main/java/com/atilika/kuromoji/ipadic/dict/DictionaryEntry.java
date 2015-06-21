@@ -18,6 +18,11 @@ package com.atilika.kuromoji.ipadic.dict;
 
 import com.atilika.kuromoji.dict.AbstractDictionaryEntry;
 
+import static com.atilika.kuromoji.dict.DictionaryField.LEFT_ID;
+import static com.atilika.kuromoji.dict.DictionaryField.RIGHT_ID;
+import static com.atilika.kuromoji.dict.DictionaryField.SURFACE;
+import static com.atilika.kuromoji.dict.DictionaryField.WORD_COST;
+
 public class DictionaryEntry extends AbstractDictionaryEntry {
 
     private final String posLevel1;
@@ -33,7 +38,11 @@ public class DictionaryEntry extends AbstractDictionaryEntry {
     private final String pronunciation;
 
     public DictionaryEntry(String[] fields) {
-        super(fields);
+        super(fields[SURFACE],
+            Short.parseShort(fields[LEFT_ID]),
+            Short.parseShort(fields[RIGHT_ID]),
+            Short.parseShort(fields[WORD_COST])
+        );
 
         posLevel1 = fields[DictionaryField.POS_LEVEL_1];
         posLevel2 = fields[DictionaryField.POS_LEVEL_2];

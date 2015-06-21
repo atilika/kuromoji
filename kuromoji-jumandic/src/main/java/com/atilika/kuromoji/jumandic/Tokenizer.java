@@ -127,7 +127,7 @@ public class Tokenizer extends AbstractTokenizer {
                 doubleArrayTrie = DoubleArrayTrie.newInstance(resolver);
                 connectionCosts = ConnectionCosts.newInstance(resolver);
                 tokenInfoDictionary = TokenInfoDictionary.newInstance(resolver);
-                unknownDictionary = UnknownDictionary.newInstance(resolver);
+                unknownDictionary = UnknownDictionary.newInstance(resolver, 7);
                 insertedDictionary = new InsertedDictionary(7);
             } catch (Exception ouch) {
                 throw new RuntimeException("Could not load dictionaries.", ouch);

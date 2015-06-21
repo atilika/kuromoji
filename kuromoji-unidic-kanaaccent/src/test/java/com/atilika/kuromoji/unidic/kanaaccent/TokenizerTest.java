@@ -80,7 +80,7 @@ public class TokenizerTest {
     @Test
     public void testUnknownWord() {
         List<Token> tokens = tokenizer.tokenize("Google");
-        String expectedFeatures = "名詞,普通名詞,一般,*,*,*";
+        String expectedFeatures = "名詞,普通名詞,一般,*,*,*,*,*,*,*,*,*,*,*,*,*,*,*,*,*,*,*,*,*,*,*";
 
         assertEquals(expectedFeatures, tokens.get(0).getAllFeatures());
     }

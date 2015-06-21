@@ -30,6 +30,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.Map;
 
 import static org.junit.Assert.assertArrayEquals;
@@ -39,7 +40,13 @@ public class UnknownDictionaryCompilerTest {
 
     private static UnknownDictionary unknownDictionary;
 
-    private static CharacterDefinitions characterDefinition;
+    private static CharacterDefinitions characterDefinitions;
+
+    private static int[][] costs;
+
+    private static int[][] references;
+
+    private static String[][] features;
 
     @BeforeClass
     public static void setUp() throws IOException {
@@ -84,7 +91,7 @@ public class UnknownDictionaryCompilerTest {
         int[][] mappings = IntegerArrayIO.readSparseArray2D(charDefInput);
         String[] symbols = StringArrayIO.readArray(charDefInput);
 
-        characterDefinition = new CharacterDefinitions(
+        characterDefinitions = new CharacterDefinitions(
             definitions,
             mappings,
             symbols
@@ -92,12 +99,12 @@ public class UnknownDictionaryCompilerTest {
 
         InputStream unkDefInput = new BufferedInputStream(new FileInputStream(unkDef));
 
-        int[][] costs = IntegerArrayIO.readArray2D(unkDefInput);
-        int[][] references = IntegerArrayIO.readArray2D(unkDefInput);
-        String[][] features = StringArrayIO.readArray2D(unkDefInput);
+        costs = IntegerArrayIO.readArray2D(unkDefInput);
+        references = IntegerArrayIO.readArray2D(unkDefInput);
+        features = StringArrayIO.readArray2D(unkDefInput);
 
         unknownDictionary = new UnknownDictionary(
-            characterDefinition,
+            characterDefinitions,
             references,
             costs,
             features
@@ -107,7 +114,7 @@ public class UnknownDictionaryCompilerTest {
 
     @Test
     public void testCostsAndFeatures() {
-        int[] categories = characterDefinition.lookupCategories('一');
+        int[] categories = characterDefinitions.lookupCategories('一');
 
         // KANJI & KANJINUMERIC
         assertEquals(2, categories.length);
@@ -167,5 +174,27 @@ public class UnknownDictionaryCompilerTest {
             new String[]{"名詞", "数", "*", "*", "*", "*", "*"},
             unknownDictionary.getAllFeaturesArray(29)
         );
+    }
+
+    @Test
+    public void testFeatureSize() {
+        UnknownDictionary unknownDictionary2 = new UnknownDictionary(
+            characterDefinitions,
+            references,
+            costs,
+            features,
+            9
+        );
+
+//        assertArrayEquals(
+//            new String[]{"名詞", "一般", "*", "*", "*", "*", "*"},
+//            unknownDictionary.getAllFeaturesArray(2)
+//        );
+
+        System.out.println(
+            Arrays.toString(unknownDictionary2.getAllFeaturesArray(2))
+        );
+//        unknownDictionary.getAllFeaturesArray(2)
+
     }
 }

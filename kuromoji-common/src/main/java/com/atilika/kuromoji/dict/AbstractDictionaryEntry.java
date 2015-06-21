@@ -28,18 +28,9 @@ public abstract class AbstractDictionaryEntry {
                                    short rightId,
                                    short wordCost) {
         this.surface = surface;
-        this.rightId = rightId;
         this.leftId = leftId;
+        this.rightId = rightId;
         this.wordCost = wordCost;
-    }
-
-    public AbstractDictionaryEntry(String[] fields) {
-        this(
-            fields[DictionaryField.SURFACE],
-            Short.parseShort(fields[DictionaryField.LEFT_ID]),
-            Short.parseShort(fields[DictionaryField.RIGHT_ID]),
-            Short.parseShort(fields[DictionaryField.WORD_COST])
-        );
     }
 
     public String getSurface() {
