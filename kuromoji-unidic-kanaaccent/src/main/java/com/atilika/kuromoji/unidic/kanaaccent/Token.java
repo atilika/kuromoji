@@ -15,11 +15,11 @@
  * limitations under the License.
  */
 
-package com.atilika.kuromoji.unidic.extended;
+package com.atilika.kuromoji.unidic.kanaaccent;
 
 import com.atilika.kuromoji.AbstractToken;
 import com.atilika.kuromoji.dict.Dictionary;
-import com.atilika.kuromoji.unidic.extended.dict.DictionaryField;
+import com.atilika.kuromoji.unidic.kanaaccent.dict.DictionaryField;
 import com.atilika.kuromoji.viterbi.ViterbiNode;
 
 public class Token extends AbstractToken {

@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.atilika.kuromoji.unidic.extended.compile;
+package com.atilika.kuromoji.unidic.kanaaccent.compile;
 
 import com.atilika.kuromoji.compile.AbstractTokenInfoDictionaryCompiler;
 import com.atilika.kuromoji.compile.AbstractDictionaryCompiler;

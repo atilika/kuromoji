@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.atilika.kuromoji.unidic.extended;
+package com.atilika.kuromoji.unidic.kanaaccent;
 
 import com.atilika.kuromoji.AbstractTokenizer;
 import com.atilika.kuromoji.ClassLoaderResolver;
@@ -37,7 +37,7 @@ import java.util.Collections;
 
 public class Tokenizer extends AbstractTokenizer {
 
-    public static final String DEFAULT_DICT_PREFIX = "com/atilika/kuromoji/unidic-extended/";
+    public static final String DEFAULT_DICT_PREFIX = "com/atilika/kuromoji/unidic-kanaaccent/";
 
     public Tokenizer(Builder builder) {
         super(

@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.atilika.kuromoji.unidic.extended.dict;
+package com.atilika.kuromoji.unidic.kanaaccent.dict;
 
 public class DictionaryField {
 

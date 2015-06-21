@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.atilika.kuromoji.unidic.extended;
+package com.atilika.kuromoji.unidic.kanaaccent;
 
 import org.junit.Before;
 import org.junit.Test;

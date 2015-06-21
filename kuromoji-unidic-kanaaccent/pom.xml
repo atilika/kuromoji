@@ -9,16 +9,16 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <name>Kuromoji UniDic Extended</name>
+    <name>Kuromoji UniDic Kana Accent</name>
 
-    <artifactId>kuromoji-unidic-extended</artifactId>
+    <artifactId>kuromoji-unidic-kanaaccent</artifactId>
     <packaging>jar</packaging>
 
     <properties>
         <kuromoji.dict.file>unidic-mecab_kana-accent-2.1.2_src.zip</kuromoji.dict.file>
         <kuromoji.dict.url>http://atilika.com/releases/unidic-mecab/${kuromoji.dict.file}</kuromoji.dict.url>
         <kuromoji.dict.dir>${project.basedir}/dictionary/unidic-mecab_kana-accent-2.1.2_src</kuromoji.dict.dir>
-        <kuromoji.dict.targetdir>${project.basedir}/src/main/resources/com/atilika/kuromoji/unidic-extended</kuromoji.dict.targetdir>
+        <kuromoji.dict.targetdir>${project.basedir}/src/main/resources/com/atilika/kuromoji/unidic-kanaaccent</kuromoji.dict.targetdir>
         <kuromoji.dict.encoding>utf-8</kuromoji.dict.encoding>
         <kuromoji.dict.compact>false</kuromoji.dict.compact>
     </properties>
@@ -124,7 +124,7 @@
                             </execution>
                         </executions>
                         <configuration>
-                            <mainClass>com.atilika.kuromoji.unidic.extended.compile.DictionaryCompiler</mainClass>
+                            <mainClass>com.atilika.kuromoji.unidic.kanaaccent.compile.DictionaryCompiler</mainClass>
                             <arguments>
                                 <argument>${kuromoji.dict.dir}</argument>
                                 <argument>${kuromoji.dict.targetdir}</argument>

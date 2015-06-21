@@ -37,7 +37,7 @@ public abstract class AbstractDictionaryCompiler {
     }
 
     private void buildTokenInfoDictionary(String inputDirname, String outputDirname, String encoding, boolean compactTrie) throws IOException {
-        ProgressLog.begin("building tokeninfo dict");
+        ProgressLog.begin("compiling tokeninfo dict");
         AbstractTokenInfoDictionaryCompiler tokenInfoCompiler = getTokenInfoDictionaryCompiler(encoding);
         tokenInfoCompiler.readTokenInfo(
             tokenInfoCompiler.combinedSequentialFileInputStream(new File(inputDirname))
@@ -46,7 +46,7 @@ public abstract class AbstractDictionaryCompiler {
 
         List<String> surfaces = tokenInfoCompiler.getSurfaces();
 
-        ProgressLog.begin("building double array trie");
+        ProgressLog.begin("compiling double array trie");
         DoubleArrayTrie trie = DoubleArrayTrieCompiler.build(surfaces, compactTrie);
         trie.write(outputDirname);
         ProgressLog.end();
@@ -66,7 +66,7 @@ public abstract class AbstractDictionaryCompiler {
     abstract protected AbstractTokenInfoDictionaryCompiler getTokenInfoDictionaryCompiler(String encoding);
 
     private void buildUnknownWordDictionary(String inputDirname, String outputDirname, String encoding) throws IOException {
-        ProgressLog.begin("building unknown word dict");
+        ProgressLog.begin("compiling unknown word dict");
 
         CharacterDefinitionsCompiler charDefCompiler = new CharacterDefinitionsCompiler(
             new BufferedOutputStream(
@@ -108,7 +108,7 @@ public abstract class AbstractDictionaryCompiler {
     }
 
     private void buildConnectionCosts(String inputDirname, String outputDirname) throws IOException {
-        ProgressLog.begin("building connection costs");
+        ProgressLog.begin("compiling connection costs");
         ConnectionCostsCompiler connectionCostsCompiler = new ConnectionCostsCompiler(
             new FileOutputStream(new File(outputDirname, "cc2.dat"))
         );
@@ -126,7 +126,7 @@ public abstract class AbstractDictionaryCompiler {
         String inputEncoding = args[2];
         boolean compactTries = Boolean.parseBoolean(args[3]);
 
-        ProgressLog.println("dictionary builder");
+        ProgressLog.println("dictionary compiler");
         ProgressLog.println("");
         ProgressLog.println("input directory: " + inputDirname);
         ProgressLog.println("output directory: " + outputDirname);

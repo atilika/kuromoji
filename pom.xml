@@ -35,7 +35,7 @@
         <module>kuromoji-jumandic</module>
         <module>kuromoji-naist-jdic</module>
         <module>kuromoji-unidic</module>
-        <module>kuromoji-unidic-extended</module>
+        <module>kuromoji-unidic-kanaaccent</module>
     </modules>
 
     <developers>
