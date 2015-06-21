@@ -42,10 +42,10 @@
 
     <profiles>
         <profile>
-            <id>build-dictionary</id>
+            <id>compile-dictionary</id>
             <activation>
                 <property>
-                    <name>!skipBuildDictionary</name>
+                    <name>!skipCompileDictionary</name>
                 </property>
             </activation>
             <build>

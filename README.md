@@ -10,9 +10,9 @@ In order to build Kuromoji from source, please do as follows:
 
 These additional build options are available:
 
-* Use to `-DskipBuildDictionary` to not recompile dictionaries on each build
-* Use to `-DskipDownloadDictionary` to not download source dictionaries on dictionary build (used with
-  with `-DskipBuildDictionary`)
+* Use to `-DskipCompileDictionary` to not recompile dictionaries on each build
+* Use to `-DskipDownloadDictionary` to not download source dictionaries on dictionary compile
+  (can be used with with `-DskipCompileDictionary`)
 
 # Contact us
 
