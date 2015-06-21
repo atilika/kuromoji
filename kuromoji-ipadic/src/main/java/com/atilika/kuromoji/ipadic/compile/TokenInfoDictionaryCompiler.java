@@ -14,19 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.atilika.kuromoji.ipadic.compile;
 
-package com.atilika.kuromoji.unidic.dict;
-
+import com.atilika.kuromoji.compile.AbstractTokenInfoDictionaryCompiler;
 import com.atilika.kuromoji.dict.GenericDictionaryEntry;
-import com.atilika.kuromoji.util.AbstractTokenInfoDictionaryBuilder;
+import com.atilika.kuromoji.ipadic.dict.DictionaryEntry;
 import com.atilika.kuromoji.util.DictionaryEntryLineParser;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class TokenInfoDictionaryBuilder extends AbstractTokenInfoDictionaryBuilder<DictionaryEntry> {
+public class TokenInfoDictionaryCompiler extends AbstractTokenInfoDictionaryCompiler<DictionaryEntry> {
 
-    public TokenInfoDictionaryBuilder(String encoding) {
+    public TokenInfoDictionaryCompiler(String encoding) {
         super(encoding);
     }
 
@@ -61,7 +61,7 @@ public class TokenInfoDictionaryBuilder extends AbstractTokenInfoDictionaryBuild
         posFeatures.add(entry.getPosLevel4());
 
         posFeatures.add(entry.getConjugationType());
-        posFeatures.add(entry.getConjugationForm());
+        posFeatures.add(entry.getConjugatedForm());
 
         return posFeatures;
     }
@@ -69,19 +69,9 @@ public class TokenInfoDictionaryBuilder extends AbstractTokenInfoDictionaryBuild
     public List<String> extractOtherFeatures(DictionaryEntry entry) {
         List<String> otherFeatures = new ArrayList<>();
 
-        otherFeatures.add(entry.getLemmaReadingForm());
-        otherFeatures.add(entry.getLemma());
-        otherFeatures.add(entry.getWrittenForm());
-
+        otherFeatures.add(entry.getBaseForm());
+        otherFeatures.add(entry.getReading());
         otherFeatures.add(entry.getPronunciation());
-        otherFeatures.add(entry.getWrittenBaseForm());
-
-        otherFeatures.add(entry.getPronunciationBaseForm());
-        otherFeatures.add(entry.getLanguageType());
-        otherFeatures.add(entry.getInitialSoundAlterationType());
-        otherFeatures.add(entry.getInitialSoundAlterationForm());
-        otherFeatures.add(entry.getFinalSoundAlterationType());
-        otherFeatures.add(entry.getFinalSoundAlterationForm());
 
         return otherFeatures;
     }

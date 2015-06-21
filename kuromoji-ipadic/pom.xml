@@ -102,7 +102,7 @@
                         <version>3.3</version>
                         <executions>
                             <execution>
-                                <id>compile-dictionary-builder</id>
+                                <id>compile-dictionary-compiler</id>
                                 <phase>generate-resources</phase>
                                 <goals>
                                     <goal>compile</goal>
@@ -117,7 +117,7 @@
                         <version>1.2.1</version>
                         <executions>
                             <execution>
-                                <id>run-dictionary-builder</id>
+                                <id>run-dictionary-compiler</id>
                                 <phase>generate-resources</phase>
                                 <goals>
                                     <goal>java</goal>
@@ -125,7 +125,7 @@
                             </execution>
                         </executions>
                         <configuration>
-                            <mainClass>com.atilika.kuromoji.ipadic.dict.DictionaryBuilder</mainClass>
+                            <mainClass>com.atilika.kuromoji.ipadic.compile.DictionaryCompiler</mainClass>
                             <arguments>
                                 <argument>${kuromoji.dict.dir}</argument>
                                 <argument>${kuromoji.dict.targetdir}</argument>

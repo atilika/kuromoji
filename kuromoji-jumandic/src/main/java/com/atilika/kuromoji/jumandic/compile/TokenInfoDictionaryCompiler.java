@@ -15,18 +15,19 @@
  * limitations under the License.
  */
 
-package com.atilika.kuromoji.naist.jdic.dict;
+package com.atilika.kuromoji.jumandic.compile;
 
+import com.atilika.kuromoji.compile.AbstractTokenInfoDictionaryCompiler;
 import com.atilika.kuromoji.dict.GenericDictionaryEntry;
-import com.atilika.kuromoji.util.AbstractTokenInfoDictionaryBuilder;
+import com.atilika.kuromoji.jumandic.dict.DictionaryEntry;
 import com.atilika.kuromoji.util.DictionaryEntryLineParser;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class TokenInfoDictionaryBuilder extends AbstractTokenInfoDictionaryBuilder<DictionaryEntry> {
+public class TokenInfoDictionaryCompiler extends AbstractTokenInfoDictionaryCompiler<DictionaryEntry> {
 
-    public TokenInfoDictionaryBuilder(String encoding) {
+    public TokenInfoDictionaryCompiler(String encoding) {
         super(encoding);
     }
 
@@ -60,9 +61,6 @@ public class TokenInfoDictionaryBuilder extends AbstractTokenInfoDictionaryBuild
         posFeatures.add(entry.getPosLevel3());
         posFeatures.add(entry.getPosLevel4());
 
-        posFeatures.add(entry.getConjugationType());
-        posFeatures.add(entry.getConjugatedForm());
-
         return posFeatures;
     }
 
@@ -71,10 +69,7 @@ public class TokenInfoDictionaryBuilder extends AbstractTokenInfoDictionaryBuild
 
         otherFeatures.add(entry.getBaseForm());
         otherFeatures.add(entry.getReading());
-        otherFeatures.add(entry.getPronunciation());
-
-        otherFeatures.add(entry.getTranscriptionVariation());
-        otherFeatures.add(entry.getCompoundInformation());
+        otherFeatures.add(entry.getSemanticInformation());
 
         return otherFeatures;
     }

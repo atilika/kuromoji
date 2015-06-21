@@ -14,13 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.atilika.kuromoji.util;
+package com.atilika.kuromoji.compile;
 
-import com.atilika.kuromoji.compile.CharacterDefinitionsCompiler;
-import com.atilika.kuromoji.compile.ConnectionCostsCompiler;
-import com.atilika.kuromoji.compile.ProgressLog;
-import com.atilika.kuromoji.compile.UnknownDictionaryCompiler;
-import com.atilika.kuromoji.dict.TokenInfoDictionary;
 import com.atilika.kuromoji.trie.DoubleArrayTrie;
 
 import java.io.BufferedInputStream;
@@ -31,7 +26,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
 
-public abstract class AbstractDictionaryBuilder {
+public abstract class AbstractDictionaryCompiler {
 
     public void build(String inputDirname, String outputDirname, String encoding, boolean compactTries) throws IOException {
         File outputDir = new File(outputDirname);
@@ -43,13 +38,16 @@ public abstract class AbstractDictionaryBuilder {
 
     private void buildTokenInfoDictionary(String inputDirname, String outputDirname, String encoding, boolean compactTrie) throws IOException {
         ProgressLog.begin("building tokeninfo dict");
-        AbstractTokenInfoDictionaryBuilder tokenInfoBuilder = getTokenInfoDictionaryBuilder(encoding);
-        TokenInfoDictionary tokenInfoDictionary = tokenInfoBuilder.build(inputDirname);
+        AbstractTokenInfoDictionaryCompiler tokenInfoCompiler = getTokenInfoDictionaryCompiler(encoding);
+        tokenInfoCompiler.readTokenInfo(
+            tokenInfoCompiler.combinedSequentialFileInputStream(new File(inputDirname))
+        );
+        tokenInfoCompiler.compile();
 
-        List<String> surfaces = tokenInfoDictionary.getSurfaces();
+        List<String> surfaces = tokenInfoCompiler.getSurfaces();
 
         ProgressLog.begin("building double array trie");
-        DoubleArrayTrie trie = DoubleArrayTrieBuilder.build(surfaces, compactTrie);
+        DoubleArrayTrie trie = DoubleArrayTrieCompiler.build(surfaces, compactTrie);
         trie.write(outputDirname);
         ProgressLog.end();
 
@@ -57,15 +55,15 @@ public abstract class AbstractDictionaryBuilder {
         for (int i = 0; i < surfaces.size(); i++) {
             int doubleArrayId = trie.lookup(surfaces.get(i));
             assert doubleArrayId > 0;
-            tokenInfoDictionary.addMapping(doubleArrayId, i);
+            tokenInfoCompiler.addMapping(doubleArrayId, i);
         }
-        tokenInfoDictionary.write(outputDirname);
+        tokenInfoCompiler.write(outputDirname); // TODO: Should be refactored -Christian
         ProgressLog.end();
 
         ProgressLog.end();
     }
 
-    abstract protected AbstractTokenInfoDictionaryBuilder getTokenInfoDictionaryBuilder(String encoding);
+    abstract protected AbstractTokenInfoDictionaryCompiler getTokenInfoDictionaryCompiler(String encoding);
 
     private void buildUnknownWordDictionary(String inputDirname, String outputDirname, String encoding) throws IOException {
         ProgressLog.begin("building unknown word dict");

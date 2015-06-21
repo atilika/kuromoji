@@ -14,26 +14,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.atilika.kuromoji.ipadic.dict;
 
+package com.atilika.kuromoji.unidic.extended.compile;
+
+import com.atilika.kuromoji.compile.AbstractTokenInfoDictionaryCompiler;
 import com.atilika.kuromoji.dict.GenericDictionaryEntry;
-import com.atilika.kuromoji.util.AbstractTokenInfoDictionaryBuilder;
+import com.atilika.kuromoji.unidic.extended.dict.DictionaryEntry;
 import com.atilika.kuromoji.util.DictionaryEntryLineParser;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class TokenInfoDictionaryBuilder extends AbstractTokenInfoDictionaryBuilder<DictionaryEntry> {
+public class TokenInfoDictionaryCompiler extends AbstractTokenInfoDictionaryCompiler<DictionaryEntry> {
 
-    public TokenInfoDictionaryBuilder(String encoding) {
+    public TokenInfoDictionaryCompiler(String encoding) {
         super(encoding);
     }
 
     @Override
     protected DictionaryEntry parse(String line) {
         String[] fields = DictionaryEntryLineParser.parseLine(line);
-        DictionaryEntry entry = new DictionaryEntry(fields);
-        return entry;
+        return new DictionaryEntry(fields);
     }
 
     @Override
@@ -60,7 +61,7 @@ public class TokenInfoDictionaryBuilder extends AbstractTokenInfoDictionaryBuild
         posFeatures.add(entry.getPosLevel4());
 
         posFeatures.add(entry.getConjugationType());
-        posFeatures.add(entry.getConjugatedForm());
+        posFeatures.add(entry.getConjugationForm());
 
         return posFeatures;
     }
@@ -68,9 +69,30 @@ public class TokenInfoDictionaryBuilder extends AbstractTokenInfoDictionaryBuild
     public List<String> extractOtherFeatures(DictionaryEntry entry) {
         List<String> otherFeatures = new ArrayList<>();
 
-        otherFeatures.add(entry.getBaseForm());
-        otherFeatures.add(entry.getReading());
+        otherFeatures.add(entry.getLemmaReadingForm());
+        otherFeatures.add(entry.getLemma());
+
+        otherFeatures.add(entry.getWrittenForm());
         otherFeatures.add(entry.getPronunciation());
+        otherFeatures.add(entry.getWrittenBaseForm());
+        otherFeatures.add(entry.getPronunciationBaseForm());
+
+        otherFeatures.add(entry.getLanguageType());
+        otherFeatures.add(entry.getInitialSoundAlterationType());
+        otherFeatures.add(entry.getInitialSoundAlterationForm());
+        otherFeatures.add(entry.getFinalSoundAlterationType());
+        otherFeatures.add(entry.getFinalSoundAlterationForm());
+
+        otherFeatures.add(entry.getKana());
+        otherFeatures.add(entry.getKanaBase());
+        otherFeatures.add(entry.getForm());
+        otherFeatures.add(entry.getFormBase());
+        otherFeatures.add(entry.getInitialConnectionType());
+        otherFeatures.add(entry.getFinalConnectionType());
+
+        otherFeatures.add(entry.getAccentType());
+        otherFeatures.add(entry.getAccentConnectionType());
+        otherFeatures.add(entry.getAccentModificationType());
 
         return otherFeatures;
     }

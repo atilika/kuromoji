@@ -24,7 +24,8 @@ import java.util.List;
 
 public class UnknownDictionaryEntryParser extends DictionaryEntryLineParser {
 
-    // TODO: Currently this code is the same as the ipadic dictionary entry parser
+    // NOTE: Currently this code is the same as the IPADIC dictionary entry parser,
+    // which is okay for all the dictionaries supported so far...
     public GenericDictionaryEntry parse(String entry) {
         String[] fields = parseLine(entry);
 

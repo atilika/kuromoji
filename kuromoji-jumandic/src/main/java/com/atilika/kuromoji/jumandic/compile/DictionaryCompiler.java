@@ -15,22 +15,22 @@
  * limitations under the License.
  */
 
-package com.atilika.kuromoji.jumandic.dict;
+package com.atilika.kuromoji.jumandic.compile;
 
-import com.atilika.kuromoji.util.AbstractDictionaryBuilder;
-import com.atilika.kuromoji.util.AbstractTokenInfoDictionaryBuilder;
+import com.atilika.kuromoji.compile.AbstractTokenInfoDictionaryCompiler;
+import com.atilika.kuromoji.compile.AbstractDictionaryCompiler;
 
 import java.io.IOException;
 
-public class DictionaryBuilder extends AbstractDictionaryBuilder {
+public class DictionaryCompiler extends AbstractDictionaryCompiler {
 
     @Override
-    protected AbstractTokenInfoDictionaryBuilder getTokenInfoDictionaryBuilder(String encoding) {
-        return new TokenInfoDictionaryBuilder(encoding);
+    protected AbstractTokenInfoDictionaryCompiler getTokenInfoDictionaryCompiler(String encoding) {
+        return new TokenInfoDictionaryCompiler(encoding);
     }
 
     public static void main(String[] args) throws IOException {
-        DictionaryBuilder dictionaryBuilder = new DictionaryBuilder();
+        DictionaryCompiler dictionaryBuilder = new DictionaryCompiler();
         dictionaryBuilder.build(args);
     }
 }

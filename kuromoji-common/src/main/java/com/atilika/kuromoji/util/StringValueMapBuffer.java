@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.TreeMap;
 
@@ -31,8 +30,6 @@ public class StringValueMapBuffer {
     private static final int INTEGER_BYTES = Integer.SIZE / Byte.SIZE;
 
     private static final int SHORT_BYTES = Short.SIZE / Byte.SIZE;
-
-    private static final Charset CHARSET = StandardCharsets.UTF_8;
 
     private ByteBuffer buffer;
 
@@ -72,7 +69,7 @@ public class StringValueMapBuffer {
     }
 
     private int putString(int address, String s) {
-        byte[] bytes = s.getBytes(CHARSET);
+        byte[] bytes = s.getBytes(StandardCharsets.UTF_8);
 
         buffer.position(address);
         // TODO: The length field in the entry (bytes.length) field can be optimized (shrunk) for most dictionary types.
@@ -89,7 +86,7 @@ public class StringValueMapBuffer {
 
     private String getString(int address) {
         int length = buffer.getShort(address);
-        return new String(buffer.array(), address + SHORT_BYTES, length, CHARSET);
+        return new String(buffer.array(), address + SHORT_BYTES, length, StandardCharsets.UTF_8);
     }
 
     public void write(OutputStream os) throws IOException {

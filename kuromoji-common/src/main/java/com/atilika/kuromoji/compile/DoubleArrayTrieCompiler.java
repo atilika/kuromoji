@@ -14,14 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.atilika.kuromoji.util;
+package com.atilika.kuromoji.compile;
 
 import com.atilika.kuromoji.trie.DoubleArrayTrie;
 import com.atilika.kuromoji.trie.Trie;
 
 import java.util.List;
 
-public class DoubleArrayTrieBuilder {
+public class DoubleArrayTrieCompiler {
 
     public static DoubleArrayTrie build(List<String> surfaces, boolean compactTries) {
         Trie trie = new Trie();

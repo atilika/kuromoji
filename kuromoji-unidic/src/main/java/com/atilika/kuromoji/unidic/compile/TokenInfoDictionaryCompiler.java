@@ -15,25 +15,27 @@
  * limitations under the License.
  */
 
-package com.atilika.kuromoji.unidic.extended.dict;
+package com.atilika.kuromoji.unidic.compile;
 
+import com.atilika.kuromoji.compile.AbstractTokenInfoDictionaryCompiler;
 import com.atilika.kuromoji.dict.GenericDictionaryEntry;
-import com.atilika.kuromoji.util.AbstractTokenInfoDictionaryBuilder;
+import com.atilika.kuromoji.unidic.dict.DictionaryEntry;
 import com.atilika.kuromoji.util.DictionaryEntryLineParser;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class TokenInfoDictionaryBuilder extends AbstractTokenInfoDictionaryBuilder<DictionaryEntry> {
+public class TokenInfoDictionaryCompiler extends AbstractTokenInfoDictionaryCompiler<DictionaryEntry> {
 
-    public TokenInfoDictionaryBuilder(String encoding) {
+    public TokenInfoDictionaryCompiler(String encoding) {
         super(encoding);
     }
 
     @Override
     protected DictionaryEntry parse(String line) {
         String[] fields = DictionaryEntryLineParser.parseLine(line);
-        return new DictionaryEntry(fields);
+        DictionaryEntry entry = new DictionaryEntry(fields);
+        return entry;
     }
 
     @Override
@@ -70,28 +72,17 @@ public class TokenInfoDictionaryBuilder extends AbstractTokenInfoDictionaryBuild
 
         otherFeatures.add(entry.getLemmaReadingForm());
         otherFeatures.add(entry.getLemma());
-
         otherFeatures.add(entry.getWrittenForm());
+
         otherFeatures.add(entry.getPronunciation());
         otherFeatures.add(entry.getWrittenBaseForm());
-        otherFeatures.add(entry.getPronunciationBaseForm());
 
+        otherFeatures.add(entry.getPronunciationBaseForm());
         otherFeatures.add(entry.getLanguageType());
         otherFeatures.add(entry.getInitialSoundAlterationType());
         otherFeatures.add(entry.getInitialSoundAlterationForm());
         otherFeatures.add(entry.getFinalSoundAlterationType());
         otherFeatures.add(entry.getFinalSoundAlterationForm());
-
-        otherFeatures.add(entry.getKana());
-        otherFeatures.add(entry.getKanaBase());
-        otherFeatures.add(entry.getForm());
-        otherFeatures.add(entry.getFormBase());
-        otherFeatures.add(entry.getInitialConnectionType());
-        otherFeatures.add(entry.getFinalConnectionType());
-
-        otherFeatures.add(entry.getAccentType());
-        otherFeatures.add(entry.getAccentConnectionType());
-        otherFeatures.add(entry.getAccentModificationType());
 
         return otherFeatures;
     }
