@@ -40,9 +40,9 @@ public class TrieTest {
         trie.add("bb");
 
         Node rootNode = trie.getRoot();
-        assertEquals(2, rootNode.getChildren().length);
-        assertEquals(2, rootNode.getChildren()[0].getChildren().length);
-        assertEquals(1, rootNode.getChildren()[1].getChildren().length);
+        assertEquals(2, rootNode.getChildren().size());
+        assertEquals(2, rootNode.getChildren().get(0).getChildren().size());
+        assertEquals(1, rootNode.getChildren().get(1).getChildren().size());
     }
 
     @Test
@@ -53,9 +53,9 @@ public class TrieTest {
         trie.add("bb");
 
         Node rootNode = trie.getRoot();
-        assertEquals(2, rootNode.getChildren().length);
-        assertEquals(2, rootNode.getChildren()[0].getChildren().length);
-        assertEquals(1, rootNode.getChildren()[1].getChildren().length);
+        assertEquals(2, rootNode.getChildren().size());
+        assertEquals(2, rootNode.getChildren().get(0).getChildren().size());
+        assertEquals(1, rootNode.getChildren().get(1).getChildren().size());
     }
 
     @Test
@@ -66,8 +66,8 @@ public class TrieTest {
         assertTrue(trie.getRoot().hasSinglePath());
         trie.add("abdfg");
         Node rootNode = trie.getRoot();
-        assertEquals(2, rootNode.getChildren()[0].getChildren()[0].getChildren().length);
-        assertTrue(rootNode.getChildren()[0].getChildren()[0].getChildren()[0].hasSinglePath());
-        assertTrue(rootNode.getChildren()[0].getChildren()[0].getChildren()[1].hasSinglePath());
+        assertEquals(2, rootNode.getChildren().get(0).getChildren().get(0).getChildren().size());
+        assertTrue(rootNode.getChildren().get(0).getChildren().get(0).getChildren().get(0).hasSinglePath());
+        assertTrue(rootNode.getChildren().get(0).getChildren().get(0).getChildren().get(1).hasSinglePath());
     }
 }

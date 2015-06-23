@@ -16,6 +16,9 @@
  */
 package com.atilika.kuromoji.trie;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Normal Trie which is used to build DoubleArrayTrie
  */
@@ -41,7 +44,7 @@ public class Trie {
      * @param value String to add to Trie
      */
     public void add(String value) {
-        root.add(value + DoubleArrayTrie.TERMINATING_CHARACTER);
+        root.add(value, true);
     }
 
     /**
@@ -59,7 +62,7 @@ public class Trie {
     public class Node {
         char key; /// key(char) of this node
 
-        Node[] children = new Node[0]; // Array to hold children nodes
+        List<Node> children = new ArrayList<Node>(); // Array to hold children nodes
 
         /**
          * Constructor
@@ -82,12 +85,21 @@ public class Trie {
          * @param value String to add
          */
         public void add(String value) {
+            add(value, false);
+        }
+
+        public void add(String value, boolean terminate) {
             if (value.length() == 0) {
                 return;
             }
 
-            Node node = new Node(value.charAt(0));
-            addChild(node).add(value.substring(1));
+            Node node = addChild(new Node(value.charAt(0)));
+            for (int i = 1; i < value.length(); i++) {
+                node = node.addChild(new Node(value.charAt(i)));
+            }
+            if (terminate && (node != null)) {
+                node.addChild(new Node(DoubleArrayTrie.TERMINATING_CHARACTER));
+            }
         }
 
         /**
@@ -99,10 +111,7 @@ public class Trie {
         public Node addChild(Node newNode) {
             Node child = getChild(newNode.getKey());
             if (child == null) {
-                Node[] newChildren = new Node[children.length + 1];
-                System.arraycopy(children, 0, newChildren, 0, children.length);
-                newChildren[newChildren.length - 1] = newNode;
-                children = newChildren;
+                children.add(newNode);
                 child = newNode;
             }
             return child;
@@ -125,11 +134,11 @@ public class Trie {
          * @return true if it has only single path. false if it has multiple path.
          */
         public boolean hasSinglePath() {
-            switch (children.length) {
+            switch (children.size()) {
                 case 0:
                     return true;
                 case 1:
-                    return children[0].hasSinglePath();
+                    return children.get(0).hasSinglePath();
                 default:
                     return false;
             }
@@ -140,7 +149,7 @@ public class Trie {
          *
          * @return Array of children nodes
          */
-        public Node[] getChildren() {
+        public List<Node> getChildren() {
             return children;
         }
 
