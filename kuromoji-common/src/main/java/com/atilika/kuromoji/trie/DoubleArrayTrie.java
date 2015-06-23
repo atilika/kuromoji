@@ -31,6 +31,7 @@ import java.nio.IntBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
+import java.util.List;
 
 public class DoubleArrayTrie {
 
@@ -174,17 +175,16 @@ public class DoubleArrayTrie {
      * @param node
      */
     private void add(int previous, int index, Trie.Node node) {
-        Trie.Node[] children = node.getChildren();    // nodes following current node
 
-        if (node.getChildren().length > 0 && node.hasSinglePath() && node.getChildren()[0].getKey() != TERMINATING_CHARACTER) {    // If node has only one path, put the rest in tail array
+        if (!node.getChildren().isEmpty() && node.hasSinglePath() && node.getChildren().get(0).getKey() != TERMINATING_CHARACTER) {    // If node has only one path, put the rest in tail array
             baseBuffer.put(index, tailIndex);    // current index of tail array
-            addToTail(node.children[0]);
+            addToTail(node.getChildren().get(0));
             checkBuffer.put(index, previous);
             return;    // No more child to process
         }
 
         int startIndex = (compact ? 0 : index);
-        int base = findBase(startIndex, children);
+        int base = findBase(startIndex, node.getChildren());
 
         baseBuffer.put(index, base);
 
@@ -192,7 +192,7 @@ public class DoubleArrayTrie {
             checkBuffer.put(index, previous);    // Set check value
         }
 
-        for (Trie.Node child : children) {    // For each child to double array trie
+        for (Trie.Node child : node.getChildren()) {    // For each child to double array trie
             if (compact) {
                 add(index, base + child.getKey(), child);
             } else {
@@ -284,7 +284,7 @@ public class DoubleArrayTrie {
      * @param nodes
      * @return base value for current node
      */
-    private int findBase(int index, Trie.Node[] nodes) {
+    private int findBase(int index, List<Trie.Node> nodes) {
         int base = baseBuffer.get(index);
         if (base < 0) {
             return base;
@@ -348,10 +348,10 @@ public class DoubleArrayTrie {
             }
             tailBuffer.put(tailIndex++ - TAIL_OFFSET, node.getKey());// set character of current node
 
-            if (node.getChildren().length == 0) { // if it reached the end of input, break.
+            if (node.getChildren().isEmpty()) { // if it reached the end of input, break.
                 break;
             }
-            node = node.getChildren()[0]; // Move to next node
+            node = node.getChildren().get(0); // Move to next node
         }
     }
 }

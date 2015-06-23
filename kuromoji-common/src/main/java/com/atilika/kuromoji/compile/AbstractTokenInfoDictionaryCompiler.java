@@ -48,51 +48,38 @@ public abstract class AbstractTokenInfoDictionaryCompiler<T extends AbstractDict
 
     private String encoding;
 
-    private List<GenericDictionaryEntry> entries = new ArrayList<>();
-
     private List<BufferEntry> bufferEntries = new ArrayList<>();
-
     protected FeatureInfoMap posInfo = new FeatureInfoMap();
-
-    protected FeatureInfoMap otherInfo = new FeatureInfoMap();;
-
+    protected FeatureInfoMap otherInfo = new FeatureInfoMap();
     private List<String> surfaces = new ArrayList<>();
-
     protected WordIdMap wordIdMap = new WordIdMap();
 
     public AbstractTokenInfoDictionaryCompiler(String encoding) {
         this.encoding = encoding;
     }
 
-    public void readTokenInfo(InputStream input) throws IOException {
+    public void analyzeTokenInfo(InputStream input) throws IOException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(input, encoding));
         String line;
 
         while ((line = reader.readLine()) != null) {
             T entry = parse(line);
 
-            GenericDictionaryEntry genericEntry = generateGenericDictionaryEntry(entry);
-            entries.add(genericEntry);
-        }
-    }
+            GenericDictionaryEntry dictionaryEntry = generateGenericDictionaryEntry(entry);
 
-    protected abstract GenericDictionaryEntry generateGenericDictionaryEntry(T entry);
-
-    protected abstract T parse(String line);
-
-    @Override
-    public void compile() throws IOException {
-        generateBufferEntries();
-    }
-
-    public void generateBufferEntries() {
-        for (GenericDictionaryEntry dictionaryEntry : entries) {
             posInfo.mapFeatures(dictionaryEntry.getPosFeatures());
         }
+    }
 
+    public void readTokenInfo(InputStream input) throws IOException {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(input, encoding));
+        String line;
         int entryCount = posInfo.getEntryCount();
 
-        for (GenericDictionaryEntry dictionaryEntry : entries) {
+        while ((line = reader.readLine()) != null) {
+            T entry = parse(line);
+
+            GenericDictionaryEntry dictionaryEntry = generateGenericDictionaryEntry(entry);
 
             short leftId = dictionaryEntry.getLeftId();
             short rightId = dictionaryEntry.getRightId();
@@ -125,6 +112,16 @@ public abstract class AbstractTokenInfoDictionaryCompiler<T extends AbstractDict
             surfaces.add(dictionaryEntry.getSurface());
         }
     }
+
+    protected abstract GenericDictionaryEntry generateGenericDictionaryEntry(T entry);
+
+    protected abstract T parse(String line);
+
+    @Override
+    public void compile() throws IOException {
+
+    }
+
     private boolean entriesFitInAByte(int entryCount) {
         return entryCount <= 0xff;
     }

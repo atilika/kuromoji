@@ -39,6 +39,12 @@ public abstract class AbstractDictionaryCompiler {
     private void buildTokenInfoDictionary(String inputDirname, String outputDirname, String encoding, boolean compactTrie) throws IOException {
         ProgressLog.begin("compiling tokeninfo dict");
         AbstractTokenInfoDictionaryCompiler tokenInfoCompiler = getTokenInfoDictionaryCompiler(encoding);
+
+        ProgressLog.println("analyzing dictionary features");
+        tokenInfoCompiler.analyzeTokenInfo(
+            tokenInfoCompiler.combinedSequentialFileInputStream(new File(inputDirname))
+        );
+        ProgressLog.println("reading tokeninfo");
         tokenInfoCompiler.readTokenInfo(
             tokenInfoCompiler.combinedSequentialFileInputStream(new File(inputDirname))
         );
