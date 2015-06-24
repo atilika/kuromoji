@@ -31,6 +31,15 @@ import java.util.ArrayList;
 
 public class Tokenizer extends AbstractTokenizer {
 
+    public Tokenizer() {
+        this(new Builder());
+    }
+
+    public Tokenizer(Builder builder) {
+        configure(builder);
+    }
+
+
     @Override
     protected Token createToken(int offset, ViterbiNode node, int wordId) {
         return new Token(
@@ -128,16 +137,10 @@ public class Tokenizer extends AbstractTokenizer {
             }
         }
 
-        /**
-         * Create Tokenizer instance
-         *
-         * @return Tokenizer
-         */
+
         @Override
         public synchronized Tokenizer build() {
-            Tokenizer tokenizer = new Tokenizer();
-            tokenizer.configure(this);
-            return tokenizer;
+            return new Tokenizer(this);
         }
 
     }

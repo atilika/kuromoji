@@ -64,9 +64,6 @@ public abstract class AbstractTokenizer {
 
     protected EnumMap<ViterbiNode.Type, Dictionary> dictionaryMap = new EnumMap<>(ViterbiNode.Type.class);
 
-    protected AbstractTokenizer() {
-    }
-
     public void configure(Builder builder) {
 
         builder.loadDictionaries();
@@ -229,6 +226,11 @@ public abstract class AbstractTokenizer {
 
         protected ResourceResolver resolver = new ClassLoaderResolver(this.getClass());
 
+        /**
+         * Create Tokenizer instance
+         *
+         * @return Tokenizer
+         */
         public <T extends AbstractTokenizer> T build() {
             return null;
         }
