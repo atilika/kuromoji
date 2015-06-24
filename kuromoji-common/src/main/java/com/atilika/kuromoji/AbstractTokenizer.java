@@ -28,7 +28,12 @@ import com.atilika.kuromoji.viterbi.ViterbiLattice;
 import com.atilika.kuromoji.viterbi.ViterbiNode;
 import com.atilika.kuromoji.viterbi.ViterbiSearcher;
 
+import java.io.BufferedInputStream;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.EnumMap;
 import java.util.List;
 
@@ -39,70 +44,65 @@ import java.util.List;
 public abstract class AbstractTokenizer {
 
     public static final String DEFAULT_DICT_PREFIX_PROPERTY = "com.atilika.kuromoji.dict.targetdir";
-    public static final String DEFAULT_DICT_PREFIX = "com/atilika/kuromoji/ipadic/";
 
     public enum Mode {
         NORMAL, SEARCH, EXTENDED
     }
 
-    private final ViterbiBuilder viterbiBuilder;
-    private final ViterbiSearcher viterbiSearcher;
-    private final boolean split;
+    private ViterbiBuilder viterbiBuilder;
+    private ViterbiSearcher viterbiSearcher;
 
-    private final DoubleArrayTrie doubleArrayTrie;
+    private boolean split;
 
-    private final ConnectionCosts connectionCosts;
+    private TokenInfoDictionary tokenInfoDictionary;
 
-    private final TokenInfoDictionary tokenInfoDictionary;
+    private UnknownDictionary unknownDictionary;
 
-    private final UnknownDictionary unknownDictionary;
+    private UserDictionary userDictionary;
 
-    private final UserDictionary userDictionary;
+    private InsertedDictionary insertedDictionary;
 
-    private final InsertedDictionary insertedDictionary;
+    protected EnumMap<ViterbiNode.Type, Dictionary> dictionaryMap = new EnumMap<>(ViterbiNode.Type.class);
 
-    protected final EnumMap<ViterbiNode.Type, Dictionary> dictionaryMap = new EnumMap<>(ViterbiNode.Type.class);
+    protected AbstractTokenizer() {
+    }
 
-    protected AbstractTokenizer(DoubleArrayTrie doubleArrayTrie,
-                                ConnectionCosts connectionCosts,
-                                TokenInfoDictionary tokenInfoDictionary,
-                                UnknownDictionary unknownDictionary,
-                                UserDictionary userDictionary,
-                                InsertedDictionary insertedDictionary,
-                                Mode mode,
-                                boolean split,
-                                List<Integer> penalties) {
-        this.doubleArrayTrie = doubleArrayTrie;
-        this.connectionCosts = connectionCosts;
-        this.tokenInfoDictionary = tokenInfoDictionary;
-        this.unknownDictionary = unknownDictionary;
-        this.userDictionary = userDictionary;
-        this.insertedDictionary = insertedDictionary;
+    public void configure(Builder builder) {
+
+        builder.loadDictionaries();
+
+        this.tokenInfoDictionary = builder.tokenInfoDictionary;
+        this.unknownDictionary = builder.unknownDictionary;
+        this.userDictionary = builder.userDictionary;
+        this.insertedDictionary = builder.insertedDictionary;
 
         this.viterbiBuilder = new ViterbiBuilder(
-            doubleArrayTrie,
+            builder.doubleArrayTrie,
             tokenInfoDictionary,
             unknownDictionary,
             userDictionary,
-            mode
-        );
-        this.split = split;
-        this.viterbiSearcher = new ViterbiSearcher(
-            mode,
-            connectionCosts,
-            unknownDictionary,
-            penalties
+            builder.mode
         );
 
-        initDictinaryMap();
+        this.split = builder.split;
+        this.viterbiSearcher = new ViterbiSearcher(
+            builder.mode,
+            builder.connectionCosts,
+            unknownDictionary,
+            builder.penalties
+        );
+
+        initDictionaryMap();
     }
 
-    private void initDictinaryMap() {
+
+    private void initDictionaryMap() {
         dictionaryMap.put(ViterbiNode.Type.KNOWN, tokenInfoDictionary);
         dictionaryMap.put(ViterbiNode.Type.UNKNOWN, unknownDictionary);
         dictionaryMap.put(ViterbiNode.Type.USER, userDictionary);
         dictionaryMap.put(ViterbiNode.Type.INSERTED, insertedDictionary);
     }
+
 
     /**
      * Tokenize input text
@@ -196,4 +196,99 @@ public abstract class AbstractTokenizer {
     }
 
     protected abstract <T extends AbstractToken> T createToken(int offset, ViterbiNode node, int wordId);
+
+    public static void main(String[] args) throws IOException {
+        AbstractTokenizer tokenizer;
+        if (args.length == 1) {
+            tokenizer = new Builder().userDictionary(args[0]).build();
+        } else {
+            tokenizer = new Builder().build();
+        }
+        new TokenizerRunner().run(tokenizer);
+    }
+
+    public static class Builder {
+
+        protected DoubleArrayTrie doubleArrayTrie;
+        protected ConnectionCosts connectionCosts;
+        protected TokenInfoDictionary tokenInfoDictionary;
+        protected UnknownDictionary unknownDictionary;
+        protected UserDictionary userDictionary = null;
+        protected InsertedDictionary insertedDictionary;
+
+        protected Mode mode = Mode.NORMAL;
+        protected boolean split = true;
+        protected List<Integer> penalties = Collections.EMPTY_LIST;
+
+        protected String defaultPrefix;
+
+        protected int totalFeatures = 1;
+        protected int unknownDictionaryTotalFeatures = 1;
+        protected int readingFeature = 0;
+        protected int partOfSpeechFeature = 0;
+
+        protected ResourceResolver resolver = new ClassLoaderResolver(this.getClass());
+
+        public <T extends AbstractTokenizer> T build() {
+            return null;
+        }
+
+        /**
+         * Default Tokenizer builder, returning null
+         */
+        protected void loadDictionaries() {
+            if (defaultPrefix != null) {
+                resolver = new PrefixDecoratorResolver(defaultPrefix, resolver);
+            }
+
+            try {
+                doubleArrayTrie = DoubleArrayTrie.newInstance(resolver);
+                connectionCosts = ConnectionCosts.newInstance(resolver);
+                tokenInfoDictionary = TokenInfoDictionary.newInstance(resolver);
+                unknownDictionary = UnknownDictionary.newInstance(resolver, unknownDictionaryTotalFeatures);
+                insertedDictionary = new InsertedDictionary(totalFeatures);
+            } catch (Exception ouch) {
+                throw new RuntimeException("Could not load dictionaries.", ouch);
+            }
+        }
+
+        /**
+         * Set user dictionary input stream
+         *
+         * @param userDictionaryInputStream dictionary file as input stream
+         * @return Builder
+         * @throws java.io.IOException
+         */
+        public synchronized Builder userDictionary(InputStream userDictionaryInputStream) throws IOException {
+            this.userDictionary = new UserDictionary(
+                userDictionaryInputStream, totalFeatures, readingFeature, partOfSpeechFeature
+            );
+            return this;
+        }
+
+        /**
+         * Set user dictionary path
+         *
+         * @param userDictionaryPath path to dictionary file
+         * @return Builder
+         * @throws IOException
+         * @throws java.io.FileNotFoundException
+         */
+        public synchronized Builder userDictionary(String userDictionaryPath) throws IOException {
+            if (userDictionaryPath != null && !userDictionaryPath.isEmpty()) {
+                this.userDictionary(new BufferedInputStream(new FileInputStream(userDictionaryPath)));
+            }
+            return this;
+        }
+
+        public synchronized Builder prefix(String resourcePrefix) {
+            this.defaultPrefix = resourcePrefix;
+            return this;
+        }
+
+        public void setSplit(boolean split) {
+            this.split = split;
+        }
+
+    }
 }
