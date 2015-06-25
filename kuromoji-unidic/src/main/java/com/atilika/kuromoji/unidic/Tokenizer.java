@@ -18,40 +18,16 @@
 package com.atilika.kuromoji.unidic;
 
 import com.atilika.kuromoji.AbstractTokenizer;
-import com.atilika.kuromoji.ClassLoaderResolver;
-import com.atilika.kuromoji.PrefixDecoratorResolver;
-import com.atilika.kuromoji.ResourceResolver;
-import com.atilika.kuromoji.TokenizerRunner;
-import com.atilika.kuromoji.dict.ConnectionCosts;
-import com.atilika.kuromoji.dict.InsertedDictionary;
-import com.atilika.kuromoji.dict.TokenInfoDictionary;
-import com.atilika.kuromoji.dict.UnknownDictionary;
-import com.atilika.kuromoji.dict.UserDictionary;
-import com.atilika.kuromoji.trie.DoubleArrayTrie;
 import com.atilika.kuromoji.viterbi.ViterbiNode;
-
-import java.io.BufferedInputStream;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Collections;
 
 public class Tokenizer extends AbstractTokenizer {
 
-    public static final String DEFAULT_DICT_PREFIX = "com/atilika/kuromoji/unidic/";
+    public Tokenizer() {
+        this(new Builder());
+    }
 
     public Tokenizer(Builder builder) {
-        super(
-            builder.doubleArrayTrie,
-            builder.connectionCosts,
-            builder.tokenInfoDictionary,
-            builder.unknownDictionary,
-            builder.userDictionary,
-            builder.insertedDictionary,
-            Mode.NORMAL,
-            true, // split,
-            Collections.EMPTY_LIST
-        );
+        configure(builder);
     }
 
     @Override
@@ -65,74 +41,18 @@ public class Tokenizer extends AbstractTokenizer {
         );
     }
 
-    private static Tokenizer init(String[] args) throws IOException {
-        if (args.length == 1) {
-            return new Builder().userDictionary(args[0]).build();
+    public static class Builder extends AbstractTokenizer.Builder {
+
+        public Builder() {
+            totalFeatures = 13;
+            unknownDictionaryTotalFeatures = 17;
+            readingFeature = 7;
+            partOfSpeechFeature = 0;
+            defaultPrefix = System.getProperty(DEFAULT_DICT_PREFIX_PROPERTY, "com/atilika/kuromoji/unidic/");
         }
 
-        return new Builder().build();
-    }
-
-    public static void main(String[] args) throws IOException {
-        Tokenizer tokenizer = init(args);
-        new TokenizerRunner().run(tokenizer);
-    }
-
-    public static class Builder {
-
-        private DoubleArrayTrie doubleArrayTrie;
-
-        private ConnectionCosts connectionCosts;
-
-        private TokenInfoDictionary tokenInfoDictionary;
-
-        private UnknownDictionary unknownDictionary;
-
-        private UserDictionary userDictionary = null;
-
-        private InsertedDictionary insertedDictionary;
-
-        private String defaultPrefix = System.getProperty(
-            DEFAULT_DICT_PREFIX_PROPERTY,
-            DEFAULT_DICT_PREFIX);
-
-        private ResourceResolver resolver = new ClassLoaderResolver(this.getClass());
-
-        public synchronized Builder userDictionary(InputStream userDictionaryInputStream) throws IOException {
-            this.userDictionary = new UserDictionary(
-                userDictionaryInputStream,
-                13, 7, 0
-            );
-            return this;
-        }
-
-        public synchronized Builder userDictionary(String userDictionaryPath) throws IOException {
-            if (userDictionaryPath != null && !userDictionaryPath.isEmpty()) {
-                this.userDictionary(new BufferedInputStream(new FileInputStream(userDictionaryPath)));
-            }
-            return this;
-        }
-
-        public synchronized Builder prefix(String resourcePrefix) {
-            this.defaultPrefix = resourcePrefix;
-            return this;
-        }
-
+        @Override
         public synchronized Tokenizer build() {
-            if (defaultPrefix != null) {
-                resolver = new PrefixDecoratorResolver(defaultPrefix, resolver);
-            }
-
-            try {
-                doubleArrayTrie = DoubleArrayTrie.newInstance(resolver);
-                connectionCosts = ConnectionCosts.newInstance(resolver);
-                tokenInfoDictionary = TokenInfoDictionary.newInstance(resolver);
-                unknownDictionary = UnknownDictionary.newInstance(resolver, 17);
-                insertedDictionary = new InsertedDictionary(13);
-            } catch (Exception ouch) {
-                throw new RuntimeException("Could not load dictionaries.", ouch);
-            }
-
             return new Tokenizer(this);
         }
     }

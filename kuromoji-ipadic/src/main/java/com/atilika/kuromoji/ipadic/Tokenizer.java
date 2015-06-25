@@ -17,108 +17,77 @@
 package com.atilika.kuromoji.ipadic;
 
 import com.atilika.kuromoji.AbstractTokenizer;
-import com.atilika.kuromoji.ClassLoaderResolver;
 import com.atilika.kuromoji.PrefixDecoratorResolver;
-import com.atilika.kuromoji.ResourceResolver;
 import com.atilika.kuromoji.TokenizerRunner;
 import com.atilika.kuromoji.dict.ConnectionCosts;
 import com.atilika.kuromoji.dict.InsertedDictionary;
 import com.atilika.kuromoji.dict.TokenInfoDictionary;
 import com.atilika.kuromoji.dict.UnknownDictionary;
-import com.atilika.kuromoji.dict.UserDictionary;
 import com.atilika.kuromoji.trie.DoubleArrayTrie;
 import com.atilika.kuromoji.viterbi.ViterbiNode;
 
-import java.io.BufferedInputStream;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.List;
 
 public class Tokenizer extends AbstractTokenizer {
 
-    public Tokenizer(Builder builder) {
-        super(
-            builder.doubleArrayTrie,
-            builder.connectionCosts,
-            builder.tokenInfoDictionary,
-            builder.unknownDictionary,
-            builder.userDictionary,
-            builder.insertedDictionary,
-            builder.getMode(),
-            builder.getSplit(),
-            builder.getPenalties()
-        );
+    public Tokenizer() {
+        this(new Builder());
     }
+
+    public Tokenizer(Builder builder) {
+        configure(builder);
+    }
+
 
     @Override
     protected Token createToken(int offset, ViterbiNode node, int wordId) {
-        return new Token(wordId, node.getSurfaceForm(), node.getType(), offset + node.getStartIndex(), dictionaryMap.get(node.getType()));
-    }
-
-    private static Tokenizer init(String[] args) throws IOException {
-        Tokenizer tokenizer;
-        if (args.length == 1) {
-            Tokenizer.Mode mode = AbstractTokenizer.Mode.valueOf(args[0].toUpperCase());
-            tokenizer = new Builder().mode(mode).build();
-        } else if (args.length == 2) {
-            AbstractTokenizer.Mode mode = AbstractTokenizer.Mode.valueOf(args[0].toUpperCase());
-            tokenizer = new Builder().mode(mode).userDictionary(args[1]).build();
-        } else {
-            tokenizer = new Builder().build();
-        }
-        return tokenizer;
+        return new Token(
+            wordId,
+            node.getSurfaceForm(),
+            node.getType(),
+            offset + node.getStartIndex(),
+            dictionaryMap.get(node.getType())
+        );
     }
 
     public static void main(String[] args) throws IOException {
-        Tokenizer tokenizer = init(args);
+        Tokenizer tokenizer;
+        switch (args.length) {
+            case 1:
+                Tokenizer.Mode mode = AbstractTokenizer.Mode.valueOf(args[0].toUpperCase());
+                tokenizer = new Builder().mode(mode).build();
+                break;
+            case 2:
+                mode = AbstractTokenizer.Mode.valueOf(args[0].toUpperCase());
+                tokenizer = new Builder().mode(mode).userDictionary(args[1]).build();
+                break;
+            default:
+                tokenizer = new Builder().build();
+                break;
+        }
         new TokenizerRunner().run(tokenizer);
     }
 
     /**
      * Builder class used to create Tokenizer instance.
      */
-    public static class Builder {
+    public static class Builder extends AbstractTokenizer.Builder {
 
-        private Mode mode = Mode.NORMAL;
-
-        private boolean split = true;
-
-        private DoubleArrayTrie doubleArrayTrie;
-
-        private ConnectionCosts connectionCosts;
-
-        private TokenInfoDictionary tokenInfoDictionary;
-
-        private UnknownDictionary unknownDictionary;
-
-        private UserDictionary userDictionary = null;
-
-        private InsertedDictionary insertedDictionary;
-
+        /**
+         * ipadic-specific search mode settings
+         */
         private Integer searchModeKanjiLength;
         private Integer searchModeKanjiPenalty;
         private Integer searchModeOtherLength;
         private Integer searchModeOtherPenalty;
 
-
-        /**
-         * The default resource prefix, also configurable via
-         * system property <code>com.atilika.kuromoji.dict.targetdir</code>.
-         */
-        private String defaultPrefix = System.getProperty(
-            DEFAULT_DICT_PREFIX_PROPERTY,
-            DEFAULT_DICT_PREFIX);
-
-        /**
-         * The default resource resolver (relative to this class).
-         */
-        private ResourceResolver resolver = new ClassLoaderResolver(this.getClass());
-
-
         public Builder() {
-
+            totalFeatures = 9;
+            unknownDictionaryTotalFeatures = 9;
+            readingFeature = 7;
+            partOfSpeechFeature = 0;
+            defaultPrefix = System.getProperty(DEFAULT_DICT_PREFIX_PROPERTY, "com/atilika/kuromoji/ipadic/");
         }
 
         /**
@@ -133,36 +102,6 @@ public class Tokenizer extends AbstractTokenizer {
             return this;
         }
 
-        /**
-         * Set user dictionary input stream
-         *
-         * @param userDictionaryInputStream dictionary file as input stream
-         * @return Builder
-         * @throws java.io.IOException
-         */
-        public synchronized Builder userDictionary(InputStream userDictionaryInputStream) throws IOException {
-            this.userDictionary = new UserDictionary(
-                userDictionaryInputStream,
-                9, 7, 0
-            );
-            return this;
-        }
-
-        /**
-         * Set user dictionary path
-         *
-         * @param userDictionaryPath path to dictionary file
-         * @return Builder
-         * @throws IOException
-         * @throws java.io.FileNotFoundException
-         */
-        public synchronized Builder userDictionary(String userDictionaryPath) throws IOException {
-            if (userDictionaryPath != null && !userDictionaryPath.isEmpty()) {
-                this.userDictionary(new BufferedInputStream(new FileInputStream(userDictionaryPath)));
-            }
-            return this;
-        }
-
         public synchronized Builder penalties(int kanjiLength, int kanjiPenalty, int otherLength, int otherPenalty) {
             this.searchModeKanjiLength = kanjiLength;
             this.searchModeKanjiPenalty = kanjiPenalty;
@@ -171,12 +110,18 @@ public class Tokenizer extends AbstractTokenizer {
             return this;
         }
 
-        /**
-         * Create Tokenizer instance
-         *
-         * @return Tokenizer
-         */
-        public synchronized Tokenizer build() {
+        @Override
+        public void loadDictionaries() {
+            if (this.mode != Mode.NORMAL
+                && searchModeKanjiLength != null && searchModeKanjiPenalty != null
+                && searchModeOtherLength != null && searchModeOtherPenalty != null) {
+                penalties = new ArrayList<Integer>();
+                penalties.add(searchModeKanjiLength);
+                penalties.add(searchModeKanjiPenalty);
+                penalties.add(searchModeOtherLength);
+                penalties.add(searchModeOtherPenalty);
+            }
+
             if (defaultPrefix != null) {
                 resolver = new PrefixDecoratorResolver(defaultPrefix, resolver);
             }
@@ -190,31 +135,14 @@ public class Tokenizer extends AbstractTokenizer {
             } catch (Exception ouch) {
                 throw new RuntimeException("Could not load dictionaries.", ouch);
             }
+        }
 
+
+        @Override
+        public synchronized Tokenizer build() {
             return new Tokenizer(this);
         }
 
-        public Mode getMode() {
-            return mode;
-        }
-
-        public boolean getSplit() {
-            return split;
-        }
-
-        public List<Integer> getPenalties() {
-            List<Integer> penalties = new ArrayList<>();
-            if (this.mode != Mode.NORMAL
-                && searchModeKanjiLength != null && searchModeKanjiPenalty != null
-                && searchModeOtherLength != null && searchModeOtherPenalty != null) {
-                penalties.add(searchModeKanjiLength);
-                penalties.add(searchModeKanjiPenalty);
-                penalties.add(searchModeOtherLength);
-                penalties.add(searchModeOtherPenalty);
-
-            }
-            return penalties;
-        }
     }
 
 }
