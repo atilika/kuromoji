@@ -354,4 +354,16 @@ public class DoubleArrayTrie {
             node = node.getChildren().get(0); // Move to next node
         }
     }
+
+    public IntBuffer getBaseBuffer() {
+        return baseBuffer;
+    }
+
+    public IntBuffer getCheckBuffer() {
+        return checkBuffer;
+    }
+
+    public CharBuffer getTailBuffer() {
+        return tailBuffer;
+    }
 }

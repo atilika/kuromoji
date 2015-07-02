@@ -37,15 +37,9 @@ public class UnknownDictionaryCompiler implements Compiler {
 
     private Map<String, List<GenericDictionaryEntry>> entryMap = new HashMap<>();
 
-    private Map<String, Integer> categoryMap;
+    protected Map<String, Integer> categoryMap;
 
-    private List<GenericDictionaryEntry> dictionaryEntries = new ArrayList<>();
-
-    private int[][] entries; // maps category Id to array of
-
-    private int[][] costs; // array of { left id, right id, word cost }
-
-    private String[][] features; // array of String[] with token features
+    protected List<GenericDictionaryEntry> dictionaryEntries = new ArrayList<>();
 
     public UnknownDictionaryCompiler(Map<String, Integer> categoryMap, OutputStream output) {
         this.categoryMap = categoryMap;
@@ -73,7 +67,7 @@ public class UnknownDictionaryCompiler implements Compiler {
         for (int i = 0; i < dictionaryEntries.size(); i++) {
             GenericDictionaryEntry entry = dictionaryEntries.get(i);
 
-            costs[i] = new int[] { entry.getLeftId(), entry.getRightId(), entry.getWordCost() };
+            costs[i] = new int[]{entry.getLeftId(), entry.getRightId(), entry.getWordCost()};
         }
 
         return costs;
@@ -143,6 +137,10 @@ public class UnknownDictionaryCompiler implements Compiler {
         }
 
         return array;
+    }
+
+    public List<GenericDictionaryEntry> getDictionaryEntries() {
+        return dictionaryEntries;
     }
 
     @Override
