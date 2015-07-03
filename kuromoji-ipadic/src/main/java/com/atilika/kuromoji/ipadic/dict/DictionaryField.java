@@ -21,9 +21,9 @@ public class DictionaryField {
     /**
      * Entry format for Ipadic in output from mecab:
      * 表層形\t品詞,品詞細分類1,品詞細分類2,品詞細分類3,活用型,活用形,原形,読み,発音
-     * <p/>
+     *
      * Surface, POS, POS detailed 1, POS detailed 2, POS detailed 3, conjugation type, conjugation form, base form reading, pronunciation
-     * <p/>
+     *
      * 0:   surface form
      * 1:   leftId
      * 2:   rightId
