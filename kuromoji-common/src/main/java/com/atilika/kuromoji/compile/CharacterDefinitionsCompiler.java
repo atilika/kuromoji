@@ -36,7 +36,8 @@ public class CharacterDefinitionsCompiler implements Compiler {
 
     private Map<String, int[]> categoryDefinitions = new TreeMap<>();
 
-    private List<Set<String>> codepointCategories = new ArrayList<>(new TreeSet());
+    @SuppressWarnings("unchecked")
+    private List<Set<String>> codepointCategories = new ArrayList<Set<String>>(new TreeSet());
 
     private OutputStream output;
 
@@ -72,7 +73,7 @@ public class CharacterDefinitionsCompiler implements Compiler {
         }
     }
 
-    public void parseCategory(String line) {
+    private void parseCategory(String line) {
         String[] values = line.split("\\s+");
 
         String classname = values[0];
@@ -88,7 +89,7 @@ public class CharacterDefinitionsCompiler implements Compiler {
         );
     }
 
-    public void parseMapping(String line) {
+    private void parseMapping(String line) {
         String[] values = line.split("\\s+");
 
         assert values.length >= 2;
@@ -134,7 +135,7 @@ public class CharacterDefinitionsCompiler implements Compiler {
         categories.add(category);
     }
 
-    public boolean isCategoryEntry(String line) {
+    private boolean isCategoryEntry(String line) {
         return !line.startsWith("0x");
     }
 
@@ -205,6 +206,14 @@ public class CharacterDefinitionsCompiler implements Compiler {
         }
 
         return categories;
+    }
+
+    public Map<String, int[]> getCategoryDefinitions() {
+        return categoryDefinitions;
+    }
+
+    public List<Set<String>> getCodepointCategories() {
+        return codepointCategories;
     }
 
     @Override

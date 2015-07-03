@@ -48,11 +48,14 @@ public abstract class AbstractTokenInfoDictionaryCompiler<T extends AbstractDict
 
     private String encoding;
 
-    private List<BufferEntry> bufferEntries = new ArrayList<>();
+    protected List<BufferEntry> bufferEntries = new ArrayList<>();
     protected FeatureInfoMap posInfo = new FeatureInfoMap();
     protected FeatureInfoMap otherInfo = new FeatureInfoMap();
     private List<String> surfaces = new ArrayList<>();
     protected WordIdMap wordIdMap = new WordIdMap();
+
+    // optional list to collect the generic dictionary entries
+    protected List<GenericDictionaryEntry> dictionaryEntries = null;
 
     public AbstractTokenInfoDictionaryCompiler(String encoding) {
         this.encoding = encoding;
@@ -110,6 +113,10 @@ public abstract class AbstractTokenInfoDictionaryCompiler<T extends AbstractDict
 
             bufferEntries.add(bufferEntry);
             surfaces.add(dictionaryEntry.getSurface());
+
+            if (dictionaryEntries != null) {
+                dictionaryEntries.add(dictionaryEntry);
+            }
         }
     }
 
@@ -194,4 +201,19 @@ public abstract class AbstractTokenInfoDictionaryCompiler<T extends AbstractDict
         wordIdMap.write(new FileOutputStream(filename));
     }
 
+    public WordIdMap getWordIdMap() {
+        return wordIdMap;
+    }
+
+    public List<BufferEntry> getBufferEntries() {
+        return bufferEntries;
+    }
+
+    public List<GenericDictionaryEntry> getDictionaryEntries() {
+        return dictionaryEntries;
+    }
+
+    public void setDictionaryEntries(List<GenericDictionaryEntry> dictionaryEntries) {
+        this.dictionaryEntries = dictionaryEntries;
+    }
 }

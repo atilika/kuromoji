@@ -71,7 +71,7 @@ public abstract class AbstractDictionaryCompiler {
 
     abstract protected AbstractTokenInfoDictionaryCompiler getTokenInfoDictionaryCompiler(String encoding);
 
-    private void buildUnknownWordDictionary(String inputDirname, String outputDirname, String encoding) throws IOException {
+    protected void buildUnknownWordDictionary(String inputDirname, String outputDirname, String encoding) throws IOException {
         ProgressLog.begin("compiling unknown word dict");
 
         CharacterDefinitionsCompiler charDefCompiler = new CharacterDefinitionsCompiler(

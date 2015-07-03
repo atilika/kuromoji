@@ -103,4 +103,12 @@ public class ConnectionCostsCompiler implements Compiler {
         channel.write(byteBuffer);
         dataOutput.close();
     }
+
+    public int getCardinality() {
+        return cardinality;
+    }
+
+    public ShortBuffer getCosts() {
+        return costs;
+    }
 }
