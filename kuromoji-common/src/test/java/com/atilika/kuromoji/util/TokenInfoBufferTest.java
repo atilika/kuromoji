@@ -1,5 +1,5 @@
 /**
- * Copyright 2010-2015 Atilika Inc. and contributors (see CONTRIBUTORS.md)
+ * Copyright © 2010-2015 Atilika Inc. and contributors (see CONTRIBUTORS.md)
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may
  * not use this file except in compliance with the License.  A copy of the
@@ -77,7 +77,7 @@ public class TokenInfoBufferTest {
         tokenInfo.add((short) 1);
         tokenInfo.add((short) 2);
         tokenInfo.add((short) 3);
-        
+
         features.add(73);
         features.add(99);
 
