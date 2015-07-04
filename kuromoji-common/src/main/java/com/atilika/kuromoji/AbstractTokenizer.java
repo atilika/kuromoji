@@ -16,6 +16,7 @@
  */
 package com.atilika.kuromoji;
 
+import com.atilika.kuromoji.dict.CharacterDefinitions;
 import com.atilika.kuromoji.dict.ConnectionCosts;
 import com.atilika.kuromoji.dict.Dictionary;
 import com.atilika.kuromoji.dict.InsertedDictionary;
@@ -50,6 +51,7 @@ public abstract class AbstractTokenizer {
     }
 
     private ViterbiBuilder viterbiBuilder;
+
     private ViterbiSearcher viterbiSearcher;
 
     private boolean split;
@@ -64,7 +66,7 @@ public abstract class AbstractTokenizer {
 
     protected EnumMap<ViterbiNode.Type, Dictionary> dictionaryMap = new EnumMap<>(ViterbiNode.Type.class);
 
-    public void configure(Builder builder) {
+    protected void configure(Builder builder) {
 
         builder.loadDictionaries();
 
@@ -210,6 +212,7 @@ public abstract class AbstractTokenizer {
         protected ConnectionCosts connectionCosts;
         protected TokenInfoDictionary tokenInfoDictionary;
         protected UnknownDictionary unknownDictionary;
+        protected CharacterDefinitions characterDefinitions;
         protected UserDictionary userDictionary = null;
         protected InsertedDictionary insertedDictionary;
 
@@ -247,7 +250,8 @@ public abstract class AbstractTokenizer {
                 doubleArrayTrie = DoubleArrayTrie.newInstance(resolver);
                 connectionCosts = ConnectionCosts.newInstance(resolver);
                 tokenInfoDictionary = TokenInfoDictionary.newInstance(resolver);
-                unknownDictionary = UnknownDictionary.newInstance(resolver, unknownDictionaryTotalFeatures);
+                characterDefinitions = CharacterDefinitions.newInstance(resolver);
+                unknownDictionary = UnknownDictionary.newInstance(resolver, characterDefinitions, unknownDictionaryTotalFeatures);
                 insertedDictionary = new InsertedDictionary(totalFeatures);
             } catch (Exception ouch) {
                 throw new RuntimeException("Could not load dictionaries.", ouch);

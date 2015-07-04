@@ -19,7 +19,7 @@ package com.atilika.kuromoji.compile;
 import com.atilika.kuromoji.dict.CharacterDefinitions;
 import com.atilika.kuromoji.io.IntegerArrayIO;
 import com.atilika.kuromoji.io.StringArrayIO;
-import org.junit.BeforeClass;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.io.BufferedInputStream;
@@ -40,14 +40,14 @@ import static org.junit.Assert.assertTrue;
 
 public class CharacterDefinitionsCompilerTest {
 
-    private static File charDef;
+    private File charDef;
 
-    private static Map<Integer, String> categoryIdMap;
+    private Map<Integer, String> categoryIdMap;
 
-    private static CharacterDefinitions characterDefinition;
+    private CharacterDefinitions characterDefinition;
 
-    @BeforeClass
-    public static void setUp() throws IOException {
+    @Before
+    public void setUp() throws IOException {
         charDef = File.createTempFile("kuromoji-chardef-", ".dat");
         charDef.deleteOnExit();
 
@@ -89,26 +89,19 @@ public class CharacterDefinitionsCompilerTest {
     }
 
     @Test
-    public void testCategoryDefinitions() {
-//        System.out.println(ch);
+    public void testAddCategoryDefinitions() {
+        assertCharacterCategories(characterDefinition, '・', "KATAKANA");
 
-        assertTrue(characterDefinition.isInvoke('A')[0] > 0);
-        assertTrue(characterDefinition.isGroup('A')[0] > 0);
+        characterDefinition.setCategories('・', new String[]{"SYMBOL", "KATAKANA"});
 
-//        assertTrue(characterDefinition.isInvoke('〇'));
-//        assertTrue(characterDefinition.isGroup('〇'));
-//
-//        assertFalse(characterDefinition.isInvoke('犬'));
-//        assertFalse(characterDefinition.isGroup('犬'));
-//
-//        assertTrue(characterDefinition.isInvoke('\u0400')); // Cyrillic
-//        assertTrue(characterDefinition.isGroup('\u0400')); // Cyrillic
+        assertCharacterCategories(characterDefinition, '・', "KATAKANA", "SYMBOL");
+        assertCharacterCategories(characterDefinition, '・', "SYMBOL", "KATAKANA");
     }
 
     public void assertCharacterCategories(CharacterDefinitions characterDefinition,
                                           char c,
                                           String... categories) {
-        int[] categoryIds = characterDefinition.lookup(c);
+        int[] categoryIds = characterDefinition.lookupCategories(c);
 
         if (categoryIds == null) {
             assertNull(categories);

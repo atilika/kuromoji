@@ -18,6 +18,7 @@ package com.atilika.kuromoji;
 
 import com.atilika.kuromoji.compile.ProgressLog;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -25,6 +26,16 @@ import java.util.Set;
 import static org.junit.Assert.assertEquals;
 
 public class TestUtils {
+
+    public static void assertTokenSurfacesEquals(List<String> expectedSurfaces, List<AbstractToken> actualTokens) {
+        List<String> actualSurfaces = new ArrayList<>();
+
+        for (AbstractToken token : actualTokens) {
+            actualSurfaces.add(token.getSurfaceForm());
+        }
+
+        assertEquals(expectedSurfaces, actualSurfaces);
+    }
 
     public static void assertEqualTokenFeatureLenghts(String text, AbstractTokenizer tokenizer) {
         List<AbstractToken> tokens = tokenizer.tokenize(text);

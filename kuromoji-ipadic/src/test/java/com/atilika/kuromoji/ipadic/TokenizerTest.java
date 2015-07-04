@@ -22,8 +22,10 @@ import org.junit.Test;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
+import java.util.Arrays;
 import java.util.List;
 
+import static com.atilika.kuromoji.TestUtils.assertTokenSurfacesEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -167,6 +169,25 @@ public class TokenizerTest {
     }
 
     @Test
+    public void testNakaguroSplit() {
+        Tokenizer defaultTokenizer = new Tokenizer();
+        Tokenizer nakakuroSplittingTokenizer = new Tokenizer.Builder()
+            .isSplitOnNakaguro(true)
+            .build();
+
+        String input = "ラレ・プールカリムの音楽が好き。";
+
+        assertTokenSurfacesEquals(
+            Arrays.asList("ラレ・プールカリム", "の", "音楽", "が", "好き", "。"),
+            defaultTokenizer.tokenize(input)
+        );
+        assertTokenSurfacesEquals(
+            Arrays.asList("ラレ", "・", "プールカリム", "の", "音楽", "が", "好き", "。"),
+            nakakuroSplittingTokenizer.tokenize(input)
+        );
+    }
+
+    @Test
     public void testAllFeatures() {
         Tokenizer tokenizer = new Tokenizer.Builder().build();
         String input = "寿司が食べたいです。";
@@ -180,7 +201,7 @@ public class TokenizerTest {
     }
 
     private String toString(Token token) {
-        return token.getSurfaceForm() + "\t" +  token.getAllFeatures();
+        return token.getSurfaceForm() + "\t" + token.getAllFeatures();
     }
 
     @Test
@@ -195,6 +216,7 @@ public class TokenizerTest {
         System.out.println("Test for Bocchan without pre-splitting sentences");
 
         long totalStart = System.currentTimeMillis();
+
         for (int i = 0; i < runs; i++) {
             List<Token> tokens = tokenizer.tokenize(text);
             for (Token token : tokens) {
@@ -227,5 +249,4 @@ public class TokenizerTest {
         System.out.println("Total time : " + time);
         System.out.println("Average time per run : " + (time / runs));
     }
-
 }
