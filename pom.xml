@@ -36,6 +36,7 @@
         <module>kuromoji-naist-jdic</module>
         <module>kuromoji-unidic</module>
         <module>kuromoji-unidic-kanaaccent</module>
+        <module>kuromoji-benchmark</module>
     </modules>
 
     <developers>
