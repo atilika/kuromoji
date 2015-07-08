@@ -25,12 +25,20 @@ public class BenchmarkTest {
 
     @Ignore("Enable during development")
     @Test
-    public void testBenchmarkIpadic() throws IOException {
+    public void testBenchmarkIpadics() throws IOException {
+        benchmark("com.atilika.kuromoji.ipadic.Tokenizer", "ipadic");
+        benchmark("com.atilika.kuromoji.jumandic.Tokenizer", "jumandic");
+        benchmark("com.atilika.kuromoji.naist.jdic.Tokenizer", "naist-jdic");
+        benchmark("com.atilika.kuromoji.unidic.Tokenizer", "unidic");
+        benchmark("com.atilika.kuromoji.unidic.kanaaccent.Tokenizer", "unidic-kanaaccent");
+    }
+
+    public void benchmark(String tokenizerClass, String tokenizerName) throws IOException {
         Benchmark.main(new String[] {
-            "-t", "com.atilika.kuromoji.ipadic.Tokenizer",
-            "-c", "20000",
-            "-o", "/Users/cm/Projects/kuromoji/jawiki-ipdadic-tokenized.txt",
-            "--benchmark-output", "/Users/cm/Projects/kuromoji/jawiki-benchmark.tsv",
+            "-t", tokenizerClass,
+            "-c", "3000",
+//            "-o", "/Users/cm/Projects/kuromoji/jawiki-ipdadic-tokenized.txt",
+            "--benchmark-output", "/Users/cm/Projects/kuromoji/jawiki-" + tokenizerName + "-benchmark.tsv",
             "/Users/cm/Projects/kuromoji/jawiki.tsv",
         });
     }

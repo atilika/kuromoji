@@ -38,6 +38,7 @@ import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.zip.GZIPInputStream;
 
 public class Benchmark {
 
@@ -75,11 +76,24 @@ public class Benchmark {
 
     public void benchmark() throws IOException {
 
-        BufferedReader reader = new BufferedReader(
-            new InputStreamReader(
-                new FileInputStream(inputFile), StandardCharsets.UTF_8
-            )
-        );
+        BufferedReader reader;
+
+        if (inputFile.getName().endsWith(".gz")) {
+            reader = new BufferedReader(
+                new InputStreamReader(
+                    new GZIPInputStream(
+                        new FileInputStream(inputFile)
+                    ),
+                    StandardCharsets.UTF_8
+                )
+            );
+        } else {
+            reader = new BufferedReader(
+                new InputStreamReader(
+                    new FileInputStream(inputFile), StandardCharsets.UTF_8
+                )
+            );
+        }
 
         Writer writer;
 
@@ -157,41 +171,46 @@ public class Benchmark {
     }
 
     private void writeStatisticsHeader(Writer writer) throws IOException {
-        writer.write(
-            format(
-                "documents",
-                "tokens",
-                "characters",
-                "documents/sec",
-                "characters/sec",
-                "used_memory_mb",
-                "free_memory_mb",
-                "total_memory_mb",
-                "max_memory_mb"
-            )
+        String header = format(
+            "documents",
+            "tokens",
+            "characters",
+            "documents/sec",
+            "characters/sec",
+            "used_memory_mb",
+            "free_memory_mb",
+            "total_memory_mb",
+            "max_memory_mb"
         );
-        writer.write('\n');
-        writer.flush();
+
+        writeRecord(writer, header);
     }
 
     private void writeStatistics(Writer writer) throws IOException {
         HeapUtilizationSnapshot heapSnapshot = new HeapUtilizationSnapshot();
-
-        writer.write(
-            format(
-                documents.get(),
-                tokens.get(),
-                characters.get(),
-                getMetricPerSecond(documents.get()),
-                getMetricPerSecond(characters.get()),
-                heapSnapshot.getUsedMemory(),
-                heapSnapshot.getFreeMemory(),
-                heapSnapshot.getTotalMemory(),
-                heapSnapshot.getMaxMemory()
-            )
+        String record = format(
+            documents.get(),
+            tokens.get(),
+            characters.get(),
+            getMetricPerSecond(documents.get()),
+            getMetricPerSecond(characters.get()),
+            heapSnapshot.getUsedMemory(),
+            heapSnapshot.getFreeMemory(),
+            heapSnapshot.getTotalMemory(),
+            heapSnapshot.getMaxMemory()
         );
+
+        writeRecord(writer, record);
+    }
+
+    private void writeRecord(Writer writer, String record) throws IOException {
+        writer.write(record);
         writer.write('\n');
         writer.flush();
+
+        if (outputStatistics) {
+            System.out.println(record);
+        }
     }
 
     private String format(Object... fields) {
