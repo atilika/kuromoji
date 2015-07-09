@@ -15,7 +15,7 @@
     <packaging>jar</packaging>
 
     <properties>
-        <kuromoji.wiki.file>jawiki-10000.tsv.gz</kuromoji.wiki.file>
+        <kuromoji.wiki.file>jawiki.tsv.gz</kuromoji.wiki.file>
         <kuromoji.wiki.url>http://atilika.com/releases/jawiki/${kuromoji.wiki.file}</kuromoji.wiki.url>
         <kuromoji.wiki.dir>${project.basedir}/jawiki/</kuromoji.wiki.dir>
         <kuromoji.benchmark.count>0</kuromoji.benchmark.count> <!-- 0 means all documents -->
