@@ -25,6 +25,7 @@ import java.io.LineNumberReader;
 import java.util.Arrays;
 import java.util.List;
 
+import static com.atilika.kuromoji.TestUtils.assertMultiThreadedTokenizedStreamEquals;
 import static com.atilika.kuromoji.TestUtils.assertTokenSurfacesEquals;
 import static com.atilika.kuromoji.TestUtils.assertTokenizedStreamEquals;
 import static org.junit.Assert.assertEquals;
@@ -249,6 +250,17 @@ public class TokenizerTest {
         assertTokenizedStreamEquals(
             getClass().getResourceAsStream("/bocchan-ipadic-features.txt"),
             getClass().getResourceAsStream("/bocchan.txt"),
+            tokenizer
+        );
+    }
+
+    @Test
+    public void testMultiThreadedBocchan() throws IOException, InterruptedException {
+        assertMultiThreadedTokenizedStreamEquals(
+            5,
+            25,
+            "/bocchan-ipadic-features.txt",
+            "/bocchan.txt",
             tokenizer
         );
     }

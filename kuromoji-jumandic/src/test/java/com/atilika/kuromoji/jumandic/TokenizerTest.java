@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.util.List;
 
 import static com.atilika.kuromoji.TestUtils.assertEqualTokenFeatureLenghts;
+import static com.atilika.kuromoji.TestUtils.assertMultiThreadedTokenizedStreamEquals;
 import static com.atilika.kuromoji.TestUtils.assertTokenizedStreamEquals;
 import static org.junit.Assert.assertEquals;
 
@@ -157,6 +158,11 @@ public class TokenizerTest {
     }
 
     @Test
+    public void testFeatureLengths() throws IOException {
+        assertEqualTokenFeatureLenghts("ahgsfdajhgsfdこの丘はアクロポリスと呼ばれている。", tokenizer);
+    }
+
+    @Test
     public void testNewBocchan() throws IOException {
         assertTokenizedStreamEquals(
             getClass().getResourceAsStream("/bocchan-jumandic-features.txt"),
@@ -166,8 +172,14 @@ public class TokenizerTest {
     }
 
     @Test
-    public void testFeatureLengths() throws IOException {
-        assertEqualTokenFeatureLenghts("ahgsfdajhgsfdこの丘はアクロポリスと呼ばれている。", tokenizer);
+    public void testMultiThreadedBocchan() throws IOException, InterruptedException {
+        assertMultiThreadedTokenizedStreamEquals(
+            5,
+            25,
+            "/bocchan-jumandic-features.txt",
+            "/bocchan.txt",
+            tokenizer
+        );
     }
 
     private String getCombinedPartOfSpeech(Token token) {

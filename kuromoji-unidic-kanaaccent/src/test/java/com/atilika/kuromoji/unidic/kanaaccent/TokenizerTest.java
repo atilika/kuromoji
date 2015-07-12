@@ -25,6 +25,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 import static com.atilika.kuromoji.TestUtils.assertEqualTokenFeatureLenghts;
+import static com.atilika.kuromoji.TestUtils.assertMultiThreadedTokenizedStreamEquals;
 import static com.atilika.kuromoji.TestUtils.assertTokenizedStreamEquals;
 import static junit.framework.Assert.assertEquals;
 
@@ -301,6 +302,17 @@ public class TokenizerTest {
         assertTokenizedStreamEquals(
             getClass().getResourceAsStream("/bocchan-unidic-kanaaccent-features.txt"),
             getClass().getResourceAsStream("/bocchan.txt"),
+            tokenizer
+        );
+    }
+
+    @Test
+    public void testMultiThreadedBocchan() throws IOException, InterruptedException {
+        assertMultiThreadedTokenizedStreamEquals(
+            5,
+            25,
+            "/bocchan-unidic-kanaaccent-features.txt",
+            "/bocchan.txt",
             tokenizer
         );
     }

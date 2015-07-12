@@ -16,8 +16,6 @@
  */
 package com.atilika.kuromoji;
 
-import com.atilika.kuromoji.compile.ProgressLog;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -28,8 +26,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 public class TestUtils {
 
@@ -72,6 +69,52 @@ public class TestUtils {
                 assertEquals(features, token.getAllFeatures());
             }
         }
+    }
+
+    public static void assertMultiThreadedTokenizedStreamEquals(int numThreads,
+                                                                final int perThreadRuns,
+                                                                final String tokenizedInputResource,
+                                                                final String untokenizedInputResource,
+                                                                final AbstractTokenizer tokenizer) throws IOException, InterruptedException {
+        List<Thread> threads = new ArrayList<>();
+
+        for (int i = 0; i < numThreads; i++) {
+            Thread thread = new Thread(
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        for (int run = 0; run < perThreadRuns; run++) {
+
+//                            System.out.println(Thread.currentThread().getName() + ": tokenizer run " + run);
+
+                            try {
+                                InputStream tokenizedInput = getClass().getResourceAsStream(tokenizedInputResource);
+                                InputStream untokenizedInput = getClass().getResourceAsStream(untokenizedInputResource);
+
+                                assertTokenizedStreamEquals(
+                                    tokenizedInput,
+                                    untokenizedInput,
+                                    tokenizer
+                                );
+
+                                untokenizedInput.close();
+                                tokenizedInput.close();
+                            } catch (IOException e) {
+                                fail(e.getMessage());
+                            }
+                        }
+                    }
+                }
+            );
+            threads.add(thread);
+            thread.start();
+        }
+
+        for (Thread thread : threads) {
+            thread.join();
+        }
+
+        assertTrue(true);
     }
 
     public static void assertEqualTokenFeatureLenghts(String text, AbstractTokenizer tokenizer) {
