@@ -26,6 +26,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static com.atilika.kuromoji.TestUtils.assertTokenSurfacesEquals;
+import static com.atilika.kuromoji.TestUtils.assertTokenizedStreamEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -208,7 +209,7 @@ public class TokenizerTest {
     public void testBocchan() throws IOException, InterruptedException {
         int runs = 3;
         LineNumberReader reader = new LineNumberReader(new InputStreamReader(
-            this.getClass().getClassLoader().getResourceAsStream("bocchan.utf-8.txt")));
+            this.getClass().getClassLoader().getResourceAsStream("bocchan.txt")));
 
         String text = reader.readLine();
         reader.close();
@@ -241,6 +242,15 @@ public class TokenizerTest {
         }
 
         reportStatistics(totalStart, runs);
+    }
+
+    @Test
+    public void testNewBocchan() throws IOException {
+        assertTokenizedStreamEquals(
+            getClass().getResourceAsStream("/bocchan-ipadic-features.txt"),
+            getClass().getResourceAsStream("/bocchan.txt"),
+            tokenizer
+        );
     }
 
     private void reportStatistics(long totalStart, int runs) {

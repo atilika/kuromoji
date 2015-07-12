@@ -33,13 +33,32 @@ public class BenchmarkTest {
         benchmark("com.atilika.kuromoji.unidic.kanaaccent.Tokenizer", "unidic-kanaaccent");
     }
 
+    @Ignore("Enable during development")
+    @Test
+    public void testBocchanVariants() throws IOException {
+        bocchan("com.atilika.kuromoji.ipadic.Tokenizer", "ipadic");
+        bocchan("com.atilika.kuromoji.jumandic.Tokenizer", "jumandic");
+        bocchan("com.atilika.kuromoji.naist.jdic.Tokenizer", "naist-jdic");
+        bocchan("com.atilika.kuromoji.unidic.Tokenizer", "unidic");
+        bocchan("com.atilika.kuromoji.unidic.kanaaccent.Tokenizer", "unidic-kanaaccent");
+    }
+
     public void benchmark(String tokenizerClass, String tokenizerName) throws IOException {
-        Benchmark.main(new String[] {
+        Benchmark.main(new String[]{
             "-t", tokenizerClass,
             "-c", "3000",
 //            "-o", "/Users/cm/Projects/kuromoji/jawiki-ipdadic-tokenized.txt",
             "--benchmark-output", "/Users/cm/Projects/kuromoji/jawiki-" + tokenizerName + "-benchmark.tsv",
             "/Users/cm/Projects/kuromoji/jawiki.tsv",
+        });
+    }
+
+
+    public void bocchan(String tokenizerClass, String tokenizerName) throws IOException {
+        Benchmark.main(new String[] {
+            "-t", tokenizerClass,
+            "-o", "bocchan-" + tokenizerName + "-features.txt",
+            "/Users/cm/Projects/kuromoji/kuromoji-ipadic/src/test/resources/bocchan.txt",
         });
     }
 }

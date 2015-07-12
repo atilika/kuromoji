@@ -25,6 +25,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 import static com.atilika.kuromoji.TestUtils.assertEqualTokenFeatureLenghts;
+import static com.atilika.kuromoji.TestUtils.assertTokenizedStreamEquals;
 import static junit.framework.Assert.assertEquals;
 
 public class TokenizerTest {
@@ -294,6 +295,16 @@ public class TokenizerTest {
     public void testFeatureLengths() throws IOException {
         assertEqualTokenFeatureLenghts("ahgsfdajhgsfdこの丘はアクロポリスと呼ばれている。", tokenizer);
     }
+
+    @Test
+    public void testNewBocchan() throws IOException {
+        assertTokenizedStreamEquals(
+            getClass().getResourceAsStream("/bocchan-unidic-kanaaccent-features.txt"),
+            getClass().getResourceAsStream("/bocchan.txt"),
+            tokenizer
+        );
+    }
+
 
     private void buildTokenizerWithUserDictionary(String userDictionaryEntry) throws IOException {
         tokenizer = new Tokenizer.Builder().userDictionary(getUserDictionaryFromString(userDictionaryEntry)).build();

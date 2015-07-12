@@ -18,12 +18,18 @@ package com.atilika.kuromoji;
 
 import com.atilika.kuromoji.compile.ProgressLog;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 public class TestUtils {
 
@@ -37,22 +43,47 @@ public class TestUtils {
         assertEquals(expectedSurfaces, actualSurfaces);
     }
 
+    public static void assertTokenizedStreamEquals(InputStream tokenizedInput,
+                                                   InputStream untokenizedInput,
+                                                   AbstractTokenizer tokenizer) throws IOException {
+        BufferedReader untokenizedInputReader = new BufferedReader(
+            new InputStreamReader(untokenizedInput, StandardCharsets.UTF_8)
+        );
+        BufferedReader tokenizedInputReader = new BufferedReader(
+            new InputStreamReader(tokenizedInput, StandardCharsets.UTF_8)
+        );
+
+        String untokenizedLine;
+
+        while ((untokenizedLine = untokenizedInputReader.readLine()) != null) {
+            List<AbstractToken> tokens = tokenizer.tokenize(untokenizedLine);
+
+            for (AbstractToken token : tokens) {
+                String tokenLine = tokenizedInputReader.readLine();
+
+                assertNotNull(tokenLine);
+
+                // TODO: Verify if this tab handling is correct...
+                String[] parts = tokenLine.split("\\t", 2);
+                String surface = parts[0];
+                String features = parts[1];
+
+                assertEquals(surface, token.getSurfaceForm());
+                assertEquals(features, token.getAllFeatures());
+            }
+        }
+    }
+
     public static void assertEqualTokenFeatureLenghts(String text, AbstractTokenizer tokenizer) {
         List<AbstractToken> tokens = tokenizer.tokenize(text);
         Set<Integer> lenghts = new HashSet<>();
 
         for (AbstractToken token : tokens) {
-            ProgressLog.println("T: " + token.getSurfaceForm() + ", FL: " + token.getAllFeaturesArray().length + ", FA: " + token.getAllFeatures());
             lenghts.add(
                 token.getAllFeaturesArray().length
             );
         }
 
-//        assertEquals(1, lenghts.size());
-        if (lenghts.size() == 1) {
-            ProgressLog.println("SUCCESS -- Token feature sizes are equal");
-        } else {
-            ProgressLog.println("FAILURE -- Token feature sizes are not equal (see above output)");
-        }
+        assertEquals(1, lenghts.size());
     }
 }

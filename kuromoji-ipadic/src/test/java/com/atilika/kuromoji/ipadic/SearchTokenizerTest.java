@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 
@@ -42,11 +43,13 @@ public class SearchTokenizerTest {
 
     @Test
     public void testCompoundSplitting() throws IOException {
-        assertSegmentation("search-segmentation-tests.txt");
+        assertSegmentation("/search-segmentation-tests.txt");
     }
 
     public void assertSegmentation(String testFilename) throws IOException {
-        LineNumberReader reader = new LineNumberReader(new InputStreamReader(getResourceAsStream(testFilename), "UTF-8"));
+        LineNumberReader reader = new LineNumberReader(
+            new InputStreamReader(getResourceAsStream(testFilename), StandardCharsets.UTF_8)
+        );
 
         String line;
         while ((line = reader.readLine()) != null) {
@@ -75,7 +78,7 @@ public class SearchTokenizerTest {
         }
     }
 
-    private InputStream getResourceAsStream(String filename) {
-        return this.getClass().getClassLoader().getResourceAsStream(filename);
+    private InputStream getResourceAsStream(String resource) {
+        return this.getClass().getResourceAsStream(resource);
     }
 }
