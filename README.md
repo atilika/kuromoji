@@ -25,13 +25,12 @@ The following additional build options are available:
 
 * `-DskipCompileDictionary`  Do not recompile the dictionaries
 * `-DskipDownloadDictionary` Do not download source dictionaries
-* `-DskipDownloadDictionary` Do not download source dictionaries
 * `-DbenchmarkTokenizers` Profile each tokenizer during the package phase using content from Japanese Wikipedia
 * `-DskipDownloadWikipedia` Prevent the compressed version of the Japanese Wikipedia (~765 MB) from being downloaded during profiling.
 
 ## Using  Kuromoji
 
-To use Kuromoji, you must add `kuromoji-common-0.9-SNAPSHOT.jar` and your chosen dictionary's jar to your Project. For many projects, the IPADIC variant `kuromoji-ipadic-0.9-SNAPSHOT.jar` should suffice.
+To use Kuromoji, you must add `kuromoji-common-0.9-SNAPSHOT.jar` and your chosen dictionary's jar to your project. For many projects, the IPADIC variant `kuromoji-ipadic-0.9-SNAPSHOT.jar` should suffice.
 
 The following code snippet demonstrates how to use Kuromoji's tokenizer:
 
