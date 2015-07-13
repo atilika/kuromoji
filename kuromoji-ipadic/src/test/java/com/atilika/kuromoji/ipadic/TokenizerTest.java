@@ -1,5 +1,5 @@
 /**
- * Copyright 2010-2015 Atilika Inc. and contributors (see CONTRIBUTORS.md)
+ * Copyright © 2010-2015 Atilika Inc. and contributors (see CONTRIBUTORS.md)
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may
  * not use this file except in compliance with the License.  A copy of the
@@ -22,8 +22,12 @@ import org.junit.Test;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
+import java.util.Arrays;
 import java.util.List;
 
+import static com.atilika.kuromoji.TestUtils.assertMultiThreadedTokenizedStreamEquals;
+import static com.atilika.kuromoji.TestUtils.assertTokenSurfacesEquals;
+import static com.atilika.kuromoji.TestUtils.assertTokenizedStreamEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -167,6 +171,25 @@ public class TokenizerTest {
     }
 
     @Test
+    public void testNakaguroSplit() {
+        Tokenizer defaultTokenizer = new Tokenizer();
+        Tokenizer nakakuroSplittingTokenizer = new Tokenizer.Builder()
+            .isSplitOnNakaguro(true)
+            .build();
+
+        String input = "ラレ・プールカリムの音楽が好き。";
+
+        assertTokenSurfacesEquals(
+            Arrays.asList("ラレ・プールカリム", "の", "音楽", "が", "好き", "。"),
+            defaultTokenizer.tokenize(input)
+        );
+        assertTokenSurfacesEquals(
+            Arrays.asList("ラレ", "・", "プールカリム", "の", "音楽", "が", "好き", "。"),
+            nakakuroSplittingTokenizer.tokenize(input)
+        );
+    }
+
+    @Test
     public void testAllFeatures() {
         Tokenizer tokenizer = new Tokenizer.Builder().build();
         String input = "寿司が食べたいです。";
@@ -180,14 +203,14 @@ public class TokenizerTest {
     }
 
     private String toString(Token token) {
-        return token.getSurfaceForm() + "\t" +  token.getAllFeatures();
+        return token.getSurfaceForm() + "\t" + token.getAllFeatures();
     }
 
     @Test
     public void testBocchan() throws IOException, InterruptedException {
         int runs = 3;
         LineNumberReader reader = new LineNumberReader(new InputStreamReader(
-            this.getClass().getClassLoader().getResourceAsStream("bocchan.utf-8.txt")));
+            this.getClass().getClassLoader().getResourceAsStream("bocchan.txt")));
 
         String text = reader.readLine();
         reader.close();
@@ -195,6 +218,7 @@ public class TokenizerTest {
         System.out.println("Test for Bocchan without pre-splitting sentences");
 
         long totalStart = System.currentTimeMillis();
+
         for (int i = 0; i < runs; i++) {
             List<Token> tokens = tokenizer.tokenize(text);
             for (Token token : tokens) {
@@ -221,11 +245,30 @@ public class TokenizerTest {
         reportStatistics(totalStart, runs);
     }
 
+    @Test
+    public void testNewBocchan() throws IOException {
+        assertTokenizedStreamEquals(
+            getClass().getResourceAsStream("/bocchan-ipadic-features.txt"),
+            getClass().getResourceAsStream("/bocchan.txt"),
+            tokenizer
+        );
+    }
+
+    @Test
+    public void testMultiThreadedBocchan() throws IOException, InterruptedException {
+        assertMultiThreadedTokenizedStreamEquals(
+            5,
+            25,
+            "/bocchan-ipadic-features.txt",
+            "/bocchan.txt",
+            tokenizer
+        );
+    }
+
     private void reportStatistics(long totalStart, int runs) {
         long time = System.currentTimeMillis() - totalStart;
 
         System.out.println("Total time : " + time);
         System.out.println("Average time per run : " + (time / runs));
     }
-
 }

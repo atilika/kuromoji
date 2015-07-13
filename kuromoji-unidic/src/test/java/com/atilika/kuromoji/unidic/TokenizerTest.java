@@ -1,5 +1,5 @@
 /**
- * Copyright 2010-2015 Atilika Inc. and contributors (see CONTRIBUTORS.md)
+ * Copyright © 2010-2015 Atilika Inc. and contributors (see CONTRIBUTORS.md)
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may
  * not use this file except in compliance with the License.  A copy of the
@@ -17,15 +17,14 @@
 package com.atilika.kuromoji.unidic;
 
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.LineNumberReader;
 import java.util.List;
 
 import static com.atilika.kuromoji.TestUtils.assertEqualTokenFeatureLenghts;
+import static com.atilika.kuromoji.TestUtils.assertMultiThreadedTokenizedStreamEquals;
+import static com.atilika.kuromoji.TestUtils.assertTokenizedStreamEquals;
 import static junit.framework.Assert.assertEquals;
 
 public class TokenizerTest {
@@ -223,45 +222,23 @@ public class TokenizerTest {
         assertEqualTokenFeatureLenghts("ahgsfdajhgsfdこの丘はアクロポリスと呼ばれている。", tokenizer);
     }
 
-    // TODO: Check witch version of unidic is used for test result. Currently there are some segmentation differences.
-    @Ignore("Unidic version of expected case should be checked")
     @Test
-    public void testBocchanTokenizationForUniDic() throws IOException {
-        int numberOfTokens = 100;
-        String expected = expect("bocchan-tokenized-unidic.utf-8.txt", numberOfTokens);
-        assertEquals(expected, given("bocchan.utf-8.txt", numberOfTokens));
+    public void testNewBocchan() throws IOException {
+        assertTokenizedStreamEquals(
+            getClass().getResourceAsStream("/bocchan-unidic-features.txt"),
+            getClass().getResourceAsStream("/bocchan.txt"),
+            tokenizer
+        );
     }
 
-    private String expect(String s, int numberOfTokens) throws IOException {
-        String expected = "";
-        String line;
-        int numberOfLines = 0;
-        LineNumberReader reader = new LineNumberReader(new InputStreamReader(this.getClass().getClassLoader().getResourceAsStream(s)));
-        while ((line = reader.readLine()) != null && (numberOfLines < numberOfTokens || numberOfTokens == 0)) {
-            expected += line.trim() + "\n";
-            numberOfLines++;
-        }
-        reader.close();
-        return expected;
-    }
-
-    private String given(String input, int numberOfTokens) throws IOException {
-        LineNumberReader reader = new LineNumberReader(new InputStreamReader(this.getClass().getClassLoader().getResourceAsStream(input)));
-        String content = reader.readLine();
-        reader.close();
-        System.out.println(content.substring(0, 100));
-        System.out.println(content.length());
-        List<Token> tokens = tokenizer.tokenize(content);
-        System.out.println(tokens.size());
-        System.out.println(tokens.get(0).getSurfaceForm());
-        String result = "";
-        int numberOfLines = 0;
-        for (Token token : tokens) {
-            if (numberOfTokens == 0 || numberOfLines < numberOfTokens) {
-                result += token.getSurfaceForm().trim() + "\n";
-            }
-            numberOfLines++;
-        }
-        return result;
+    @Test
+    public void testMultiThreadedBocchan() throws IOException, InterruptedException {
+        assertMultiThreadedTokenizedStreamEquals(
+            5,
+            25,
+            "/bocchan-unidic-features.txt",
+            "/bocchan.txt",
+            tokenizer
+        );
     }
 }

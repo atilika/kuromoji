@@ -1,5 +1,5 @@
 /**
- * Copyright 2010-2015 Atilika Inc. and contributors (see CONTRIBUTORS.md)
+ * Copyright © 2010-2015 Atilika Inc. and contributors (see CONTRIBUTORS.md)
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may
  * not use this file except in compliance with the License.  A copy of the
@@ -16,32 +16,117 @@
  */
 package com.atilika.kuromoji;
 
-import com.atilika.kuromoji.compile.ProgressLog;
-
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 public class TestUtils {
+
+    public static void assertTokenSurfacesEquals(List<String> expectedSurfaces, List<AbstractToken> actualTokens) {
+        List<String> actualSurfaces = new ArrayList<>();
+
+        for (AbstractToken token : actualTokens) {
+            actualSurfaces.add(token.getSurfaceForm());
+        }
+
+        assertEquals(expectedSurfaces, actualSurfaces);
+    }
+
+    public static void assertTokenizedStreamEquals(InputStream tokenizedInput,
+                                                   InputStream untokenizedInput,
+                                                   AbstractTokenizer tokenizer) throws IOException {
+        BufferedReader untokenizedInputReader = new BufferedReader(
+            new InputStreamReader(untokenizedInput, StandardCharsets.UTF_8)
+        );
+        BufferedReader tokenizedInputReader = new BufferedReader(
+            new InputStreamReader(tokenizedInput, StandardCharsets.UTF_8)
+        );
+
+        String untokenizedLine;
+
+        while ((untokenizedLine = untokenizedInputReader.readLine()) != null) {
+            List<AbstractToken> tokens = tokenizer.tokenize(untokenizedLine);
+
+            for (AbstractToken token : tokens) {
+                String tokenLine = tokenizedInputReader.readLine();
+
+                assertNotNull(tokenLine);
+
+                // TODO: Verify if this tab handling is correct...
+                String[] parts = tokenLine.split("\\t", 2);
+                String surface = parts[0];
+                String features = parts[1];
+
+                assertEquals(surface, token.getSurfaceForm());
+                assertEquals(features, token.getAllFeatures());
+            }
+        }
+    }
+
+    public static void assertMultiThreadedTokenizedStreamEquals(int numThreads,
+                                                                final int perThreadRuns,
+                                                                final String tokenizedInputResource,
+                                                                final String untokenizedInputResource,
+                                                                final AbstractTokenizer tokenizer) throws IOException, InterruptedException {
+        List<Thread> threads = new ArrayList<>();
+
+        for (int i = 0; i < numThreads; i++) {
+            Thread thread = new Thread(
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        for (int run = 0; run < perThreadRuns; run++) {
+
+//                            System.out.println(Thread.currentThread().getName() + ": tokenizer run " + run);
+
+                            try {
+                                InputStream tokenizedInput = getClass().getResourceAsStream(tokenizedInputResource);
+                                InputStream untokenizedInput = getClass().getResourceAsStream(untokenizedInputResource);
+
+                                assertTokenizedStreamEquals(
+                                    tokenizedInput,
+                                    untokenizedInput,
+                                    tokenizer
+                                );
+
+                                untokenizedInput.close();
+                                tokenizedInput.close();
+                            } catch (IOException e) {
+                                fail(e.getMessage());
+                            }
+                        }
+                    }
+                }
+            );
+            threads.add(thread);
+            thread.start();
+        }
+
+        for (Thread thread : threads) {
+            thread.join();
+        }
+
+        assertTrue(true);
+    }
 
     public static void assertEqualTokenFeatureLenghts(String text, AbstractTokenizer tokenizer) {
         List<AbstractToken> tokens = tokenizer.tokenize(text);
         Set<Integer> lenghts = new HashSet<>();
 
         for (AbstractToken token : tokens) {
-            ProgressLog.println("T: " + token.getSurfaceForm() + ", FL: " + token.getAllFeaturesArray().length + ", FA: " + token.getAllFeatures());
             lenghts.add(
                 token.getAllFeaturesArray().length
             );
         }
 
-//        assertEquals(1, lenghts.size());
-        if (lenghts.size() == 1) {
-            ProgressLog.println("SUCCESS -- Token feature sizes are equal");
-        } else {
-            ProgressLog.println("FAILURE -- Token feature sizes are not equal (see above output)");
-        }
+        assertEquals(1, lenghts.size());
     }
 }

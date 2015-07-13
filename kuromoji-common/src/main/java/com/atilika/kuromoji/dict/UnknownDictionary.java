@@ -1,5 +1,5 @@
 /**
- * Copyright 2010-2015 Atilika Inc. and contributors (see CONTRIBUTORS.md)
+ * Copyright © 2010-2015 Atilika Inc. and contributors (see CONTRIBUTORS.md)
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may
  * not use this file except in compliance with the License.  A copy of the
@@ -140,20 +140,9 @@ public class UnknownDictionary implements Dictionary {
         return builder.toString();
     }
 
-    public static UnknownDictionary newInstance(ResourceResolver resolver, int totalFeatures) throws IOException {
-
-        InputStream charDefInput = resolver.resolve("chardef2.dat");
-
-        int[][] definitions = IntegerArrayIO.readSparseArray2D(charDefInput);
-        int[][] mappings = IntegerArrayIO.readSparseArray2D(charDefInput);
-        String[] symbols = StringArrayIO.readArray(charDefInput);
-
-        CharacterDefinitions characterDefinition = new CharacterDefinitions(
-            definitions,
-            mappings,
-            symbols
-        );
-
+    public static UnknownDictionary newInstance(ResourceResolver resolver,
+                                                CharacterDefinitions characterDefinitions,
+                                                int totalFeatures) throws IOException {
         InputStream unkDefInput = resolver.resolve("unkdef2.dat");
 
         int[][] costs = IntegerArrayIO.readArray2D(unkDefInput);
@@ -161,7 +150,7 @@ public class UnknownDictionary implements Dictionary {
         String[][] features = StringArrayIO.readArray2D(unkDefInput);
 
         UnknownDictionary unknownDictionary = new UnknownDictionary(
-            characterDefinition,
+            characterDefinitions,
             references,
             costs,
             features,

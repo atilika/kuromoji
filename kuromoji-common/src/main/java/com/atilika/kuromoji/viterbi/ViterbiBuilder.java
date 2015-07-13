@@ -1,5 +1,5 @@
 /**
- * Copyright 2010-2015 Atilika Inc. and contributors (see CONTRIBUTORS.md)
+ * Copyright © 2010-2015 Atilika Inc. and contributors (see CONTRIBUTORS.md)
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may
  * not use this file except in compliance with the License.  A copy of the
@@ -89,12 +89,13 @@ public class ViterbiBuilder {
 
                     int[] categories = characterDefinitions.lookupCategories(suffix.charAt(0));
 
-                    for (int i = 0; i < categories.length; i++) {
-                        int category = categories[i];
-                        unknownWordEndIndex = processUnknownWord2(category, i, lattice, unknownWordEndIndex, startIndex, suffix, found);
+                    if (categories != null) {
+                        for (int i = 0; i < categories.length; i++) {
+                            int category = categories[i];
+                            unknownWordEndIndex = processUnknownWord2(category, i, lattice, unknownWordEndIndex, startIndex, suffix, found);
+                        }
                     }
                 }
-
             }
         }
 
@@ -163,6 +164,12 @@ public class ViterbiBuilder {
                     char c = suffix.charAt(j);
 
                     int[] categories = characterDefinitions.lookupCategories(c);
+
+//                    System.out.println("categories: " + Arrays.asList(categories));
+
+                    if (categories == null) {
+                        break;
+                    }
 
                     if (i < categories.length && category == categories[i]) {
                         unknownWordLength++;

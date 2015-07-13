@@ -1,5 +1,5 @@
 /**
- * Copyright 2010-2015 Atilika Inc. and contributors (see CONTRIBUTORS.md)
+ * Copyright © 2010-2015 Atilika Inc. and contributors (see CONTRIBUTORS.md)
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may
  * not use this file except in compliance with the License.  A copy of the
@@ -19,6 +19,7 @@ package com.atilika.kuromoji.ipadic;
 import com.atilika.kuromoji.AbstractTokenizer;
 import com.atilika.kuromoji.PrefixDecoratorResolver;
 import com.atilika.kuromoji.TokenizerRunner;
+import com.atilika.kuromoji.dict.CharacterDefinitions;
 import com.atilika.kuromoji.dict.ConnectionCosts;
 import com.atilika.kuromoji.dict.InsertedDictionary;
 import com.atilika.kuromoji.dict.TokenInfoDictionary;
@@ -38,7 +39,6 @@ public class Tokenizer extends AbstractTokenizer {
     public Tokenizer(Builder builder) {
         configure(builder);
     }
-
 
     @Override
     protected Token createToken(int offset, ViterbiNode node, int wordId) {
@@ -82,6 +82,8 @@ public class Tokenizer extends AbstractTokenizer {
         private Integer searchModeOtherLength;
         private Integer searchModeOtherPenalty;
 
+        private boolean nakaguroSplit = false;
+
         public Builder() {
             totalFeatures = 9;
             unknownDictionaryTotalFeatures = 9;
@@ -110,12 +112,17 @@ public class Tokenizer extends AbstractTokenizer {
             return this;
         }
 
+        public Builder isSplitOnNakaguro(boolean split) {
+            this.nakaguroSplit = split;
+            return this;
+        }
+
         @Override
         public void loadDictionaries() {
             if (this.mode != Mode.NORMAL
                 && searchModeKanjiLength != null && searchModeKanjiPenalty != null
                 && searchModeOtherLength != null && searchModeOtherPenalty != null) {
-                penalties = new ArrayList<Integer>();
+                penalties = new ArrayList<>();
                 penalties.add(searchModeKanjiLength);
                 penalties.add(searchModeKanjiPenalty);
                 penalties.add(searchModeOtherLength);
@@ -130,7 +137,13 @@ public class Tokenizer extends AbstractTokenizer {
                 doubleArrayTrie = DoubleArrayTrie.newInstance(resolver);
                 connectionCosts = ConnectionCosts.newInstance(resolver);
                 tokenInfoDictionary = TokenInfoDictionary.newInstance(resolver);
-                unknownDictionary = UnknownDictionary.newInstance(resolver, 9);
+                characterDefinitions = CharacterDefinitions.newInstance(resolver);
+
+                if (nakaguroSplit) {
+                    characterDefinitions.setCategories('・', new String[]{"SYMBOL"});
+                }
+
+                unknownDictionary = UnknownDictionary.newInstance(resolver, characterDefinitions, 9);
                 insertedDictionary = new InsertedDictionary(9);
             } catch (Exception ouch) {
                 throw new RuntimeException("Could not load dictionaries.", ouch);
@@ -142,7 +155,5 @@ public class Tokenizer extends AbstractTokenizer {
         public synchronized Tokenizer build() {
             return new Tokenizer(this);
         }
-
     }
-
 }

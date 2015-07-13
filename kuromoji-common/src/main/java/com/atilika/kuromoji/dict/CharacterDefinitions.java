@@ -1,5 +1,5 @@
 /**
- * Copyright 2010-2015 Atilika Inc. and contributors (see CONTRIBUTORS.md)
+ * Copyright © 2010-2015 Atilika Inc. and contributors (see CONTRIBUTORS.md)
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may
  * not use this file except in compliance with the License.  A copy of the
@@ -15,6 +15,13 @@
  * limitations under the License.
  */
 package com.atilika.kuromoji.dict;
+
+import com.atilika.kuromoji.ResourceResolver;
+import com.atilika.kuromoji.io.IntegerArrayIO;
+import com.atilika.kuromoji.io.StringArrayIO;
+
+import java.io.IOException;
+import java.io.InputStream;
 
 public final class CharacterDefinitions {
 
@@ -38,16 +45,6 @@ public final class CharacterDefinitions {
         this.categorySymbols = categorySymbols;
     }
 
-    // TODO: Override Nakaguro
-//    if (codePoint == 0x30FB) {
-//        characterClassName = "SYMBOL";
-//    }
-
-
-    public int[] lookup(char c) {
-        return codepointMappings[c];
-    }
-
     public int[] lookupCategories(char c) {
         return codepointMappings[c];
     }
@@ -56,34 +53,46 @@ public final class CharacterDefinitions {
         return categoryDefinitions[category];
     }
 
-    public boolean isInvoke(int[] definition) {
-        return definition[0] == 1;
+    public static CharacterDefinitions newInstance(ResourceResolver resolver) throws IOException {
+        InputStream charDefInput = resolver.resolve("chardef2.dat");
+
+        int[][] definitions = IntegerArrayIO.readSparseArray2D(charDefInput);
+        int[][] mappings = IntegerArrayIO.readSparseArray2D(charDefInput);
+        String[] symbols = StringArrayIO.readArray(charDefInput);
+
+        CharacterDefinitions characterDefinition = new CharacterDefinitions(
+            definitions,
+            mappings,
+            symbols
+        );
+
+        return characterDefinition;
     }
 
-    public boolean isGroup(int[] definition) {
-        return definition[1] == 1;
+    public void setCategories(char c, String[] categoryNames) {
+        codepointMappings[c] = lookupCategories(categoryNames);
     }
 
-    public int[] isInvoke(char c) {
-        return checkDefinition(c, INVOKE);
-    }
+    private int[] lookupCategories(String[] categoryNames) {
+        int[] categories = new int[categoryNames.length];
 
-    public int[] isGroup(char c) {
-        return checkDefinition(c, GROUP);
-    }
+        for (int i = 0; i < categoryNames.length; i++) {
+            String category = categoryNames[i];
+            int categoryIndex = -1;
 
-    private int[] checkDefinition(char c, int aspect) {
-        int[] categoryIds = codepointMappings[c];
+            for (int j = 0; j < categorySymbols.length; j++) {
+                if (category.equals(categorySymbols[j])) {
+                    categoryIndex = j;
+                }
+            }
 
-        int[] result = new int[categoryIds.length];
+            if (categoryIndex < 0) {
+                throw new RuntimeException("No category '" + category + "' found");
+            }
 
-        for (int i = 0; i < categoryIds.length; i++) {
-            int categoryId = categoryIds[i];
-            int[] definition = categoryDefinitions[categoryId];
-
-            result[i] = definition[aspect];
+            categories[i] = categoryIndex;
         }
 
-        return result;
+        return categories;
     }
 }

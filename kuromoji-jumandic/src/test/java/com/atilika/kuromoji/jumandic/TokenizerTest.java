@@ -1,5 +1,5 @@
 /**
- * Copyright 2010-2015 Atilika Inc. and contributors (see CONTRIBUTORS.md)
+ * Copyright © 2010-2015 Atilika Inc. and contributors (see CONTRIBUTORS.md)
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may
  * not use this file except in compliance with the License.  A copy of the
@@ -23,6 +23,8 @@ import java.io.IOException;
 import java.util.List;
 
 import static com.atilika.kuromoji.TestUtils.assertEqualTokenFeatureLenghts;
+import static com.atilika.kuromoji.TestUtils.assertMultiThreadedTokenizedStreamEquals;
+import static com.atilika.kuromoji.TestUtils.assertTokenizedStreamEquals;
 import static org.junit.Assert.assertEquals;
 
 public class TokenizerTest {
@@ -158,6 +160,26 @@ public class TokenizerTest {
     @Test
     public void testFeatureLengths() throws IOException {
         assertEqualTokenFeatureLenghts("ahgsfdajhgsfdこの丘はアクロポリスと呼ばれている。", tokenizer);
+    }
+
+    @Test
+    public void testNewBocchan() throws IOException {
+        assertTokenizedStreamEquals(
+            getClass().getResourceAsStream("/bocchan-jumandic-features.txt"),
+            getClass().getResourceAsStream("/bocchan.txt"),
+            tokenizer
+        );
+    }
+
+    @Test
+    public void testMultiThreadedBocchan() throws IOException, InterruptedException {
+        assertMultiThreadedTokenizedStreamEquals(
+            5,
+            25,
+            "/bocchan-jumandic-features.txt",
+            "/bocchan.txt",
+            tokenizer
+        );
     }
 
     private String getCombinedPartOfSpeech(Token token) {
