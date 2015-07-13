@@ -45,8 +45,7 @@
                                         <delete dir="${kuromoji.wiki.dir}"/>
                                         <mkdir dir="${kuromoji.wiki.dir}"/>
                                         <get src="${kuromoji.wiki.url}"
-                                             dest="${kuromoji.wiki.dir}/${kuromoji.wiki.file}"
-                                             verbose="true"/>
+                                             dest="${kuromoji.wiki.dir}/${kuromoji.wiki.file}"/>
                                     </target>
                                 </configuration>
                                 <goals>
