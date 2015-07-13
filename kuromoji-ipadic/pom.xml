@@ -83,8 +83,7 @@
                                         <delete dir="dictionary"/>
                                         <mkdir dir="dictionary"/>
                                         <get src="${kuromoji.dict.url}"
-                                             dest="dictionary/${kuromoji.dict.file}"
-                                             verbose="true"/>
+                                             dest="dictionary/${kuromoji.dict.file}"/>
                                         <untar src="dictionary/${kuromoji.dict.file}"
                                                dest="dictionary" compression="gzip"/>
                                     </target>
