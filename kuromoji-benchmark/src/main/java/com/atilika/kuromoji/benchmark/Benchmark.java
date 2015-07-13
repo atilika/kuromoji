@@ -172,15 +172,15 @@ public class Benchmark {
 
     private void writeStatisticsHeader(Writer writer) throws IOException {
         String header = format(
-            "documents",
+            "docs",
             "tokens",
-            "characters",
-            "documents/sec",
-            "characters/sec",
-            "used_memory_mb",
-            "free_memory_mb",
-            "total_memory_mb",
-            "max_memory_mb"
+            "chars",
+            "docs/s",
+            "chars/s",
+            "used_mb",
+            "free_mb",
+            "total_mb",
+            "max_mb"
         );
 
         writeRecord(writer, header);
