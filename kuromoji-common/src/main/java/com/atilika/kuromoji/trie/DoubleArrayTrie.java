@@ -38,7 +38,7 @@ public class DoubleArrayTrie {
     public static final String DOUBLE_ARRAY_TRIE_FILENAME = "dat.dat";
     public static final char TERMINATING_CHARACTER = '\u0001';
 
-    private static final int BASE_CHECK_INITIAL_SIZE = 5120000;
+    private static final int BASE_CHECK_INITIAL_SIZE = 2800000;
     private static final int TAIL_INITIAL_SIZE = 200000;
     private static final int TAIL_OFFSET = 100000000;
 
