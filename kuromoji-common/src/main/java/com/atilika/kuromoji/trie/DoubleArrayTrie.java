@@ -42,7 +42,7 @@ public class DoubleArrayTrie {
     private static final int TAIL_INITIAL_SIZE = 200000;
     private static final int TAIL_OFFSET = 100000000;
 
-    private static int BUFFER_GROWTH_CHUNK = 8192;
+    private static float BUFFER_GROWTH_PERCENTAGE = 0.25f;
 
     private IntBuffer baseBuffer;
     private IntBuffer checkBuffer;
@@ -80,14 +80,13 @@ public class DoubleArrayTrie {
             file.delete();
         }
 
-        int baseCheckSize = maxBaseCheckIndex + 4;
-        int tailSize = tailIndex - TAIL_OFFSET + 1;
-
+        int baseCheckSize = Math.min(maxBaseCheckIndex + 64, baseBuffer.capacity());
+        int tailSize = Math.min(tailIndex - TAIL_OFFSET + 64, tailBuffer.capacity());
 
         RandomAccessFile raf = new RandomAccessFile(filename, "rw");
         FileChannel channel = raf.getChannel();
         raf.writeInt(baseCheckSize);
-        raf.writeInt(tailSize) ;
+        raf.writeInt(tailSize);
 
         ByteBuffer tmpBuffer = ByteBuffer.allocate(baseCheckSize * 4);
         IntBuffer tmpIntBuffer = tmpBuffer.asIntBuffer();
@@ -103,7 +102,7 @@ public class DoubleArrayTrie {
 
         tmpBuffer = ByteBuffer.allocate(tailSize * 2);
         CharBuffer tmpCharBuffer = tmpBuffer.asCharBuffer();
-        tmpCharBuffer.put(tailBuffer.array(),0,tailSize);
+        tmpCharBuffer.put(tailBuffer.array(), 0, tailSize);
         tmpBuffer.rewind();
         channel.write(tmpBuffer);
 
@@ -327,8 +326,8 @@ public class DoubleArrayTrie {
     }
 
     private void extendBuffers(int nextIndex) {
-        int newLength = nextIndex + BUFFER_GROWTH_CHUNK;
-        ProgressLog.println("Buffer extension for length " + (baseBuffer.capacity() * 1) + " to support index " + nextIndex + " old size: " + (baseBuffer.capacity() * 4) + " => new size " + newLength);
+        int newLength = nextIndex + (int) (baseBuffer.capacity() * BUFFER_GROWTH_PERCENTAGE);
+        ProgressLog.println("Buffers extended to " + baseBuffer.capacity() + " entries" );
 
         IntBuffer newBaseBuffer = IntBuffer.allocate(newLength);
         baseBuffer.rewind();
@@ -349,8 +348,8 @@ public class DoubleArrayTrie {
     private void addToTail(Trie.Node node) {
         while (true) {
             if (tailBuffer.capacity() < tailIndex - TAIL_OFFSET + 1) {
-                CharBuffer newTailBuffer = CharBuffer.allocate(
-                    (tailIndex - TAIL_OFFSET + BUFFER_GROWTH_CHUNK));
+                CharBuffer newTailBuffer = CharBuffer.allocate(tailBuffer.capacity() +
+                    (int) (tailBuffer.capacity() * BUFFER_GROWTH_PERCENTAGE));
                 tailBuffer.rewind();
                 newTailBuffer.put(tailBuffer);
                 tailBuffer = newTailBuffer;

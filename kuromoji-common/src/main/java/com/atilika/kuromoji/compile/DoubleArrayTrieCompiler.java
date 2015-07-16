@@ -30,6 +30,7 @@ public class DoubleArrayTrieCompiler {
         }
         DoubleArrayTrie daTrie = new DoubleArrayTrie(compactTries);
         daTrie.build(trie);
+
         return daTrie;
     }
 
