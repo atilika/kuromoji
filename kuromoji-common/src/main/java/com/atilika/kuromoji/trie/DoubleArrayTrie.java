@@ -38,15 +38,18 @@ public class DoubleArrayTrie {
     public static final String DOUBLE_ARRAY_TRIE_FILENAME = "dat.dat";
     public static final char TERMINATING_CHARACTER = '\u0001';
 
-    private static final int BASE_CHECK_INITIAL_SIZE = 700000; //1000000;
-    private static final int TAIL_INITIAL_SIZE = 10000;
+    private static final int BASE_CHECK_INITIAL_SIZE = 2800000;
+    private static final int TAIL_INITIAL_SIZE = 200000;
     private static final int TAIL_OFFSET = 100000000;
+
+    private static float BUFFER_GROWTH_PERCENTAGE = 0.25f;
 
     private IntBuffer baseBuffer;
     private IntBuffer checkBuffer;
     private CharBuffer tailBuffer;
 
     private int tailIndex = TAIL_OFFSET;
+    private int maxBaseCheckIndex = 0;
 
     private final boolean compact;
 
@@ -74,29 +77,32 @@ public class DoubleArrayTrie {
         File file = new File(filename);
 
         if (file.exists()) {
-            file.delete(); // TODO: Do we need this?  Looks dangerous... -Christian
+            file.delete();
         }
+
+        int baseCheckSize = Math.min(maxBaseCheckIndex + 64, baseBuffer.capacity());
+        int tailSize = Math.min(tailIndex - TAIL_OFFSET + 64, tailBuffer.capacity());
 
         RandomAccessFile raf = new RandomAccessFile(filename, "rw");
         FileChannel channel = raf.getChannel();
-        raf.writeInt(baseBuffer.capacity());
-        raf.writeInt(tailBuffer.capacity());
+        raf.writeInt(baseCheckSize);
+        raf.writeInt(tailSize);
 
-        ByteBuffer tmpBuffer = ByteBuffer.allocate(baseBuffer.capacity() * 4);
+        ByteBuffer tmpBuffer = ByteBuffer.allocate(baseCheckSize * 4);
         IntBuffer tmpIntBuffer = tmpBuffer.asIntBuffer();
-        tmpIntBuffer.put(baseBuffer);
+        tmpIntBuffer.put(baseBuffer.array(), 0, baseCheckSize);
         tmpBuffer.rewind();
         channel.write(tmpBuffer);
 
-        tmpBuffer = ByteBuffer.allocate(checkBuffer.capacity() * 4);
+        tmpBuffer = ByteBuffer.allocate(baseCheckSize * 4);
         tmpIntBuffer = tmpBuffer.asIntBuffer();
-        tmpIntBuffer.put(checkBuffer);
+        tmpIntBuffer.put(checkBuffer.array(), 0, baseCheckSize);
         tmpBuffer.rewind();
         channel.write(tmpBuffer);
 
-        tmpBuffer = ByteBuffer.allocate(tailBuffer.capacity() * 2);
+        tmpBuffer = ByteBuffer.allocate(tailSize * 2);
         CharBuffer tmpCharBuffer = tmpBuffer.asCharBuffer();
-        tmpCharBuffer.put(tailBuffer);
+        tmpCharBuffer.put(tailBuffer.array(), 0, tailSize);
         tmpBuffer.rewind();
         channel.write(tmpBuffer);
 
@@ -120,7 +126,6 @@ public class DoubleArrayTrie {
         int baseCheckSize = dis.readInt();    // Read size of baseArr and checkArr
         int tailSize = dis.readInt();        // Read size of tailArr
         ReadableByteChannel channel = Channels.newChannel(dis);
-
 
         ByteBuffer tmpBaseBuffer = ByteBuffer.allocateDirect(baseCheckSize * 4);    // The size is 4 times the baseCheckSize since it is the length of array
         channel.read(tmpBaseBuffer);
@@ -148,10 +153,10 @@ public class DoubleArrayTrie {
      */
     public void build(Trie trie) {
         ProgressLog.begin("building " + (compact ? "compact" : "sparse") + " trie");
-        baseBuffer = ByteBuffer.allocate(BASE_CHECK_INITIAL_SIZE * 4).asIntBuffer();
+        baseBuffer = IntBuffer.allocate(BASE_CHECK_INITIAL_SIZE);
         baseBuffer.put(0, 1);
-        checkBuffer = ByteBuffer.allocate(BASE_CHECK_INITIAL_SIZE * 4).asIntBuffer();
-        tailBuffer = ByteBuffer.allocate(TAIL_INITIAL_SIZE * 2).asCharBuffer();
+        checkBuffer = IntBuffer.allocate(BASE_CHECK_INITIAL_SIZE);
+        tailBuffer = CharBuffer.allocate(TAIL_INITIAL_SIZE);
         add(-1, 0, trie.getRoot());
         reportUtilizationRate();
         ProgressLog.end();
@@ -294,6 +299,7 @@ public class DoubleArrayTrie {
             boolean collision = false;    // already taken?
             for (Trie.Node node : nodes) {
                 int nextIndex = index + base + node.getKey();
+                maxBaseCheckIndex = Math.max(maxBaseCheckIndex, nextIndex);
 
                 if (baseBuffer.capacity() <= nextIndex) {
                     extendBuffers(nextIndex);
@@ -320,14 +326,15 @@ public class DoubleArrayTrie {
     }
 
     private void extendBuffers(int nextIndex) {
-        int newLength = (nextIndex + 1) * 16;
+        int newLength = nextIndex + (int) (baseBuffer.capacity() * BUFFER_GROWTH_PERCENTAGE);
+        ProgressLog.println("Buffers extended to " + baseBuffer.capacity() + " entries" );
 
-        IntBuffer newBaseBuffer = ByteBuffer.allocate(newLength).asIntBuffer();
+        IntBuffer newBaseBuffer = IntBuffer.allocate(newLength);
         baseBuffer.rewind();
         newBaseBuffer.put(baseBuffer);
         baseBuffer = newBaseBuffer;
 
-        IntBuffer newCheckBuffer = ByteBuffer.allocate(newLength).asIntBuffer();
+        IntBuffer newCheckBuffer = IntBuffer.allocate(newLength);//ByteBuffer.allocate(newLength).asIntBuffer();
         checkBuffer.rewind();
         newCheckBuffer.put(checkBuffer);
         checkBuffer = newCheckBuffer;
@@ -341,7 +348,8 @@ public class DoubleArrayTrie {
     private void addToTail(Trie.Node node) {
         while (true) {
             if (tailBuffer.capacity() < tailIndex - TAIL_OFFSET + 1) {
-                CharBuffer newTailBuffer = ByteBuffer.allocate((tailBuffer.capacity() + TAIL_INITIAL_SIZE) * 2 * 2).asCharBuffer();
+                CharBuffer newTailBuffer = CharBuffer.allocate(tailBuffer.capacity() +
+                    (int) (tailBuffer.capacity() * BUFFER_GROWTH_PERCENTAGE));
                 tailBuffer.rewind();
                 newTailBuffer.put(tailBuffer);
                 tailBuffer = newTailBuffer;

@@ -127,30 +127,6 @@ public class ViterbiBuilder {
         return found;
     }
 
-//    private int processUnknownWord(ViterbiLattice lattice, int unknownWordEndIndex, int startIndex, String suffix, boolean found) {
-//        int unknownWordLength = 0;
-//        char firstCharacter = suffix.charAt(0);
-//        boolean isInvoke = characterDefinition.isInvoke(firstCharacter);
-//
-//        if (isInvoke || found == false) { // Process "invoke"
-//            unknownWordLength = unkDictionary.lookup(suffix);
-//        }
-//
-//        if (unknownWordLength > 0) { // found unknown word
-//            String unkWord = suffix.substring(0, unknownWordLength);
-//            int characterId = characterDefinition.lookup(firstCharacter);
-//            int[] wordIds = unkDictionary.lookupWordIds(characterId); // characters in input text are supposed to be the same
-//
-//            for (int wordId : wordIds) {
-//                ViterbiNode node = new ViterbiNode(wordId, unkWord, unkDictionary, startIndex, ViterbiNode.Type.UNKNOWN);
-//                lattice.addNode(node, startIndex + 1, startIndex + 1 + unknownWordLength);
-//            }
-//            unknownWordEndIndex = startIndex + unknownWordLength;
-//        }
-//        return unknownWordEndIndex;
-//    }
-
-    // TODO: Needs cleaning up
     private int processUnknownWord2(int category, int i, ViterbiLattice lattice, int unknownWordEndIndex, int startIndex, String suffix, boolean found) {
         int unknownWordLength = 0;
         int[] definition = characterDefinitions.lookupDefinition(category);
@@ -164,8 +140,6 @@ public class ViterbiBuilder {
                     char c = suffix.charAt(j);
 
                     int[] categories = characterDefinitions.lookupCategories(c);
-
-//                    System.out.println("categories: " + Arrays.asList(categories));
 
                     if (categories == null) {
                         break;

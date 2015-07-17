@@ -55,6 +55,18 @@ public abstract class AbstractDictionaryCompiler {
         ProgressLog.begin("compiling double array trie");
         DoubleArrayTrie trie = DoubleArrayTrieCompiler.build(surfaces, compactTrie);
         trie.write(outputDirname);
+
+        try {
+            ProgressLog.println("validating saved double array trie");
+            DoubleArrayTrie daTrie = DoubleArrayTrie.read(new FileInputStream(outputDirname + File.separator + DoubleArrayTrie.DOUBLE_ARRAY_TRIE_FILENAME));
+            for (String surface : surfaces) {
+                if (daTrie.lookup(surface) < 0) {
+                    ProgressLog.println("failed to look up [" + surface + " ]");
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         ProgressLog.end();
 
         ProgressLog.begin("processing target map");
