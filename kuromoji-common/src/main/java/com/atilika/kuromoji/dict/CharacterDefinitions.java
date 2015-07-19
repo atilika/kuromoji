@@ -25,6 +25,8 @@ import java.io.InputStream;
 
 public final class CharacterDefinitions {
 
+    public static final String CHARACTER_DEFINITIONS_FILENAME = "characterDefinitions.bin";
+
     public static final int INVOKE = 0;
 
     public static final int GROUP = 1;
@@ -54,7 +56,7 @@ public final class CharacterDefinitions {
     }
 
     public static CharacterDefinitions newInstance(ResourceResolver resolver) throws IOException {
-        InputStream charDefInput = resolver.resolve("chardef2.dat");
+        InputStream charDefInput = resolver.resolve(CHARACTER_DEFINITIONS_FILENAME);
 
         int[][] definitions = IntegerArrayIO.readSparseArray2D(charDefInput);
         int[][] mappings = IntegerArrayIO.readSparseArray2D(charDefInput);

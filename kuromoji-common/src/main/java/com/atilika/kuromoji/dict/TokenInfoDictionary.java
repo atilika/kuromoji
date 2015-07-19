@@ -26,10 +26,10 @@ import java.io.IOException;
 
 public class TokenInfoDictionary implements Dictionary {
 
-    private static final String TOKEN_INFO_DICTIONARY_FILENAME = "tid.dat";
-    private static final String FEATURE_MAP_FILENAME = "tid_fet.dat";
-    private static final String POS_MAP_FILENAME = "tid_pos.dat";
-    private static final String TARGETMAP_FILENAME = "tid_map.dat";
+    public static final String TOKEN_INFO_DICTIONARY_FILENAME = "tokenInfoDictionary.bin";
+    public static final String FEATURE_MAP_FILENAME = "tokenInfoFeaturesMap.bin";
+    public static final String POS_MAP_FILENAME = "tokenInfoPartOfSpeechMap.bin";
+    public static final String TARGETMAP_FILENAME = "tokenInfoTargetMap.bin";
 
     private static final int LEFT_ID = 0;
     private static final int RIGHT_ID = 1;

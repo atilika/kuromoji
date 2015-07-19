@@ -35,7 +35,7 @@ import java.util.List;
 
 public class DoubleArrayTrie {
 
-    public static final String DOUBLE_ARRAY_TRIE_FILENAME = "dat.dat";
+    public static final String DOUBLE_ARRAY_TRIE_FILENAME = "doubleArrayTrie.bin";
     public static final char TERMINATING_CHARACTER = '\u0001';
 
     private static final int BASE_CHECK_INITIAL_SIZE = 2800000;

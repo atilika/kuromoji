@@ -19,6 +19,7 @@ package com.atilika.kuromoji.compile;
 import com.atilika.kuromoji.dict.AbstractDictionaryEntry;
 import com.atilika.kuromoji.dict.BufferEntry;
 import com.atilika.kuromoji.dict.GenericDictionaryEntry;
+import com.atilika.kuromoji.dict.TokenInfoDictionary;
 import com.atilika.kuromoji.util.FeatureInfoMap;
 import com.atilika.kuromoji.util.StringValueMapBuffer;
 import com.atilika.kuromoji.util.TokenInfoBuffer;
@@ -41,21 +42,16 @@ import java.util.TreeMap;
 
 public abstract class AbstractTokenInfoDictionaryCompiler<T extends AbstractDictionaryEntry> implements Compiler {
 
-    private static final String TOKEN_INFO_DICTIONARY_FILENAME = "tid.dat";
-    private static final String FEATURE_MAP_FILENAME = "tid_fet.dat";
-    private static final String POS_MAP_FILENAME = "tid_pos.dat";
-    private static final String TARGETMAP_FILENAME = "tid_map.dat";
-
-    private String encoding;
-
     protected List<BufferEntry> bufferEntries = new ArrayList<>();
     protected FeatureInfoMap posInfo = new FeatureInfoMap();
     protected FeatureInfoMap otherInfo = new FeatureInfoMap();
-    private List<String> surfaces = new ArrayList<>();
     protected WordIdMap wordIdMap = new WordIdMap();
 
     // optional list to collect the generic dictionary entries
     protected List<GenericDictionaryEntry> dictionaryEntries = null;
+
+    private String encoding;
+    private List<String> surfaces = new ArrayList<>();
 
     public AbstractTokenInfoDictionaryCompiler(String encoding) {
         this.encoding = encoding;
@@ -176,10 +172,10 @@ public abstract class AbstractTokenInfoDictionaryCompiler<T extends AbstractDict
     }
 
     public void write(String directoryName) throws IOException {
-        writeDictionary(directoryName + File.separator + TOKEN_INFO_DICTIONARY_FILENAME);
-        writeMap(directoryName + File.separator + POS_MAP_FILENAME, posInfo);
-        writeMap(directoryName + File.separator + FEATURE_MAP_FILENAME, otherInfo);
-        writeTargetMap(directoryName + File.separator + TARGETMAP_FILENAME);
+        writeDictionary(directoryName + File.separator + TokenInfoDictionary.TOKEN_INFO_DICTIONARY_FILENAME);
+        writeMap(directoryName + File.separator + TokenInfoDictionary.POS_MAP_FILENAME, posInfo);
+        writeMap(directoryName + File.separator + TokenInfoDictionary.FEATURE_MAP_FILENAME, otherInfo);
+        writeTargetMap(directoryName + File.separator + TokenInfoDictionary.TARGETMAP_FILENAME);
     }
 
 

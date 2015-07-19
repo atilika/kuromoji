@@ -295,6 +295,5 @@ public abstract class AbstractTokenizer {
         public void setSplit(boolean split) {
             this.split = split;
         }
-
     }
 }

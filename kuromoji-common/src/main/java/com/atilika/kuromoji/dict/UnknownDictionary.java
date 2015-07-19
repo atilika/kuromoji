@@ -25,6 +25,8 @@ import java.io.InputStream;
 
 public class UnknownDictionary implements Dictionary {
 
+    public static final String UNKNOWN_DICTIONARY_FILENAME = "unknownDictionary.bin";
+
     private static final String DEFAULT_FEATURE = "*";
 
     private static final String FEATURE_SEPARATOR = ",";
@@ -143,7 +145,7 @@ public class UnknownDictionary implements Dictionary {
     public static UnknownDictionary newInstance(ResourceResolver resolver,
                                                 CharacterDefinitions characterDefinitions,
                                                 int totalFeatures) throws IOException {
-        InputStream unkDefInput = resolver.resolve("unkdef2.dat");
+        InputStream unkDefInput = resolver.resolve(UnknownDictionary.UNKNOWN_DICTIONARY_FILENAME);
 
         int[][] costs = IntegerArrayIO.readArray2D(unkDefInput);
         int[][] references = IntegerArrayIO.readArray2D(unkDefInput);

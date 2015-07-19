@@ -37,7 +37,7 @@ public class CharacterDefinitionsCompiler implements Compiler {
     private Map<String, int[]> categoryDefinitions = new TreeMap<>();
 
     @SuppressWarnings("unchecked")
-    private List<Set<String>> codepointCategories = new ArrayList<Set<String>>(new TreeSet());
+    private List<Set<String>> codepointCategories = new ArrayList<>(new TreeSet());
 
     private OutputStream output;
 

@@ -75,7 +75,8 @@ public class TestUtils {
                                                                 final int perThreadRuns,
                                                                 final String tokenizedInputResource,
                                                                 final String untokenizedInputResource,
-                                                                final AbstractTokenizer tokenizer) throws IOException, InterruptedException {
+                                                                final AbstractTokenizer tokenizer)
+        throws IOException, InterruptedException {
         List<Thread> threads = new ArrayList<>();
 
         for (int i = 0; i < numThreads; i++) {

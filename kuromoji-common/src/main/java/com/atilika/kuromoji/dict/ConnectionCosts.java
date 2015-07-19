@@ -28,7 +28,7 @@ import java.nio.ShortBuffer;
 
 public class ConnectionCosts {
 
-    public static final String CONNECTION_COSTS = "cc2.dat";
+    public static final String CONNECTION_COSTS_FILENAME = "connectionCosts.bin";
 
     private int size;
 
@@ -44,7 +44,7 @@ public class ConnectionCosts {
     }
 
     public static ConnectionCosts newInstance(ResourceResolver resolver) throws IOException {
-        return read(resolver.resolve(CONNECTION_COSTS));
+        return read(resolver.resolve(CONNECTION_COSTS_FILENAME));
     }
 
     private static ConnectionCosts read(InputStream input) throws IOException {

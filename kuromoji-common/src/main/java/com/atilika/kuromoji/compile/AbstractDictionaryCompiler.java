@@ -16,6 +16,9 @@
  */
 package com.atilika.kuromoji.compile;
 
+import com.atilika.kuromoji.dict.CharacterDefinitions;
+import com.atilika.kuromoji.dict.ConnectionCosts;
+import com.atilika.kuromoji.dict.UnknownDictionary;
 import com.atilika.kuromoji.trie.DoubleArrayTrie;
 
 import java.io.BufferedInputStream;
@@ -89,7 +92,7 @@ public abstract class AbstractDictionaryCompiler {
         CharacterDefinitionsCompiler charDefCompiler = new CharacterDefinitionsCompiler(
             new BufferedOutputStream(
                 new FileOutputStream(
-                    new File(outputDirname, "chardef2.dat")
+                    new File(outputDirname, CharacterDefinitions.CHARACTER_DEFINITIONS_FILENAME)
                 )
             )
         );
@@ -106,8 +109,7 @@ public abstract class AbstractDictionaryCompiler {
         UnknownDictionaryCompiler unkDefCompiler = new UnknownDictionaryCompiler(
             charDefCompiler.makeCharacterCategoryMap(),
             new FileOutputStream(
-                new File(outputDirname, "unkdef2.dat"
-                )
+                new File(outputDirname, UnknownDictionary.UNKNOWN_DICTIONARY_FILENAME)
             )
         );
 
@@ -128,7 +130,7 @@ public abstract class AbstractDictionaryCompiler {
     private void buildConnectionCosts(String inputDirname, String outputDirname) throws IOException {
         ProgressLog.begin("compiling connection costs");
         ConnectionCostsCompiler connectionCostsCompiler = new ConnectionCostsCompiler(
-            new FileOutputStream(new File(outputDirname, "cc2.dat"))
+            new FileOutputStream(new File(outputDirname, ConnectionCosts.CONNECTION_COSTS_FILENAME))
         );
         connectionCostsCompiler.readCosts(
             new FileInputStream(new File(inputDirname, "matrix.def"))
