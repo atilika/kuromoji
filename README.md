@@ -26,7 +26,7 @@ The following additional build options are available:
 * `-DbenchmarkTokenizers` Profile each tokenizer during the package phase using content from Japanese Wikipedia
 * `-DskipDownloadWikipedia` Prevent the compressed version of the Japanese Wikipedia (~765 MB) from being downloaded during profiling.
 
-## Using  Kuromoji
+## Using Kuromoji
 
 To use Kuromoji, you add `kuromoji-common-0.9-SNAPSHOT.jar` and your chosen dictionary's jar to your project. For many projects, the IPADIC variant `kuromoji-ipadic-0.9-SNAPSHOT.jar` should suffice.
 
@@ -61,6 +61,8 @@ When running this program, you will get the following output
 。　　　記号,句点,*,*,*,*,。,。,。
 ```
 
-# Contact us
+# About us
 
-Please feel free to contact us on kuromoji@atilika.com if you have any questions.
+We small team of experienced software engineers based in Tokyo who offers technologies and good advice in the field of search, natural language processing and big data analytics.
+
+Please feel free to contact us on kuromoji@atilika.com if you have any questions or need help.

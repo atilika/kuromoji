@@ -152,22 +152,32 @@ public class TokenizerTest {
 
     @Test
     public void testCustomPenalties() {
-        Tokenizer customTokenizer = new Tokenizer.Builder().mode(Tokenizer.Mode.SEARCH).penalties(3, 10000, Integer.MAX_VALUE, 0).build();
         String input = "シニアソフトウェアエンジニアを探しています";
-        String[] expected1 = {"シニアソフトウェアエンジニア", "を", "探し", "て", "い", "ます"};
-        List<Token> tokens = customTokenizer.tokenize(input);
-        assertTrue(tokens.size() == expected1.length);
-        for (int i = 0; i < tokens.size(); i++) {
-            assertEquals(expected1[i], tokens.get(i).getSurfaceForm());
-        }
 
-        Tokenizer searchTokenizer = new Tokenizer.Builder().mode(Tokenizer.Mode.SEARCH).build();
+        Tokenizer customTokenizer = new Tokenizer.Builder()
+            .mode(Tokenizer.Mode.SEARCH)
+            .kanjiPenalty(3, 10000)
+            .otherPenalty(Integer.MAX_VALUE, 0)
+            .build();
+
+        String[] expected1 = {"シニアソフトウェアエンジニア", "を", "探し", "て", "い", "ます"};
+
+        assertTokenSurfacesEquals(
+            Arrays.asList(expected1),
+            customTokenizer.tokenize(input)
+        );
+
+        Tokenizer searchTokenizer = new Tokenizer.Builder()
+            .mode(Tokenizer.Mode.SEARCH)
+            .build();
+
         String[] expected2 = {"シニア", "ソフトウェア", "エンジニア", "を", "探し", "て", "い", "ます"};
-        tokens = searchTokenizer.tokenize(input);
-        assertTrue(tokens.size() == expected2.length);
-        for (int i = 0; i < tokens.size(); i++) {
-            assertEquals(expected2[i], tokens.get(i).getSurfaceForm());
-        }
+
+        assertTokenSurfacesEquals(
+            Arrays.asList(expected2),
+            searchTokenizer.tokenize(input)
+        );
+
     }
 
     @Test
@@ -207,7 +217,7 @@ public class TokenizerTest {
     }
 
     @Test
-    public void testBocchan() throws IOException, InterruptedException {
+    public void testBocchan() throws IOException {
         int runs = 3;
         LineNumberReader reader = new LineNumberReader(new InputStreamReader(
             this.getClass().getClassLoader().getResourceAsStream("bocchan.txt")));
