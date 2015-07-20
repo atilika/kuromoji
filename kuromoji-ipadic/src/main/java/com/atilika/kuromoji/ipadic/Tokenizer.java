@@ -74,13 +74,15 @@ public class Tokenizer extends AbstractTokenizer {
      */
     public static class Builder extends AbstractTokenizer.Builder {
 
-        /**
-         * ipadic-specific search mode settings
-         */
-        private Integer searchModeKanjiLength;
-        private Integer searchModeKanjiPenalty;
-        private Integer searchModeOtherLength;
-        private Integer searchModeOtherPenalty;
+        private static final int DEFAULT_KANJI_LENGTH_THRESHOLD = 2;
+        private static final int DEFAULT_OTHER_LENGTH_THRESHOLD = 7;
+        private static final int DEFAULT_KANJI_PENALTY = 3000;
+        private static final int DEFAULT_OTHER_PENALTY = 1700;
+
+        private int kanjiPenaltyLengthTreshold = DEFAULT_KANJI_LENGTH_THRESHOLD;
+        private int kanjiPenalty = DEFAULT_KANJI_PENALTY;
+        private int otherPenaltyLengthThreshold = DEFAULT_OTHER_LENGTH_THRESHOLD;
+        private int otherPenalty = DEFAULT_OTHER_PENALTY;
 
         private boolean nakaguroSplit = false;
 
@@ -104,11 +106,15 @@ public class Tokenizer extends AbstractTokenizer {
             return this;
         }
 
-        public synchronized Builder penalties(int kanjiLength, int kanjiPenalty, int otherLength, int otherPenalty) {
-            this.searchModeKanjiLength = kanjiLength;
-            this.searchModeKanjiPenalty = kanjiPenalty;
-            this.searchModeOtherLength = otherLength;
-            this.searchModeOtherPenalty = otherPenalty;
+        public Builder kanjiPenalty(int lengthThreshold, int penalty) {
+            this.kanjiPenaltyLengthTreshold = lengthThreshold;
+            this.kanjiPenalty = penalty;
+            return this;
+        }
+
+        public Builder otherPenalty(int lengthThreshold, int penalty) {
+            this.otherPenaltyLengthThreshold = lengthThreshold;
+            this.otherPenalty = penalty;
             return this;
         }
 
@@ -119,15 +125,11 @@ public class Tokenizer extends AbstractTokenizer {
 
         @Override
         public void loadDictionaries() {
-            if (this.mode != Mode.NORMAL
-                && searchModeKanjiLength != null && searchModeKanjiPenalty != null
-                && searchModeOtherLength != null && searchModeOtherPenalty != null) {
-                penalties = new ArrayList<>();
-                penalties.add(searchModeKanjiLength);
-                penalties.add(searchModeKanjiPenalty);
-                penalties.add(searchModeOtherLength);
-                penalties.add(searchModeOtherPenalty);
-            }
+            penalties = new ArrayList<>();
+            penalties.add(kanjiPenaltyLengthTreshold);
+            penalties.add(kanjiPenalty);
+            penalties.add(otherPenaltyLengthThreshold);
+            penalties.add(otherPenalty);
 
             if (defaultPrefix != null) {
                 resolver = new PrefixDecoratorResolver(defaultPrefix, resolver);
@@ -149,7 +151,6 @@ public class Tokenizer extends AbstractTokenizer {
                 throw new RuntimeException("Could not load dictionaries.", ouch);
             }
         }
-
 
         @Override
         public synchronized Tokenizer build() {

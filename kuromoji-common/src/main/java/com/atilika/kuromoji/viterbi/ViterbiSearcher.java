@@ -25,55 +25,32 @@ import java.util.List;
 
 public class ViterbiSearcher {
 
-    private static final int SEARCH_MODE_KANJI_LENGTH_DEFAULT = 2;
-    private static final int SEARCH_MODE_OTHER_LENGTH_DEFAULT = 7;
-    private static final int SEARCH_MODE_KANJI_PENALTY_DEFAULT = 3000;
-    private static final int SEARCH_MODE_OTHER_PENALTY_DEFAULT = 1700;
-    private static final int DEFAULT_COST = 10000000;
+    private static final int DEFAULT_COST = Integer.MAX_VALUE;
 
     private final ConnectionCosts costs;
     private final UnknownDictionary unknownDictionary;
 
-    private final boolean extendedMode;
-    private final boolean searchMode;
+    private int kanjiPenaltyLengthTreshold;
+    private int otherPenaltyLengthThreshold;
+    private int kanjiPenalty;
+    private int otherPenalty;
 
-    private final int searchModeKanjiPenalty;
-    private final int searchModeOtherPenalty;
-    private final int searchModeOtherLength;
-    private final int searchModeKanjiLength;
+    private final AbstractTokenizer.Mode mode;
 
     public ViterbiSearcher(AbstractTokenizer.Mode mode,
                            ConnectionCosts costs,
                            UnknownDictionary unknownDictionary,
                            List<Integer> penalties) {
-        if (penalties.isEmpty()) {
-            this.searchModeKanjiLength = SEARCH_MODE_KANJI_LENGTH_DEFAULT;
-            this.searchModeKanjiPenalty = SEARCH_MODE_KANJI_PENALTY_DEFAULT;
-            this.searchModeOtherLength = SEARCH_MODE_OTHER_LENGTH_DEFAULT;
-            this.searchModeOtherPenalty = SEARCH_MODE_OTHER_PENALTY_DEFAULT;
-        } else {
-            this.searchModeKanjiLength = penalties.get(0);
-            this.searchModeKanjiPenalty = penalties.get(1);
-            this.searchModeOtherLength = penalties.get(2);
-            this.searchModeOtherPenalty = penalties.get(3);
+        if (!penalties.isEmpty()) {
+            this.kanjiPenaltyLengthTreshold = penalties.get(0);
+            this.kanjiPenalty = penalties.get(1);
+            this.otherPenaltyLengthThreshold = penalties.get(2);
+            this.otherPenalty = penalties.get(3);
         }
+
+        this.mode = mode;
         this.costs = costs;
         this.unknownDictionary = unknownDictionary;
-
-        switch (mode) {
-            case SEARCH:
-                searchMode = true;
-                extendedMode = false;
-                break;
-            case EXTENDED:
-                searchMode = true;
-                extendedMode = true;
-                break;
-            default:
-                searchMode = false;
-                extendedMode = false;
-                break;
-        }
     }
 
     /**
@@ -90,7 +67,7 @@ public class ViterbiSearcher {
         return result;
     }
 
-    ViterbiNode[][] calculatePathCosts(ViterbiLattice lattice) {
+    private ViterbiNode[][] calculatePathCosts(ViterbiLattice lattice) {
         ViterbiNode[][] startIndexArr = lattice.getStartIndexArr();
         ViterbiNode[][] endIndexArr = lattice.getEndIndexArr();
 
@@ -111,7 +88,7 @@ public class ViterbiSearcher {
         return endIndexArr;
     }
 
-    void updateNode(ViterbiNode[] viterbiNodes, ViterbiNode node) {
+    private void updateNode(ViterbiNode[] viterbiNodes, ViterbiNode node) {
         int backwardConnectionId = node.getLeftId();
         int wordCost = node.getWordCost();
         int leastPathCost = DEFAULT_COST;
@@ -127,8 +104,8 @@ public class ViterbiSearcher {
                     wordCost;
 
                 // Add extra cost for long nodes in "Search mode".
-                if (searchMode) {
-                    pathCost += getLongNodeAdditionalCost(node);
+                if (mode == AbstractTokenizer.Mode.SEARCH || mode == AbstractTokenizer.Mode.EXTENDED) {
+                    pathCost += getPenaltyCost(node);
                 }
 
                 // If total cost is lower than before, set current previous node as best left node (previous means left).
@@ -141,24 +118,25 @@ public class ViterbiSearcher {
         }
     }
 
-    int getLongNodeAdditionalCost(ViterbiNode node) {
+    private int getPenaltyCost(ViterbiNode node) {
         int pathCost = 0;
         String surfaceForm = node.getSurfaceForm();
         int length = surfaceForm.length();
-        if (length > searchModeKanjiLength) {
 
-            if (isOnlyKanji(surfaceForm)) {    // Process only Kanji keywords
-                pathCost += (length - searchModeKanjiLength) * searchModeKanjiPenalty;
-            } else if (length > searchModeOtherLength) {
-                pathCost += (length - searchModeOtherLength) * searchModeOtherPenalty;
+        if (length > kanjiPenaltyLengthTreshold) {
+            if (isKanjiOnly(surfaceForm)) {    // Process only Kanji keywords
+                pathCost += (length - kanjiPenaltyLengthTreshold) * kanjiPenalty;
+            } else if (length > otherPenaltyLengthThreshold) {
+                pathCost += (length - otherPenaltyLengthThreshold) * otherPenalty;
             }
         }
         return pathCost;
     }
 
-    boolean isOnlyKanji(String surfaceForm) {
+    private boolean isKanjiOnly(String surfaceForm) {
+        for (int i = 0; i < surfaceForm.length(); i++) {
+            char c = surfaceForm.charAt(i);
 
-        for (char c : surfaceForm.toCharArray()) {
             if (Character.UnicodeBlock.of(c) != Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS) {
                 return false;
             }
@@ -166,7 +144,7 @@ public class ViterbiSearcher {
         return true;
     }
 
-    LinkedList<ViterbiNode> backtrackBestPath(ViterbiNode eos) {
+    private LinkedList<ViterbiNode> backtrackBestPath(ViterbiNode eos) {
         // track best path
         ViterbiNode node = eos; // EOS
         LinkedList<ViterbiNode> result = new LinkedList<>();
@@ -180,7 +158,7 @@ public class ViterbiSearcher {
                 break;
             } else {
                 // EXTENDED mode convert unknown word into unigram node
-                if (extendedMode && leftNode.getType() == ViterbiNode.Type.UNKNOWN) {
+                if (mode == AbstractTokenizer.Mode.EXTENDED && leftNode.getType() == ViterbiNode.Type.UNKNOWN) {
                     LinkedList<ViterbiNode> uniGramNodes = convertUnknownWordToUnigramNode(leftNode);
                     result.addAll(uniGramNodes);
                 } else {
@@ -192,7 +170,7 @@ public class ViterbiSearcher {
         return result;
     }
 
-    LinkedList<ViterbiNode> convertUnknownWordToUnigramNode(ViterbiNode node) {
+    private LinkedList<ViterbiNode> convertUnknownWordToUnigramNode(ViterbiNode node) {
         LinkedList<ViterbiNode> uniGramNodes = new LinkedList<>();
         int unigramWordId = 0; //  CharacterDefinition.CharacterClass.NGRAM.getId();
         String surfaceForm = node.getSurfaceForm();
@@ -207,5 +185,4 @@ public class ViterbiSearcher {
 
         return uniGramNodes;
     }
-
 }
