@@ -4,6 +4,3 @@ jdk:
 
 before_install:
   - sudo rm -f /etc/mavenrc
-
-script:
-  - mvn -X install
