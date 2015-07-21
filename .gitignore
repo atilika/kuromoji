@@ -1,5 +1,12 @@
 # Ignore IntelliJ IDEA files
 *.iml
 .idea/
+
+# Ignore Maven build directory
 target/
+
+# Ignore downloaded dictionary data
 dictionary/
+
+# Ignore compiled dictionaries
+*/src/main/resources/com/atilika/kuromoji/**/*.bin
