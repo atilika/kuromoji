@@ -2,9 +2,9 @@ language: java
 jdk:
   - oraclejdk7
 
-before_script:
- - "echo $JAVA_OPTS"
- - "echo $MAVEN_OPTS"
+before_install:
+  - sudo rm /etc/mavenrc
+  - export MAVEN_OPTS=-Xmx3g
 
-install: MAVEN_OPTS=-Xmx3g mvn -X install -DskipTests=true
+install: mvn install -DskipTests=true
 
