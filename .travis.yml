@@ -3,8 +3,8 @@ jdk:
   - oraclejdk7
 
 before_install:
-  - sudo rm /etc/mavenrc
+  - cat /home/travis/build.sh
+  - sudo rm -f /etc/mavenrc
   - export MAVEN_OPTS=-Xmx3g
 
 install: mvn install -DskipTests=true
-
