@@ -2,6 +2,9 @@ language: java
 jdk:
   - oraclejdk7
 
-before_install:
+before_script:
   - sudo rm -f /etc/mavenrc
   - export MAVEN_OPTS=-Xmx3g
+
+script:
+  - mvn install
