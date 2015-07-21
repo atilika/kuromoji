@@ -4,3 +4,10 @@ jdk:
 
 before_install:
   - sudo rm -f /etc/mavenrc
+
+install:
+  - mvn install -DskipTests
+
+script:
+  - mvn test -DskipCompileDictionary
+
