@@ -265,7 +265,7 @@ public abstract class AbstractTokenizer {
          * @return Builder
          * @throws java.io.IOException
          */
-        public synchronized Builder userDictionary(InputStream userDictionaryInputStream) throws IOException {
+        public Builder userDictionary(InputStream userDictionaryInputStream) throws IOException {
             this.userDictionary = new UserDictionary(
                 userDictionaryInputStream, totalFeatures, readingFeature, partOfSpeechFeature
             );
@@ -280,14 +280,14 @@ public abstract class AbstractTokenizer {
          * @throws IOException
          * @throws java.io.FileNotFoundException
          */
-        public synchronized Builder userDictionary(String userDictionaryPath) throws IOException {
+        public Builder userDictionary(String userDictionaryPath) throws IOException {
             if (userDictionaryPath != null && !userDictionaryPath.isEmpty()) {
                 this.userDictionary(new BufferedInputStream(new FileInputStream(userDictionaryPath)));
             }
             return this;
         }
 
-        public synchronized Builder prefix(String resourcePrefix) {
+        public Builder prefix(String resourcePrefix) {
             this.defaultPrefix = resourcePrefix;
             return this;
         }
