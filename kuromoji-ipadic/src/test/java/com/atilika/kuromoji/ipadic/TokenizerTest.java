@@ -29,6 +29,7 @@ import static com.atilika.kuromoji.TestUtils.assertMultiThreadedTokenizedStreamE
 import static com.atilika.kuromoji.TestUtils.assertTokenSurfacesEquals;
 import static com.atilika.kuromoji.TestUtils.assertTokenizedStreamEquals;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class TokenizerTest {
@@ -82,7 +83,7 @@ public class TokenizerTest {
     public void testSimpleBaseFormUnknownWord() {
         List<Token> tokens = tokenizer.tokenize("アティリカ株式会社");
         assertTrue(tokens.size() == 2);
-        assertTrue(tokens.get(0).isUnknown());
+        assertFalse(tokens.get(0).isKnown());
         assertEquals("*", tokens.get(0).getBaseForm());
         assertTrue(tokens.get(1).isKnown());
         assertEquals("株式会社", tokens.get(1).getBaseForm());

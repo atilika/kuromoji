@@ -26,7 +26,7 @@ public class Tokenizer extends AbstractTokenizer {
         this(new Builder());
     }
 
-    public Tokenizer(Builder builder) {
+    private Tokenizer(Builder builder) {
         configure(builder);
     }
 
@@ -52,7 +52,7 @@ public class Tokenizer extends AbstractTokenizer {
         }
 
         @Override
-        public synchronized Tokenizer build() {
+        public Tokenizer build() {
             return new Tokenizer(this);
         }
     }

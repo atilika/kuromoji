@@ -30,13 +30,26 @@ import com.atilika.kuromoji.viterbi.ViterbiNode;
 import java.io.IOException;
 import java.util.ArrayList;
 
+/**
+ * A tokenizer based on the IPADIC dictionary
+ * <p>
+ * See {@link Token} for details on the morphological features produced by this tokenizer
+ */
 public class Tokenizer extends AbstractTokenizer {
 
+    /**
+     * Class constructor constructing a default tokenizer
+     */
     public Tokenizer() {
         this(new Builder());
     }
 
-    public Tokenizer(Builder builder) {
+    /**
+     * Class constructor constructing a customized tokenizer
+     * <p>
+     * See {@see com.atilika.kuromoji.ipadic.Tokenizer#Builder}
+     */
+    private Tokenizer(Builder builder) {
         configure(builder);
     }
 
@@ -70,7 +83,7 @@ public class Tokenizer extends AbstractTokenizer {
     }
 
     /**
-     * Builder class used to create Tokenizer instance.
+     * Builder class for creating a customized tokenizer instance
      */
     public static class Builder extends AbstractTokenizer.Builder {
 
@@ -86,6 +99,9 @@ public class Tokenizer extends AbstractTokenizer {
 
         private boolean nakaguroSplit = false;
 
+        /**
+         * Creates a default builder
+         */
         public Builder() {
             totalFeatures = 9;
             unknownDictionaryTotalFeatures = 9;
@@ -95,36 +111,86 @@ public class Tokenizer extends AbstractTokenizer {
         }
 
         /**
-         * Set tokenization mode
-         * Default: NORMAL
+         * Sets the tokenization mode
+         * <p>
+         * The tokenization mode defines how Available modes are as follows:
+         * <p><ul>
+         * <li>{@link com.atilika.kuromoji.AbstractTokenizer.Mode#NORMAL} - The default mode
+         * <li>{@link com.atilika.kuromoji.AbstractTokenizer.Mode#SEARCH} - Uses a heuristic to segment compound nouns (複合名詞) into their parts
+         * <li>{@link com.atilika.kuromoji.AbstractTokenizer.Mode#EXTENDED} - Same as SEARCH, but emits unigram tokens for unknown terms
+         * </ul><p>
+         * See {@link #kanjiPenalty} and {@link #otherPenalty} for how to adjust costs used by SEARCH and EXTENDED mode
          *
-         * @param mode tokenization mode
-         * @return Builder
+         * @param mode  tokenization mode
+         * @return this builder, not null
          */
-        public synchronized Builder mode(Mode mode) {
+        public Builder mode(Mode mode) {
             this.mode = mode;
             return this;
         }
 
+        /**
+         * Sets a custom kanji penalty
+         * <p>
+         * This is an expert feature used with {@link com.atilika.kuromoji.AbstractTokenizer.Mode#SEARCH} and {@link com.atilika.kuromoji.AbstractTokenizer.Mode#EXTENDED} modes that sets a length threshold and an additional costs used when running the Viterbi search.
+         * The additional cost is applicable for kanji candidate tokens longer than the length threshold specified.
+         * <p>
+         * This is an expert feature and you usually would not need to change this.
+         *
+         * @param lengthThreshold
+         * @param penalty  cost added to Viterbi nodes for long kanji candidate tokens
+         * @return this builder, not null
+         */
         public Builder kanjiPenalty(int lengthThreshold, int penalty) {
             this.kanjiPenaltyLengthTreshold = lengthThreshold;
             this.kanjiPenalty = penalty;
             return this;
         }
 
+        /**
+         * Sets a custom non-kanji penalty
+         * <p>
+         * This is an expert feature used with {@link com.atilika.kuromoji.AbstractTokenizer.Mode#SEARCH} and {@link com.atilika.kuromoji.AbstractTokenizer.Mode#EXTENDED} modes that sets a length threshold and an additional costs used when running the Viterbi search.
+         * The additional cost is applicable for non-kanji candidate tokens longer than the length threshold specified.
+         * <p>
+         * This is an expert feature and you usually would not need to change this.
+         *
+         * @param lengthThreshold
+         * @param penalty  cost added to Viterbi nodes for long non-kanji candidate tokens
+         * @return this builder, not null
+         */
         public Builder otherPenalty(int lengthThreshold, int penalty) {
             this.otherPenaltyLengthThreshold = lengthThreshold;
             this.otherPenalty = penalty;
             return this;
         }
 
+        /**
+         * Predictate that splits unknown words on the middle dot character (U+30FB KATAKANA MIDDLE DOT)
+         * <p>
+         * This feature is off by default.
+         * This is an expert feature sometimes used with {@link com.atilika.kuromoji.AbstractTokenizer.Mode#SEARCH} and {@link com.atilika.kuromoji.AbstractTokenizer.Mode#EXTENDED} mode.
+         *
+         * @param split  predicate to indicate split on middle dot
+         * @return this builder, not null
+         */
         public Builder isSplitOnNakaguro(boolean split) {
             this.nakaguroSplit = split;
             return this;
         }
 
+        /**
+         * Creates the custom tokenizer instance
+         *
+         * @return tokenizer instance, not null
+         */
         @Override
-        public void loadDictionaries() {
+        public Tokenizer build() {
+            return new Tokenizer(this);
+        }
+
+        @Override
+        protected void loadDictionaries() {
             penalties = new ArrayList<>();
             penalties.add(kanjiPenaltyLengthTreshold);
             penalties.add(kanjiPenalty);
@@ -152,9 +218,5 @@ public class Tokenizer extends AbstractTokenizer {
             }
         }
 
-        @Override
-        public synchronized Tokenizer build() {
-            return new Tokenizer(this);
-        }
     }
 }
