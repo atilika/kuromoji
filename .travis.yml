@@ -4,7 +4,7 @@ jdk:
 
 before_script:
   - sudo rm -f /etc/mavenrc
-  - export MAVEN_OPTS=-Xmx3g
+  - export MAVEN_OPTS=-Xmx2g
 
 script:
   - mvn install
