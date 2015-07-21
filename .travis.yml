@@ -6,5 +6,5 @@ before_script:
  - "echo $JAVA_OPTS"
  - "echo $MAVEN_OPTS"
 
-install: mvn -X install -DskipTests=true
+install: MAVEN_OPTS=-Xmx3g mvn -X install -DskipTests=true
 
