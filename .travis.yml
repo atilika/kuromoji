@@ -5,8 +5,6 @@ jdk:
 before_script:
  - "echo $JAVA_OPTS"
  - "echo $MAVEN_OPTS"
- - "export JAVA_OPTS=-Xmx2g"
- - "export MAVEN_OPTS=-Xmx2g"
 
-install: mvn -q install -DskipTests=true
+install: mvn install -DskipTests=true
 
