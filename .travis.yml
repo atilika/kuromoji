@@ -6,8 +6,8 @@ before_install:
   - sudo rm -f /etc/mavenrc
 
 install:
-  - mvn install -DskipTests
+  - mvn install -DskipTests -pl kuromoji-ipadic -am
 
 script:
-  - mvn test -DskipCompileDictionary
+  - mvn test -DskipCompileDictionary -pl kuromoji-ipadic -am
 
