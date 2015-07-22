@@ -57,14 +57,14 @@ import java.util.ArrayList;
 public class Tokenizer extends AbstractTokenizer {
 
     /**
-     * Class constructor constructing a default tokenizer
+     * Construct a default tokenizer
      */
     public Tokenizer() {
         this(new Builder());
     }
 
     /**
-     * Class constructor constructing a customized tokenizer
+     * Construct a customized tokenizer
      * <p>
      * See {@see com.atilika.kuromoji.ipadic.Tokenizer#Builder}
      */

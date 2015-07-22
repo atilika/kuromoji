@@ -47,14 +47,14 @@ import com.atilika.kuromoji.viterbi.ViterbiNode;
 public class Tokenizer extends AbstractTokenizer {
 
     /**
-     * Class constructor constructing a default tokenizer
+     * Construct a default tokenizer
      */
     public Tokenizer() {
         this(new Builder());
     }
 
     /**
-     * Class constructor constructing a customized tokenizer
+     * Construct a customized tokenizer
      * <p>
      * See {@see com.atilika.kuromoji.unidic.Tokenizer#Builder}
      */
