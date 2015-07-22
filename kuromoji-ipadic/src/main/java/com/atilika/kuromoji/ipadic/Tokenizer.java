@@ -34,6 +34,25 @@ import java.util.ArrayList;
  * A tokenizer based on the IPADIC dictionary
  * <p>
  * See {@link Token} for details on the morphological features produced by this tokenizer
+ * <p>
+ * The following code example demonstrates how to use the Kuromoji tokenizer:
+ * <pre>{@code
+ * package com.atilika.kuromoji.example;
+ * import com.atilika.kuromoji.ipadic.Token;
+ * import com.atilika.kuromoji.ipadic.Tokenizer;
+ * import java.util.List;
+ *
+ * public class KuromojiExample {
+ *     public static void main(String[] args) {
+ *         Tokenizer tokenizer = new Tokenizer() ;
+ *         List<Token> tokens = tokenizer.tokenize("お寿司が食べたい。");
+ *         for (Token token : tokens) {
+ *             System.out.println(token.getSurfaceForm() + "\t" + token.getAllFeatures());
+ *         }
+ *     }
+ * }
+ * }
+ * </pre>
  */
 public class Tokenizer extends AbstractTokenizer {
 
@@ -53,6 +72,29 @@ public class Tokenizer extends AbstractTokenizer {
         configure(builder);
     }
 
+    public static void main(String[] args) throws IOException {
+        Tokenizer tokenizer;
+        switch (args.length) {
+            case 1:
+                Tokenizer.Mode mode = AbstractTokenizer.Mode.valueOf(args[0].toUpperCase());
+                tokenizer = new Builder()
+                    .mode(mode)
+                    .build();
+                break;
+            case 2:
+                mode = AbstractTokenizer.Mode.valueOf(args[0].toUpperCase());
+                tokenizer = new Builder()
+                    .mode(mode)
+                    .userDictionary(args[1])
+                    .build();
+                break;
+            default:
+                tokenizer = new Tokenizer();
+                break;
+        }
+        new TokenizerRunner().run(tokenizer);
+    }
+
     @Override
     protected Token createToken(int offset, ViterbiNode node, int wordId) {
         return new Token(
@@ -62,24 +104,6 @@ public class Tokenizer extends AbstractTokenizer {
             offset + node.getStartIndex(),
             dictionaryMap.get(node.getType())
         );
-    }
-
-    public static void main(String[] args) throws IOException {
-        Tokenizer tokenizer;
-        switch (args.length) {
-            case 1:
-                Tokenizer.Mode mode = AbstractTokenizer.Mode.valueOf(args[0].toUpperCase());
-                tokenizer = new Builder().mode(mode).build();
-                break;
-            case 2:
-                mode = AbstractTokenizer.Mode.valueOf(args[0].toUpperCase());
-                tokenizer = new Builder().mode(mode).userDictionary(args[1]).build();
-                break;
-            default:
-                tokenizer = new Builder().build();
-                break;
-        }
-        new TokenizerRunner().run(tokenizer);
     }
 
     /**
