@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.atilika.kuromoji.unidic;
 
 import com.atilika.kuromoji.AbstractToken;
@@ -23,7 +22,11 @@ import com.atilika.kuromoji.unidic.dict.DictionaryField;
 import com.atilika.kuromoji.viterbi.ViterbiNode;
 
 public class Token extends AbstractToken {
-    public Token(int wordId, String surfaceForm, ViterbiNode.Type type, int position, Dictionary dictionary) {
+    public Token(int wordId,
+                 String surfaceForm,
+                 ViterbiNode.Type type,
+                 int position,
+                 Dictionary dictionary) {
         super(wordId, surfaceForm, type, position, dictionary);
     }
 
