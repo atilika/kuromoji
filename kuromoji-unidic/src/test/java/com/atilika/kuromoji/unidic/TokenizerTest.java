@@ -33,7 +33,7 @@ public class TokenizerTest {
 
     @BeforeClass
     public static void setUpBeforeClass() throws Exception {
-        tokenizer = new Tokenizer.Builder().build();
+        tokenizer = new Tokenizer();
     }
 
     @Test

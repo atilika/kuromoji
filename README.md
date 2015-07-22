@@ -30,7 +30,7 @@ The following additional build options are available:
 
 To use Kuromoji, you add `kuromoji-common-0.9-SNAPSHOT.jar` and your chosen dictionary's jar to your project. For many projects, the IPADIC variant `kuromoji-ipadic-0.9-SNAPSHOT.jar` should suffice.
 
-The following code snippet demonstrates how to use the Kuromoji tokenizer:
+The following code example demonstrates how to use the Kuromoji tokenizer:
 
 ```java
 package com.atilika.kuromoji.example;

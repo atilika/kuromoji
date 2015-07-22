@@ -35,7 +35,7 @@ public class Token extends AbstractToken {
     }
 
     /**
-     * Gets the 1st level part-of-speech tag of this token (品詞細分類1)
+     * Gets the 1st level part-of-speech tag for this token (品詞細分類1)
      *
      * @return 1st level part-of-speech tag, not null
      */
@@ -44,7 +44,7 @@ public class Token extends AbstractToken {
     }
 
     /**
-     * Gets the 2nd level part-of-speech tag of this token (品詞細分類2)
+     * Gets the 2nd level part-of-speech tag for this token (品詞細分類2)
      *
      * @return 2nd level part-of-speech tag, not null
      */
@@ -53,7 +53,7 @@ public class Token extends AbstractToken {
     }
 
     /**
-     * Gets the 3rd level part-of-speech tag of this token (品詞細分類3)
+     * Gets the 3rd level part-of-speech tag for this token (品詞細分類3)
      *
      * @return 3rd level part-of-speech tag, not null
      */
@@ -62,7 +62,7 @@ public class Token extends AbstractToken {
     }
 
     /**
-     * Gets the 4th level part-of-speech tag of this token (品詞細分類4)
+     * Gets the 4th level part-of-speech tag for this token (品詞細分類4)
      *
      * @return 4th level part-of-speech tag, not null
      */
@@ -71,7 +71,7 @@ public class Token extends AbstractToken {
     }
 
     /**
-     * Gets the conjugation type of this token (活用型), if applicable
+     * Gets the conjugation type for this token (活用型), if applicable
      * <p>
      * If this token does not have a conjugation type, return *
      *
@@ -82,7 +82,7 @@ public class Token extends AbstractToken {
     }
 
     /**
-     * Gets the conjugation form of this token (活用形), if applicable
+     * Gets the conjugation form for this token (活用形), if applicable
      * <p>
      * If this token does not have a conjugation type, return *
      *
@@ -93,7 +93,7 @@ public class Token extends AbstractToken {
     }
 
     /**
-     * Gets the base form (also called dictionary form) of this token (基本形)
+     * Gets the base form (also called dictionary form) for this token (基本形)
      *
      * @return base form, not null
      */
@@ -102,7 +102,7 @@ public class Token extends AbstractToken {
     }
 
     /**
-     * Gets the reading of this token (読み) in katakana script
+     * Gets the reading for this token (読み) in katakana script
      *
      * @return reading, not null
      */
@@ -111,7 +111,7 @@ public class Token extends AbstractToken {
     }
 
     /**
-     * Gets the pronunciation of this token (発音)
+     * Gets the pronunciation for this token (発音)
      *
      * @return pronunciation, not null
      */

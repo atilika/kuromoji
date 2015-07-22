@@ -19,14 +19,73 @@ package com.atilika.kuromoji.unidic.kanaaccent;
 import com.atilika.kuromoji.AbstractTokenizer;
 import com.atilika.kuromoji.viterbi.ViterbiNode;
 
+/**
+ * A tokenizer based on the UniDic Kana Accent dictionary
+ * <p>
+ * See {@link Token} for details on the morphological features produced by this tokenizer
+ * <p>
+ * The following code example demonstrates how to use the Kuromoji tokenizer:
+ * <pre>{@code
+ * package com.atilika.kuromoji.example;
+ * import com.atilika.kuromoji.unidic.kanaaccent.Token;
+ * import com.atilika.kuromoji.unidic.kanaaccent.Tokenizer;
+ * import java.util.List;
+ *
+ * public class KuromojiExample {
+ *     public static void main(String[] args) {
+ *         Tokenizer tokenizer = new Tokenizer() ;
+ *         List<Token> tokens = tokenizer.tokenize("お寿司が食べたい。");
+ *         for (Token token : tokens) {
+ *             System.out.println(token.getSurfaceForm() + "\t" + token.getAllFeatures());
+ *         }
+ *     }
+ * }
+ * }
+ * </pre>
+ */
 public class Tokenizer extends AbstractTokenizer {
 
+    /**
+     * Class constructor constructing a default tokenizer
+     */
     public Tokenizer() {
         this(new Builder());
     }
 
+    /**
+     * Class constructor constructing a customized tokenizer
+     * <p>
+     * See {@see com.atilika.kuromoji.unidickanaaccent.Tokenizer#Builder}
+     */
     private Tokenizer(Builder builder) {
         configure(builder);
+    }
+
+    /**
+     * Builder class for creating a customized tokenizer instance
+     */
+    public static class Builder extends AbstractTokenizer.Builder {
+
+        /**
+         * Creates a default builder
+         */
+        public Builder() {
+            totalFeatures = 22;
+            unknownDictionaryTotalFeatures = 26;
+            readingFeature = 13;
+            partOfSpeechFeature = 0;
+            defaultPrefix = System.getProperty(DEFAULT_DICT_PREFIX_PROPERTY, "com/atilika/kuromoji/unidic-kanaaccent/");
+        }
+
+        /**
+         * Creates the custom tokenizer instance
+         *
+         * @return tokenizer instance, not null
+         */
+        @Override
+        public Tokenizer build() {
+            return new Tokenizer(this);
+        }
     }
 
     @Override
@@ -38,22 +97,5 @@ public class Tokenizer extends AbstractTokenizer {
             offset + node.getStartIndex(),
             dictionaryMap.get(node.getType())
         );
-    }
-
-
-    public static class Builder extends AbstractTokenizer.Builder {
-
-        public Builder() {
-            totalFeatures = 22;
-            unknownDictionaryTotalFeatures = 26;
-            readingFeature = 13;
-            partOfSpeechFeature = 0;
-            defaultPrefix = System.getProperty(DEFAULT_DICT_PREFIX_PROPERTY, "com/atilika/kuromoji/unidic-kanaaccent/");
-        }
-
-        @Override
-        public Tokenizer build() {
-            return new Tokenizer(this);
-        }
     }
 }
