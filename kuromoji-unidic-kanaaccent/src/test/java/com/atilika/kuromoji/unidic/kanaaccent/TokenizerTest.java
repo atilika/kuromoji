@@ -317,7 +317,6 @@ public class TokenizerTest {
         );
     }
 
-
     private void buildTokenizerWithUserDictionary(String userDictionaryEntry) throws IOException {
         tokenizer = new Tokenizer.Builder().userDictionary(getUserDictionaryFromString(userDictionaryEntry)).build();
     }

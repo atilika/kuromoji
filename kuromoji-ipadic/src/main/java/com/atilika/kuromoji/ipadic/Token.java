@@ -84,7 +84,7 @@ public class Token extends AbstractToken {
     /**
      * Gets the conjugation form for this token (活用形), if applicable
      * <p>
-     * If this token does not have a conjugation type, return *
+     * If this token does not have a conjugation form, return *
      *
      * @return conjugation form, not null
      */
