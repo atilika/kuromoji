@@ -16,31 +16,10 @@
  */
 package com.atilika.kuromoji.ipadic.dict;
 
+/**
+ * Feature indexes for IPADIC
+ */
 public class DictionaryField {
-    /**
-     * Entry format for Ipadic in output from mecab:
-     * 表層形\t品詞,品詞細分類1,品詞細分類2,品詞細分類3,活用型,活用形,原形,読み,発音
-     *
-     * Surface, POS, POS detailed 1, POS detailed 2, POS detailed 3, conjugation type, conjugation form, base form reading, pronunciation
-     *
-     * 0:   surface form
-     * 1:   leftId
-     * 2:   rightId
-     * 3:   wordcost
-     * 4:   Part of speech (POS)
-     * 5:   POS detailed 1
-     * 6:   POS detailed 2
-     * 7:   POS detailed 3
-     * 8:   conjugation type
-     * 9:   conjugation form
-     * 10:  base form
-     * 11:  reading
-     * 12:  pronunciation
-     *
-     * Surface form, leftId, rightId and wordCost (fields 0, 1, 2, 3) are handled in the core
-     * and do not need to be specified here.
-     *
-     */
 
     public static final int POS_LEVEL_1 = 4;
     public static final int POS_LEVEL_2 = 5;

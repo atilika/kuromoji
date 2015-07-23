@@ -16,33 +16,10 @@
  */
 package com.atilika.kuromoji.unidic.dict;
 
+/**
+ * Feature indexes for UNIDIC
+ */
 public class DictionaryField {
-
-    /**
-     * Entry format for UNIDIC in output from mecab:
-     *
-     * f[0]:  pos1
-     * f[1]:  pos2
-     * f[2]:  pos3
-     * f[3]:  pos4
-     * f[4]:  cType     conjugation type
-     * f[5]:  cForm     conjugation form
-     * f[6]:  lForm     lemma reading form
-     * f[7]:  lemma     lemma (base form)
-     * f[8]:  orth      written form (orthographic form?)
-     * f[9]:  pron      pronunciation
-     * f[10]: orthBase  orthographic base form
-     * f[11]: pronBase  pronunciation base form
-     * f[12]: goshu     language type
-     * f[13]: iType     initial sound alteration type
-     * f[14]: iForm     initial sound alteration form
-     * f[15]: fType     final sound alteration type
-     * f[16]: fForm     final sound alteration form
-     *
-     * Surface form, leftId, rightId and wordCost (fields 0, 1, 2, 3) are handled in the core
-     * and do not need to be specified here.
-     *
-     */
 
     public static final int POS_LEVEL_1 = 4;
     public static final int POS_LEVEL_2 = 5;
