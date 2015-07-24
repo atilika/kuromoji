@@ -16,7 +16,6 @@
  */
 package com.atilika.kuromoji.ipadic;
 
-import com.atilika.kuromoji.TestUtils;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -34,10 +33,11 @@ public class UserDictionaryTokenizerTest {
 
     @Before
     public void setUp() throws IOException {
-        String userDictionary = "クロ,クロ,クロ,カスタム名詞\n"
-            + "真救世主,真救世主,シンキュウセイシュ,カスタム名詞\n"
-            + "真救世主伝説,真救世主伝説,シンキュウセイシュデンセツ,カスタム名詞\n"
-            + "北斗の拳,北斗の拳,ホクトノケン,カスタム名詞";
+        String userDictionary = "" + "" +
+            "クロ,クロ,クロ,カスタム名詞\n" +
+            "真救世主,真救世主,シンキュウセイシュ,カスタム名詞\n" +
+            "真救世主伝説,真救世主伝説,シンキュウセイシュデンセツ,カスタム名詞\n" +
+            "北斗の拳,北斗の拳,ホクトノケン,カスタム名詞";
 
         buildTokenizerWithUserDictionary(userDictionary);
     }

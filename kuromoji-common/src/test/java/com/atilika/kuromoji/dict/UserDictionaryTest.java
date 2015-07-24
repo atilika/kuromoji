@@ -21,6 +21,8 @@ import org.junit.Test;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
@@ -33,22 +35,23 @@ public class UserDictionaryTest {
             9, 7, 0
         );
 
-        int[][] dictionaryEntryResult = dictionary.locateUserDefinedWordsInText("関西国際空港に行った");
+        List<UserDictionary.UserDictionaryMatch> matches = dictionary.findUserDictionaryMatches("関西国際空港に行った");
+
         // Length should be three 関西, 国際, 空港
-        assertEquals(3, dictionaryEntryResult.length);
+        assertEquals(3, matches.size());
 
         // Test positions
-        assertEquals(0, dictionaryEntryResult[0][1]); // index of 関西
-        assertEquals(2, dictionaryEntryResult[1][1]); // index of 国際
-        assertEquals(4, dictionaryEntryResult[2][1]); // index of 空港
+        assertEquals(0, matches.get(0).getMatchStartIndex()); // index of 関西
+        assertEquals(2, matches.get(1).getMatchStartIndex()); // index of 国際
+        assertEquals(4, matches.get(2).getMatchStartIndex()); // index of 空港
 
         // Test lengths
-        assertEquals(2, dictionaryEntryResult[0][2]); // length of 関西
-        assertEquals(2, dictionaryEntryResult[1][2]); // length of 国際
-        assertEquals(2, dictionaryEntryResult[2][2]); // length of 空港
+        assertEquals(2, matches.get(0).getMatchLength()); // length of 関西
+        assertEquals(2, matches.get(1).getMatchLength()); // length of 国際
+        assertEquals(2, matches.get(2).getMatchLength()); // length of 空港
 
-        int[][] dictionaryEntryResult2 = dictionary.locateUserDefinedWordsInText("関西国際空港と関西国際空港に行った");
-        assertEquals(6, dictionaryEntryResult2.length);
+        List<UserDictionary.UserDictionaryMatch> matches2 = dictionary.findUserDictionaryMatches("関西国際空港と関西国際空港に行った");
+        assertEquals(6, matches2.size());
     }
 
     @Test
@@ -109,29 +112,26 @@ public class UserDictionaryTest {
     public void testUserDictionaryEntries() throws IOException {
         String userDictionaryEntry = "クロ,クロ,クロ,カスタム名詞";
         UserDictionary dictionary = new UserDictionary(
-            new ByteArrayInputStream(userDictionaryEntry.getBytes("UTF-8")),
+            new ByteArrayInputStream(userDictionaryEntry.getBytes(StandardCharsets.UTF_8)),
             9, 7, 0
         );
-        int[][] positions = dictionary.locateUserDefinedWordsInText("この丘はアクロポリスと呼ばれている");
-        int indexForKuro = 5;
-        int calculatedIndex = positions[0][1];
-        assertEquals(indexForKuro, calculatedIndex);
+        List<UserDictionary.UserDictionaryMatch> matches = dictionary.findUserDictionaryMatches("この丘はアクロポリスと呼ばれている");
+        assertEquals(1, matches.size());
+        assertEquals(5, matches.get(0).getMatchStartIndex());
     }
 
     @Test
     public void testOverlappingUserDictionaryEntries() throws IOException {
-        String userDictionaryEntries = "クロ,クロ,クロ,カスタム名詞\n" +
+        String userDictionaryEntries = "" +
+            "クロ,クロ,クロ,カスタム名詞\n" +
             "アクロ,アクロ,アクロ,カスタム名詞";
         UserDictionary dictionary = new UserDictionary(
-            new ByteArrayInputStream(userDictionaryEntries.getBytes("UTF-8")),
+            new ByteArrayInputStream(userDictionaryEntries.getBytes(StandardCharsets.UTF_8)),
             9, 7, 0
         );
-        int[][] positions = dictionary.locateUserDefinedWordsInText("この丘はアクロポリスと呼ばれている");
-        int indexForAcro = 4;
-        int calculatedIndex = positions[0][1];
-        assertEquals(indexForAcro, calculatedIndex);
-        assertEquals(2, positions.length);
-
+        List<UserDictionary.UserDictionaryMatch> positions = dictionary.findUserDictionaryMatches("この丘はアクロポリスと呼ばれている");
+        assertEquals(4, positions.get(0).getMatchStartIndex());
+        assertEquals(2, positions.size());
     }
 
     private InputStream getResource(String resource) {
