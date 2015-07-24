@@ -16,6 +16,7 @@
  */
 package com.atilika.kuromoji.dict;
 
+import com.atilika.kuromoji.trie.PatriciaTrie;
 import com.atilika.kuromoji.util.DictionaryEntryLineParser;
 
 import java.io.BufferedReader;
@@ -24,8 +25,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 
 public class UserDictionary implements Dictionary {
 
@@ -45,7 +46,7 @@ public class UserDictionary implements Dictionary {
 
     // The word id below is the word id for the source string
     // surface string => [ word id, 1st token length, 2nd token length, ... , nth token length
-    private TreeMap<String, int[]> entries = new TreeMap<>();
+    private PatriciaTrie<int[]> entries2 = new PatriciaTrie<>();
 
     // Maps wordId to reading
     private Map<Integer, String> readings = new HashMap<>();
@@ -75,48 +76,78 @@ public class UserDictionary implements Dictionary {
      * @param text
      * @return array of {wordId, position, length}
      */
-    public int[][] locateUserDefinedWordsInText(String text) {
-        TreeMap<Integer, int[]> positions = new TreeMap<>(); // index, [length, length...]
+    public List<UserDictionaryMatch> findUserDictionaryMatches(String text) {
+        List<UserDictionaryMatch> matchInfos = new ArrayList<>();
+        int startIndex = 0;
 
-        for (String entry : entries.descendingKeySet()) {
-            checkUserDefinedWord(text, entry, positions);
+        while (startIndex < text.length()) {
+            int matchLength = 0;
+
+            while (startIndex + matchLength < text.length() && entries2.containsKeyPrefix(text.substring(startIndex, startIndex + matchLength + 1))) {
+                matchLength++;
+            }
+
+            if (matchLength > 0) {
+                String match = text.substring(startIndex, startIndex + matchLength);
+                int[] details = entries2.get(match);
+
+                if (details != null) {
+                    matchInfos.addAll(
+                        makeMatchDetails(startIndex, details)
+                    );
+                }
+            }
+
+            startIndex++;
         }
 
-        return toIndexArray(positions);
+        return matchInfos;
     }
 
-    private void checkUserDefinedWord(final String text, final String entry, TreeMap<Integer, int[]> positions) {
-        int offset = 0;
-        int pos = text.indexOf(entry, offset);
-        while (offset < text.length() && pos >= 0) {
-            if (!positions.containsKey(pos)) {
-                positions.put(pos, entries.get(entry));
-            }
-            offset += pos + entry.length();
-            pos = text.indexOf(entry, offset);
+    private List<UserDictionaryMatch> makeMatchDetails(int matchStartIndex, int[] details) {
+        List<UserDictionaryMatch> matchDetails = new ArrayList<>(details.length - 1);
+
+        int wordId = details[0];
+        int startIndex = 0;
+
+        for (int i = 1; i < details.length; i++) {
+            int matchLength = details[i];
+
+            matchDetails.add(
+                new UserDictionaryMatch(wordId, matchStartIndex + startIndex, matchLength)
+            );
+
+            startIndex += matchLength;
+            wordId++;
         }
+        return matchDetails;
     }
 
-    /**
-     * Convert Map of index and wordIdAndLength to array of {wordId, index, length}
-     *
-     * @param input
-     * @return array of {wordId, index, length}
-     */
-    private int[][] toIndexArray(Map<Integer, int[]> input) {
-        ArrayList<int[]> result = new ArrayList<>();
-        for (int i : input.keySet()) {
-            int[] wordIdAndLength = input.get(i);
-            int wordId = wordIdAndLength[0];
-            // convert length to index
-            int current = i;
-            for (int j = 1; j < wordIdAndLength.length; j++) { // first entry is wordId offset
-                int[] token = {wordId + j - 1, current, wordIdAndLength[j]};
-                result.add(token);
-                current += wordIdAndLength[j];
-            }
+    public static class UserDictionaryMatch {
+
+        private final int wordId;
+
+        private final int matchStartIndex;
+
+        private final int matchLength;
+
+        public UserDictionaryMatch(int wordId, int matchStartIndex, int matchLength) {
+            this.wordId = wordId;
+            this.matchStartIndex = matchStartIndex;
+            this.matchLength = matchLength;
         }
-        return result.toArray(new int[result.size()][]);
+
+        public int getWordId() {
+            return wordId;
+        }
+
+        public int getMatchStartIndex() {
+            return matchStartIndex;
+        }
+
+        public int getMatchLength() {
+            return matchLength;
+        }
     }
 
     @Override
@@ -153,7 +184,8 @@ public class UserDictionary implements Dictionary {
     @Override
     public String getFeature(int wordId, int... fields) {
 
-        if (fields.length == 0 || fields.length == totalFeatures) { // Is this latter test correct?  There can be duplicate features... -Christian
+        // Is this latter test correct?  There can be duplicate features... -Christian
+        if (fields.length == 0 || fields.length == totalFeatures) {
             return getAllFeatures(wordId);
         }
 
@@ -193,7 +225,7 @@ public class UserDictionary implements Dictionary {
             addEntry(line);
         }
 
-        reader.close();
+        reader.close(); // FIXME: Should not close this
     }
 
     public void addEntry(String entry) {
@@ -211,15 +243,16 @@ public class UserDictionary implements Dictionary {
             segmentation = split(segmentationValue);
             readings = split(readingsValue);
         } else {
-            segmentation = new String[]{ segmentationValue };
-            readings = new String[]{ readingsValue };
+            segmentation = new String[]{segmentationValue};
+            readings = new String[]{readingsValue};
         }
 
         if (segmentation.length != readings.length) {
             throw new RuntimeException("User dictionary entry not properly formatted: " + entry);
         }
 
-        int[] wordIdAndLengths = new int[segmentation.length + 1]; // wordId offset, length, length....
+        // { wordId, 1st token length, 2nd token length, ... , nth token length
+        int[] wordIdAndLengths = new int[segmentation.length + 1];
 
         wordIdAndLengths[0] = wordId;
 
@@ -231,7 +264,8 @@ public class UserDictionary implements Dictionary {
 
             wordId++;
         }
-        entries.put(surface, wordIdAndLengths);
+
+        entries2.put(surface, wordIdAndLengths);
     }
 
     private boolean isCustomSegmentation(String surface, String segmentation) {

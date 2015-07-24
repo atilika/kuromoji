@@ -175,11 +175,13 @@ public class ViterbiBuilder {
      * @param lattice
      */
     private void processUserDictionary(final String text, ViterbiLattice lattice) {
-        int[][] result = userDictionary.locateUserDefinedWordsInText(text);
-        for (int[] segmentation : result) {
-            int wordId = segmentation[0];
-            int index = segmentation[1];
-            int length = segmentation[2];
+        List<UserDictionary.UserDictionaryMatch> matches = userDictionary.findUserDictionaryMatches(text);
+
+        for (UserDictionary.UserDictionaryMatch match : matches) {
+            int wordId = match.getWordId();
+            int index = match.getMatchStartIndex();
+            int length = match.getMatchLength();
+
             String word = text.substring(index, index + length);
 
             ViterbiNode node = new ViterbiNode(wordId, word, userDictionary, index, ViterbiNode.Type.USER);
