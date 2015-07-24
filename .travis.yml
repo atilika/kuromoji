@@ -1,6 +1,9 @@
 language: java
+
 jdk:
+  - openjdk7
   - oraclejdk7
+  - oraclejdk8
 
 before_install:
   - sudo rm -f /etc/mavenrc
