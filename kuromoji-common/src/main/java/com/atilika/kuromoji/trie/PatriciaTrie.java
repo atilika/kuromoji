@@ -25,15 +25,15 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Convenient and compact structure for storing key-value pairs and quickly looking them up,
- * including doing prefix searches
+ * Convenient and compact structure for storing key-value pairs and quickly
+ * looking them up, including doing prefix searches
  * <p>
- * Implements <code>Map<String, V></code> interface
+ * Implements the <code>Map<String, V></code> interface
  * <p>
- * Note that <code>values()</code>, <code>keySet()</code>, <code>entrySet()</code> and <code>containsValue()</code> have
- * naive implementations
+ * Note that <code>values()</code>, <code>keySet()</code>, <code>entrySet()</code>
+ * and <code>containsValue()</code> have naive implementations
  *
- * @param <V>
+ * @param <V value type
  */
 public class PatriciaTrie<V> implements Map<String, V> {
 
@@ -47,16 +47,16 @@ public class PatriciaTrie<V> implements Map<String, V> {
     private final KeyMapper<String> keyMapper = new StringKeyMapper();
 
     /**
-     * Constructor
+     * Constructs and empty trie
      */
     public PatriciaTrie() {
         clear();
     }
 
     /**
-     * Gets value associated with key
+     * Get value associated with specified key in this trie
      *
-     * @param key    key to retrieve value for
+     * @param key  key to retrieve value for
      * @return value or null if non-existent
      */
     @Override
@@ -89,10 +89,10 @@ public class PatriciaTrie<V> implements Map<String, V> {
     }
 
     /**
-     * Puts value into trie identifiable by key. Key needs to be non-null
+     * Puts value into trie identifiable by key into this trie (key should be non-null)
      *
-     * @param key    key to associate with value
-     * @param value    value be inserted
+     * @param key  key to associate with value
+     * @param value  value be inserted
      * @return value inserted
      * @throws NullPointerException in case key is null
      */
@@ -134,9 +134,9 @@ public class PatriciaTrie<V> implements Map<String, V> {
     }
 
     /**
-     * Inserts all key and values entries in a map into the trie
+     * Inserts all key and value entries in a map into this trie
      *
-     * @param map    map with entries to insert
+     * @param map   map with entries to insert
      */
     @Override
     public void putAll(Map<? extends String, ? extends V> map) {
@@ -146,11 +146,11 @@ public class PatriciaTrie<V> implements Map<String, V> {
     }
 
     /**
-     * Removes entry identified by key from the trie - currently unsupported
+     * Removes entry identified by key from this trie (currently unsupported)
      *
-     * @param key    to remove
-     * @return value
-     * @throws UnsupportedOperationException
+     * @param key to remove
+     * @return value removed
+     * @throws UnsupportedOperationException is always thrown since this operation is unimplemented
      */
     @Override
     public V remove(Object key) {
@@ -158,10 +158,10 @@ public class PatriciaTrie<V> implements Map<String, V> {
     }
 
     /**
-     * Test trie membership
+     * Test membership in this trie
      *
-     * @param key    to test if exists
-     * @return true if trie has key
+     * @param key  to test if exists
+     * @return true if trie contains key
      */
     @Override
     public boolean containsKey(Object key) {
@@ -176,9 +176,33 @@ public class PatriciaTrie<V> implements Map<String, V> {
     }
 
     /**
-     *  Test trie prefix membership (prefix search using key)
+     * Returns a copy of the keys contained in this trie as a Set
      *
-     * @param prefix    key prefix to search
+     * @return keys in the trie, not null
+     */
+    @Override
+    public Set<String> keySet() {
+        Set<String> keys = new HashSet<>();
+        keysR(root.getLeft(), -1, keys);
+        return keys;
+    }
+
+    /**
+     * Returns a copy of the values contained in this trie as a Set
+     *
+     * @return values in the trie, not null
+     */
+    @Override
+    public Collection<V> values() {
+        List<V> values = new ArrayList<V>();
+        valuesR(root.getLeft(), -1, values);
+        return values;
+    }
+
+    /**
+     *  Test key prefix membership in this trie (prefix search using key)
+     *
+     * @param prefix  key prefix to search
      * @return true if trie contains key prefix
      */
     public boolean containsKeyPrefix(String prefix) {
@@ -209,6 +233,8 @@ public class PatriciaTrie<V> implements Map<String, V> {
     }
 
     /**
+     * Returns the number of key-value mappings in this trie
+     *
      * @return number of entries in trie
      */
     @Override
@@ -217,7 +243,9 @@ public class PatriciaTrie<V> implements Map<String, V> {
     }
 
     /**
-     * @return true if and only iff the trie is empty
+     * Predicate indicating whether this trie is empty
+     *
+     * @return true if and only ff the trie is empty
      */
     @Override
     public boolean isEmpty() {
@@ -225,10 +253,47 @@ public class PatriciaTrie<V> implements Map<String, V> {
     }
 
     /**
+     * Clears this trie by removing all its key-value pairs
+     */
+    @Override
+    public void clear() {
+        root = new PatriciaNode<V>(null, null, -1);
+        root.setLeft(root);
+        entries = 0;
+    }
+
+    /**
+     * Predicate to test valuel membership
+     *
+     * @returns true if and only if trie contains value
+     */
+    @Override
+    public boolean containsValue(Object value) {
+        for (V v : values()) {
+            if (v.equals(value)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Returns a copy of the mappings contained in this trie as a Set
+     *
+     * @return entries in the trie, not null
+     */
+    @Override
+    public Set<Entry<String, V>> entrySet() {
+        HashMap<String, V> entries = new HashMap<>();
+        entriesR(root.getLeft(), -1, entries);
+        return entries.entrySet();
+    }
+
+    /**
      * Finds the closest node in the trie matching key
      *
-     * @param key
-     * @return closest node
+     * @param key  key to look up
+     * @return closest node, null null
      */
     private PatriciaNode<V> findNearestNode(String key) {
         PatriciaNode<V> current = root.getLeft();
@@ -248,9 +313,9 @@ public class PatriciaTrie<V> implements Map<String, V> {
     /**
      * Returns the leftmost differing bit index when doing a bitwise comparison of key1 and key2
      *
-     * @param key1
-     * @param key2
-     * @return bit index
+     * @param key1  first key to compare
+     * @param key2  second key to compare
+     * @return bit index of first different bit
      */
     private int findFirstDifferingBit(String key1, String key2) {
         int bit = 0;
@@ -262,9 +327,9 @@ public class PatriciaTrie<V> implements Map<String, V> {
     }
 
     /**
-     * Inserts node at into the trie
+     * Inserts a node into this trie
      *
-     * @param node    node to insert
+     * @param node  node to insert
      */
     private void insertNode(PatriciaNode<V> node) {
         PatriciaNode<V> current = root.getLeft();
@@ -297,67 +362,19 @@ public class PatriciaTrie<V> implements Map<String, V> {
     /**
      * Should only be used by {@link PatriciaTrieFormatter}
      *
-     * @return trie root
+     * @return trie root, not null
      */
     public PatriciaNode<V> getRoot() {
         return root;
     }
 
     /**
-     * @return key mapper used to map key to bit strings. FIXME: Remove?
+     * Should only be used by {@link PatriciaTrieFormatter}
+     *
+     * @return key mapper used to map key to bit strings
      */
     public KeyMapper<String> getKeyMapper() {
         return keyMapper;
-    }
-
-    @Override
-    public void clear() {
-        root = new PatriciaNode<V>(null, null, -1);
-        root.setLeft(root);
-        entries = 0;
-    }
-
-    /**
-     * @returns true iff trie contains value
-     */
-    @Override
-    public boolean containsValue(Object value) {
-        for (V v : values()) {
-            if (v.equals(value)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * @return entries in the trie
-     */
-    @Override
-    public Set<Entry<String, V>> entrySet() {
-        HashMap<String, V> entries = new HashMap<>();
-        entriesR(root.getLeft(), -1, entries);
-        return entries.entrySet();
-    }
-
-    /**
-     * @return keys in the trie
-     */
-    @Override
-    public Set<String> keySet() {
-        Set<String> keys = new HashSet<>();
-        keysR(root.getLeft(), -1, keys);
-        return keys;
-    }
-
-    /**
-     * @return values in the trie
-     */
-    @Override
-    public Collection<V> values() {
-        List<V> values = new ArrayList<V>();
-        valuesR(root.getLeft(), -1, values);
-        return values;
     }
 
     private void valuesR(PatriciaNode<V> node, int bit, List<V> list) {
@@ -393,18 +410,18 @@ public class PatriciaTrie<V> implements Map<String, V> {
     /**
      * Generic interface to map a key to bits
      *
-     * @param <K>
+     * @param <K>  key type
      */
     public interface KeyMapper<K> {
         /** Bit testing */
-        public boolean isSet(int bit, K key);
+        boolean isSet(int bit, K key);
 
         /** Key formatting */
-        public String toBitString(K key);
+        String toBitString(K key);
     }
 
     /**
-     * {@link KeyMapper} mapping Strings to bits
+     * A {@link KeyMapper} mapping Strings to bits
      */
     public static class StringKeyMapper implements KeyMapper<String> {
 
@@ -429,18 +446,18 @@ public class PatriciaTrie<V> implements Map<String, V> {
         }
 
         public String toBitString(String key) {
-            StringBuilder sb = new StringBuilder();
+            StringBuilder builder = new StringBuilder();
             for (int i = 0; i < length(key); i++) {
                 if (isSet(i, key)) {
-                    sb.append("1");
+                    builder.append("1");
                 } else {
-                    sb.append("0");
+                    builder.append("0");
                 }
                 if ((i + 1) % 4 == 0 && i < length(key)) {
-                    sb.append(" ");
+                    builder.append(" ");
                 }
             }
-            return sb.toString();
+            return builder.toString();
         }
 
         private int length(String key) {

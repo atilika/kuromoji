@@ -17,127 +17,137 @@
 package com.atilika.kuromoji.trie;
 
 /**
- * Nodes used in a {@link PatriciaTrie} containing a String key and payload data
+ * Nodes used in a {@link PatriciaTrie} containing a String key and associated value data
  *
- * @param <V>
+ * @param <V>  value type
  */
 public class PatriciaNode<V> {
 
-	/** This node's key */
-	private String key;
+    /** This node's key */
+    private String key;
 
-	/** This node's value */
-	private V value;
+    /** This node's value */
+    private V value;
 
-	/** Critical bit */
-	private int bit;
+    /** Critical bit */
+    private int bit;
 
-	/** Left node */
-	private PatriciaNode<V> left = null;
+    /** Left node */
+    private PatriciaNode<V> left = null;
 
-	/** Right node */
-	private PatriciaNode<V> right = null;
+    /** Right node */
+    private PatriciaNode<V> right = null;
 
-	/**
-	 * Constructor
-	 *
-	 * @param key
-	 * @param value
-	 * @param bit
-	 */
-	public PatriciaNode(String key, V value, int bit) {
-		this.key = key;
-		this.value = value;
-		this.bit = bit;
-	}
+    /**
+     * Constructs a new node
+     *
+     * @param key  this node's key
+     * @param value  this node's value
+     * @param bit  this node's critical bit
+     */
+    public PatriciaNode(String key, V value, int bit) {
+        this.key = key;
+        this.value = value;
+        this.bit = bit;
+    }
 
-	/**
-	 * @return key
-	 */
-	public String getKey() {
-		return key;
-	}
+    /**
+     * Get this node's key
+     *
+     * @return key, not null
+     */
+    public String getKey() {
+        return key;
+    }
 
-	/**
-	 * @return payload value
-	 */
-	public V getValue() {
-		return value;
-	}
+    /**
+     * Returns this node's value
+     *
+     * @return payload value
+     */
+    public V getValue() {
+        return value;
+    }
 
-	/**
-	 * Set value
-	 *
-	 * @param value
-	 */
-	public void setValue(V value) {
-		this.value = value;
-	}
+    /**
+     * Sets this node's value
+     *
+     * @param value  value to set
+     */
+    public void setValue(V value) {
+        this.value = value;
+    }
 
-	/**
-	 * @return critical bit index (from left)
-	 */
-	public int getBit() {
-		return bit;
-	}
+    /**
+     * Returns this node's critical bit index
+     *
+     * @return critical bit index (from left/MSB)
+     */
+    public int getBit() {
+        return bit;
+    }
 
-	/**
-	 * @return left node
-	 */
-	public PatriciaNode<V> getLeft() {
-		return left;
-	}
+     /**
+     * Returns this node's left node
+     *
+     * @return left node
+     */
+    public PatriciaNode<V> getLeft() {
+        return left;
+    }
 
-	/**
-	 * @return right node
-	 */
-	public PatriciaNode<V> getRight() {
-		return right;
-	}
+    /**
+     * Returns this node's right node
+     *
+     * @return right node
+     */
+    public PatriciaNode<V> getRight() {
+        return right;
+    }
 
-	/**
-	 * Set left node
-	 *
-	 * @param left node
-	 */
-	public void setLeft(PatriciaNode<V> left) {
-		this.left = left;
-	}
+    /**
+     * Set this node's left node
+     *
+     * @param left  left node
+     */
+    public void setLeft(PatriciaNode<V> left) {
+        this.left = left;
+    }
 
-	/**
-	 * Set right node
-	 *
-	 * @param right node
-	 */
-	public void setRight(PatriciaNode<V> right) {
-		this.right = right;
-	}
+    /**
+     * Set this node's right node
+     *
+     * @param right  right node
+     */
+    public void setRight(PatriciaNode<V> right) {
+        this.right = right;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append("key: " + key);
-		sb.append(", ");
-		sb.append("bit: " + bit);
-		sb.append(", ");
-//		sb.append("bitString: " + StringKeyMapper.toBitString(key));
-//		sb.append(", ");
-		sb.append("value: " + value);
-		sb.append(", ");
-		if (left != null) {
-			sb.append("left: " + left.getKey());
-		} else {
-			sb.append("left: null");
-		}
-		sb.append(", ");
-		if (right != null) {
-			sb.append("right: " + right.getKey());
-		} else {
-			sb.append("right: null");
-		}
-		return sb.toString();
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("key: " + key);
+        builder.append(", ");
+        builder.append("bit: " + bit);
+        builder.append(", ");
+//		builder.append("bitString: " + StringKeyMapper.toBitString(key));
+//		builder.append(", ");
+        builder.append("value: " + value);
+        builder.append(", ");
+        if (left != null) {
+            builder.append("left: " + left.getKey());
+        } else {
+            builder.append("left: null");
+        }
+        builder.append(", ");
+        if (right != null) {
+            builder.append("right: " + right.getKey());
+        } else {
+            builder.append("right: null");
+        }
+        return builder.toString();
+    }
 }
