@@ -16,28 +16,10 @@
  */
 package com.atilika.kuromoji.jumandic.dict;
 
+/**
+ * Feature index for JUMANDIC
+ */
 public class DictionaryField {
-
-    /**
-     *
-     * Entry format for Jumandic in output from mecab:
-     * 表層形\t品詞,品詞細分類1,品詞細分類2,品詞細分類3,原形,読み,代表表記
-     *
-     * Surface, POS, POS detailed 1, POS detailed 2, POS detailed 3, base form, reading, representation
-     *
-     * 0:   surface form
-     * 1:   leftId
-     * 2:   rightId
-     * 3:   wordcost
-     * 4:   Part of speech (POS)
-     * 5:   POS detailed 1
-     * 6:   POS detailed 2
-     * 7:   POS detailed 3
-     * 8:   base form
-     * 9:   reading
-     * 10:  representation
-     *
-     */
 
     public static final int POS_LEVEL_1 = 4;
     public static final int POS_LEVEL_2 = 5;

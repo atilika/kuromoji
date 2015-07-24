@@ -22,7 +22,7 @@ import com.atilika.kuromoji.ipadic.dict.DictionaryField;
 import com.atilika.kuromoji.viterbi.ViterbiNode;
 
 /**
- * A token produced by a tokenizer with various morphological features
+ * IPADIC token produced by the IPADIC tokenizer with various morphological features
  */
 public class Token extends AbstractToken {
 
