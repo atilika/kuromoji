@@ -13,4 +13,3 @@ install:
 
 script:
   - mvn test -DskipCompileDictionary -pl kuromoji-ipadic -pl kuromoji-unidic -am
-
