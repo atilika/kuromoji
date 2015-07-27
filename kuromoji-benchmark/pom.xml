@@ -18,7 +18,8 @@
         <kuromoji.wiki.file>jawiki.tsv.gz</kuromoji.wiki.file>
         <kuromoji.wiki.url>http://atilika.com/releases/jawiki/${kuromoji.wiki.file}</kuromoji.wiki.url>
         <kuromoji.wiki.dir>${project.basedir}/jawiki/</kuromoji.wiki.dir>
-        <kuromoji.benchmark.count>0</kuromoji.benchmark.count> <!-- 0 means all documents -->
+        <kuromoji.benchmark.count>0</kuromoji.benchmark.count>
+        <kuromoji.benchmark.userdictionary>jawikiuserdict.txt</kuromoji.benchmark.userdictionary>
     </properties>
 
     <profiles>
@@ -167,6 +168,132 @@
                                         <argument>${kuromoji.benchmark.count}</argument>
                                         <argument>--benchmark-output</argument>
                                         <argument>${project.build.directory}/kuromoji-benchmark-unidic-kanaaccent.tsv
+                                        </argument>
+                                        <argument>${kuromoji.wiki.dir}/${kuromoji.wiki.file}</argument>
+                                    </arguments>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>make-userdictionary</id>
+                                <phase>generate-resources</phase>
+                                <goals>
+                                    <goal>java</goal>
+                                </goals>
+                                <configuration>
+                                    <mainClass>com.atilika.kuromoji.benchmark.UserDictionaryConverter</mainClass>
+                                    <arguments>
+                                        <argument>${kuromoji.wiki.dir}/${kuromoji.wiki.file}</argument>
+                                        <argument>${kuromoji.wiki.dir}/${kuromoji.benchmark.userdictionary}</argument>
+                                    </arguments>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>benchmark-ipadic-userdict</id>
+                                <phase>generate-resources</phase>
+                                <goals>
+                                    <goal>java</goal>
+                                </goals>
+                                <configuration>
+                                    <mainClass>com.atilika.kuromoji.benchmark.Benchmark</mainClass>
+                                    <arguments>
+                                        <argument>--user-dictionary</argument>
+                                        <argument>${kuromoji.wiki.dir}/${kuromoji.benchmark.userdictionary}</argument>
+                                        <argument>--tokenizer</argument>
+                                        <argument>com.atilika.kuromoji.ipadic.Tokenizer</argument>
+                                        <argument>--count</argument>
+                                        <argument>${kuromoji.benchmark.count}</argument>
+                                        <argument>--benchmark-output</argument>
+                                        <argument>${project.build.directory}/kuromoji-benchmark-ipadic-userdict.tsv
+                                        </argument>
+                                        <argument>${kuromoji.wiki.dir}/${kuromoji.wiki.file}</argument>
+                                    </arguments>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>benchmark-jumandic-userdict</id>
+                                <phase>generate-resources</phase>
+                                <goals>
+                                    <goal>java</goal>
+                                </goals>
+                                <configuration>
+                                    <mainClass>com.atilika.kuromoji.benchmark.Benchmark</mainClass>
+                                    <arguments>
+                                        <argument>--user-dictionary</argument>
+                                        <argument>${kuromoji.wiki.dir}/${kuromoji.benchmark.userdictionary}</argument>
+                                        <argument>--tokenizer</argument>
+                                        <argument>com.atilika.kuromoji.jumandic.Tokenizer</argument>
+                                        <argument>--count</argument>
+                                        <argument>${kuromoji.benchmark.count}</argument>
+                                        <argument>--benchmark-output</argument>
+                                        <argument>${project.build.directory}/kuromoji-benchmark-jumandic-userdict.tsv
+                                        </argument>
+                                        <argument>${kuromoji.wiki.dir}/${kuromoji.wiki.file}</argument>
+                                    </arguments>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>benchmark-naist-jdic-userdict</id>
+                                <phase>generate-resources</phase>
+                                <goals>
+                                    <goal>java</goal>
+                                </goals>
+                                <configuration>
+                                    <mainClass>com.atilika.kuromoji.benchmark.Benchmark</mainClass>
+                                    <arguments>
+                                        <argument>--user-dictionary</argument>
+                                        <argument>${kuromoji.wiki.dir}/${kuromoji.benchmark.userdictionary}</argument>
+                                        <argument>--tokenizer</argument>
+                                        <argument>com.atilika.kuromoji.naist.jdic.Tokenizer</argument>
+                                        <argument>--count</argument>
+                                        <argument>${kuromoji.benchmark.count}</argument>
+                                        <argument>--benchmark-output</argument>
+                                        <argument>
+                                            ${project.build.directory}/kuromoji-benchmark-naist-jdic-userdict.tsv
+                                        </argument>
+                                        <argument>${kuromoji.wiki.dir}/${kuromoji.wiki.file}</argument>
+                                    </arguments>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>benchmark-unidic-userdict</id>
+                                <phase>generate-resources</phase>
+                                <goals>
+                                    <goal>java</goal>
+                                </goals>
+                                <configuration>
+                                    <mainClass>com.atilika.kuromoji.benchmark.Benchmark</mainClass>
+                                    <arguments>
+                                        <argument>--user-dictionary</argument>
+                                        <argument>${kuromoji.wiki.dir}/${kuromoji.benchmark.userdictionary}</argument>
+                                        <argument>--tokenizer</argument>
+                                        <argument>com.atilika.kuromoji.unidic.Tokenizer</argument>
+                                        <argument>--count</argument>
+                                        <argument>${kuromoji.benchmark.count}</argument>
+                                        <argument>--benchmark-output</argument>
+                                        <argument>${project.build.directory}/kuromoji-benchmark-unidic-userdict.tsv
+                                        </argument>
+                                        <argument>${kuromoji.wiki.dir}/${kuromoji.wiki.file}</argument>
+                                    </arguments>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>benchmark-unidic-kanaaccent-userdict</id>
+                                <phase>generate-resources</phase>
+                                <goals>
+                                    <goal>java</goal>
+                                </goals>
+                                <configuration>
+                                    <mainClass>com.atilika.kuromoji.benchmark.Benchmark</mainClass>
+                                    <arguments>
+                                        <argument>--user-dictionary</argument>
+                                        <argument>${kuromoji.wiki.dir}/${kuromoji.benchmark.userdictionary}</argument>
+                                        <argument>--tokenizer</argument>
+                                        <argument>com.atilika.kuromoji.unidic.kanaaccent.Tokenizer</argument>
+                                        <argument>--count</argument>
+                                        <argument>${kuromoji.benchmark.count}</argument>
+                                        <argument>--benchmark-output</argument>
+                                        <argument>
+                                            ${project.build.directory}/kuromoji-benchmark-unidic-kanaaccent-userdict.tsv
                                         </argument>
                                         <argument>${kuromoji.wiki.dir}/${kuromoji.wiki.file}</argument>
                                     </arguments>

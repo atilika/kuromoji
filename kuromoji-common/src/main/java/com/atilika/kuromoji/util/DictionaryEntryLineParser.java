@@ -48,7 +48,7 @@ public class DictionaryEntryLineParser {
 
             if (c == COMMA && !insideQuote) {
                 String value = sb.toString();
-                value = unQuoteUnEscape(value);
+                value = unquoteUnEscape(value);
                 result.add(value);
                 sb = new StringBuilder();
                 continue;
@@ -67,7 +67,7 @@ public class DictionaryEntryLineParser {
         return result.toArray(new String[result.size()]);
     }
 
-    private static String unQuoteUnEscape(String original) {
+    private static String unquoteUnEscape(String original) {
         String result = original;
 
         // Unquote

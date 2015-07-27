@@ -129,7 +129,7 @@ public class Benchmark {
         String line;
 
         while ((line = reader.readLine()) != null) {
-            String text = unescape(line);
+            String text = EscapeUtils.unescape(line);
 
             tokenizeDocument(writer, text);
 
@@ -235,18 +235,6 @@ public class Benchmark {
         writer.write('\n');
     }
 
-    public String unescape(String text) {
-        return text
-            .replaceAll("\\\\t", "\t")
-            .replaceAll("\\\\n", "\n");
-    }
-
-    public String escape(String text) {
-        return text
-            .replaceAll("\t", "\\\\t")
-            .replaceAll("\n", "\\\\n");
-    }
-
     public static class Builder {
 
         private AbstractTokenizer tokenizer;
@@ -258,6 +246,8 @@ public class Benchmark {
         private File statisticsFile;
 
         private File validationFile;
+
+        private File userDictionaryFile;
 
         private boolean outputStatistics;
 
@@ -275,6 +265,11 @@ public class Benchmark {
 
         public Builder outputStatisticsFile(File file) {
             this.statisticsFile = file;
+            return this;
+        }
+
+        public Builder userDictionaryFile(File file) {
+            this.userDictionaryFile = file;
             return this;
         }
 
@@ -307,6 +302,7 @@ public class Benchmark {
         Options options = new Options();
         options.addOption("h", "help", false, "Display this help message and exit");
         options.addOption("t", "tokenizer", true, "Tokenizer class to use");
+        options.addOption("u", "user-dictionary", true, "Optional user dictionary filename to use");
         options.addOption("c", "count", true, "Number of documents ot process (Default: 0, which means all");
 //        options.addOption("v", "validation-input", true, "Validation filename");
         options.addOption("o", "tokenizer-output", true, "Tokenizer output filename.  If unset, segmentation is done, but.");
@@ -330,12 +326,34 @@ public class Benchmark {
 
         String className = commandLine.getOptionValue("t", "com.atilika.kuromoji.ipadic.Tokenizer");
 
+        className += "$Builder";
+
+        String userDictionaryFilename = commandLine.getOptionValue("u");
+
         AbstractTokenizer tokenizer = null;
         try {
             Class clazz = Class.forName(className);
-            tokenizer = (AbstractTokenizer) clazz.getConstructor(null).newInstance();
+
+            // Make builder
+            Object builder = clazz.getDeclaredConstructor(null)
+                .newInstance();
+
+            // Set user dictionary
+            if (userDictionaryFilename != null) {
+
+                builder.getClass()
+                    .getMethod("userDictionary", String.class)
+                    .invoke(builder, userDictionaryFilename);
+            }
+
+            // Build tokenizer
+            tokenizer = (AbstractTokenizer) builder.getClass()
+                .getMethod("build")
+                .invoke(builder);
+
         } catch (Exception e) {
             System.err.println("Could not create tokenizer. Got " + e);
+            e.printStackTrace();
             System.exit(1);
         }
 

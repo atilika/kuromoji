@@ -20,17 +20,20 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class BenchmarkTest {
 
     @Ignore("Enable during development")
     @Test
     public void testBenchmarkIpadics() throws IOException {
+        benchmark("com.atilika.kuromoji.ipadic.Tokenizer", "ipadic", "/Users/cm/Projects/kuromoji-cmoen/kuromoji-benchmark/jawiki/jawikiuserdict.txt");
         benchmark("com.atilika.kuromoji.ipadic.Tokenizer", "ipadic");
-        benchmark("com.atilika.kuromoji.jumandic.Tokenizer", "jumandic");
-        benchmark("com.atilika.kuromoji.naist.jdic.Tokenizer", "naist-jdic");
-        benchmark("com.atilika.kuromoji.unidic.Tokenizer", "unidic");
-        benchmark("com.atilika.kuromoji.unidic.kanaaccent.Tokenizer", "unidic-kanaaccent");
+//        benchmark("com.atilika.kuromoji.jumandic.Tokenizer", "jumandic");
+//        benchmark("com.atilika.kuromoji.naist.jdic.Tokenizer", "naist-jdic");
+//        benchmark("com.atilika.kuromoji.unidic.Tokenizer", "unidic");
+//        benchmark("com.atilika.kuromoji.unidic.kanaaccent.Tokenizer", "unidic-kanaaccent");
     }
 
     @Ignore("Enable during development")
@@ -44,21 +47,33 @@ public class BenchmarkTest {
     }
 
     public void benchmark(String tokenizerClass, String tokenizerName) throws IOException {
-        Benchmark.main(new String[]{
-            "-t", tokenizerClass,
-            "-c", "3000",
-//            "-o", "/Users/cm/Projects/kuromoji/jawiki-ipdadic-tokenized.txt",
-            "--benchmark-output", "/Users/cm/Projects/kuromoji/jawiki-" + tokenizerName + "-benchmark.tsv",
-            "/Users/cm/Projects/kuromoji/jawiki.tsv",
-        });
+        benchmark(tokenizerClass, tokenizerName, null);
+    }
+
+    public void benchmark(String tokenizerClass, String tokenizerName, String userDictionaryFilename) throws IOException {
+        List<String> args = new ArrayList<>();
+        args.add("-t");
+        args.add(tokenizerClass);
+        args.add("-c");
+        args.add("3000");
+        args.add("--benchmark-output");
+        args.add("/Users/cm/Projects/kuromoji-cmoen/jawiki-" + tokenizerName + "-benchmark.tsv");
+        args.add("/Users/cm/Projects/kuromoji-cmoen/kuromoji-benchmark/jawiki/jawiki.tsv.gz");
+
+        if (userDictionaryFilename != null) {
+            args.add(0, "-u");
+            args.add(1, userDictionaryFilename);
+        }
+
+        Benchmark.main(args.toArray(new String[args.size()]));
     }
 
 
     public void bocchan(String tokenizerClass, String tokenizerName) throws IOException {
-        Benchmark.main(new String[] {
+        Benchmark.main(new String[]{
             "-t", tokenizerClass,
             "-o", "bocchan-" + tokenizerName + "-features.txt",
-            "/Users/cm/Projects/kuromoji/kuromoji-ipadic/src/test/resources/bocchan.txt",
+            "/Users/cm/Projects/kuromoji-cmoen/kuromoji-ipadic/src/test/resources/bocchan.txt",
         });
     }
 }

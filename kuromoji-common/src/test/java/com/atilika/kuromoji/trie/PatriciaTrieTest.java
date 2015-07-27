@@ -55,17 +55,13 @@ public class PatriciaTrieTest {
         assertEquals("sashimi", trie.get("刺身"));
     }
 
-    @Test
+    @Test(expected = NullPointerException.class)
     public void testNull() {
         PatriciaTrie<String> trie = new PatriciaTrie<>();
-        try {
-            trie.put(null, "null");
-            assertTrue(false);
-        } catch (NullPointerException npe) {
-            assertTrue(true);
-        }
         trie.put("null", null);
         assertEquals(null, trie.get("null"));
+        trie.put(null, "null"); // Throws NullPointerException
+        assertTrue(false);
     }
 
     @Test
@@ -116,17 +112,13 @@ public class PatriciaTrieTest {
         assertEquals("found it", trie.get(longMovieTitle));
     }
 
-    @Test
+    @Test(expected = ClassCastException.class)
     public void testUnsupportedType() {
-        try {
-            PatriciaTrie<String> trie = new PatriciaTrie<>();
-            trie.put("hello", "world");
-            assertTrue(trie.containsKey("hello"));
-            trie.containsKey(new Integer(1));
-            assertTrue(false);
-        } catch (ClassCastException cce) {
-            assertTrue(true);
-        }
+        PatriciaTrie<String> trie = new PatriciaTrie<>();
+        trie.put("hello", "world");
+        assertTrue(trie.containsKey("hello"));
+        trie.containsKey(new Integer(1));
+        assertTrue(false);
     }
 
     @Test

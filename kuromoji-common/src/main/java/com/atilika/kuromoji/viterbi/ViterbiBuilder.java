@@ -92,7 +92,7 @@ public class ViterbiBuilder {
                     if (categories != null) {
                         for (int i = 0; i < categories.length; i++) {
                             int category = categories[i];
-                            unknownWordEndIndex = processUnknownWord2(category, i, lattice, unknownWordEndIndex, startIndex, suffix, found);
+                            unknownWordEndIndex = processUnknownWord(category, i, lattice, unknownWordEndIndex, startIndex, suffix, found);
                         }
                     }
                 }
@@ -127,7 +127,7 @@ public class ViterbiBuilder {
         return found;
     }
 
-    private int processUnknownWord2(int category, int i, ViterbiLattice lattice, int unknownWordEndIndex, int startIndex, String suffix, boolean found) {
+    private int processUnknownWord(int category, int i, ViterbiLattice lattice, int unknownWordEndIndex, int startIndex, String suffix, boolean found) {
         int unknownWordLength = 0;
         int[] definition = characterDefinitions.lookupDefinition(category);
 
@@ -255,21 +255,21 @@ public class ViterbiBuilder {
     /**
      * Tries to repair the lattice by creating and adding an additional Viterbi node to the RIGHT of the newly
      * inserted user dictionary entry by using the substring of the node in the lattice that overlaps the least
-     *
-     * @param lattice
-     * @param index
+     *  @param lattice
+     * @param nodeEndIndex
      */
-    private void repairBrokenLatticeAfter(ViterbiLattice lattice, int index) {
+    private void repairBrokenLatticeAfter(ViterbiLattice lattice, int nodeEndIndex) {
         ViterbiNode[][] nodeEndIndices = lattice.getEndIndexArr();
 
-        for (int endIndex = index + 1; endIndex < nodeEndIndices.length; endIndex++) {
+        for (int endIndex = nodeEndIndex + 1; endIndex < nodeEndIndices.length; endIndex++) {
             if (nodeEndIndices[endIndex] != null) {
-                ViterbiNode glueBase = findGlueNodeCandidate(index, nodeEndIndices[endIndex], endIndex);
+                ViterbiNode glueBase = findGlueNodeCandidate(nodeEndIndex, nodeEndIndices[endIndex], endIndex);
                 if (glueBase != null) {
-                    int length = endIndex + 1 - index;
-                    String surface = glueBase.getSurfaceForm().substring(length + 1);
-                    ViterbiNode glueNode = createGlueNode(index, glueBase, surface);
-                    lattice.addNode(glueNode, index, index + glueNode.getSurfaceForm().length());
+                    int delta = endIndex - nodeEndIndex;
+                    String glueBaseSurface = glueBase.getSurfaceForm();
+                    String surface = glueBaseSurface.substring(glueBaseSurface.length() - delta);
+                    ViterbiNode glueNode = createGlueNode(nodeEndIndex, glueBase, surface);
+                    lattice.addNode(glueNode, nodeEndIndex, nodeEndIndex + glueNode.getSurfaceForm().length());
                     return;
                 }
             }
@@ -333,7 +333,6 @@ public class ViterbiBuilder {
      * @return new ViterbiNode to be inserted as glue into the lattice
      */
     private ViterbiNode createGlueNode(int startIndex, ViterbiNode glueBase, String surface) {
-
         return new ViterbiNode(
             glueBase.getWordId(),
             surface,
