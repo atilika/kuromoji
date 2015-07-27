@@ -23,6 +23,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -46,7 +47,7 @@ public class UserDictionary implements Dictionary {
 
     // The word id below is the word id for the source string
     // surface string => [ word id, 1st token length, 2nd token length, ... , nth token length
-    private PatriciaTrie<int[]> entries2 = new PatriciaTrie<>();
+    private PatriciaTrie<int[]> entries = new PatriciaTrie<>();
 
     // Maps wordId to reading
     private Map<Integer, String> readings = new HashMap<>();
@@ -73,8 +74,8 @@ public class UserDictionary implements Dictionary {
     /**
      * Lookup words in text
      *
-     * @param text
-     * @return array of {wordId, position, length}
+     * @param text  text to look up user dictionary matches for
+     * @return list of UserDictionaryMatch, not null
      */
     public List<UserDictionaryMatch> findUserDictionaryMatches(String text) {
         List<UserDictionaryMatch> matchInfos = new ArrayList<>();
@@ -83,13 +84,13 @@ public class UserDictionary implements Dictionary {
         while (startIndex < text.length()) {
             int matchLength = 0;
 
-            while (startIndex + matchLength < text.length() && entries2.containsKeyPrefix(text.substring(startIndex, startIndex + matchLength + 1))) {
+            while (startIndex + matchLength < text.length() && entries.containsKeyPrefix(text.substring(startIndex, startIndex + matchLength + 1))) {
                 matchLength++;
             }
 
             if (matchLength > 0) {
                 String match = text.substring(startIndex, startIndex + matchLength);
-                int[] details = entries2.get(match);
+                int[] details = entries.get(match);
 
                 if (details != null) {
                     matchInfos.addAll(
@@ -209,7 +210,7 @@ public class UserDictionary implements Dictionary {
     }
 
     public void read(InputStream input) throws IOException {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(input, "UTF-8"));
+        BufferedReader reader = new BufferedReader(new InputStreamReader(input, StandardCharsets.UTF_8));
         String line;
 
         while ((line = reader.readLine()) != null) {
@@ -224,8 +225,6 @@ public class UserDictionary implements Dictionary {
 
             addEntry(line);
         }
-
-        reader.close(); // FIXME: Should not close this
     }
 
     public void addEntry(String entry) {
@@ -265,7 +264,7 @@ public class UserDictionary implements Dictionary {
             wordId++;
         }
 
-        entries2.put(surface, wordIdAndLengths);
+        entries.put(surface, wordIdAndLengths);
     }
 
     private boolean isCustomSegmentation(String surface, String segmentation) {

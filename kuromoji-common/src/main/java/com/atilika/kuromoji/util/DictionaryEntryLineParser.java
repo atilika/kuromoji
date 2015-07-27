@@ -30,8 +30,8 @@ public class DictionaryEntryLineParser {
     /**
      * Parse CSV line
      *
-     * @param line
-     * @return Array of values
+     * @param line  line to parse
+     * @return String array of parsed valued
      */
     public static String[] parseLine(String line) {
         boolean insideQuote = false;
@@ -48,7 +48,7 @@ public class DictionaryEntryLineParser {
 
             if (c == COMMA && !insideQuote) {
                 String value = sb.toString();
-                value = unQuoteUnEscape(value);
+                value = unquoteUnEscape(value);
                 result.add(value);
                 sb = new StringBuilder();
                 continue;
@@ -67,7 +67,7 @@ public class DictionaryEntryLineParser {
         return result.toArray(new String[result.size()]);
     }
 
-    private static String unQuoteUnEscape(String original) {
+    private static String unquoteUnEscape(String original) {
         String result = original;
 
         // Unquote
@@ -86,8 +86,8 @@ public class DictionaryEntryLineParser {
     /**
      * Quote and escape input value for CSV
      *
-     * @param original
-     * @return
+     * @param original  String to be quoted
+     * @return quoted value, not null
      */
     public static String quoteEscape(String original) {
         boolean containsQuote = original.indexOf(QUOTE) >= 0;

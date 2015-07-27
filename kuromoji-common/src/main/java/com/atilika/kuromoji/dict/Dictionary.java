@@ -23,24 +23,24 @@ public interface Dictionary {
     /**
      * Get left id of specified word
      *
-     * @param wordId
-     * @return left id
+     * @param wordId  word id to get left id cost for
+     * @return left id cost
      */
     public int getLeftId(int wordId);
 
     /**
      * Get right id of specified word
      *
-     * @param wordId
-     * @return left id
+     * @param wordId  word id to get right id cost for
+     * @return right id cost
      */
     public int getRightId(int wordId);
 
     /**
      * Get word cost of specified word
      *
-     * @param wordId
-     * @return left id
+     * @param wordId   word id to get word cost for
+     * @return word cost
      */
     public int getWordCost(int wordId);
 

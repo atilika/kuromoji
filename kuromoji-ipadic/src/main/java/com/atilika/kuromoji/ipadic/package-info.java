@@ -5,7 +5,7 @@
  * If you are not sure about which dictionary to use, this one is a good starting point.
  * <p>
  * The following token features are supported:
- * <p><ul>
+ * <ul>
  * <li>surface form (表層形)
  * <li>part of speech level 1 (品詞細分類1)
  * <li>part of speech level 2 (品詞細分類2)
@@ -16,6 +16,6 @@
  * <li>base form (基本形)
  * <li>reading (読み)
  * <li>pronunciation (発音)
- * </ul><p>
+ * </ul>
  */
 package com.atilika.kuromoji.ipadic;

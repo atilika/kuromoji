@@ -138,11 +138,11 @@ public class Tokenizer extends AbstractTokenizer {
          * Sets the tokenization mode
          * <p>
          * The tokenization mode defines how Available modes are as follows:
-         * <p><ul>
+         * <ul>
          * <li>{@link com.atilika.kuromoji.AbstractTokenizer.Mode#NORMAL} - The default mode
          * <li>{@link com.atilika.kuromoji.AbstractTokenizer.Mode#SEARCH} - Uses a heuristic to segment compound nouns (複合名詞) into their parts
          * <li>{@link com.atilika.kuromoji.AbstractTokenizer.Mode#EXTENDED} - Same as SEARCH, but emits unigram tokens for unknown terms
-         * </ul><p>
+         * </ul>
          * See {@link #kanjiPenalty} and {@link #otherPenalty} for how to adjust costs used by SEARCH and EXTENDED mode
          *
          * @param mode  tokenization mode
@@ -161,7 +161,7 @@ public class Tokenizer extends AbstractTokenizer {
          * <p>
          * This is an expert feature and you usually would not need to change this.
          *
-         * @param lengthThreshold
+         * @param lengthThreshold  length threshold applicable for this penalty
          * @param penalty  cost added to Viterbi nodes for long kanji candidate tokens
          * @return this builder, not null
          */
@@ -179,7 +179,7 @@ public class Tokenizer extends AbstractTokenizer {
          * <p>
          * This is an expert feature and you usually would not need to change this.
          *
-         * @param lengthThreshold
+         * @param lengthThreshold  length threshold applicable for this penalty
          * @param penalty  cost added to Viterbi nodes for long non-kanji candidate tokens
          * @return this builder, not null
          */

@@ -55,17 +55,13 @@ public class PatriciaTrieTest {
         assertEquals("sashimi", trie.get("刺身"));
     }
 
-    @Test
+    @Test(expected = NullPointerException.class)
     public void testNull() {
         PatriciaTrie<String> trie = new PatriciaTrie<>();
-        try {
-            trie.put(null, "null");
-            assertTrue(false);
-        } catch (NullPointerException npe) {
-            assertTrue(true);
-        }
         trie.put("null", null);
         assertEquals(null, trie.get("null"));
+        trie.put(null, "null"); // Throws NullPointerException
+        assertTrue(false);
     }
 
     @Test
@@ -92,7 +88,8 @@ public class PatriciaTrieTest {
         // Generate random strings
         Map<String, String> randoms = new HashMap<>();
         for (int i = 0; i < 10000; i++) {
-            randoms.put(UUID.randomUUID().toString(), UUID.randomUUID().toString());
+            String random = UUID.randomUUID().toString();
+            randoms.put(random, random);
         }
         // Insert them
         PatriciaTrie<String> trie = new PatriciaTrie<>();
@@ -112,21 +109,16 @@ public class PatriciaTrieTest {
         PatriciaTrie<String> trie = new PatriciaTrie<>();
         trie.put(longMovieTitle, "found it");
 
-        System.out.println(trie.containsKey("マ"));
-
+        assertEquals("found it", trie.get(longMovieTitle));
     }
 
-    @Test
+    @Test(expected = ClassCastException.class)
     public void testUnsupportedType() {
-        try {
-            PatriciaTrie<String> trie = new PatriciaTrie<>();
-            trie.put("hello", "world");
-            assertTrue(trie.containsKey("hello"));
-            trie.containsKey(new Integer(1));
-            assertTrue(false);
-        } catch (ClassCastException cce) {
-            assertTrue(true);
-        }
+        PatriciaTrie<String> trie = new PatriciaTrie<>();
+        trie.put("hello", "world");
+        assertTrue(trie.containsKey("hello"));
+        trie.containsKey(new Integer(1));
+        assertTrue(false);
     }
 
     @Test
@@ -277,6 +269,54 @@ public class PatriciaTrieTest {
             }
         }
         assertEquals("[日本料理|japanese food]の中で、[一番|first and foremost][美味しい|tasty]のは[お寿司|sushi][だと思います|i think]。すぐ[日本|japan]に帰りたいです。", builder.toString());
+    }
+
+    @Test
+    public void testMultiThreadedTrie() throws InterruptedException {
+        final int numThreads = 10;
+        final int perThreadRuns = 500000;
+        final int keySetSize = 1000;
+
+        final List<Thread> threads = new ArrayList<>();
+        final List<String> randoms = new ArrayList<>();
+
+        final PatriciaTrie<Integer> trie = new PatriciaTrie<>();
+
+        for (int i = 0; i < keySetSize; i++) {
+            String random = UUID.randomUUID().toString();
+            randoms.add(random);
+            trie.put(random, i);
+        }
+
+        for (int i = 0; i < numThreads; i++) {
+            Thread thread = new Thread(
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        for (int run = 0; run < perThreadRuns; run++) {
+                            int randomIndex = (int) (Math.random() * randoms.size());
+                            String random = randoms.get(randomIndex);
+
+                            // Test retrieve
+                            assertEquals(randomIndex, (int) trie.get(random));
+
+                            int randomPrefixLength = (int) (Math.random() * random.length());
+
+                            // Test random prefix length prefix match
+                            assertTrue(trie.containsKeyPrefix(random.substring(0, randomPrefixLength)));
+                        }
+                    }
+                }
+            );
+            threads.add(thread);
+            thread.start();
+        }
+
+        for (Thread thread : threads) {
+            thread.join();
+        }
+
+        assertTrue(true);
     }
 
     @Test

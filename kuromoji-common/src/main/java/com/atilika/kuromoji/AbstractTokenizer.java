@@ -25,6 +25,7 @@ import com.atilika.kuromoji.dict.UnknownDictionary;
 import com.atilika.kuromoji.dict.UserDictionary;
 import com.atilika.kuromoji.trie.DoubleArrayTrie;
 import com.atilika.kuromoji.viterbi.ViterbiBuilder;
+import com.atilika.kuromoji.viterbi.ViterbiFormatter;
 import com.atilika.kuromoji.viterbi.ViterbiLattice;
 import com.atilika.kuromoji.viterbi.ViterbiNode;
 import com.atilika.kuromoji.viterbi.ViterbiSearcher;
@@ -33,6 +34,8 @@ import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumMap;
@@ -53,6 +56,8 @@ public abstract class AbstractTokenizer {
     private ViterbiBuilder viterbiBuilder;
 
     private ViterbiSearcher viterbiSearcher;
+
+    private ViterbiFormatter viterbiFormatter;
 
     private boolean split;
 
@@ -83,13 +88,15 @@ public abstract class AbstractTokenizer {
             builder.mode
         );
 
-        this.split = builder.split;
         this.viterbiSearcher = new ViterbiSearcher(
             builder.mode,
             builder.connectionCosts,
             unknownDictionary,
             builder.penalties
         );
+
+        this.viterbiFormatter = new ViterbiFormatter(builder.connectionCosts);
+        this.split = builder.split;
 
         initDictionaryMap();
     }
@@ -106,8 +113,9 @@ public abstract class AbstractTokenizer {
     /**
      * Tokenize input text
      *
-     * @param text
-     * @return list of Token
+     * @param text  text to tokenizer
+     * @param <T>  token type
+     * @return list of Token, not null
      */
     public <T extends AbstractToken> List<T> tokenize(String text) {
 
@@ -135,6 +143,25 @@ public abstract class AbstractTokenizer {
         }
 
         return result;
+    }
+
+    public void debugTokenize(OutputStream outputStream, String text) throws IOException {
+        ViterbiLattice lattice = viterbiBuilder.build(text);
+        List<ViterbiNode> bestPath = viterbiSearcher.search(lattice);
+
+        outputStream.write(
+            viterbiFormatter.format(lattice, bestPath).getBytes(StandardCharsets.UTF_8)
+        );
+        outputStream.flush();
+    }
+
+    public void debugLattice(OutputStream outputStream, String text) throws IOException {
+        ViterbiLattice lattice = viterbiBuilder.build(text);
+
+        outputStream.write(
+            viterbiFormatter.format(lattice).getBytes(StandardCharsets.UTF_8)
+        );
+        outputStream.flush();
     }
 
     /**
@@ -173,13 +200,13 @@ public abstract class AbstractTokenizer {
      * Tokenize input sentence.
      *
      * @param offset   offset of sentence in original input text
-     * @param sentence sentence to tokenize
+     * @param text sentence to tokenize
      * @return list of Token
      */
-    private <T extends AbstractToken> List<T> doTokenize(int offset, String sentence) {
+    private <T extends AbstractToken> List<T> doTokenize(int offset, String text) {
         ArrayList<T> result = new ArrayList<>();
 
-        ViterbiLattice lattice = viterbiBuilder.build(sentence);
+        ViterbiLattice lattice = viterbiBuilder.build(text);
         List<ViterbiNode> bestPath = viterbiSearcher.search(lattice);
 
         for (ViterbiNode node : bestPath) {
@@ -232,6 +259,7 @@ public abstract class AbstractTokenizer {
         /**
          * Create Tokenizer instance
          *
+         * @param <T> token type
          * @return Tokenizer
          */
         public <T extends AbstractTokenizer> T build() {
@@ -263,7 +291,7 @@ public abstract class AbstractTokenizer {
          *
          * @param userDictionaryInputStream dictionary file as input stream
          * @return Builder
-         * @throws java.io.IOException
+         * @throws java.io.IOException if an error occurs when reading the user dictionary
          */
         public Builder userDictionary(InputStream userDictionaryInputStream) throws IOException {
             this.userDictionary = new UserDictionary(
@@ -277,13 +305,15 @@ public abstract class AbstractTokenizer {
          *
          * @param userDictionaryPath path to dictionary file
          * @return Builder
-         * @throws IOException
-         * @throws java.io.FileNotFoundException
+         * @throws java.io.IOException if an error occurs when reading the user dictionary
          */
         public Builder userDictionary(String userDictionaryPath) throws IOException {
-            if (userDictionaryPath != null && !userDictionaryPath.isEmpty()) {
-                this.userDictionary(new BufferedInputStream(new FileInputStream(userDictionaryPath)));
-            }
+            InputStream input = new BufferedInputStream(
+                new FileInputStream(userDictionaryPath)
+            );
+
+            this.userDictionary(input);
+            input.close();
             return this;
         }
 

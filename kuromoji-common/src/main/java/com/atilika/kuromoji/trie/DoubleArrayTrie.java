@@ -64,8 +64,8 @@ public class DoubleArrayTrie {
     /**
      * Write to file
      *
-     * @param directoryName
-     * @throws IOException
+     * @param directoryName  directory to write the double array trie to
+     * @throws IOException if an IO error occured during write
      */
     public void write(String directoryName) throws IOException {
         String filename = directoryName + File.separator + DOUBLE_ARRAY_TRIE_FILENAME;
@@ -116,13 +116,13 @@ public class DoubleArrayTrie {
     /**
      * Load Stored data
      *
-     * @param is
-     * @return
-     * @throws IOException
+     * @param input  input stream to read the double array trie from
+     * @return double array trie, not null
+     * @throws IOException if an IO error occured during reading the double array trie
      */
-    public static DoubleArrayTrie read(InputStream is) throws IOException {
+    public static DoubleArrayTrie read(InputStream input) throws IOException {
         DoubleArrayTrie trie = new DoubleArrayTrie();
-        DataInputStream dis = new DataInputStream(new BufferedInputStream(is));
+        DataInputStream dis = new DataInputStream(new BufferedInputStream(input));
         int baseCheckSize = dis.readInt();    // Read size of baseArr and checkArr
         int tailSize = dis.readInt();        // Read size of tailArr
         ReadableByteChannel channel = Channels.newChannel(dis);
@@ -142,14 +142,14 @@ public class DoubleArrayTrie {
         tmpTailBuffer.rewind();
         trie.tailBuffer = tmpTailBuffer.asCharBuffer().asReadOnlyBuffer();
 
-        is.close();
+        input.close();
         return trie;
     }
 
     /**
      * Construct double array trie which is equivalent to input trie
      *
-     * @param trie normal trie which contains all dictionary words
+     * @param trie  normal trie, which contains all dictionary words
      */
     public void build(Trie trie) {
         ProgressLog.begin("building " + (compact ? "compact" : "sparse") + " trie");

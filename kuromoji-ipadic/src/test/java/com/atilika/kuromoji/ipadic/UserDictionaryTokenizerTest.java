@@ -21,10 +21,12 @@ import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.List;
 
 import static com.atilika.kuromoji.TestUtils.assertEqualTokenFeatureLenghts;
+import static com.atilika.kuromoji.TestUtils.assertTokenSurfacesEquals;
 import static org.junit.Assert.assertEquals;
 
 public class UserDictionaryTokenizerTest {
@@ -203,6 +205,18 @@ public class UserDictionaryTokenizerTest {
             given("マルキ・ド・サドの演出のもとにシャラントン精神病院患者たちによって演じられたジャン＝ポール・マラーの迫害と暗殺"));
     }
 
+    @Test
+    public void testInsertedFail() throws IOException {
+        String userDictionaryEntry = "" +
+            "引,引,引,カスタム品詞\n";
+        buildTokenizerWithUserDictionary(userDictionaryEntry);
+
+        assertTokenSurfacesEquals(
+            Arrays.asList("引", "く", "。"),
+            tokenizer.tokenize("引く。")
+        );
+    }
+
     private String given(String input) {
         List<Token> tokens = tokenizer.tokenize(input);
         Token token = tokens.get(0);
@@ -210,10 +224,14 @@ public class UserDictionaryTokenizerTest {
     }
 
     private void buildTokenizerWithUserDictionary(String userDictionaryEntry) throws IOException {
-        tokenizer = new Tokenizer.Builder().userDictionary(getUserDictionaryFromString(userDictionaryEntry)).build();
+        tokenizer = new Tokenizer.Builder()
+            .userDictionary(getUserDictionaryFromString(userDictionaryEntry))
+            .build();
     }
 
-    private ByteArrayInputStream getUserDictionaryFromString(String userDictionaryEntry) throws UnsupportedEncodingException {
-        return new ByteArrayInputStream(userDictionaryEntry.getBytes("UTF-8"));
+    private ByteArrayInputStream getUserDictionaryFromString(String userDictionaryEntry) {
+        return new ByteArrayInputStream(
+            userDictionaryEntry.getBytes(StandardCharsets.UTF_8)
+        );
     }
 }

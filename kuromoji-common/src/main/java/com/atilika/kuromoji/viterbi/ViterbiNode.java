@@ -103,6 +103,8 @@ public class ViterbiNode {
 
     /**
      * param cost minimum path cost found this far
+     *
+     * @param pathCost  cost to set for this node
      */
     public void setPathCost(int pathCost) {
         this.pathCost = pathCost;

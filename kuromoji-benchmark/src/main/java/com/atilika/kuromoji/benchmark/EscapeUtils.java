@@ -14,21 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.atilika.kuromoji;
+package com.atilika.kuromoji.benchmark;
 
-import java.io.IOException;
-import java.io.InputStream;
+public class EscapeUtils {
 
-/**
- * An adapter to resolve the required resources into data streams.
- */
-public interface ResourceResolver {
-  /**
-   * Resolve the resource name and return an open input stream to it.
-   *
-   * @param resourceName resource to resolve
-   * @return resolved resource stream
-   * @throws IOException if an I/O error occured resolving the resource
-   */
-  InputStream resolve(String resourceName) throws IOException;
+    public static String unescape(String text) {
+        return text
+            .replaceAll("\\\\t", "\t")
+            .replaceAll("\\\\n", "\n");
+    }
+
+    public static String escape(String text) {
+        return text
+            .replaceAll("\t", "\\\\t")
+            .replaceAll("\n", "\\\\n");
+    }
+
 }
