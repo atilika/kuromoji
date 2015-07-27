@@ -28,12 +28,12 @@ import java.util.Set;
  * Convenient and compact structure for storing key-value pairs and quickly
  * looking them up, including doing prefix searches
  * <p>
- * Implements the <code>Map<String, V></code> interface
+ * Implements the {@code Map<String, V>} interface
  * <p>
- * Note that <code>values()</code>, <code>keySet()</code>, <code>entrySet()</code>
- * and <code>containsValue()</code> have naive implementations
+ * Note that {@code values()}, {@code keySet()}, {@code entrySet()}
+ * and {@code containsValue()} have naive implementations
  *
- * @param <V value type
+ * @param <V> value type
  */
 public class PatriciaTrie<V> implements Map<String, V> {
 
@@ -263,9 +263,10 @@ public class PatriciaTrie<V> implements Map<String, V> {
     }
 
     /**
-     * Predicate to test valuel membership
+     * Predicate to test value membership
      *
-     * @returns true if and only if trie contains value
+     * @param value  value to test if is contained in the trie
+     * @return true if and only if trie contains value
      */
     @Override
     public boolean containsValue(Object value) {
@@ -413,10 +414,19 @@ public class PatriciaTrie<V> implements Map<String, V> {
      * @param <K>  key type
      */
     public interface KeyMapper<K> {
-        /** Bit testing */
+        /** Tests a bit in a key
+         *
+         * @param bit  bit to test
+         * @param key  key to use as a base for testing
+         * @return true if the specified bit is set in the provided key
+         */
         boolean isSet(int bit, K key);
 
-        /** Key formatting */
+        /** Formats a key as a String
+         *
+         * @param key  key to format to a String
+         * @return key formatted as a String, not null
+         */
         String toBitString(K key);
     }
 

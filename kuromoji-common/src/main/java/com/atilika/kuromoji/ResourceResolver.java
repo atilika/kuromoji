@@ -25,6 +25,10 @@ import java.io.InputStream;
 public interface ResourceResolver {
   /**
    * Resolve the resource name and return an open input stream to it.
+   *
+   * @param resourceName resource to resolve
+   * @return resolved resource stream
+   * @throws IOException if an I/O error occured resolving the resource
    */
   InputStream resolve(String resourceName) throws IOException;
 }

@@ -113,8 +113,9 @@ public abstract class AbstractTokenizer {
     /**
      * Tokenize input text
      *
-     * @param text
-     * @return list of Token
+     * @param text  text to tokenizer
+     * @param <T>  token type
+     * @return list of Token, not null
      */
     public <T extends AbstractToken> List<T> tokenize(String text) {
 
@@ -258,6 +259,7 @@ public abstract class AbstractTokenizer {
         /**
          * Create Tokenizer instance
          *
+         * @param <T> token type
          * @return Tokenizer
          */
         public <T extends AbstractTokenizer> T build() {
@@ -289,7 +291,7 @@ public abstract class AbstractTokenizer {
          *
          * @param userDictionaryInputStream dictionary file as input stream
          * @return Builder
-         * @throws java.io.IOException
+         * @throws java.io.IOException if an error occurs when reading the user dictionary
          */
         public Builder userDictionary(InputStream userDictionaryInputStream) throws IOException {
             this.userDictionary = new UserDictionary(
@@ -303,8 +305,7 @@ public abstract class AbstractTokenizer {
          *
          * @param userDictionaryPath path to dictionary file
          * @return Builder
-         * @throws IOException
-         * @throws java.io.FileNotFoundException
+         * @throws java.io.IOException if an error occurs when reading the user dictionary
          */
         public Builder userDictionary(String userDictionaryPath) throws IOException {
             InputStream input = new BufferedInputStream(

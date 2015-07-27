@@ -39,10 +39,11 @@ public class ViterbiBuilder {
     /**
      * Constructor
      *
-     * @param trie
-     * @param dictionary
-     * @param unknownDictionary
-     * @param userDictionary
+     * @param trie  trie with surface forms
+     * @param dictionary  token info dictionary
+     * @param unknownDictionary  unknown word dictionary
+     * @param userDictionary  user dictionary
+     * @param mode  tokenization {@link com.atilika.kuromoji.AbstractTokenizer.Mode mode}
      */
     public ViterbiBuilder(DoubleArrayTrie trie,
                           TokenInfoDictionary dictionary,
@@ -66,8 +67,8 @@ public class ViterbiBuilder {
     /**
      * Build lattice from input text
      *
-     * @param text
-     * @return
+     * @param text  source text for the lattice
+     * @return built lattice, not null
      */
     public ViterbiLattice build(String text) {
         int textLength = text.length();

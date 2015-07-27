@@ -74,8 +74,8 @@ public class UserDictionary implements Dictionary {
     /**
      * Lookup words in text
      *
-     * @param text
-     * @return array of {wordId, position, length}
+     * @param text  text to look up user dictionary matches for
+     * @return list of UserDictionaryMatch, not null
      */
     public List<UserDictionaryMatch> findUserDictionaryMatches(String text) {
         List<UserDictionaryMatch> matchInfos = new ArrayList<>();
