@@ -18,6 +18,7 @@ package com.atilika.kuromoji.dict;
 
 import com.atilika.kuromoji.ResourceResolver;
 import com.atilika.kuromoji.util.DictionaryEntryLineParser;
+import com.atilika.kuromoji.util.StringUtils;
 import com.atilika.kuromoji.util.StringValueMapBuffer;
 import com.atilika.kuromoji.util.TokenInfoBuffer;
 import com.atilika.kuromoji.util.WordIdMap;
@@ -35,6 +36,8 @@ public class TokenInfoDictionary implements Dictionary {
     private static final int RIGHT_ID = 1;
     private static final int WORD_COST = 2;
     private static final int TOKEN_INFO_OFFSET = 3;
+
+    private static final String FEATURE_SEPARATOR = ",";
 
     protected TokenInfoBuffer tokenInfoBuffer;
     protected StringValueMapBuffer posValues;
@@ -67,22 +70,23 @@ public class TokenInfoDictionary implements Dictionary {
         int posLength = bufferEntry.posInfos.length;
         int featureLength = bufferEntry.featureInfos.length;
 
-        // TODO: When can posLength be 0?
+        boolean partOfSpeechAsShorts = false;
+
         if (posLength == 0) {
             posLength = bufferEntry.tokenInfos.length - TOKEN_INFO_OFFSET;
+            partOfSpeechAsShorts = true;
         }
+
         String[] result = new String[posLength + featureLength];
 
-        for (int i = 0; i < bufferEntry.posInfos.length; i++) {
-            int feature = bufferEntry.posInfos[i] & 0xff; // TODO: This bitwise AND is a no-op...
-            result[i] = posValues.get(feature);
-        }
-
-        if (bufferEntry.posInfos.length == 0) {
-            posLength = bufferEntry.tokenInfos.length - TOKEN_INFO_OFFSET;
-
+        if (partOfSpeechAsShorts) {
             for (int i = 0; i < posLength; i++) {
                 int feature = bufferEntry.tokenInfos[i + TOKEN_INFO_OFFSET];
+                result[i] = posValues.get(feature);
+            }
+        } else {
+            for (int i = 0; i < posLength; i++) {
+                int feature = bufferEntry.posInfos[i] & 0xff;
                 result[i] = posValues.get(feature);
             }
         }
@@ -98,8 +102,14 @@ public class TokenInfoDictionary implements Dictionary {
 
     @Override
     public String getAllFeatures(int wordId) {
-        // This extracts all features
-        return getFeature(wordId);
+        String[] features = getAllFeaturesArray(wordId);
+
+        for (int i = 0; i < features.length; i++) {
+            String feature = features[i];
+            features[i] = DictionaryEntryLineParser.escape(feature);
+        }
+
+        return StringUtils.join(features, FEATURE_SEPARATOR);
     }
 
     @Override
@@ -112,33 +122,36 @@ public class TokenInfoDictionary implements Dictionary {
     }
 
     private String extractSingleFeature(int wordId, int field) {
-        String feature;
+        int featureId;
 
-        if (tokenInfoBuffer.isPosFeature(field)) {
-            int featureId = tokenInfoBuffer.lookupPosFeature(wordId, field);
-            feature = posValues.get(featureId);
-        } else {
-            int featureId = tokenInfoBuffer.lookupFeature(wordId, field);
-            feature = stringValues.get(featureId);
+        if (tokenInfoBuffer.isPartOfSpeechFeature(field)) {
+            featureId = tokenInfoBuffer.lookupPartOfSpeechFeature(wordId, field);
+            return posValues.get(featureId);
         }
 
-        return feature;
+        featureId = tokenInfoBuffer.lookupFeature(wordId, field);
+        return stringValues.get(featureId);
     }
 
     private String extractMultipleFeatures(int wordId, int[] fields) {
-        String[] allFeatures = getAllFeaturesArray(wordId);
-        StringBuilder sb = new StringBuilder();
-
-        if (fields.length == 0) { // All features
-            for (String feature : allFeatures) {
-                sb.append(DictionaryEntryLineParser.quoteEscape(feature)).append(",");
-            }
-        } else {
-            for (int field : fields) {
-                sb.append(DictionaryEntryLineParser.quoteEscape(allFeatures[field])).append(",");
-            }
+        if (fields.length == 0) {
+            return getAllFeatures(wordId);
         }
-        return sb.deleteCharAt(sb.length() - 1).toString();
+
+        if (fields.length == 1) {
+            return extractSingleFeature(wordId, fields[0]);
+        }
+
+        String[] allFeatures = getAllFeaturesArray(wordId);
+        String[] features = new String[fields.length];
+
+        for (int i = 0; i < fields.length; i++) {
+            int featureNumber = fields[i];
+            features[i] = DictionaryEntryLineParser.escape(
+                allFeatures[featureNumber]
+            );
+        }
+        return StringUtils.join(features, FEATURE_SEPARATOR);
     }
 
     public static TokenInfoDictionary newInstance(ResourceResolver resolver) throws IOException {

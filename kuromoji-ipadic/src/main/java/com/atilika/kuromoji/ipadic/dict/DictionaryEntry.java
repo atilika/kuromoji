@@ -57,7 +57,6 @@ public class DictionaryEntry extends AbstractDictionaryEntry {
         pronunciation = fields[DictionaryField.PRONUNCIATION];
     }
 
-
     public String getPosLevel1() {
         return posLevel1;
     }

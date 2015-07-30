@@ -19,6 +19,7 @@ package com.atilika.kuromoji.dict;
 import com.atilika.kuromoji.ResourceResolver;
 import com.atilika.kuromoji.io.IntegerArrayIO;
 import com.atilika.kuromoji.io.StringArrayIO;
+import com.atilika.kuromoji.util.StringUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -88,7 +89,7 @@ public class UnknownDictionary implements Dictionary {
 
     @Override
     public String getAllFeatures(int wordId) {
-        return join(getAllFeaturesArray(wordId));
+        return StringUtils.join(getAllFeaturesArray(wordId), FEATURE_SEPARATOR);
     }
 
     @Override
@@ -121,25 +122,11 @@ public class UnknownDictionary implements Dictionary {
             features[i] = allFeatures[featureNumber];
         }
 
-        return join(features);
+        return StringUtils.join(features, FEATURE_SEPARATOR);
     }
 
     public CharacterDefinitions getCharacterDefinition() {
         return characterDefinition;
-    }
-
-    // TODO: Should go into a shared utility somewhere
-    private String join(String[] values) {
-        StringBuilder builder = new StringBuilder();
-
-        for (int i = 0; i < values.length; i++) {
-            builder.append(values[i]);
-
-            if (i < values.length - 1) {
-                builder.append(FEATURE_SEPARATOR);
-            }
-        }
-        return builder.toString();
     }
 
     public static UnknownDictionary newInstance(ResourceResolver resolver,

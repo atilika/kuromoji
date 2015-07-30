@@ -99,7 +99,6 @@ public class DictionaryEntry extends AbstractDictionaryEntry {
         accentModificationType = fields[DictionaryField.ACCENT_MODIFICATION_TYPE];
     }
 
-
     public String getPosLevel1() {
         return posLevel1;
     }

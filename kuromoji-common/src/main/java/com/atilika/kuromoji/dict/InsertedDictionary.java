@@ -16,6 +16,8 @@
  */
 package com.atilika.kuromoji.dict;
 
+import com.atilika.kuromoji.util.StringUtils;
+
 public class InsertedDictionary implements Dictionary {
 
     private static final String DEFAULT_FEATURE = "*";
@@ -34,7 +36,7 @@ public class InsertedDictionary implements Dictionary {
             featuresArray[i] = DEFAULT_FEATURE;
         }
 
-        featuresString = join(featuresArray);
+        featuresString = StringUtils.join(featuresArray, FEATURE_SEPARATOR);
     }
 
     @Override
@@ -70,20 +72,6 @@ public class InsertedDictionary implements Dictionary {
             features[i] = DEFAULT_FEATURE;
         }
 
-        return join(features);
-    }
-
-    private String join(String[] values) {
-        StringBuilder builder = new StringBuilder();
-
-        for (int i = 0; i < values.length; i++) {
-            builder.append(values[i]);
-
-            if (i < values.length - 1) {
-                builder.append(FEATURE_SEPARATOR);
-            }
-        }
-
-        return builder.toString();
+        return StringUtils.join(features, FEATURE_SEPARATOR);
     }
 }

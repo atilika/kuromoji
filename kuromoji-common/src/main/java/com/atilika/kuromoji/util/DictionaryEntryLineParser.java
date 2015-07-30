@@ -17,27 +17,27 @@
 package com.atilika.kuromoji.util;
 
 import java.util.ArrayList;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.List;
 
 public class DictionaryEntryLineParser {
 
     private static final char QUOTE = '"';
     private static final char COMMA = ',';
-    private static final Pattern QUOTE_REPLACE_PATTERN = Pattern.compile("^\"([^\"]+)\"$");
-    private static final String ESCAPED_QUOTE = "\"\"";
+    private static final String QUOTE_ESCAPED = "\"\"";
 
     /**
      * Parse CSV line
      *
      * @param line  line to parse
-     * @return String array of parsed valued
+     * @return String array of parsed valued, null
+     * @throws RuntimeException on malformed input
      */
     public static String[] parseLine(String line) {
         boolean insideQuote = false;
-        ArrayList<String> result = new ArrayList<>();
+        List<String> result = new ArrayList<>();
+        StringBuilder builder = new StringBuilder();
         int quoteCount = 0;
-        StringBuilder sb = new StringBuilder();
+
         for (int i = 0; i < line.length(); i++) {
             char c = line.charAt(i);
 
@@ -47,74 +47,93 @@ public class DictionaryEntryLineParser {
             }
 
             if (c == COMMA && !insideQuote) {
-                String value = sb.toString();
-                value = unquoteUnEscape(value);
+                String value = builder.toString();
+                value = unescape(value);
+
                 result.add(value);
-                sb = new StringBuilder();
+                builder = new StringBuilder();
                 continue;
             }
 
-            sb.append(c);
+            builder.append(c);
         }
 
-        result.add(sb.toString());
+        result.add(builder.toString());
 
-        // Validate
         if (quoteCount % 2 != 0) {
-            return new String[0];
+            throw new RuntimeException("Unmatched quote in entry: " + line);
         }
 
         return result.toArray(new String[result.size()]);
     }
 
-    private static String unquoteUnEscape(String original) {
-        String result = original;
+    /**
+     * Unescape input for CSV
+     *
+     * @param text  text to be unescaped
+     * @return unescaped value, not null
+     */
+    public static String unescape(String text) {
+        StringBuilder builder = new StringBuilder();
+        boolean foundQuote = false;
 
-        // Unquote
-        Matcher m = QUOTE_REPLACE_PATTERN.matcher(original);
-        if (m.matches()) {
-            result = m.group(1);
+        for (int i = 0; i < text.length(); i++) {
+            char c = text.charAt(i);
+
+            if (i == 0 && c == QUOTE || i == text.length() - 1 && c == QUOTE) {
+                continue;
+            }
+
+            if (c == QUOTE) {
+                if (foundQuote) {
+                    builder.append(QUOTE);
+                    foundQuote = false;
+                } else {
+                    foundQuote = true;
+                }
+            } else {
+                foundQuote = false;
+                builder.append(c);
+            }
         }
 
-        // Unescape
-        result = result.replaceAll(ESCAPED_QUOTE, "\"");
-
-        return result;
-
+        return builder.toString();
     }
 
     /**
-     * Quote and escape input value for CSV
+     * Escape input for CSV
      *
-     * @param original  String to be quoted
-     * @return quoted value, not null
+     * @param text  text to be escaped
+     * @return escaped value, not null
      */
-    public static String quoteEscape(String original) {
-        boolean containsQuote = original.indexOf(QUOTE) >= 0;
-        boolean containsComma = original.indexOf(COMMA) >= 0;
+    public static String escape(String text) {
+        boolean hasQuote = text.indexOf(QUOTE) >= 0;
+        boolean hasComma = text.indexOf(COMMA) >= 0;
 
-        if (!(containsQuote || containsComma)) {
-            return original;
+        if (!(hasQuote || hasComma)) {
+            return text;
         }
 
-        StringBuilder sb = new StringBuilder();
-        if (containsQuote) {
-            for (int i = 0; i < original.length(); i++) {
-                char c = original.charAt(i);
+        StringBuilder builder = new StringBuilder();
+
+        if (hasQuote) {
+            for (int i = 0; i < text.length(); i++) {
+                char c = text.charAt(i);
+
                 if (c == QUOTE) {
-                    sb.append(ESCAPED_QUOTE);
+                    builder.append(QUOTE_ESCAPED);
                 } else {
-                    sb.append(c);
+                    builder.append(c);
                 }
             }
         } else {
-            sb.append(original);
+            builder.append(text);
         }
 
-        if (containsComma) {
-            sb.insert(0, '\"');
-            sb.append('\"');
+        if (hasComma) {
+            builder.insert(0, QUOTE);
+            builder.append(QUOTE);
         }
-        return sb.toString();
+        return builder.toString();
     }
 }

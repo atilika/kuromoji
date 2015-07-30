@@ -18,6 +18,7 @@ package com.atilika.kuromoji.dict;
 
 import com.atilika.kuromoji.trie.PatriciaTrie;
 import com.atilika.kuromoji.util.DictionaryEntryLineParser;
+import com.atilika.kuromoji.util.StringUtils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -179,7 +180,7 @@ public class UserDictionary implements Dictionary {
 
     @Override
     public String getAllFeatures(int wordId) {
-        return join(getAllFeaturesArray(wordId));
+        return StringUtils.join(getAllFeaturesArray(wordId), FEATURE_SEPARATOR);
     }
 
     @Override
@@ -205,12 +206,13 @@ public class UserDictionary implements Dictionary {
             }
         }
 
-        return join(features);
-
+        return StringUtils.join(features, FEATURE_SEPARATOR);
     }
 
     public void read(InputStream input) throws IOException {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(input, StandardCharsets.UTF_8));
+        BufferedReader reader = new BufferedReader(
+            new InputStreamReader(input, StandardCharsets.UTF_8)
+        );
         String line;
 
         while ((line = reader.readLine()) != null) {
@@ -269,20 +271,6 @@ public class UserDictionary implements Dictionary {
 
     private boolean isCustomSegmentation(String surface, String segmentation) {
         return !surface.equals(segmentation);
-    }
-
-    private String join(String[] values) {
-        StringBuilder builder = new StringBuilder();
-
-        for (int i = 0; i < values.length; i++) {
-            builder.append(values[i]);
-
-            if (i < values.length - 1) {
-                builder.append(FEATURE_SEPARATOR);
-            }
-        }
-
-        return builder.toString();
     }
 
     private String[] split(String input) {

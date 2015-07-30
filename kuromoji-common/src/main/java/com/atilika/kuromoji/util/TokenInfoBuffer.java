@@ -21,9 +21,7 @@ import com.atilika.kuromoji.io.ByteBufferIO;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.nio.ByteBuffer;
-import java.util.List;
 
 public class TokenInfoBuffer {
 
@@ -32,62 +30,22 @@ public class TokenInfoBuffer {
 
     private ByteBuffer buffer;
 
-    public TokenInfoBuffer(List<BufferEntry> entries) {
-        putEntries(entries);
-    }
+    private final int tokenInfoCount;
+    private final int posInfoCount;
+    private final int featureCount;
+
+    private final int entrySize;
 
     public TokenInfoBuffer(InputStream is) throws IOException {
         buffer = ByteBufferIO.read(is);
-    }
-
-    private void putEntries(List<BufferEntry> entries) {
-        int size = calculateEntriesSize(entries) * 2;
-
-        this.buffer = ByteBuffer.allocate(size + INTEGER_BYTES * 4);
-
-        buffer.putInt(size);
-        buffer.putInt(entries.size());
-        BufferEntry firstEntry = entries.get(0);
-
-        buffer.putInt(firstEntry.tokenInfo.size());
-        buffer.putInt(firstEntry.posInfo.size());
-        buffer.putInt(firstEntry.features.size());
-
-        for (BufferEntry entry : entries) {
-            for (Short s : entry.tokenInfo) {
-                buffer.putShort(s);
-            }
-
-            for (Byte b : entry.posInfo) {
-                buffer.put(b);
-            }
-
-            for (Integer feature : entry.features) {
-                buffer.putInt(feature);
-            }
-        }
-    }
-
-    private int calculateEntriesSize(List<BufferEntry> entries) {
-        if (entries.isEmpty()) {
-            return 0;
-        } else {
-            int size = 0;
-            BufferEntry entry = entries.get(0);
-            size += entry.tokenInfo.size() * SHORT_BYTES + SHORT_BYTES;
-            size += entry.posInfo.size();
-            size += entry.features.size() * INTEGER_BYTES;
-            size *= entries.size();
-            return size;
-        }
+        tokenInfoCount = getTokenInfoCount();
+        posInfoCount = getPosInfoCount();
+        featureCount = getFeatureCount();
+        entrySize = getEntrySize(tokenInfoCount, posInfoCount, featureCount);
     }
 
     public BufferEntry lookupEntry(int offset) {
         BufferEntry entry = new BufferEntry();
-
-        int tokenInfoCount = getTokenInfoCount();
-        int posInfoCount = getPosInfoCount();
-        int featureCount = getFeatureCount();
 
         entry.tokenInfos = new short[tokenInfoCount];
         entry.posInfos = new byte[posInfoCount];
@@ -114,40 +72,24 @@ public class TokenInfoBuffer {
         return entry;
     }
 
-    // TODO: Whis is this different than looking up a feature?  Because the value range is a short?
     public int lookupTokenInfo(int offset, int i) {
-        int tokenInfoCount = getTokenInfoCount();
-        int posInfoCount = getPosInfoCount();
-        int featureCount = getFeatureCount();
-
-        int entrySize = getEntrySize(tokenInfoCount, posInfoCount, featureCount);
         int position = getPosition(offset, entrySize);
         return buffer.getShort(position + i * SHORT_BYTES);
     }
 
-    public int lookupPosFeature(int offset, int i) {
-        int tokenInfoCount = getTokenInfoCount();
-        int posInfoCount = getPosInfoCount();
-        int featureCount = getFeatureCount();
-
-        int entrySize = getEntrySize(tokenInfoCount, posInfoCount, featureCount);
+    public int lookupPartOfSpeechFeature(int offset, int i) {
         int position = getPosition(offset, entrySize);
 
         return 0xff & buffer.get(position + tokenInfoCount * SHORT_BYTES + i);
     }
 
     public int lookupFeature(int offset, int i) {
-        int tokenInfoCount = getTokenInfoCount();
-        int posInfoCount = getPosInfoCount();
-        int featureCount = getFeatureCount();
-
-        int entrySize = getEntrySize(tokenInfoCount, posInfoCount, featureCount);
         int position = getPosition(offset, entrySize);
 
         return buffer.getInt(position + tokenInfoCount * SHORT_BYTES + posInfoCount + (i - posInfoCount) * INTEGER_BYTES);
     }
 
-    public boolean isPosFeature(int i) {
+    public boolean isPartOfSpeechFeature(int i) {
         int posInfoCount = getPosInfoCount();
         return (i < posInfoCount);
     }
@@ -170,10 +112,5 @@ public class TokenInfoBuffer {
 
     private int getPosition(int offset, int entrySize) {
         return offset * entrySize + INTEGER_BYTES * 5;
-    }
-
-    public void write(OutputStream os) throws IOException {
-        ByteBufferIO.write(os, buffer);
-        os.close();
     }
 }
