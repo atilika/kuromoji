@@ -38,7 +38,7 @@ public class ConnectionCostsCompilerTest {
 
     @BeforeClass
     public static void setUp() throws IOException {
-        File costsFile = File.createTempFile("kuromoji-connectioncosts-", ".dat");
+        File costsFile = File.createTempFile("kuromoji-connectioncosts-", ".bin");
         costsFile.deleteOnExit();
 
         String costs = "" +

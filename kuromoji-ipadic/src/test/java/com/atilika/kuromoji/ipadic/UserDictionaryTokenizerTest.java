@@ -17,9 +17,11 @@
 package com.atilika.kuromoji.ipadic;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
@@ -215,6 +217,18 @@ public class UserDictionaryTokenizerTest {
             Arrays.asList("引", "く", "。"),
             tokenizer.tokenize("引く。")
         );
+    }
+
+    @Ignore("Doesn't segment properly - Viterbi lattice looks funny")
+    @Test
+    public void testTsunk() throws IOException {
+        String userDictionaryEntry = "" +
+            "シャ乱Q つんく♂,シャ乱Q つんく ♂,シャランキュー ツンク ボーイ,カスタムアーティスト名";
+        buildTokenizerWithUserDictionary(userDictionaryEntry);
+
+        FileOutputStream output = new FileOutputStream("tsunk.gv");
+        tokenizer.debugTokenize(output, "シャQ");
+        output.close();
     }
 
     private String given(String input) {

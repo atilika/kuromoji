@@ -50,7 +50,7 @@ public class UnknownDictionaryCompilerTest {
 
     @BeforeClass
     public static void setUp() throws IOException {
-        File charDef = File.createTempFile("kuromoji-chardef-", ".dat");
+        File charDef = File.createTempFile("kuromoji-chardef-", ".bin");
         charDef.deleteOnExit();
 
         CharacterDefinitionsCompiler charDefCompiler = new CharacterDefinitionsCompiler(
@@ -68,7 +68,7 @@ public class UnknownDictionaryCompilerTest {
 
         Map<String, Integer> categoryMap = charDefCompiler.makeCharacterCategoryMap();
 
-        File unkDef = File.createTempFile("kuromoji-unkdef-", ".dat");
+        File unkDef = File.createTempFile("kuromoji-unkdef-", ".bin");
         unkDef.deleteOnExit();
 
         UnknownDictionaryCompiler unkDefCompiler = new UnknownDictionaryCompiler(
@@ -174,27 +174,5 @@ public class UnknownDictionaryCompilerTest {
             new String[]{"名詞", "数", "*", "*", "*", "*", "*"},
             unknownDictionary.getAllFeaturesArray(29)
         );
-    }
-
-    @Test
-    public void testFeatureSize() {
-        UnknownDictionary unknownDictionary2 = new UnknownDictionary(
-            characterDefinitions,
-            references,
-            costs,
-            features,
-            9
-        );
-
-//        assertArrayEquals(
-//            new String[]{"名詞", "一般", "*", "*", "*", "*", "*"},
-//            unknownDictionary.getAllFeaturesArray(2)
-//        );
-
-        System.out.println(
-            Arrays.toString(unknownDictionary2.getAllFeaturesArray(2))
-        );
-//        unknownDictionary.getAllFeaturesArray(2)
-
     }
 }

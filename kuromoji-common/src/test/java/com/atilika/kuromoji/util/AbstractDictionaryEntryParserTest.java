@@ -45,7 +45,7 @@ public class AbstractDictionaryEntryParserTest {
     public void testQuoteEscape() throws Exception {
         String input = "日本経済新聞,1292,1292,4980,名詞,固有名詞,組織,*,*,\"1,0\",日本経済新聞,ニホンケイザイシンブン,ニホンケイザイシンブン";
         String expected = "\"日本経済新聞,1292,1292,4980,名詞,固有名詞,組織,*,*,\"\"1,0\"\",日本経済新聞,ニホンケイザイシンブン,ニホンケイザイシンブン\"";
-        assertEquals(expected, DictionaryEntryLineParser.quoteEscape(input));
+        assertEquals(expected, DictionaryEntryLineParser.escape(input));
     }
 
     private String given(String input) {

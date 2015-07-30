@@ -22,7 +22,6 @@ import com.atilika.kuromoji.dict.GenericDictionaryEntry;
 import com.atilika.kuromoji.dict.TokenInfoDictionary;
 import com.atilika.kuromoji.util.FeatureInfoMap;
 import com.atilika.kuromoji.util.StringValueMapBuffer;
-import com.atilika.kuromoji.util.TokenInfoBuffer;
 import com.atilika.kuromoji.util.WordIdMap;
 
 import java.io.BufferedReader;
@@ -188,9 +187,11 @@ public abstract class AbstractTokenInfoDictionaryCompiler<T extends AbstractDict
     }
 
     protected void writeDictionary(String filename) throws IOException {
-        TokenInfoBuffer tokenInfoBuffer = new TokenInfoBuffer(bufferEntries);
-        FileOutputStream fos = new FileOutputStream(filename);
-        tokenInfoBuffer.write(fos);
+        TokenInfoBufferCompiler tokenInfoBufferCompiler = new TokenInfoBufferCompiler(
+            new FileOutputStream(filename),
+            bufferEntries
+        );
+        tokenInfoBufferCompiler.compile();
     }
 
     protected void writeTargetMap(String filename) throws IOException {

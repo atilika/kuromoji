@@ -48,7 +48,7 @@ public class CharacterDefinitionsCompilerTest {
 
     @Before
     public void setUp() throws IOException {
-        charDef = File.createTempFile("kuromoji-chardef-", ".dat");
+        charDef = File.createTempFile("kuromoji-chardef-", ".bin");
         charDef.deleteOnExit();
 
         CharacterDefinitionsCompiler compiler = new CharacterDefinitionsCompiler(

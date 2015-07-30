@@ -16,12 +16,10 @@
  */
 package com.atilika.kuromoji.util;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
-import java.util.Arrays;
-
 import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 
 public class DictionaryEntryLineParserTest {
 
@@ -52,18 +50,112 @@ public class DictionaryEntryLineParserTest {
         );
     }
 
-    @Ignore("To be implemented and verified")
     @Test
-    public void testEscapedQuote() {
-        String[] entries = parser.parseLine(
-            "\\\",\\\",\\\",カスタム品詞"
+    public void testQuotedQuotes() {
+        assertArrayEquals(
+            new String[]{
+                "Java \"Platform\"",
+                "Java \"Platform\"",
+                "Java \"Platform\"",
+                "カスタム名詞"
+            },
+            parser.parseLine(
+                "\"Java \"\"Platform\"\"\",\"Java \"\"Platform\"\"\",\"Java \"\"Platform\"\"\",カスタム名詞"
+            )
         );
+    }
 
-        System.out.println("entries: " + entries.length);
+    @Test
+    public void testEmptyQuotedQuotes() {
+        assertArrayEquals(
+            new String[]{
+                "\"",
+                "\"",
+                "quote",
+                "punctuation"
+            },
+            parser.parseLine(
+                "\"\"\"\",\"\"\"\",quote,punctuation"
+            )
+        );
+    }
 
-        for (String entry : entries) {
-            System.out.println(entry);
-        }
-//        System.out.println(Arrays.toString(entries));
+    @Test
+    public void testCSharp() {
+        assertArrayEquals(
+            new String[]{
+                "C#",
+                "C #",
+                "シーシャープ",
+                "プログラミング言語"
+            },
+            parser.parseLine(
+                "\"C#\",\"C #\",シーシャープ,プログラミング言語"
+            )
+        );
+    }
+
+    @Test
+    public void testTab() {
+        assertArrayEquals(
+            new String[]{
+                "A\tB",
+                "A B",
+                "A B",
+                "tab"
+            },
+            parser.parseLine(
+                "A\tB,A B,A B,tab"
+            )
+        );
+    }
+
+    @Test
+    public void testFrancoisWhiteBuffaloBota() {
+
+        assertArrayEquals(
+            new String[]{
+                "フランソワ\"ザホワイトバッファロー\"ボタ",
+                "フランソワ\"ザホワイトバッファロー\"ボタ",
+                "フランソワ\"ザホワイトバッファロー\"ボタ",
+                "名詞"
+            },
+            parser.parseLine(
+                "\"フランソワ\"\"ザホワイトバッファロー\"\"ボタ\",\"フランソワ\"\"ザホワイトバッファロー\"\"ボタ\",\"フランソワ\"\"ザホワイトバッファロー\"\"ボタ\",名詞"
+            )
+        );
+    }
+
+    @Test(expected = RuntimeException.class)
+    public void testSingleQuote() {
+        parser.parseLine("this is an entry with \"unmatched quote");
+    }
+
+    @Test(expected = RuntimeException.class)
+    public void testUnmatchedQuote() {
+        parser.parseLine("this is an entry with \"\"\"unmatched quote");
+    }
+
+    @Test
+    public void testEscapeRoundTrip() {
+        String original = "3,\"14";
+
+        assertEquals("\"3,\"\"14\"", DictionaryEntryLineParser.escape(original));
+        assertEquals(original,
+            DictionaryEntryLineParser.unescape(
+                DictionaryEntryLineParser.escape(original)
+            )
+        );
+    }
+
+    @Test
+    public void testUnescape() {
+        assertEquals("A", DictionaryEntryLineParser.unescape("\"A\""));
+        assertEquals("\"A\"", DictionaryEntryLineParser.unescape("\"\"\"A\"\"\""));
+
+        assertEquals("\"", DictionaryEntryLineParser.unescape("\"\"\"\""));
+        assertEquals("\"\"", DictionaryEntryLineParser.unescape("\"\"\"\"\"\""));
+        assertEquals("\"\"\"", DictionaryEntryLineParser.unescape("\"\"\"\"\"\"\"\""));
+        assertEquals("\"\"\"\"\"", DictionaryEntryLineParser.unescape("\"\"\"\"\"\"\"\"\"\"\"\""));
     }
 }

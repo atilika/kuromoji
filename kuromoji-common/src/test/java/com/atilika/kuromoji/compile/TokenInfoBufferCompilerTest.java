@@ -14,11 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.atilika.kuromoji.util;
+package com.atilika.kuromoji.compile;
 
 import com.atilika.kuromoji.dict.BufferEntry;
+import com.atilika.kuromoji.util.TokenInfoBuffer;
 import org.junit.Test;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -27,7 +31,7 @@ import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 
-public class TokenInfoBufferTest {
+public class TokenInfoBufferCompilerTest {
 
     @Test
     public void testReadAndWriteFromBuffer() throws Exception {
@@ -91,10 +95,22 @@ public class TokenInfoBufferTest {
         List<BufferEntry> bufferEntries = new ArrayList<>();
         bufferEntries.add(entry);
 
-        TokenInfoBuffer tokenInfoBuffer = new TokenInfoBuffer(bufferEntries);
+        File file = File.createTempFile("kuromoji-tokeinfo-buffer-", ".bin");
+        file.deleteOnExit();
 
-        assertEquals(99, tokenInfoBuffer.lookupFeature(0, 1));
-        assertEquals(73, tokenInfoBuffer.lookupFeature(0, 0));
+        TokenInfoBufferCompiler compiler = new TokenInfoBufferCompiler(
+            new FileOutputStream(file),
+            bufferEntries
+        );
+
+        compiler.compile();
+
+        TokenInfoBuffer tokenInfoBuffer2 = new TokenInfoBuffer(
+            new FileInputStream(file)
+        );
+
+        assertEquals(99, tokenInfoBuffer2.lookupFeature(0, 1));
+        assertEquals(73, tokenInfoBuffer2.lookupFeature(0, 0));
     }
 
     @Test
@@ -122,8 +138,21 @@ public class TokenInfoBufferTest {
         List<BufferEntry> bufferEntries = new ArrayList<>();
         bufferEntries.add(entry);
 
-        TokenInfoBuffer tokenInfoBuffer = new TokenInfoBuffer(bufferEntries);
-        BufferEntry result = tokenInfoBuffer.lookupEntry(0);
+        File file = File.createTempFile("kuromoji-tokeinfo-buffer-", ".bin");
+        file.deleteOnExit();
+
+        TokenInfoBufferCompiler compiler = new TokenInfoBufferCompiler(
+            new FileOutputStream(file),
+            bufferEntries
+        );
+
+        compiler.compile();
+
+        TokenInfoBuffer tokenInfoBuffer2 = new TokenInfoBuffer(
+            new FileInputStream(file)
+        );
+
+        BufferEntry result = tokenInfoBuffer2.lookupEntry(0);
 
         assertEquals("hello", resultMap.get(result.featureInfos[0]));
         assertEquals("素敵な世界", resultMap.get(result.featureInfos[1]));
