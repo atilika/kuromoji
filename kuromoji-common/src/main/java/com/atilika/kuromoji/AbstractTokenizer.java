@@ -159,7 +159,7 @@ public abstract class AbstractTokenizer {
      *
      * @param outputStream  output stream to write to
      * @param text  text to tokenize
-     * @throws IOException in case of an I/O error
+     * @throws java.io.IOException if an error occurs when writing the lattice and path
      */
     public void debugTokenize(OutputStream outputStream, String text) throws IOException {
         ViterbiLattice lattice = viterbiBuilder.build(text);
@@ -180,7 +180,7 @@ public abstract class AbstractTokenizer {
      *
      * @param outputStream  output stream to write to
      * @param text  text to create lattice for
-     * @throws IOException in case of an I/O error
+     * @throws java.io.IOException if an error occurs when writing the lattice
      */
     public void debugLattice(OutputStream outputStream, String text) throws IOException {
         ViterbiLattice lattice = viterbiBuilder.build(text);

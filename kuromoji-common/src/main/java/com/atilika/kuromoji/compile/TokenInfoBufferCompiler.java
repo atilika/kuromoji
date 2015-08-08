@@ -16,7 +16,7 @@
  */
 package com.atilika.kuromoji.compile;
 
-import com.atilika.kuromoji.dict.BufferEntry;
+import com.atilika.kuromoji.buffer.BufferEntry;
 import com.atilika.kuromoji.io.ByteBufferIO;
 
 import java.io.IOException;

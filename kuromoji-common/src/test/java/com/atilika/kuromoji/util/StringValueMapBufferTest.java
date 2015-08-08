@@ -16,6 +16,7 @@
  */
 package com.atilika.kuromoji.util;
 
+import com.atilika.kuromoji.buffer.StringValueMapBuffer;
 import org.junit.Test;
 
 import java.util.TreeMap;
