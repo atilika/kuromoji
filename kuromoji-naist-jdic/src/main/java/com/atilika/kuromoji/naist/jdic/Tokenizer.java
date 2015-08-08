@@ -74,7 +74,7 @@ public class Tokenizer extends AbstractTokenizer {
             unknownDictionaryTotalFeatures = 11;
             readingFeature = 7;
             partOfSpeechFeature = 0;
-            defaultPrefix = System.getProperty(DEFAULT_DICT_PREFIX_PROPERTY, "com/atilika/kuromoji/naist-jdic/");
+            defaultPrefix = System.getProperty(DEFAULT_DICT_PREFIX_PROPERTY, "com/atilika/kuromoji/naist/jdic/");
 
             tokenFactory = new TokenFactory<Token>() {
                 @Override

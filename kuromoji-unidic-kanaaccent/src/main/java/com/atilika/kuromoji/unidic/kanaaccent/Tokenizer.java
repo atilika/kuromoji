@@ -76,7 +76,7 @@ public class Tokenizer extends AbstractTokenizer {
             unknownDictionaryTotalFeatures = 26;
             readingFeature = 13;
             partOfSpeechFeature = 0;
-            defaultPrefix = System.getProperty(DEFAULT_DICT_PREFIX_PROPERTY, "com/atilika/kuromoji/unidic-kanaaccent/");
+            defaultPrefix = System.getProperty(DEFAULT_DICT_PREFIX_PROPERTY, "com/atilika/kuromoji/unidic/kanaaccent/");
 
             tokenFactory = new TokenFactory<Token>() {
                 @Override
