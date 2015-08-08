@@ -14,9 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.atilika.kuromoji.util;
+package com.atilika.kuromoji.buffer;
 
-import com.atilika.kuromoji.buffer.StringValueMapBuffer;
 import org.junit.Test;
 
 import java.util.TreeMap;

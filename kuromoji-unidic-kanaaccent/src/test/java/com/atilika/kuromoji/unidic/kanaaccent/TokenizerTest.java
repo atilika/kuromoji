@@ -16,7 +16,6 @@
  */
 package com.atilika.kuromoji.unidic.kanaaccent;
 
-import com.atilika.kuromoji.unidic.kanaaccent.dict.DictionaryField;
 import org.junit.Before;
 import org.junit.Test;
 

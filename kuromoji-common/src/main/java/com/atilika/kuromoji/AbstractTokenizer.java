@@ -125,13 +125,13 @@ public abstract class AbstractTokenizer {
     public <T extends AbstractToken> List<T> tokenize(String text) {
 
         if (!split) {
-            return doTokenize(0, text);
+            return tokenize(0, text);
         }
 
         List<Integer> splitPositions = getSplitPositions(text);
 
         if (splitPositions.size() == 0) {
-            return doTokenize(0, text);
+            return tokenize(0, text);
         }
 
         ArrayList<T> result = new ArrayList<>();
@@ -139,12 +139,12 @@ public abstract class AbstractTokenizer {
         int offset = 0;
 
         for (int position : splitPositions) {
-            result.addAll(this.<T>doTokenize(offset, text.substring(offset, position + 1)));
+            result.addAll(this.<T>tokenize(offset, text.substring(offset, position + 1)));
             offset = position + 1;
         }
 
         if (offset < text.length()) {
-            result.addAll(this.<T>doTokenize(offset, text.substring(offset)));
+            result.addAll(this.<T>tokenize(offset, text.substring(offset)));
         }
 
         return result;
@@ -191,18 +191,6 @@ public abstract class AbstractTokenizer {
         outputStream.flush();
     }
 
-    public static void main(String[] args) throws IOException {
-        AbstractTokenizer tokenizer;
-        if (args.length == 1) {
-            tokenizer = new Builder()
-                .userDictionary(args[0])
-                .build();
-        } else {
-            tokenizer = new Builder().build();
-        }
-        new TokenizerRunner().run(tokenizer);
-    }
-
     /**
      * Split input text at 句読点, which is 。 and 、
      *
@@ -242,7 +230,8 @@ public abstract class AbstractTokenizer {
      * @param text sentence to tokenize
      * @return list of Token
      */
-    private <T extends AbstractToken> List<T> doTokenize(int offset, String text) {
+    @SuppressWarnings("unchecked")
+    private <T extends AbstractToken> List<T> tokenize(int offset, String text) {
         ArrayList<T> result = new ArrayList<>();
 
         ViterbiLattice lattice = viterbiBuilder.build(text);
@@ -266,7 +255,7 @@ public abstract class AbstractTokenizer {
         return result;
     }
 
-    public static class Builder {
+    public abstract static class Builder {
 
         protected DoubleArrayTrie doubleArrayTrie;
         protected ConnectionCosts connectionCosts;
@@ -278,7 +267,7 @@ public abstract class AbstractTokenizer {
 
         protected Mode mode = Mode.NORMAL;
         protected boolean split = true;
-        protected List<Integer> penalties = Collections.EMPTY_LIST;
+        protected List<Integer> penalties = Collections.emptyList();
 
         protected int totalFeatures = 1;
         protected int unknownDictionaryTotalFeatures = 1;
@@ -288,16 +277,6 @@ public abstract class AbstractTokenizer {
         protected ResourceResolver resolver;
 
         protected TokenFactory tokenFactory;
-
-        /**
-         * Create Tokenizer instance
-         *
-         * @param <T> token type
-         * @return Tokenizer
-         */
-        public <T extends AbstractTokenizer> T build() {
-            return null;
-        }
 
         protected void loadDictionaries() {
             try {
@@ -313,38 +292,44 @@ public abstract class AbstractTokenizer {
         }
 
         /**
-         * Set user dictionary input stream
+         * Creates a Tokenizer instance defined by this Builder
          *
-         * @param userDictionaryInputStream dictionary file as input stream
-         * @return Builder
+         * @param <T> token type
+         * @return Tokenizer instance
+         */
+        public abstract <T extends AbstractTokenizer> T build();
+
+        /**
+         * Sets an optional user dictionary as an input stream
+         * <p>
+         * The inpuut stream provided is not closed by this method
+         *
+         * @param input  user dictionary as an input stream
+         * @return this builder
          * @throws java.io.IOException if an error occurs when reading the user dictionary
          */
-        public Builder userDictionary(InputStream userDictionaryInputStream) throws IOException {
+        public Builder userDictionary(InputStream input) throws IOException {
             this.userDictionary = new UserDictionary(
-                userDictionaryInputStream, totalFeatures, readingFeature, partOfSpeechFeature
+                input, totalFeatures, readingFeature, partOfSpeechFeature
             );
             return this;
         }
 
         /**
-         * Set user dictionary path
+         * Sets an optional user dictionary filename
          *
-         * @param userDictionaryPath path to dictionary file
-         * @return Builder
+         * @param filename  user dictionary filename
+         * @return this builder
          * @throws java.io.IOException if an error occurs when reading the user dictionary
          */
-        public Builder userDictionary(String userDictionaryPath) throws IOException {
+        public Builder userDictionary(String filename) throws IOException {
             InputStream input = new BufferedInputStream(
-                new FileInputStream(userDictionaryPath)
+                new FileInputStream(filename)
             );
 
             this.userDictionary(input);
             input.close();
             return this;
-        }
-
-        public void setSplit(boolean split) {
-            this.split = split;
         }
     }
 }

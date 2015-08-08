@@ -74,29 +74,6 @@ public class Tokenizer extends AbstractTokenizer {
         configure(builder);
     }
 
-    public static void main(String[] args) throws IOException {
-        Tokenizer tokenizer;
-        switch (args.length) {
-            case 1:
-                Mode mode = Mode.valueOf(args[0].toUpperCase());
-                tokenizer = new Builder()
-                    .mode(mode)
-                    .build();
-                break;
-            case 2:
-                mode = Mode.valueOf(args[0].toUpperCase());
-                tokenizer = new Builder()
-                    .mode(mode)
-                    .userDictionary(args[1])
-                    .build();
-                break;
-            default:
-                tokenizer = new Tokenizer();
-                break;
-        }
-        new TokenizerRunner().run(tokenizer);
-    }
-
     /**
      * Builder class for creating a customized tokenizer instance
      */
