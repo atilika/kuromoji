@@ -14,32 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.atilika.kuromoji;
+package com.atilika.kuromoji.util;
 
 import java.io.IOException;
 import java.io.InputStream;
 
 /**
- * Resolves resources off based on the given class loader.
+ * An adapter to resolve the required resources into data streams.
  */
-public final class ClassLoaderResolver implements ResourceResolver {
-
-    private final ClassLoader loader;
-
-    public ClassLoaderResolver(ClassLoader loader) {
-        this.loader = loader;
-    }
-
-    public ClassLoaderResolver(Class<?> clazz) {
-        this(clazz.getClassLoader());
-    }
-
-    @Override
-    public InputStream resolve(String resourceName) throws IOException {
-        InputStream input = loader.getResourceAsStream(resourceName);
-        if (input == null) {
-            throw new IOException("Classpath resource not found: " + resourceName);
-        }
-        return input;
-    }
+public interface ResourceResolver {
+  /**
+   * Resolve the resource name and return an open input stream to it.
+   *
+   * @param resourceName resource to resolve
+   * @return resolved resource stream
+   * @throws IOException if an I/O error occured resolving the resource
+   */
+  InputStream resolve(String resourceName) throws IOException;
 }

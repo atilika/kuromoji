@@ -16,7 +16,7 @@
  */
 package com.atilika.kuromoji.trie;
 
-import com.atilika.kuromoji.ResourceResolver;
+import com.atilika.kuromoji.util.ResourceResolver;
 import com.atilika.kuromoji.compile.ProgressLog;
 
 import java.io.BufferedInputStream;

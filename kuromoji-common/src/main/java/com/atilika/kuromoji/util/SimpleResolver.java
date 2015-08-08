@@ -14,29 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.atilika.kuromoji;
+package com.atilika.kuromoji.util;
 
 import java.io.IOException;
 import java.io.InputStream;
 
-/**
- * Applies a given prefix to the resources passed to a given resolver.
- */
-public final class PrefixDecoratorResolver implements ResourceResolver {
+public class SimpleResolver implements ResourceResolver{
 
-    private final ResourceResolver delegate;
-    private final String prefix;
+    private Class<?> clazz;
 
-    public PrefixDecoratorResolver(String prefix, ResourceResolver resolver) {
-        assert prefix != null;
-        assert resolver != null;
-
-        this.delegate = resolver;
-        this.prefix = prefix;
+    public SimpleResolver(Class<?> clazz) {
+        this.clazz = clazz;
     }
 
     @Override
     public InputStream resolve(String resourceName) throws IOException {
-        return delegate.resolve(prefix + resourceName);
+        InputStream input = clazz.getResourceAsStream(resourceName);
+        if (input == null) {
+            throw new IOException("Classpath resource not found: " + resourceName);
+        }
+        return input;
     }
 }

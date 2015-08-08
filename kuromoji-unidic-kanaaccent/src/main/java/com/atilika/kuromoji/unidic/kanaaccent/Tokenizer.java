@@ -18,6 +18,7 @@ package com.atilika.kuromoji.unidic.kanaaccent;
 
 import com.atilika.kuromoji.AbstractTokenizer;
 import com.atilika.kuromoji.dict.Dictionary;
+import com.atilika.kuromoji.util.SimpleResolver;
 import com.atilika.kuromoji.viterbi.TokenFactory;
 import com.atilika.kuromoji.viterbi.ViterbiNode;
 
@@ -76,7 +77,8 @@ public class Tokenizer extends AbstractTokenizer {
             unknownDictionaryTotalFeatures = 26;
             readingFeature = 13;
             partOfSpeechFeature = 0;
-            defaultPrefix = System.getProperty(DEFAULT_DICT_PREFIX_PROPERTY, "com/atilika/kuromoji/unidic/kanaaccent/");
+
+            resolver = new SimpleResolver(this.getClass());
 
             tokenFactory = new TokenFactory<Token>() {
                 @Override
