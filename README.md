@@ -24,7 +24,7 @@ The following additional build options are available:
 * `-DskipCompileDictionary`  Do not recompile the dictionaries
 * `-DskipDownloadDictionary` Do not download source dictionaries
 * `-DbenchmarkTokenizers` Profile each tokenizer during the package phase using content from Japanese Wikipedia
-* `-DskipDownloadWikipedia` Prevent the compressed version of the Japanese Wikipedia (~765 MB) from being downloaded during profiling.
+* `-DskipDownloadWikipedia` Prevent the compressed version of the Japanese Wikipedia (~765 MB) from being downloaded during profiling, i.e. if it has already been downloaded.
 
 ## Using Kuromoji
 

@@ -18,7 +18,7 @@
         <kuromoji.dict.file>unidic-mecab_kana-accent-2.1.2_src.zip</kuromoji.dict.file>
         <kuromoji.dict.url>http://atilika.com/releases/unidic-mecab/${kuromoji.dict.file}</kuromoji.dict.url>
         <kuromoji.dict.dir>${project.basedir}/dictionary/unidic-mecab_kana-accent-2.1.2_src</kuromoji.dict.dir>
-        <kuromoji.dict.targetdir>${project.basedir}/src/main/resources/com/atilika/kuromoji/unidic-kanaaccent</kuromoji.dict.targetdir>
+        <kuromoji.dict.targetdir>${project.basedir}/src/main/resources/com/atilika/kuromoji/unidic/kanaaccent</kuromoji.dict.targetdir>
         <kuromoji.dict.encoding>utf-8</kuromoji.dict.encoding>
         <kuromoji.dict.compact>false</kuromoji.dict.compact>
     </properties>
