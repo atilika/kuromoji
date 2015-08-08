@@ -25,7 +25,7 @@ import com.atilika.kuromoji.dict.InsertedDictionary;
 import com.atilika.kuromoji.dict.TokenInfoDictionary;
 import com.atilika.kuromoji.dict.UnknownDictionary;
 import com.atilika.kuromoji.trie.DoubleArrayTrie;
-import com.atilika.kuromoji.util.SimpleResolver;
+import com.atilika.kuromoji.util.SimpleResourceResolver;
 import com.atilika.kuromoji.viterbi.TokenFactory;
 import com.atilika.kuromoji.viterbi.ViterbiNode;
 
@@ -222,7 +222,7 @@ public class Tokenizer extends AbstractTokenizer {
             penalties.add(otherPenaltyLengthThreshold);
             penalties.add(otherPenalty);
 
-            resolver = new SimpleResolver(this.getClass());
+            resolver = new SimpleResourceResolver(this.getClass());
 
             try {
                 doubleArrayTrie = DoubleArrayTrie.newInstance(resolver);

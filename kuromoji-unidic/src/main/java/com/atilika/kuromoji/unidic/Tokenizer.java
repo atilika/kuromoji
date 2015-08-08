@@ -19,7 +19,7 @@ package com.atilika.kuromoji.unidic;
 
 import com.atilika.kuromoji.AbstractTokenizer;
 import com.atilika.kuromoji.dict.Dictionary;
-import com.atilika.kuromoji.util.SimpleResolver;
+import com.atilika.kuromoji.util.SimpleResourceResolver;
 import com.atilika.kuromoji.viterbi.TokenFactory;
 import com.atilika.kuromoji.viterbi.ViterbiNode;
 
@@ -79,7 +79,7 @@ public class Tokenizer extends AbstractTokenizer {
             readingFeature = 7;
             partOfSpeechFeature = 0;
 
-            resolver = new SimpleResolver(this.getClass());
+            resolver = new SimpleResourceResolver(this.getClass());
 
             tokenFactory = new TokenFactory<Token>() {
                 @Override

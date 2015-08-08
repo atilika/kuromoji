@@ -105,7 +105,6 @@ public abstract class AbstractTokenizer {
         initDictionaryMap();
     }
 
-
     private void initDictionaryMap() {
         dictionaryMap.put(ViterbiNode.Type.KNOWN, tokenInfoDictionary);
         dictionaryMap.put(ViterbiNode.Type.UNKNOWN, unknownDictionary);
@@ -115,9 +114,11 @@ public abstract class AbstractTokenizer {
 
 
     /**
-     * Tokenize input text
+     * Tokenizes the provided text and returns a list of tokens with various feature information
+     * <p>
+     * This method is thread safe
      *
-     * @param text  text to tokenizer
+     * @param text  text to tokenize
      * @param <T>  token type
      * @return list of Token, not null
      */
@@ -149,6 +150,17 @@ public abstract class AbstractTokenizer {
         return result;
     }
 
+    /**
+     * Tokenizes the provided text and outputs the corresponding Viterbi lattice and the Viterbi path to the provided output stream
+     * <p>
+     * The output is written in <a href="https://en.wikipedia.org/wiki/DOT_(graph_description_language)">DOT</a> format.
+     * <p>
+     * This method is not thread safe
+     *
+     * @param outputStream  output stream to write to
+     * @param text  text to tokenize
+     * @throws IOException in case of an I/O error
+     */
     public void debugTokenize(OutputStream outputStream, String text) throws IOException {
         ViterbiLattice lattice = viterbiBuilder.build(text);
         List<ViterbiNode> bestPath = viterbiSearcher.search(lattice);
@@ -159,6 +171,17 @@ public abstract class AbstractTokenizer {
         outputStream.flush();
     }
 
+    /**
+     * Writes the Viterbi lattice for the provided text to an output stream
+     * <p>
+     * The output is written in <a href="https://en.wikipedia.org/wiki/DOT_(graph_description_language)">DOT</a> format.
+     * <p>
+     * This method is not thread safe
+     *
+     * @param outputStream  output stream to write to
+     * @param text  text to create lattice for
+     * @throws IOException in case of an I/O error
+     */
     public void debugLattice(OutputStream outputStream, String text) throws IOException {
         ViterbiLattice lattice = viterbiBuilder.build(text);
 
@@ -166,6 +189,18 @@ public abstract class AbstractTokenizer {
             viterbiFormatter.format(lattice).getBytes(StandardCharsets.UTF_8)
         );
         outputStream.flush();
+    }
+
+    public static void main(String[] args) throws IOException {
+        AbstractTokenizer tokenizer;
+        if (args.length == 1) {
+            tokenizer = new Builder()
+                .userDictionary(args[0])
+                .build();
+        } else {
+            tokenizer = new Builder().build();
+        }
+        new TokenizerRunner().run(tokenizer);
     }
 
     /**
@@ -229,18 +264,6 @@ public abstract class AbstractTokenizer {
         }
 
         return result;
-    }
-
-    public static void main(String[] args) throws IOException {
-        AbstractTokenizer tokenizer;
-        if (args.length == 1) {
-            tokenizer = new Builder()
-                .userDictionary(args[0])
-                .build();
-        } else {
-            tokenizer = new Builder().build();
-        }
-        new TokenizerRunner().run(tokenizer);
     }
 
     public static class Builder {

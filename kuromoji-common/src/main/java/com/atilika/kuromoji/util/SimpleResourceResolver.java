@@ -19,11 +19,11 @@ package com.atilika.kuromoji.util;
 import java.io.IOException;
 import java.io.InputStream;
 
-public class SimpleResolver implements ResourceResolver{
+public class SimpleResourceResolver implements ResourceResolver{
 
     private Class<?> clazz;
 
-    public SimpleResolver(Class<?> clazz) {
+    public SimpleResourceResolver(Class<?> clazz) {
         this.clazz = clazz;
     }
 
