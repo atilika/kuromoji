@@ -24,6 +24,7 @@ import com.atilika.kuromoji.dict.TokenInfoDictionary;
 import com.atilika.kuromoji.dict.UnknownDictionary;
 import com.atilika.kuromoji.dict.UserDictionary;
 import com.atilika.kuromoji.trie.DoubleArrayTrie;
+import com.atilika.kuromoji.util.ResourceResolver;
 import com.atilika.kuromoji.viterbi.TokenFactory;
 import com.atilika.kuromoji.viterbi.ViterbiBuilder;
 import com.atilika.kuromoji.viterbi.ViterbiFormatter;
@@ -47,8 +48,6 @@ import java.util.List;
  * Thread safe.
  */
 public abstract class AbstractTokenizer {
-
-    public static final String DEFAULT_DICT_PREFIX_PROPERTY = "com.atilika.kuromoji.dict.targetdir";
 
     public enum Mode {
         NORMAL, SEARCH, EXTENDED
@@ -258,14 +257,12 @@ public abstract class AbstractTokenizer {
         protected boolean split = true;
         protected List<Integer> penalties = Collections.EMPTY_LIST;
 
-        protected String defaultPrefix;
-
         protected int totalFeatures = 1;
         protected int unknownDictionaryTotalFeatures = 1;
         protected int readingFeature = 0;
         protected int partOfSpeechFeature = 0;
 
-        protected ResourceResolver resolver = new ClassLoaderResolver(this.getClass());
+        protected ResourceResolver resolver;
 
         protected TokenFactory tokenFactory;
 
@@ -279,19 +276,7 @@ public abstract class AbstractTokenizer {
             return null;
         }
 
-        public Builder tokenFactory(TokenFactory tokenFactory) {
-            this.tokenFactory = tokenFactory;
-            return this;
-        }
-
-        /**
-         * Default Tokenizer builder, returning null
-         */
         protected void loadDictionaries() {
-            if (defaultPrefix != null) {
-                resolver = new PrefixDecoratorResolver(defaultPrefix, resolver);
-            }
-
             try {
                 doubleArrayTrie = DoubleArrayTrie.newInstance(resolver);
                 connectionCosts = ConnectionCosts.newInstance(resolver);
@@ -332,11 +317,6 @@ public abstract class AbstractTokenizer {
 
             this.userDictionary(input);
             input.close();
-            return this;
-        }
-
-        public Builder prefix(String resourcePrefix) {
-            this.defaultPrefix = resourcePrefix;
             return this;
         }
 

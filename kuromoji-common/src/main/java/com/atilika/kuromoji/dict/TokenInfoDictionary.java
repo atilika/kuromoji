@@ -16,7 +16,7 @@
  */
 package com.atilika.kuromoji.dict;
 
-import com.atilika.kuromoji.ResourceResolver;
+import com.atilika.kuromoji.util.ResourceResolver;
 import com.atilika.kuromoji.util.DictionaryEntryLineParser;
 import com.atilika.kuromoji.util.StringUtils;
 import com.atilika.kuromoji.util.StringValueMapBuffer;

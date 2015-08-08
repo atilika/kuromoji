@@ -18,6 +18,7 @@ package com.atilika.kuromoji.jumandic;
 
 import com.atilika.kuromoji.AbstractTokenizer;
 import com.atilika.kuromoji.dict.Dictionary;
+import com.atilika.kuromoji.util.SimpleResolver;
 import com.atilika.kuromoji.viterbi.TokenFactory;
 import com.atilika.kuromoji.viterbi.ViterbiNode;
 
@@ -76,7 +77,8 @@ public class Tokenizer extends AbstractTokenizer {
             unknownDictionaryTotalFeatures = 7;
             readingFeature = 5;
             partOfSpeechFeature = 0;
-            defaultPrefix = System.getProperty(DEFAULT_DICT_PREFIX_PROPERTY, "com/atilika/kuromoji/jumandic/");
+
+            resolver = new SimpleResolver(this.getClass());
 
             tokenFactory = new TokenFactory<Token>() {
                 @Override

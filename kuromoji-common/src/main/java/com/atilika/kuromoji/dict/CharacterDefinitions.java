@@ -16,7 +16,7 @@
  */
 package com.atilika.kuromoji.dict;
 
-import com.atilika.kuromoji.ResourceResolver;
+import com.atilika.kuromoji.util.ResourceResolver;
 import com.atilika.kuromoji.io.IntegerArrayIO;
 import com.atilika.kuromoji.io.StringArrayIO;
 
