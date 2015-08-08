@@ -18,6 +18,8 @@
 package com.atilika.kuromoji.unidic;
 
 import com.atilika.kuromoji.AbstractTokenizer;
+import com.atilika.kuromoji.dict.Dictionary;
+import com.atilika.kuromoji.viterbi.TokenFactory;
 import com.atilika.kuromoji.viterbi.ViterbiNode;
 
 /**
@@ -76,6 +78,17 @@ public class Tokenizer extends AbstractTokenizer {
             readingFeature = 7;
             partOfSpeechFeature = 0;
             defaultPrefix = System.getProperty(DEFAULT_DICT_PREFIX_PROPERTY, "com/atilika/kuromoji/unidic/");
+
+            tokenFactory = new TokenFactory<Token>() {
+                @Override
+                public Token createToken(int wordId,
+                                         String surfaceForm,
+                                         ViterbiNode.Type type,
+                                         int position,
+                                         Dictionary dictionary) {
+                    return new Token(wordId, surfaceForm, type, position, dictionary);
+                }
+            };
         }
 
         /**
@@ -87,16 +100,5 @@ public class Tokenizer extends AbstractTokenizer {
         public Tokenizer build() {
             return new Tokenizer(this);
         }
-    }
-
-    @Override
-    protected Token createToken(int offset, ViterbiNode node, int wordId) {
-        return new Token(
-            wordId,
-            node.getSurfaceForm(),
-            node.getType(),
-            offset + node.getStartIndex(),
-            dictionaryMap.get(node.getType())
-        );
     }
 }

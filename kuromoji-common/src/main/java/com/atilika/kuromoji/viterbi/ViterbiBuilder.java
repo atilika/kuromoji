@@ -43,7 +43,7 @@ public class ViterbiBuilder {
      * @param dictionary  token info dictionary
      * @param unknownDictionary  unknown word dictionary
      * @param userDictionary  user dictionary
-     * @param mode  tokenization {@link com.atilika.kuromoji.AbstractTokenizer.Mode mode}
+     * @param mode  tokenization {@link Mode mode}
      */
     public ViterbiBuilder(DoubleArrayTrie trie,
                           TokenInfoDictionary dictionary,

@@ -24,6 +24,7 @@ import com.atilika.kuromoji.dict.TokenInfoDictionary;
 import com.atilika.kuromoji.dict.UnknownDictionary;
 import com.atilika.kuromoji.dict.UserDictionary;
 import com.atilika.kuromoji.trie.DoubleArrayTrie;
+import com.atilika.kuromoji.viterbi.TokenFactory;
 import com.atilika.kuromoji.viterbi.ViterbiBuilder;
 import com.atilika.kuromoji.viterbi.ViterbiFormatter;
 import com.atilika.kuromoji.viterbi.ViterbiLattice;
@@ -69,11 +70,15 @@ public abstract class AbstractTokenizer {
 
     private InsertedDictionary insertedDictionary;
 
+    protected TokenFactory tokenFactory;
+
     protected EnumMap<ViterbiNode.Type, Dictionary> dictionaryMap = new EnumMap<>(ViterbiNode.Type.class);
 
     protected void configure(Builder builder) {
 
         builder.loadDictionaries();
+
+        this.tokenFactory = builder.tokenFactory;
 
         this.tokenInfoDictionary = builder.tokenInfoDictionary;
         this.unknownDictionary = builder.unknownDictionary;
@@ -214,19 +219,25 @@ public abstract class AbstractTokenizer {
             if (node.getType() == ViterbiNode.Type.KNOWN && wordId == -1) { // Do not include BOS/EOS
                 continue;
             }
-            T token = createToken(offset, node, wordId);    // Pass different dictionary based on the type of node
+            T token = (T) tokenFactory.createToken(
+                wordId,
+                node.getSurfaceForm(),
+                node.getType(),
+                offset + node.getStartIndex(),
+                dictionaryMap.get(node.getType())
+            );
             result.add(token);
         }
 
         return result;
     }
 
-    protected abstract <T extends AbstractToken> T createToken(int offset, ViterbiNode node, int wordId);
-
     public static void main(String[] args) throws IOException {
         AbstractTokenizer tokenizer;
         if (args.length == 1) {
-            tokenizer = new Builder().userDictionary(args[0]).build();
+            tokenizer = new Builder()
+                .userDictionary(args[0])
+                .build();
         } else {
             tokenizer = new Builder().build();
         }
@@ -256,6 +267,8 @@ public abstract class AbstractTokenizer {
 
         protected ResourceResolver resolver = new ClassLoaderResolver(this.getClass());
 
+        protected TokenFactory tokenFactory;
+
         /**
          * Create Tokenizer instance
          *
@@ -264,6 +277,11 @@ public abstract class AbstractTokenizer {
          */
         public <T extends AbstractTokenizer> T build() {
             return null;
+        }
+
+        public Builder tokenFactory(TokenFactory tokenFactory) {
+            this.tokenFactory = tokenFactory;
+            return this;
         }
 
         /**
