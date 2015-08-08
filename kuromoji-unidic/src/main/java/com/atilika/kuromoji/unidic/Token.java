@@ -34,7 +34,7 @@ public class Token extends AbstractToken {
     }
 
     /**
-     * Gets the 1st level part-of-speech tag for this token (品詞細分類1)
+     * Gets the 1st level part-of-speech tag for this token (品詞大分類)
      *
      * @return 1st level part-of-speech tag, not null
      */
@@ -43,7 +43,7 @@ public class Token extends AbstractToken {
     }
 
     /**
-     * Gets the 2nd level part-of-speech tag for this token (品詞細分類2)
+     * Gets the 2nd level part-of-speech tag for this token (品詞中分類)
      *
      * @return 2nd level part-of-speech tag, not null
      */
@@ -52,7 +52,7 @@ public class Token extends AbstractToken {
     }
 
     /**
-     * Gets the 3rd level part-of-speech tag for this token (品詞細分類3)
+     * Gets the 3rd level part-of-speech tag for this token (品詞小分類)
      *
      * @return 3rd level part-of-speech tag, not null
      */
@@ -61,7 +61,7 @@ public class Token extends AbstractToken {
     }
 
     /**
-     * Gets the 4th level part-of-speech tag for this token (品詞細分類4)
+     * Gets the 4th level part-of-speech tag for this token (品詞細分類)
      *
      * @return 4th level part-of-speech tag, not null
      */
