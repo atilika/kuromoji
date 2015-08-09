@@ -25,7 +25,6 @@ import java.io.LineNumberReader;
 import java.util.Arrays;
 import java.util.List;
 
-import static com.atilika.kuromoji.TestUtils.assertMultiThreadedTokenizedStreamEquals;
 import static com.atilika.kuromoji.TestUtils.assertTokenSurfacesEquals;
 import static com.atilika.kuromoji.TestUtils.assertTokenizedStreamEquals;
 import static org.junit.Assert.assertEquals;

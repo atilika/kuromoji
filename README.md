@@ -61,6 +61,13 @@ When running this program, you will get the following output
 。　　　記号,句点,*,*,*,*,。,。,。
 ```
 
+## Contributing
+
+Please open up issues if you have a feature request.  We also welcome contributions through pull requests.
+
+You will retain copyright to your own contributions, but need to license them using the Apache License, Version 2.0.
+All contributors will be mentioned in the `CONTRIBUTORS.md` file.
+
 # About us
 
 We small team of experienced software engineers based in Tokyo who offers technologies and good advice in the field of search, natural language processing and big data analytics.

@@ -25,7 +25,6 @@ import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 import static com.atilika.kuromoji.TestUtils.assertEqualTokenFeatureLenghts;
-import static com.atilika.kuromoji.TestUtils.assertMultiThreadedTokenizedStreamEquals;
 import static com.atilika.kuromoji.TestUtils.assertTokenizedStreamEquals;
 import static junit.framework.Assert.assertEquals;
 

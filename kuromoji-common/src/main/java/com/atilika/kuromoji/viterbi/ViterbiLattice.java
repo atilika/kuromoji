@@ -85,14 +85,7 @@ public class ViterbiLattice {
         }
     }
 
-    /**
-     * Return twice as big array which contains value of input array
-     *
-     * @param array
-     * @return
-     */
     private ViterbiNode[] extendArray(ViterbiNode[] array) {
-        //extend array
         ViterbiNode[] newArray = new ViterbiNode[array.length * 2];
         System.arraycopy(array, 0, newArray, 0, array.length);
         return newArray;
