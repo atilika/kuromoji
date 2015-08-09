@@ -61,7 +61,7 @@ When running this program, you will get the following output
 。　　　記号,句点,*,*,*,*,。,。,。
 ```
 
-# Contributing
+## Contributing
 
 Please open up issues if you have a feature request.  We also welcome contributions through pull requests.
 
