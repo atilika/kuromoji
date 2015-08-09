@@ -307,17 +307,6 @@ public class TokenizerTest {
     }
 
     @Test
-    public void testMultiThreadedBocchan() throws IOException, InterruptedException {
-        assertMultiThreadedTokenizedStreamEquals(
-            5,
-            25,
-            "/bocchan-unidic-kanaaccent-features.txt",
-            "/bocchan.txt",
-            tokenizer
-        );
-    }
-
-    @Test
     public void testQuotedFeature() {
         List<Token> tokens = tokenizer.tokenize("合い方");
 

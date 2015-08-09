@@ -265,17 +265,6 @@ public class TokenizerTest {
         );
     }
 
-    @Test
-    public void testMultiThreadedBocchan() throws IOException, InterruptedException {
-        assertMultiThreadedTokenizedStreamEquals(
-            5,
-            25,
-            "/bocchan-ipadic-features.txt",
-            "/bocchan.txt",
-            tokenizer
-        );
-    }
-
     private void reportStatistics(long totalStart, int runs) {
         long time = System.currentTimeMillis() - totalStart;
 

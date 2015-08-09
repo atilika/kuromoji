@@ -199,7 +199,7 @@ public abstract class AbstractTokenizer {
      */
     private List<Integer> getSplitPositions(String text) {
         ArrayList<Integer> splitPositions = new ArrayList<>();
-        int position = 0;
+        int position;
         int currentPosition = 0;
 
         while (true) {
@@ -230,7 +230,6 @@ public abstract class AbstractTokenizer {
      * @param text sentence to tokenize
      * @return list of Token
      */
-    @SuppressWarnings("unchecked")
     private <T extends AbstractToken> List<T> tokenize(int offset, String text) {
         ArrayList<T> result = new ArrayList<>();
 
@@ -242,6 +241,7 @@ public abstract class AbstractTokenizer {
             if (node.getType() == ViterbiNode.Type.KNOWN && wordId == -1) { // Do not include BOS/EOS
                 continue;
             }
+            @SuppressWarnings("unchecked")
             T token = (T) tokenFactory.createToken(
                 wordId,
                 node.getSurfaceForm(),
@@ -256,14 +256,13 @@ public abstract class AbstractTokenizer {
     }
 
     public abstract static class Builder {
-
         protected DoubleArrayTrie doubleArrayTrie;
         protected ConnectionCosts connectionCosts;
         protected TokenInfoDictionary tokenInfoDictionary;
         protected UnknownDictionary unknownDictionary;
         protected CharacterDefinitions characterDefinitions;
-        protected UserDictionary userDictionary = null;
         protected InsertedDictionary insertedDictionary;
+        protected UserDictionary userDictionary = null;
 
         protected Mode mode = Mode.NORMAL;
         protected boolean split = true;
