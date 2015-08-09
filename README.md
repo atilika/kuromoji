@@ -72,4 +72,4 @@ All contributors will be mentioned in the `CONTRIBUTORS.md` file.
 
 We small team of experienced software engineers based in Tokyo who offers technologies and good advice in the field of search, natural language processing and big data analytics.
 
-Please feel free to contact us on kuromoji@atilika.com if you have any questions or need help.
+Please feel free to contact us at kuromoji@atilika.com if you have any questions or need help.
