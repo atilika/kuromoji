@@ -39,11 +39,24 @@ public class BenchmarkTest {
     @Ignore("Enable during development")
     @Test
     public void testBocchanVariants() throws IOException {
-        bocchan("com.atilika.kuromoji.ipadic.Tokenizer", "ipadic");
-        bocchan("com.atilika.kuromoji.jumandic.Tokenizer", "jumandic");
-        bocchan("com.atilika.kuromoji.naist.jdic.Tokenizer", "naist-jdic");
-        bocchan("com.atilika.kuromoji.unidic.Tokenizer", "unidic");
-        bocchan("com.atilika.kuromoji.unidic.kanaaccent.Tokenizer", "unidic-kanaaccent");
+        String bocchan = "/Users/cm/Projects/kuromoji-cmoen/kuromoji-ipadic/src/test/resources/bocchan.txt";
+        tokenize(bocchan, "bocchan-ipadic-features.txt", "com.atilika.kuromoji.ipadic.Tokenizer");
+        tokenize(bocchan, "bocchan-jumandic-features.txt", "com.atilika.kuromoji.jumandic.Tokenizer");
+        tokenize(bocchan, "bocchan-naist-jdic-features.txt", "com.atilika.kuromoji.naist.jdic.Tokenizer");
+        tokenize(bocchan, "bocchan-unidic-features.txt", "com.atilika.kuromoji.unidic.Tokenizer");
+        tokenize(bocchan, "bocchan-unidic-kanaaccent-features.txt", "com.atilika.kuromoji.unidic.kanaaccent.Tokenizer");
+    }
+
+    @Ignore("Enable during development")
+    @Test
+    public void testUserDictionaryVariants() throws IOException {
+        String jawikisentences = "/Users/cm/Projects/kuromoji-cmoen/kuromoji-ipadic/src/test/resources/jawikisentences.txt";
+        String userDictionaryFilename = "/Users/cm/Projects/kuromoji-cmoen/kuromoji-common/src/test/resources/userdict.txt";
+        tokenizeUserDictionary(jawikisentences, "jawikisentences-ipadic-features.txt", "com.atilika.kuromoji.ipadic.Tokenizer", userDictionaryFilename);
+        tokenizeUserDictionary(jawikisentences, "jawikisentences-jumandic-features.txt", "com.atilika.kuromoji.jumandic.Tokenizer", userDictionaryFilename);
+        tokenizeUserDictionary(jawikisentences, "jawikisentences-naist-jdic-features.txt", "com.atilika.kuromoji.naist.jdic.Tokenizer", userDictionaryFilename);
+        tokenizeUserDictionary(jawikisentences, "jawikisentences-unidic-features.txt", "com.atilika.kuromoji.unidic.Tokenizer", userDictionaryFilename);
+        tokenizeUserDictionary(jawikisentences, "jawikisentences-unidic-kanaaccent-features.txt", "com.atilika.kuromoji.unidic.kanaaccent.Tokenizer", userDictionaryFilename);
     }
 
     public void benchmark(String tokenizerClass, String tokenizerName) throws IOException {
@@ -69,11 +82,26 @@ public class BenchmarkTest {
     }
 
 
-    public void bocchan(String tokenizerClass, String tokenizerName) throws IOException {
+    public void tokenize(String inputFilename,
+                         String outputFilename,
+                         String tokenizerClass) throws IOException {
         Benchmark.main(new String[]{
             "-t", tokenizerClass,
-            "-o", "bocchan-" + tokenizerName + "-features.txt",
-            "/Users/cm/Projects/kuromoji-cmoen/kuromoji-ipadic/src/test/resources/bocchan.txt",
+            "-o", outputFilename,
+            inputFilename
         });
     }
+
+    public void tokenizeUserDictionary(String inputFilename,
+                                       String outputFilename,
+                                       String tokenizerClass,
+                                       String userDictionaryFilename) throws IOException {
+        Benchmark.main(new String[]{
+            "-t", tokenizerClass,
+            "-o", outputFilename,
+            "-u", userDictionaryFilename,
+            inputFilename
+        });
+    }
+
 }

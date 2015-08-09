@@ -307,14 +307,21 @@ public class TokenizerTest {
     }
 
     @Test
-    public void testMultiThreadedBocchan() throws IOException, InterruptedException {
-        assertMultiThreadedTokenizedStreamEquals(
-            5,
-            25,
-            "/bocchan-unidic-kanaaccent-features.txt",
-            "/bocchan.txt",
-            tokenizer
+    public void testQuotedFeature() {
+        List<Token> tokens = tokenizer.tokenize("合い方");
+
+        assertEquals(1, tokens.size());
+
+        Token token = tokens.get(0);
+
+        // Feature is escaped in quotes ("0,4")
+        assertEquals(
+            "名詞,普通名詞,一般,*,*,*,アイカタ,合方,合い方,アイカタ,合い方,アイカタ,和,*,*,*,*,アイカタ,アイカタ,アイカタ,アイカタ,*,*,\"0,4\",C2,*",
+            token.getAllFeatures()
         );
+
+        // Feature is not quoted (0,4)
+        assertEquals("0,4", token.getAccentType());
     }
 
     private void buildTokenizerWithUserDictionary(String userDictionaryEntry) throws IOException {

@@ -230,15 +230,4 @@ public class TokenizerTest {
             tokenizer
         );
     }
-
-    @Test
-    public void testMultiThreadedBocchan() throws IOException, InterruptedException {
-        assertMultiThreadedTokenizedStreamEquals(
-            5,
-            25,
-            "/bocchan-unidic-features.txt",
-            "/bocchan.txt",
-            tokenizer
-        );
-    }
 }

@@ -171,17 +171,6 @@ public class TokenizerTest {
         );
     }
 
-    @Test
-    public void testMultiThreadedBocchan() throws IOException, InterruptedException {
-        assertMultiThreadedTokenizedStreamEquals(
-            5,
-            25,
-            "/bocchan-jumandic-features.txt",
-            "/bocchan.txt",
-            tokenizer
-        );
-    }
-
     private String getCombinedPartOfSpeech(Token token) {
         return token.getPosLevel1() + "," + token.getPosLevel2() + "," + token.getPosLevel3() + "," + token.getPosLevel4();
     }

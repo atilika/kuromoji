@@ -17,7 +17,6 @@
 package com.atilika.kuromoji.ipadic;
 
 import com.atilika.kuromoji.AbstractTokenizer;
-import com.atilika.kuromoji.TokenizerRunner;
 import com.atilika.kuromoji.dict.CharacterDefinitions;
 import com.atilika.kuromoji.dict.ConnectionCosts;
 import com.atilika.kuromoji.dict.Dictionary;
@@ -29,7 +28,6 @@ import com.atilika.kuromoji.util.SimpleResourceResolver;
 import com.atilika.kuromoji.viterbi.TokenFactory;
 import com.atilika.kuromoji.viterbi.ViterbiNode;
 
-import java.io.IOException;
 import java.util.ArrayList;
 
 /**
@@ -72,29 +70,6 @@ public class Tokenizer extends AbstractTokenizer {
      */
     private Tokenizer(Builder builder) {
         configure(builder);
-    }
-
-    public static void main(String[] args) throws IOException {
-        Tokenizer tokenizer;
-        switch (args.length) {
-            case 1:
-                Mode mode = Mode.valueOf(args[0].toUpperCase());
-                tokenizer = new Builder()
-                    .mode(mode)
-                    .build();
-                break;
-            case 2:
-                mode = Mode.valueOf(args[0].toUpperCase());
-                tokenizer = new Builder()
-                    .mode(mode)
-                    .userDictionary(args[1])
-                    .build();
-                break;
-            default:
-                tokenizer = new Tokenizer();
-                break;
-        }
-        new TokenizerRunner().run(tokenizer);
     }
 
     /**

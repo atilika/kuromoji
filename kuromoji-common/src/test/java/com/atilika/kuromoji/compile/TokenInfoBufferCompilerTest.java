@@ -16,8 +16,8 @@
  */
 package com.atilika.kuromoji.compile;
 
-import com.atilika.kuromoji.dict.BufferEntry;
-import com.atilika.kuromoji.util.TokenInfoBuffer;
+import com.atilika.kuromoji.buffer.BufferEntry;
+import com.atilika.kuromoji.buffer.TokenInfoBuffer;
 import org.junit.Test;
 
 import java.io.File;

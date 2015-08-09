@@ -17,12 +17,12 @@
 package com.atilika.kuromoji.compile;
 
 import com.atilika.kuromoji.dict.AbstractDictionaryEntry;
-import com.atilika.kuromoji.dict.BufferEntry;
+import com.atilika.kuromoji.buffer.BufferEntry;
 import com.atilika.kuromoji.dict.GenericDictionaryEntry;
 import com.atilika.kuromoji.dict.TokenInfoDictionary;
-import com.atilika.kuromoji.util.FeatureInfoMap;
-import com.atilika.kuromoji.util.StringValueMapBuffer;
-import com.atilika.kuromoji.util.WordIdMap;
+import com.atilika.kuromoji.buffer.FeatureInfoMap;
+import com.atilika.kuromoji.buffer.StringValueMapBuffer;
+import com.atilika.kuromoji.buffer.WordIdMap;
 
 import java.io.BufferedReader;
 import java.io.File;

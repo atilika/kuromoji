@@ -14,28 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.atilika.kuromoji.util;
+package com.atilika.kuromoji.buffer;
 
-import org.junit.Test;
+import java.util.ArrayList;
+import java.util.List;
 
-import java.util.TreeMap;
+public class BufferEntry {
 
-import static org.junit.Assert.assertEquals;
+    public List<Short> tokenInfo = new ArrayList<>();
+    public List<Integer> features = new ArrayList<>();
+    public List<Byte> posInfo = new ArrayList<>();
 
-public class StringValueMapBufferTest {
+    public short[] tokenInfos; // left id, right id, word cost values
+    public int[] featureInfos; // references to string features
+    public byte[] posInfos; // part-of-speech tag values
 
-    @Test
-    public void testInsertIntoMap() throws Exception {
-        TreeMap<Integer, String> input = new TreeMap<>();
-
-        input.put(1, "hello");
-        input.put(2, "日本");
-        input.put(0, "Bye");
-
-        StringValueMapBuffer values = new StringValueMapBuffer(input);
-
-        assertEquals("Bye", values.get(0));
-        assertEquals("hello", values.get(1));
-        assertEquals("日本", values.get(2));
-    }
 }

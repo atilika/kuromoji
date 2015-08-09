@@ -226,15 +226,4 @@ public class TokenizerTest {
             tokenizer
         );
     }
-
-    @Test
-    public void testMultiThreadedBocchan() throws IOException, InterruptedException {
-        assertMultiThreadedTokenizedStreamEquals(
-            5,
-            25,
-            "/bocchan-naist-jdic-features.txt",
-            "/bocchan.txt",
-            tokenizer
-        );
-    }
 }
