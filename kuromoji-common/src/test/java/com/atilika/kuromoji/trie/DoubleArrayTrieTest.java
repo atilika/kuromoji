@@ -20,64 +20,40 @@ import org.junit.Test;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 public class DoubleArrayTrieTest {
 
     @Test
-    public void buildTest() {
-        Trie trie = getTrie();
-        DoubleArrayTrie doubleArrayTrie = new DoubleArrayTrie();
-        doubleArrayTrie.build(trie);
+    public void testSparseTrie() throws IOException {
+        testSimpleTrie(false);
     }
 
     @Test
-    public void writeTest() throws IOException {
-        Trie trie = getTrie();
-
-        DoubleArrayTrie doubleArrayTrie = new DoubleArrayTrie();
-        doubleArrayTrie.build(trie);
-
-        try {
-            doubleArrayTrie.write("/some/path/which/is/not/exist");
-            fail();
-        } catch (IOException e) {
-
-        }
-
-        String tmpDir = System.getProperty("java.io.tmpdir");
-        File dir = new File(tmpDir + File.separator + "datmp");
-        dir.mkdir();
-        doubleArrayTrie.write(dir.getCanonicalPath());
-        dir.deleteOnExit();
-        for (File file : dir.listFiles()) {
-            file.deleteOnExit();
-        }
-
-        assertTrue(dir.list().length > 0);
+    public void testCompactTrie() throws IOException {
+        testSimpleTrie(false);
     }
 
-    @Test
-    public void lookupTest() throws IOException {
-        Trie trie = getTrie();
+    private void testSimpleTrie(boolean compact) throws IOException {
+        Trie trie = makeTrie();
+        File costsFile = File.createTempFile("kuromoji-doublearraytrie-", ".bin");
+        costsFile.deleteOnExit();
 
-        DoubleArrayTrie doubleArrayTrie = new DoubleArrayTrie();
+        DoubleArrayTrie doubleArrayTrie = new DoubleArrayTrie(compact);
         doubleArrayTrie.build(trie);
 
-        String tmpDir = System.getProperty("java.io.tmpdir");
-        File dir = new File(tmpDir + File.separator + "datmp");
-        dir.mkdir();
-        doubleArrayTrie.write(dir.getCanonicalPath());
-        dir.deleteOnExit();
-        for (File file : dir.listFiles()) {
-            file.deleteOnExit();
-        }
+        OutputStream output = new FileOutputStream(costsFile);
+        doubleArrayTrie.write(output);
+        output.close();
 
-		doubleArrayTrie = DoubleArrayTrie.read(new FileInputStream(dir.getCanonicalPath() + File.separator + DoubleArrayTrie.DOUBLE_ARRAY_TRIE_FILENAME));
+        doubleArrayTrie = DoubleArrayTrie.read(
+            new FileInputStream(costsFile)
+        );
 
         assertEquals(0, doubleArrayTrie.lookup("a"));
         assertTrue(doubleArrayTrie.lookup("abc") > 0);
@@ -85,12 +61,12 @@ public class DoubleArrayTrieTest {
         assertTrue(doubleArrayTrie.lookup("xyz") < 0);
     }
 
-	private Trie getTrie() {
-		Trie trie = new Trie();
-		trie.add("abc");
-		trie.add("abd");
-		trie.add("あああ");
-		trie.add("あいう");
-		return trie;
-	}
+    private Trie makeTrie() {
+        Trie trie = new Trie();
+        trie.add("abc");
+        trie.add("abd");
+        trie.add("あああ");
+        trie.add("あいう");
+        return trie;
+    }
 }

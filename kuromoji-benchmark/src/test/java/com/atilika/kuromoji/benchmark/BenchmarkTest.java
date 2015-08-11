@@ -28,7 +28,7 @@ public class BenchmarkTest {
     @Ignore("Enable during development")
     @Test
     public void testBenchmarkIpadics() throws IOException {
-        benchmark("com.atilika.kuromoji.ipadic.Tokenizer", "ipadic", "/Users/cm/Projects/kuromoji-cmoen/kuromoji-benchmark/jawiki/jawikiuserdict.txt");
+        benchmark("com.atilika.kuromoji.ipadic.Tokenizer", "ipadic", "kuromoji-benchmark/jawiki/jawikiuserdict.txt");
         benchmark("com.atilika.kuromoji.ipadic.Tokenizer", "ipadic");
 //        benchmark("com.atilika.kuromoji.jumandic.Tokenizer", "jumandic");
 //        benchmark("com.atilika.kuromoji.naist.jdic.Tokenizer", "naist-jdic");
@@ -39,7 +39,7 @@ public class BenchmarkTest {
     @Ignore("Enable during development")
     @Test
     public void testBocchanVariants() throws IOException {
-        String bocchan = "/Users/cm/Projects/kuromoji-cmoen/kuromoji-ipadic/src/test/resources/bocchan.txt";
+        String bocchan = "../kuromoji-ipadic/src/test/resources/bocchan.txt";
         tokenize(bocchan, "bocchan-ipadic-features.txt", "com.atilika.kuromoji.ipadic.Tokenizer");
         tokenize(bocchan, "bocchan-jumandic-features.txt", "com.atilika.kuromoji.jumandic.Tokenizer");
         tokenize(bocchan, "bocchan-naist-jdic-features.txt", "com.atilika.kuromoji.naist.jdic.Tokenizer");
@@ -50,8 +50,8 @@ public class BenchmarkTest {
     @Ignore("Enable during development")
     @Test
     public void testUserDictionaryVariants() throws IOException {
-        String jawikisentences = "/Users/cm/Projects/kuromoji-cmoen/kuromoji-ipadic/src/test/resources/jawikisentences.txt";
-        String userDictionaryFilename = "/Users/cm/Projects/kuromoji-cmoen/kuromoji-common/src/test/resources/userdict.txt";
+        String jawikisentences = "../kuromoji-ipadic/src/test/resources/jawikisentences.txt";
+        String userDictionaryFilename = "../kuromoji-common/src/test/resources/userdict.txt";
         tokenizeUserDictionary(jawikisentences, "jawikisentences-ipadic-features.txt", "com.atilika.kuromoji.ipadic.Tokenizer", userDictionaryFilename);
         tokenizeUserDictionary(jawikisentences, "jawikisentences-jumandic-features.txt", "com.atilika.kuromoji.jumandic.Tokenizer", userDictionaryFilename);
         tokenizeUserDictionary(jawikisentences, "jawikisentences-naist-jdic-features.txt", "com.atilika.kuromoji.naist.jdic.Tokenizer", userDictionaryFilename);
@@ -70,8 +70,8 @@ public class BenchmarkTest {
         args.add("-c");
         args.add("3000");
         args.add("--benchmark-output");
-        args.add("/Users/cm/Projects/kuromoji-cmoen/jawiki-" + tokenizerName + "-benchmark.tsv");
-        args.add("/Users/cm/Projects/kuromoji-cmoen/kuromoji-benchmark/jawiki/jawiki.tsv.gz");
+        args.add("jawiki-" + tokenizerName + "-benchmark.tsv");
+        args.add("kuromoji-benchmark/jawiki/jawiki.tsv.gz");
 
         if (userDictionaryFilename != null) {
             args.add(0, "-u");

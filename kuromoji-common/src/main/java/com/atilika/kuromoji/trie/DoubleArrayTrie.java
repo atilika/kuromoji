@@ -16,21 +16,22 @@
  */
 package com.atilika.kuromoji.trie;
 
-import com.atilika.kuromoji.util.ResourceResolver;
 import com.atilika.kuromoji.compile.ProgressLog;
+import com.atilika.kuromoji.util.ResourceResolver;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.DataInputStream;
-import java.io.File;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.RandomAccessFile;
+import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.IntBuffer;
 import java.nio.channels.Channels;
-import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
+import java.nio.channels.WritableByteChannel;
 import java.util.List;
 
 public class DoubleArrayTrie {
@@ -51,7 +52,7 @@ public class DoubleArrayTrie {
     private int tailIndex = TAIL_OFFSET;
     private int maxBaseCheckIndex = 0;
 
-    private final boolean compact;
+    private boolean compact;
 
     public DoubleArrayTrie() {
         this(false);
@@ -61,32 +62,24 @@ public class DoubleArrayTrie {
         compact = compactTries;
     }
 
-    /**
-     * Write to file
-     *
-     * @param directoryName  directory to write the double array trie to
-     * @throws IOException if an IO error occured during write
-     */
-    public void write(String directoryName) throws IOException {
-        String filename = directoryName + File.separator + DOUBLE_ARRAY_TRIE_FILENAME;
+    public void write(OutputStream output) throws IOException {
 
         baseBuffer.rewind();
         checkBuffer.rewind();
         tailBuffer.rewind();
 
-        File file = new File(filename);
-
-        if (file.exists()) {
-            file.delete();
-        }
-
         int baseCheckSize = Math.min(maxBaseCheckIndex + 64, baseBuffer.capacity());
         int tailSize = Math.min(tailIndex - TAIL_OFFSET + 64, tailBuffer.capacity());
 
-        RandomAccessFile raf = new RandomAccessFile(filename, "rw");
-        FileChannel channel = raf.getChannel();
-        raf.writeInt(baseCheckSize);
-        raf.writeInt(tailSize);
+        DataOutputStream dataOutput = new DataOutputStream(
+            new BufferedOutputStream(output)
+        );
+
+        dataOutput.writeBoolean(compact);
+        dataOutput.writeInt(baseCheckSize);
+        dataOutput.writeInt(tailSize);
+
+        WritableByteChannel channel = Channels.newChannel(dataOutput);
 
         ByteBuffer tmpBuffer = ByteBuffer.allocate(baseCheckSize * 4);
         IntBuffer tmpIntBuffer = tmpBuffer.asIntBuffer();
@@ -106,7 +99,7 @@ public class DoubleArrayTrie {
         tmpBuffer.rewind();
         channel.write(tmpBuffer);
 
-        raf.close();
+        dataOutput.flush();
     }
 
     public static DoubleArrayTrie newInstance(ResourceResolver resolver) throws IOException {
@@ -123,6 +116,8 @@ public class DoubleArrayTrie {
     public static DoubleArrayTrie read(InputStream input) throws IOException {
         DoubleArrayTrie trie = new DoubleArrayTrie();
         DataInputStream dis = new DataInputStream(new BufferedInputStream(input));
+
+        trie.compact = dis.readBoolean();
         int baseCheckSize = dis.readInt();    // Read size of baseArr and checkArr
         int tailSize = dis.readInt();        // Read size of tailArr
         ReadableByteChannel channel = Channels.newChannel(dis);
@@ -164,12 +159,12 @@ public class DoubleArrayTrie {
 
     private void reportUtilizationRate() {
         int zeros = 0;
-        for (int i = 0; i < baseBuffer.limit(); i++) {
+        for (int i = 0; i < maxBaseCheckIndex; i++) {
             if (baseBuffer.get(i) == 0) {
                 zeros++;
             }
         }
-        ProgressLog.println("trie memory utilization ratio (" + (!compact ? "not " : "") + "compacted): " + ((baseBuffer.limit() - zeros) / (float) baseBuffer.limit()));
+        ProgressLog.println("trie memory utilization ratio (" + (!compact ? "not " : "") + "compacted): " + ((maxBaseCheckIndex - zeros) / (float) maxBaseCheckIndex));
     }
 
     /**
