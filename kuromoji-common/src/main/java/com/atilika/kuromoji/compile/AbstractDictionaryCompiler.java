@@ -27,6 +27,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.List;
 
 public abstract class AbstractDictionaryCompiler {
@@ -53,18 +54,23 @@ public abstract class AbstractDictionaryCompiler {
         );
         tokenInfoCompiler.compile();
 
+        @SuppressWarnings("unchecked")
         List<String> surfaces = tokenInfoCompiler.getSurfaces();
 
         ProgressLog.begin("compiling double array trie");
         DoubleArrayTrie trie = DoubleArrayTrieCompiler.build(surfaces, compactTrie);
-        trie.write(outputDirname);
+        OutputStream daTrieOutput = new FileOutputStream(
+            outputDirname + File.separator + DoubleArrayTrie.DOUBLE_ARRAY_TRIE_FILENAME
+        );
+        trie.write(daTrieOutput);
+        daTrieOutput.close();
 
         try {
             ProgressLog.println("validating saved double array trie");
             DoubleArrayTrie daTrie = DoubleArrayTrie.read(new FileInputStream(outputDirname + File.separator + DoubleArrayTrie.DOUBLE_ARRAY_TRIE_FILENAME));
             for (String surface : surfaces) {
                 if (daTrie.lookup(surface) < 0) {
-                    ProgressLog.println("failed to look up [" + surface + " ]");
+                    ProgressLog.println("failed to look up [" + surface + "]");
                 }
             }
         } catch (Exception e) {
