@@ -59,6 +59,16 @@ public class BenchmarkTest {
         tokenizeUserDictionary(jawikisentences, "jawikisentences-unidic-kanaaccent-features.txt", "com.atilika.kuromoji.unidic.kanaaccent.Tokenizer", userDictionaryFilename);
     }
 
+    @Ignore("Crashed with compacted tries")
+    @Test
+    public void testCrash() throws IOException {
+        tokenize(
+            "../kuromoji-benchmark/jawiki/jawiki-crash.tsv",
+            "../kuromoji-benchmark/jawiki/jawiki-crash.tok",
+            "com.atilika.kuromoji.ipadic.Tokenizer"
+        );
+    }
+
     public void benchmark(String tokenizerClass, String tokenizerName) throws IOException {
         benchmark(tokenizerClass, tokenizerName, null);
     }

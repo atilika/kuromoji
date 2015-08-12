@@ -130,6 +130,7 @@ public class Benchmark {
 
         while ((line = reader.readLine()) != null) {
             String text = EscapeUtils.unescape(line);
+//            System.out.println(documents.get() + ": " + text.split("\t")[0]);
 
             tokenizeDocument(writer, text);
 
