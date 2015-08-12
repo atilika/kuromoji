@@ -217,6 +217,17 @@ public class TokenizerTest {
     }
 
     @Test
+    public void testCompactedTrieCrash() {
+        String input = "＼ｍ";
+        Tokenizer tokenizer = new Tokenizer();
+
+        assertTokenSurfacesEquals(
+            Arrays.asList("＼", "ｍ"),
+            tokenizer.tokenize(input)
+        );
+    }
+
+    @Test
     public void testBocchan() throws IOException {
         int runs = 3;
         LineNumberReader reader = new LineNumberReader(new InputStreamReader(
