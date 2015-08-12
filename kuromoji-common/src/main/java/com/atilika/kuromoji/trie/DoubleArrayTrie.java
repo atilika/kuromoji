@@ -225,7 +225,7 @@ public class DoubleArrayTrie {
             } else {
                 index = index + base + key.charAt(i);
             }
-            if (index > baseBuffer.limit()) { // Too long
+            if (index >= baseBuffer.limit()) { // Too long
                 return -1;
             }
 
