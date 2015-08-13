@@ -122,17 +122,17 @@ public class DoubleArrayTrie {
         int tailSize = dis.readInt();        // Read size of tailArr
         ReadableByteChannel channel = Channels.newChannel(dis);
 
-        ByteBuffer tmpBaseBuffer = ByteBuffer.allocateDirect(baseCheckSize * 4);    // The size is 4 times the baseCheckSize since it is the length of array
+        ByteBuffer tmpBaseBuffer = ByteBuffer.allocate(baseCheckSize * 4);    // The size is 4 times the baseCheckSize since it is the length of array
         channel.read(tmpBaseBuffer);
         tmpBaseBuffer.rewind();
         trie.baseBuffer = tmpBaseBuffer.asIntBuffer().asReadOnlyBuffer();
 
-        ByteBuffer tmpCheckBuffer = ByteBuffer.allocateDirect(baseCheckSize * 4);
+        ByteBuffer tmpCheckBuffer = ByteBuffer.allocate(baseCheckSize * 4);
         channel.read(tmpCheckBuffer);
         tmpCheckBuffer.rewind();
         trie.checkBuffer = tmpCheckBuffer.asIntBuffer().asReadOnlyBuffer();
 
-        ByteBuffer tmpTailBuffer = ByteBuffer.allocateDirect(tailSize * 2);            // The size is 2 times the tailSize since it is the length of array
+        ByteBuffer tmpTailBuffer = ByteBuffer.allocate(tailSize * 2);            // The size is 2 times the tailSize since it is the length of array
         channel.read(tmpTailBuffer);
         tmpTailBuffer.rewind();
         trie.tailBuffer = tmpTailBuffer.asCharBuffer().asReadOnlyBuffer();
