@@ -24,7 +24,7 @@ import java.util.List;
 
 import static com.atilika.kuromoji.TestUtils.assertEqualTokenFeatureLenghts;
 import static com.atilika.kuromoji.TestUtils.assertTokenizedStreamEquals;
-import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.assertEquals;
 
 public class TokenizerTest {
 
