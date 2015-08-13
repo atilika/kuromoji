@@ -27,15 +27,12 @@ import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class UnknownDictionaryCompiler implements Compiler {
 
     private OutputStream output;
-
-    private Map<String, List<GenericDictionaryEntry>> entryMap = new HashMap<>();
 
     protected Map<String, Integer> categoryMap;
 

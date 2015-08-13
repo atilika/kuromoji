@@ -44,8 +44,7 @@ import java.util.EnumMap;
 import java.util.List;
 
 /**
- * AbstractTokenizer main class.
- * Thread safe.
+ * AbstractTokenizer main class
  */
 public abstract class AbstractTokenizer {
 
@@ -255,6 +254,9 @@ public abstract class AbstractTokenizer {
         return result;
     }
 
+    /**
+     * Abstract Builder shared by all tokenizers
+     */
     public abstract static class Builder {
         protected DoubleArrayTrie doubleArrayTrie;
         protected ConnectionCosts connectionCosts;

@@ -131,7 +131,7 @@ public class PatriciaTrieFormatter<V> {
      * @param formatBitString  true if the bits for this key should be included in the node
      * @return formatted node, not null
      */
-    private String formatNode(PatriciaNode<V> node, int bit, KeyMapper<String> keyMapper, boolean formatBitString) {
+    private String formatNode(PatriciaTrie.PatriciaNode<V> node, int bit, KeyMapper<String> keyMapper, boolean formatBitString) {
         if (node.getBit() <= bit) {
             return "";
         } else {
@@ -164,7 +164,7 @@ public class PatriciaTrieFormatter<V> {
      * @param tailport  tail port to use when formatting (dot-specific, "sw" or "se)
      * @return formatted link, not null
      */
-    private String formatPointer(PatriciaNode<V> from, PatriciaNode<V> to, String label, String tailport) {
+    private String formatPointer(PatriciaTrie.PatriciaNode<V> from, PatriciaTrie.PatriciaNode<V> to, String label, String tailport) {
         StringBuilder builder = new StringBuilder();
         builder.append(getNodeId(from));
         builder.append(" -> ");
@@ -190,7 +190,7 @@ public class PatriciaTrieFormatter<V> {
      * @param formatBitString  true if the bits for this key should be included in the node
      * @return formatted formatted node, not null
      */
-    private String formatNodeLabel(PatriciaNode<V> node, KeyMapper<String> keyMapper, boolean formatBitString) {
+    private String formatNodeLabel(PatriciaTrie.PatriciaNode<V> node, KeyMapper<String> keyMapper, boolean formatBitString) {
         StringBuilder builder = new StringBuilder();
         builder.append("<<table border=\"0\" cellborder=\"0\">");
         // Key
@@ -235,7 +235,7 @@ public class PatriciaTrieFormatter<V> {
      * @param node
      * @return label, not null
      */
-    private String getNodeLabel(PatriciaNode<V> node) {
+    private String getNodeLabel(PatriciaTrie.PatriciaNode<V> node) {
         return node.getKey();
     }
 
@@ -245,7 +245,7 @@ public class PatriciaTrieFormatter<V> {
      * @param node
      * @return node id, not null
      */
-    private String getNodeId(PatriciaNode<V> node) {
+    private String getNodeId(PatriciaTrie.PatriciaNode<V> node) {
         if (node == null) {
             return "null";
         } else {
