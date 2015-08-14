@@ -12,11 +12,11 @@ This will download all source dictionary data and build Kuromoji with all dictio
 
 ```
 kuromoji-core/target/kuromoji-core-0.9-SNAPSHOT.jar
-kuromoji-unidic/target/kuromoji-ipadic-0.9-SNAPSHOT.jar
+kuromoji-ipadic/target/kuromoji-ipadic-0.9-SNAPSHOT.jar
+kuromoji-jumandic/target/kuromoji-jumandic-0.9-SNAPSHOT.jar
+kuromoji-naist-jdic/target/kuromoji-naist-jdic-0.9-SNAPSHOT.jar
 kuromoji-unidic/target/kuromoji-unidic-0.9-SNAPSHOT.jar
 kuromoji-unidic-kanaaccent/target/kuromoji-unidic-kanaaccent-0.9-SNAPSHOT.jar
-kuromoji-naist-jdic/target/kuromoji-naist-jdic-0.9-SNAPSHOT.jar
-kuromoji-jumandic/target/kuromoji-jumandic-0.9-SNAPSHOT.jar
 ```
 
 The following additional build options are available:
