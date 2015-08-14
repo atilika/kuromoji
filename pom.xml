@@ -30,7 +30,7 @@
     </scm>
 
     <modules>
-        <module>kuromoji-common</module>
+        <module>kuromoji-core</module>
         <module>kuromoji-ipadic</module>
         <module>kuromoji-jumandic</module>
         <module>kuromoji-naist-jdic</module>

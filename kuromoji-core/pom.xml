@@ -9,9 +9,9 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <name>Kuromoji Common</name>
+    <name>Kuromoji Core</name>
 
-    <artifactId>kuromoji-common</artifactId>
+    <artifactId>kuromoji-core</artifactId>
     <packaging>jar</packaging>
 
     <build>
