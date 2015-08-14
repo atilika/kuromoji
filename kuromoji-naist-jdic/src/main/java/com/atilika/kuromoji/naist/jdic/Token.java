@@ -18,7 +18,7 @@ package com.atilika.kuromoji.naist.jdic;
 
 import com.atilika.kuromoji.AbstractToken;
 import com.atilika.kuromoji.dict.Dictionary;
-import com.atilika.kuromoji.naist.jdic.dict.DictionaryField;
+import com.atilika.kuromoji.naist.jdic.compile.DictionaryEntry;
 import com.atilika.kuromoji.viterbi.ViterbiNode;
 
 /**
@@ -41,7 +41,7 @@ public class Token extends AbstractToken {
      * @return 1st level part-of-speech tag, not null
      */
     public String getPosLevel1() {
-        return this.getFeature(DictionaryField.POS_LEVEL_1);
+        return this.getFeature(DictionaryEntry.POS_LEVEL_1);
     }
 
     /**
@@ -50,7 +50,7 @@ public class Token extends AbstractToken {
      * @return 2nd level part-of-speech tag, not null
      */
     public String getPosLevel2() {
-        return this.getFeature(DictionaryField.POS_LEVEL_2);
+        return this.getFeature(DictionaryEntry.POS_LEVEL_2);
     }
 
     /**
@@ -59,7 +59,7 @@ public class Token extends AbstractToken {
      * @return 3rd level part-of-speech tag, not null
      */
     public String getPosLevel3() {
-        return this.getFeature(DictionaryField.POS_LEVEL_3);
+        return this.getFeature(DictionaryEntry.POS_LEVEL_3);
     }
 
     /**
@@ -68,7 +68,7 @@ public class Token extends AbstractToken {
      * @return 4th level part-of-speech tag, not null
      */
     public String getPosLevel4() {
-        return this.getFeature(DictionaryField.POS_LEVEL_4);
+        return this.getFeature(DictionaryEntry.POS_LEVEL_4);
     }
 
     /**
@@ -77,7 +77,7 @@ public class Token extends AbstractToken {
      * @return pronunciation, not null
      */
     public String getPronunciation() {
-        return this.getFeature(DictionaryField.PRONUNCIATION);
+        return this.getFeature(DictionaryEntry.PRONUNCIATION);
     }
 
     /**
@@ -88,7 +88,7 @@ public class Token extends AbstractToken {
      * @return conjugation type, not null
      */
     public String getConjugationType() {
-        return this.getFeature(DictionaryField.CONJUGATION_TYPE);
+        return this.getFeature(DictionaryEntry.CONJUGATION_TYPE);
     }
 
     /**
@@ -99,7 +99,7 @@ public class Token extends AbstractToken {
      * @return conjugation form, not null
      */
     public String getConjugationForm() {
-        return this.getFeature(DictionaryField.CONJUGATION_FORM);
+        return this.getFeature(DictionaryEntry.CONJUGATION_FORM);
     }
 
     /**
@@ -108,7 +108,7 @@ public class Token extends AbstractToken {
      * @return base form, not null
      */
     public String getBaseForm() {
-        return this.getFeature(DictionaryField.BASE_FORM);
+        return this.getFeature(DictionaryEntry.BASE_FORM);
     }
 
     /**
@@ -117,7 +117,7 @@ public class Token extends AbstractToken {
      * @return reading, not null
      */
     public String getReading() {
-        return this.getFeature(DictionaryField.READING);
+        return this.getFeature(DictionaryEntry.READING);
     }
 
     /**
@@ -126,7 +126,7 @@ public class Token extends AbstractToken {
      * @return trascription variation, not null
      */
     public String getTranscriptionVariation() {
-        return this.getFeature(DictionaryField.TRANSCRIPTION_VARIATION);
+        return this.getFeature(DictionaryEntry.TRANSCRIPTION_VARIATION);
     }
 
     /**
@@ -135,6 +135,6 @@ public class Token extends AbstractToken {
      * @return the token's compound word information, not null
      */
     public String getCompoundInformation() {
-        return this.getFeature(DictionaryField.COMPOUND_INFORMATION);
+        return this.getFeature(DictionaryEntry.COMPOUND_INFORMATION);
     }
 }
