@@ -52,11 +52,6 @@ public final class CharacterDefinitions {
         this.defaultCategory = lookupCategories(new String[]{DEFAULT_CATEGORY});
     }
 
-    /**
-     *
-     * @param c
-     * @return
-     */
     public int[] lookupCategories(char c) {
         int[] mappings = codepointMappings[c];
 
