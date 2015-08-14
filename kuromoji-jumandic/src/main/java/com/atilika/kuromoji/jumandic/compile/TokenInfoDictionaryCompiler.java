@@ -19,7 +19,6 @@ package com.atilika.kuromoji.jumandic.compile;
 
 import com.atilika.kuromoji.compile.AbstractTokenInfoDictionaryCompiler;
 import com.atilika.kuromoji.dict.GenericDictionaryEntry;
-import com.atilika.kuromoji.jumandic.dict.DictionaryEntry;
 import com.atilika.kuromoji.util.DictionaryEntryLineParser;
 
 import java.util.ArrayList;

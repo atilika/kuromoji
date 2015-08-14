@@ -18,7 +18,6 @@ package com.atilika.kuromoji.ipadic.compile;
 
 import com.atilika.kuromoji.compile.AbstractTokenInfoDictionaryCompiler;
 import com.atilika.kuromoji.dict.GenericDictionaryEntry;
-import com.atilika.kuromoji.ipadic.dict.DictionaryEntry;
 import com.atilika.kuromoji.util.DictionaryEntryLineParser;
 
 import java.util.ArrayList;
