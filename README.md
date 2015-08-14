@@ -11,7 +11,7 @@ In order to build Kuromoji from source, please run the following command:
 This will download all source dictionary data and build Kuromoji with all dictionaries. The following Kuromoji jars will then be available:
 
 ```
-kuromoji-common/target/kuromoji-common-0.9-SNAPSHOT.jar
+kuromoji-core/target/kuromoji-core-0.9-SNAPSHOT.jar
 kuromoji-unidic/target/kuromoji-ipadic-0.9-SNAPSHOT.jar
 kuromoji-unidic/target/kuromoji-unidic-0.9-SNAPSHOT.jar
 kuromoji-unidic-kanaaccent/target/kuromoji-unidic-kanaaccent-0.9-SNAPSHOT.jar
@@ -28,7 +28,7 @@ The following additional build options are available:
 
 ## Using Kuromoji
 
-To use Kuromoji, you add `kuromoji-common-0.9-SNAPSHOT.jar` and your chosen dictionary's jar to your project. For many projects, the IPADIC variant `kuromoji-ipadic-0.9-SNAPSHOT.jar` should suffice.
+To use Kuromoji, you add `kuromoji-core-0.9-SNAPSHOT.jar` and your chosen dictionary's jar to your project. For many projects, the IPADIC variant `kuromoji-ipadic-0.9-SNAPSHOT.jar` should suffice.
 
 The following code example demonstrates how to use the Kuromoji tokenizer:
 
