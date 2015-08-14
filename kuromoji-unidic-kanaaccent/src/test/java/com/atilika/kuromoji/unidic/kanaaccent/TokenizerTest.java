@@ -16,6 +16,7 @@
  */
 package com.atilika.kuromoji.unidic.kanaaccent;
 
+import com.atilika.kuromoji.CommonCornerCasesTest;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -321,6 +322,11 @@ public class TokenizerTest {
 
         // Feature is not quoted (0,4)
         assertEquals("0,4", token.getAccentType());
+    }
+
+    @Test
+    public void testPunctuation() {
+        CommonCornerCasesTest.testPunctuation(new Tokenizer());
     }
 
     private void buildTokenizerWithUserDictionary(String userDictionaryEntry) throws IOException {

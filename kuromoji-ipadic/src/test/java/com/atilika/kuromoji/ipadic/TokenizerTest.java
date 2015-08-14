@@ -16,6 +16,7 @@
  */
 package com.atilika.kuromoji.ipadic;
 
+import com.atilika.kuromoji.CommonCornerCasesTest;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -273,6 +274,11 @@ public class TokenizerTest {
             getClass().getResourceAsStream("/bocchan.txt"),
             tokenizer
         );
+    }
+
+    @Test
+    public void testPunctuation() {
+        CommonCornerCasesTest.testPunctuation(new Tokenizer());
     }
 
     private void reportStatistics(long totalStart, int runs) {

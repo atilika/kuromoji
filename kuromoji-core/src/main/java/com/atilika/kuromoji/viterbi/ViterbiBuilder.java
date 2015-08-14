@@ -90,11 +90,9 @@ public class ViterbiBuilder {
 
                     int[] categories = characterDefinitions.lookupCategories(suffix.charAt(0));
 
-                    if (categories != null) {
-                        for (int i = 0; i < categories.length; i++) {
-                            int category = categories[i];
-                            unknownWordEndIndex = processUnknownWord(category, i, lattice, unknownWordEndIndex, startIndex, suffix, found);
-                        }
+                    for (int i = 0; i < categories.length; i++) {
+                        int category = categories[i];
+                        unknownWordEndIndex = processUnknownWord(category, i, lattice, unknownWordEndIndex, startIndex, suffix, found);
                     }
                 }
             }

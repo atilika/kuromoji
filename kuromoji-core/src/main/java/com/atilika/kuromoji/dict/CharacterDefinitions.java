@@ -31,6 +31,8 @@ public final class CharacterDefinitions {
 
     public static final int GROUP = 1;
 
+    private static final String DEFAULT_CATEGORY = "DEFAULT";
+
     private static final int LENGTH = 2; // Not used as of now
 
     private final int[][] categoryDefinitions;
@@ -39,16 +41,30 @@ public final class CharacterDefinitions {
 
     private final String[] categorySymbols;
 
+    private final int[] defaultCategory;
+
     public CharacterDefinitions(int[][] categoryDefinitions,
                                 int[][] codepointMappings,
                                 String[] categorySymbols) {
         this.categoryDefinitions = categoryDefinitions;
         this.codepointMappings = codepointMappings;
         this.categorySymbols = categorySymbols;
+        this.defaultCategory = lookupCategories(new String[]{DEFAULT_CATEGORY});
     }
 
+    /**
+     *
+     * @param c
+     * @return
+     */
     public int[] lookupCategories(char c) {
-        return codepointMappings[c];
+        int[] mappings = codepointMappings[c];
+
+        if (mappings == null) {
+            return defaultCategory;
+        }
+
+        return mappings;
     }
 
     public int[] lookupDefinition(int category) {
