@@ -17,15 +17,16 @@
 
 package com.atilika.kuromoji.naist.jdic;
 
-import com.atilika.kuromoji.CommonCornerCasesTest;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 
-import static com.atilika.kuromoji.TestUtils.assertEqualTokenFeatureLenghts;
+import static com.atilika.kuromoji.TestUtils.assertEqualTokenFeatureLengths;
 import static com.atilika.kuromoji.TestUtils.assertTokenSurfacesEquals;
 import static com.atilika.kuromoji.TestUtils.assertTokenizedStreamEquals;
 import static org.junit.Assert.assertEquals;
@@ -217,7 +218,18 @@ public class TokenizerTest {
 
     @Test
     public void testFeatureLengths() throws IOException {
-        assertEqualTokenFeatureLenghts("ahgsfdajhgsfdこの丘はアクロポリスと呼ばれている。", tokenizer);
+        String userDictionary = "" +
+            "gsf,gsf,ジーエスーエフ,カスタム名詞\n";
+
+        Tokenizer tokenizer = new Tokenizer.Builder()
+            .userDictionary(
+                new ByteArrayInputStream(
+                    userDictionary.getBytes(StandardCharsets.UTF_8)
+                )
+            )
+            .build();
+
+        assertEqualTokenFeatureLengths("ahgsfdajhgsfdこの丘はアクロポリスと呼ばれている。", tokenizer);
     }
 
     @Test

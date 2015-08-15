@@ -34,6 +34,10 @@ public class DictionaryEntry extends AbstractDictionaryEntry {
     public static final int READING = 11;
     public static final int PRONUNCIATION = 12;
 
+    public static final int TOTAL_FEATURES = 9;
+    public static final int READING_FEATURE = 7;
+    public static final int PART_OF_SPEECH_FEATURE = 0;
+
     private final String posLevel1;
     private final String posLevel2;
     private final String posLevel3;

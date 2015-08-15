@@ -27,7 +27,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 
-import static com.atilika.kuromoji.TestUtils.assertEqualTokenFeatureLenghts;
+import static com.atilika.kuromoji.TestUtils.assertEqualTokenFeatureLengths;
 import static com.atilika.kuromoji.TestUtils.assertTokenSurfacesEquals;
 import static org.junit.Assert.assertEquals;
 
@@ -103,14 +103,6 @@ public class UserDictionaryTokenizerTest {
         }
 
         assertEquals(surfaceForms.length, tokens.size());
-    }
-
-    @Test
-    public void testFeatureLengths() throws IOException {
-        String userDictionaryEntry = "クロ,クロ,クロ,カスタム名詞";
-        buildTokenizerWithUserDictionary(userDictionaryEntry);
-
-        assertEqualTokenFeatureLenghts("ahgsfdajhgsfdこの丘はアクロポリスと呼ばれている。", tokenizer);
     }
 
     @Test

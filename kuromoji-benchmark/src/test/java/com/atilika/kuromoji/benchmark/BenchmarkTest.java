@@ -51,7 +51,7 @@ public class BenchmarkTest {
     @Test
     public void testUserDictionaryVariants() throws IOException {
         String jawikisentences = "../kuromoji-ipadic/src/test/resources/jawikisentences.txt";
-        String userDictionaryFilename = "../kuromoji-common/src/test/resources/userdict.txt";
+        String userDictionaryFilename = "../kuromoji-core/src/test/resources/userdict.txt";
         tokenizeUserDictionary(jawikisentences, "jawikisentences-ipadic-features.txt", "com.atilika.kuromoji.ipadic.Tokenizer", userDictionaryFilename);
         tokenizeUserDictionary(jawikisentences, "jawikisentences-jumandic-features.txt", "com.atilika.kuromoji.jumandic.Tokenizer", userDictionaryFilename);
         tokenizeUserDictionary(jawikisentences, "jawikisentences-naist-jdic-features.txt", "com.atilika.kuromoji.naist.jdic.Tokenizer", userDictionaryFilename);
