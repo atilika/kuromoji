@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.atilika.kuromoji.ipadic.dict;
+package com.atilika.kuromoji.naist.jdic.compile;
 
 import com.atilika.kuromoji.dict.AbstractDictionaryEntry;
 
@@ -24,6 +24,17 @@ import static com.atilika.kuromoji.dict.DictionaryField.SURFACE;
 import static com.atilika.kuromoji.dict.DictionaryField.WORD_COST;
 
 public class DictionaryEntry extends AbstractDictionaryEntry {
+    public static final int POS_LEVEL_1 = 4;
+    public static final int POS_LEVEL_2 = 5;
+    public static final int POS_LEVEL_3 = 6;
+    public static final int POS_LEVEL_4 = 7;
+    public static final int CONJUGATION_TYPE = 8;
+    public static final int CONJUGATION_FORM = 9;
+    public static final int BASE_FORM = 10;
+    public static final int READING = 11;
+    public static final int PRONUNCIATION = 12;
+    public static final int TRANSCRIPTION_VARIATION = 13;
+    public static final int COMPOUND_INFORMATION = 14;
 
     private final String posLevel1;
     private final String posLevel2;
@@ -37,6 +48,9 @@ public class DictionaryEntry extends AbstractDictionaryEntry {
     private final String reading;
     private final String pronunciation;
 
+    private final String transcriptionVariation;
+    private final String compoundInformation;
+
     public DictionaryEntry(String[] fields) {
         super(fields[SURFACE],
             Short.parseShort(fields[LEFT_ID]),
@@ -44,18 +58,22 @@ public class DictionaryEntry extends AbstractDictionaryEntry {
             Short.parseShort(fields[WORD_COST])
         );
 
-        posLevel1 = fields[DictionaryField.POS_LEVEL_1];
-        posLevel2 = fields[DictionaryField.POS_LEVEL_2];
-        posLevel3 = fields[DictionaryField.POS_LEVEL_3];
-        posLevel4 = fields[DictionaryField.POS_LEVEL_4];
+        posLevel1 = fields[POS_LEVEL_1];
+        posLevel2 = fields[POS_LEVEL_2];
+        posLevel3 = fields[POS_LEVEL_3];
+        posLevel4 = fields[POS_LEVEL_4];
 
-        conjugationType = fields[DictionaryField.CONJUGATION_TYPE];
-        conjugatedForm = fields[DictionaryField.CONJUGATION_FORM];
+        conjugationType = fields[CONJUGATION_TYPE];
+        conjugatedForm = fields[CONJUGATION_FORM];
 
-        baseForm = fields[DictionaryField.BASE_FORM];
-        reading = fields[DictionaryField.READING];
-        pronunciation = fields[DictionaryField.PRONUNCIATION];
+        baseForm = fields[BASE_FORM];
+        reading = fields[READING];
+        pronunciation = fields[PRONUNCIATION];
+
+        transcriptionVariation = fields[TRANSCRIPTION_VARIATION];
+        compoundInformation = fields[COMPOUND_INFORMATION];
     }
+
 
     public String getPosLevel1() {
         return posLevel1;
@@ -91,5 +109,13 @@ public class DictionaryEntry extends AbstractDictionaryEntry {
 
     public String getPronunciation() {
         return pronunciation;
+    }
+
+    public String getTranscriptionVariation() {
+        return transcriptionVariation;
+    }
+
+    public String getCompoundInformation() {
+        return compoundInformation;
     }
 }

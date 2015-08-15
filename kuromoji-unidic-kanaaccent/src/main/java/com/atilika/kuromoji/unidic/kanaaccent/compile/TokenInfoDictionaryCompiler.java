@@ -19,7 +19,6 @@ package com.atilika.kuromoji.unidic.kanaaccent.compile;
 
 import com.atilika.kuromoji.compile.AbstractTokenInfoDictionaryCompiler;
 import com.atilika.kuromoji.dict.GenericDictionaryEntry;
-import com.atilika.kuromoji.unidic.kanaaccent.dict.DictionaryEntry;
 import com.atilika.kuromoji.util.DictionaryEntryLineParser;
 
 import java.util.ArrayList;

@@ -18,7 +18,7 @@ package com.atilika.kuromoji.unidic.kanaaccent;
 
 import com.atilika.kuromoji.AbstractToken;
 import com.atilika.kuromoji.dict.Dictionary;
-import com.atilika.kuromoji.unidic.kanaaccent.dict.DictionaryField;
+import com.atilika.kuromoji.unidic.kanaaccent.compile.DictionaryEntry;
 import com.atilika.kuromoji.viterbi.ViterbiNode;
 
 /**
@@ -41,7 +41,7 @@ public class Token extends AbstractToken {
      * @return 1st level part-of-speech tag, not null
      */
     public String getPosLevel1() {
-        return getFeature(DictionaryField.POS_LEVEL_1);
+        return getFeature(DictionaryEntry.POS_LEVEL_1);
     }
 
     /**
@@ -50,7 +50,7 @@ public class Token extends AbstractToken {
      * @return 2nd level part-of-speech tag, not null
      */
     public String getPosLevel2() {
-        return getFeature(DictionaryField.POS_LEVEL_2);
+        return getFeature(DictionaryEntry.POS_LEVEL_2);
     }
 
     /**
@@ -59,7 +59,7 @@ public class Token extends AbstractToken {
      * @return 3rd level part-of-speech tag, not null
      */
     public String getPosLevel3() {
-        return getFeature(DictionaryField.POS_LEVEL_3);
+        return getFeature(DictionaryEntry.POS_LEVEL_3);
     }
 
     /**
@@ -68,7 +68,7 @@ public class Token extends AbstractToken {
      * @return 4th level part-of-speech tag, not null
      */
     public String getPosLevel4() {
-        return getFeature(DictionaryField.POS_LEVEL_4);
+        return getFeature(DictionaryEntry.POS_LEVEL_4);
     }
 
     /**
@@ -79,7 +79,7 @@ public class Token extends AbstractToken {
      * @return conjugation form, not null
      */
     public String getConjugationForm() {
-        return getFeature(DictionaryField.CONJUGATION_FORM);
+        return getFeature(DictionaryEntry.CONJUGATION_FORM);
     }
 
     /**
@@ -90,7 +90,7 @@ public class Token extends AbstractToken {
      * @return conjugation type, not null
      */
     public String getConjugationType() {
-        return getFeature(DictionaryField.CONJUGATION_TYPE);
+        return getFeature(DictionaryEntry.CONJUGATION_TYPE);
     }
 
     /**
@@ -99,7 +99,7 @@ public class Token extends AbstractToken {
      * @return lemma reading form, not null
      */
     public String getLemmaReadingForm() {
-        return getFeature(DictionaryField.LEMMA_READING_FORM);
+        return getFeature(DictionaryEntry.LEMMA_READING_FORM);
     }
 
     /**
@@ -108,7 +108,7 @@ public class Token extends AbstractToken {
      * @return lemma, not null
      */
     public String getLemma() {
-        return getFeature(DictionaryField.LEMMA);
+        return getFeature(DictionaryEntry.LEMMA);
     }
 
     /**
@@ -117,11 +117,11 @@ public class Token extends AbstractToken {
      * @return pronunciation, not null
      */
     public String getPronunciation() {
-        return getFeature(DictionaryField.PRONUNCIATION);
+        return getFeature(DictionaryEntry.PRONUNCIATION);
     }
 
     public String getPronunciationBaseForm() {
-        return getFeature(DictionaryField.PRONUNCIATION_BASE_FORM);
+        return getFeature(DictionaryEntry.PRONUNCIATION_BASE_FORM);
     }
 
     /**
@@ -130,7 +130,7 @@ public class Token extends AbstractToken {
      * @return written form, not null
      */
     public String getWrittenForm() {
-        return getFeature(DictionaryField.WRITTEN_FORM);
+        return getFeature(DictionaryEntry.WRITTEN_FORM);
     }
 
     /**
@@ -139,7 +139,7 @@ public class Token extends AbstractToken {
      * @return written base form, not null
      */
     public String getWrittenBaseForm() {
-        return getFeature(DictionaryField.WRITTEN_BASE_FORM);
+        return getFeature(DictionaryEntry.WRITTEN_BASE_FORM);
     }
 
     /**
@@ -148,7 +148,7 @@ public class Token extends AbstractToken {
      * @return language type, not null
      */
     public String getLanguageType() {
-        return getFeature(DictionaryField.LANGUAGE_TYPE);
+        return getFeature(DictionaryEntry.LANGUAGE_TYPE);
     }
 
     /**
@@ -157,7 +157,7 @@ public class Token extends AbstractToken {
      * @return initial sound alteration type, not null
      */
     public String getInitialSoundAlterationType() {
-        return getFeature(DictionaryField.INITIAL_SOUND_ALTERATION_TYPE);
+        return getFeature(DictionaryEntry.INITIAL_SOUND_ALTERATION_TYPE);
     }
 
     /**
@@ -166,7 +166,7 @@ public class Token extends AbstractToken {
      * @return initial sound alteration form, not null
      */
     public String getInitialSoundAlterationForm() {
-        return getFeature(DictionaryField.INITIAL_SOUND_ALTERATION_FORM);
+        return getFeature(DictionaryEntry.INITIAL_SOUND_ALTERATION_FORM);
     }
 
     /**
@@ -175,7 +175,7 @@ public class Token extends AbstractToken {
      * @return final sound alteration type, not null
      */
     public String getFinalSoundAlterationType() {
-        return getFeature(DictionaryField.FINAL_SOUND_ALTERATION_TYPE);
+        return getFeature(DictionaryEntry.FINAL_SOUND_ALTERATION_TYPE);
     }
 
     /**
@@ -184,7 +184,7 @@ public class Token extends AbstractToken {
      * @return final sound alteration form, not null
      */
     public String getFinalSoundAlterationForm() {
-        return getFeature(DictionaryField.FINAL_SOUND_ALTERATION_FORM);
+        return getFeature(DictionaryEntry.FINAL_SOUND_ALTERATION_FORM);
     }
 
     /**
@@ -193,7 +193,7 @@ public class Token extends AbstractToken {
      * @return kana, not null
      */
     public String getKana() {
-        return getFeature(DictionaryField.KANA);
+        return getFeature(DictionaryEntry.KANA);
     }
 
     /**
@@ -202,7 +202,7 @@ public class Token extends AbstractToken {
      * @return kana base, not null
      */
     public String getKanaBase() {
-        return getFeature(DictionaryField.KANA_BASE);
+        return getFeature(DictionaryEntry.KANA_BASE);
     }
 
     /**
@@ -211,7 +211,7 @@ public class Token extends AbstractToken {
      * @return form, not null
      */
     public String getForm() {
-        return getFeature(DictionaryField.FORM);
+        return getFeature(DictionaryEntry.FORM);
     }
 
     /**
@@ -220,7 +220,7 @@ public class Token extends AbstractToken {
      * @return form base, not null
      */
     public String getFormBase() {
-        return getFeature(DictionaryField.FORM_BASE);
+        return getFeature(DictionaryEntry.FORM_BASE);
     }
 
     /**
@@ -229,7 +229,7 @@ public class Token extends AbstractToken {
      * @return initial connection type, not null
      */
     public String getInitialConnectionType() {
-        return getFeature(DictionaryField.INITIAL_CONNECTION_TYPE);
+        return getFeature(DictionaryEntry.INITIAL_CONNECTION_TYPE);
     }
 
     /**
@@ -238,7 +238,7 @@ public class Token extends AbstractToken {
      * @return final connection type, not null
      */
     public String getFinalConnectionType() {
-        return getFeature(DictionaryField.FINAL_CONNECTION_TYPE);
+        return getFeature(DictionaryEntry.FINAL_CONNECTION_TYPE);
     }
 
     /**
@@ -247,7 +247,7 @@ public class Token extends AbstractToken {
      * @return accent type, not null
      */
     public String getAccentType() {
-        return getFeature(DictionaryField.ACCENT_TYPE);
+        return getFeature(DictionaryEntry.ACCENT_TYPE);
     }
 
     /**
@@ -256,7 +256,7 @@ public class Token extends AbstractToken {
      * @return accent connection type, not null
      */
     public String getAccentConnectionType() {
-        return getFeature(DictionaryField.ACCENT_CONNECTION_TYPE);
+        return getFeature(DictionaryEntry.ACCENT_CONNECTION_TYPE);
     }
 
     /**
@@ -265,7 +265,7 @@ public class Token extends AbstractToken {
      * @return accent modification type, not null
      */
     public String getAccentModificationType() {
-        return getFeature(DictionaryField.ACCENT_MODIFICATION_TYPE);
+        return getFeature(DictionaryEntry.ACCENT_MODIFICATION_TYPE);
     }
 
 }
