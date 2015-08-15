@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.atilika.kuromoji.jumandic.dict;
+package com.atilika.kuromoji.jumandic.compile;
 
 import com.atilika.kuromoji.dict.AbstractDictionaryEntry;
 
@@ -24,6 +24,13 @@ import static com.atilika.kuromoji.dict.DictionaryField.SURFACE;
 import static com.atilika.kuromoji.dict.DictionaryField.WORD_COST;
 
 public class DictionaryEntry extends AbstractDictionaryEntry {
+    public static final int POS_LEVEL_1 = 4;
+    public static final int POS_LEVEL_2 = 5;
+    public static final int POS_LEVEL_3 = 6;
+    public static final int POS_LEVEL_4 = 7;
+    public static final int BASE_FORM = 8;
+    public static final int READING = 9;
+    public static final int SEMANTIC_INFORMATION = 10;
 
     private final String posLevel1;
     private final String posLevel2;
@@ -41,14 +48,14 @@ public class DictionaryEntry extends AbstractDictionaryEntry {
             Short.parseShort(fields[WORD_COST])
         );
 
-        posLevel1 = fields[DictionaryField.POS_LEVEL_1];
-        posLevel2 = fields[DictionaryField.POS_LEVEL_2];
-        posLevel3 = fields[DictionaryField.POS_LEVEL_3];
-        posLevel4 = fields[DictionaryField.POS_LEVEL_4];
+        posLevel1 = fields[POS_LEVEL_1];
+        posLevel2 = fields[POS_LEVEL_2];
+        posLevel3 = fields[POS_LEVEL_3];
+        posLevel4 = fields[POS_LEVEL_4];
 
-        baseForm = fields[DictionaryField.BASE_FORM];
-        reading = fields[DictionaryField.READING];
-        semanticInformation = fields[DictionaryField.SEMANTIC_INFORMATION];
+        baseForm = fields[BASE_FORM];
+        reading = fields[READING];
+        semanticInformation = fields[SEMANTIC_INFORMATION];
     }
 
 

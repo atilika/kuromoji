@@ -17,13 +17,16 @@
 
 package com.atilika.kuromoji.naist.jdic;
 
+import com.atilika.kuromoji.CommonCornerCasesTest;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 
 import static com.atilika.kuromoji.TestUtils.assertEqualTokenFeatureLenghts;
+import static com.atilika.kuromoji.TestUtils.assertTokenSurfacesEquals;
 import static com.atilika.kuromoji.TestUtils.assertTokenizedStreamEquals;
 import static org.junit.Assert.assertEquals;
 
@@ -223,6 +226,19 @@ public class TokenizerTest {
             getClass().getResourceAsStream("/bocchan-naist-jdic-features.txt"),
             getClass().getResourceAsStream("/bocchan.txt"),
             tokenizer
+        );
+    }
+
+    @Test
+    public void testPunctuation() {
+        String gerryNoHanaNoHanashi = "僕の鼻はちょっと\r\n長いだよ。";
+
+        // A special segmentation case not covered by CommonCornerCasesTest.testPunctuation())
+        assertTokenSurfacesEquals(
+            Arrays.asList(
+                "僕", "の", "鼻", "は", "ちょっと", "\r\n", "長い", "だ", "よ", "。"
+            ),
+            tokenizer.tokenize(gerryNoHanaNoHanashi)
         );
     }
 }

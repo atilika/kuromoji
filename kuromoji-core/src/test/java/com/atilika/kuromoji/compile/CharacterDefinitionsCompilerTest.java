@@ -80,7 +80,8 @@ public class CharacterDefinitionsCompilerTest {
 
     @Test
     public void testCharacterCategories() throws IOException {
-        assertCharacterCategories(characterDefinition, '\u0000', null);
+        // Non-defined characters get the default definition
+        assertCharacterCategories(characterDefinition, '\u0000', "DEFAULT");
         assertCharacterCategories(characterDefinition, '〇', "SYMBOL", "KANJI", "KANJINUMERIC");
         assertCharacterCategories(characterDefinition, ' ', "SPACE");
         assertCharacterCategories(characterDefinition, '。', "SYMBOL");

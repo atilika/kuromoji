@@ -14,22 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.atilika.kuromoji.ipadic.dict;
+package com.atilika.kuromoji;
 
-/**
- * Feature indexes for IPADIC
- */
-public class DictionaryField {
+import java.util.Arrays;
 
-    public static final int POS_LEVEL_1 = 4;
-    public static final int POS_LEVEL_2 = 5;
-    public static final int POS_LEVEL_3 = 6;
-    public static final int POS_LEVEL_4 = 7;
+import static com.atilika.kuromoji.TestUtils.assertTokenSurfacesEquals;
 
-    public static final int CONJUGATION_TYPE = 8;
-    public static final int CONJUGATION_FORM = 9;
+public class CommonCornerCasesTest {
 
-    public static final int BASE_FORM = 10;
-    public static final int READING = 11;
-    public static final int PRONUNCIATION = 12;
+    public static void testPunctuation(AbstractTokenizer tokenizer) {
+        String gerryNoHanaNoHanashi = "僕の鼻はちょっと\r\n長いだよ。";
+
+        assertTokenSurfacesEquals(
+            Arrays.asList(
+                "僕", "の", "鼻", "は", "ちょっと", "\r", "\n", "長い", "だ", "よ", "。"
+            ),
+            tokenizer.tokenize(gerryNoHanaNoHanashi)
+        );
+    }
 }
