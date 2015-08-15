@@ -22,6 +22,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -118,16 +119,23 @@ public class TestUtils {
         assertTrue(true);
     }
 
-    public static void assertEqualTokenFeatureLenghts(String text, AbstractTokenizer tokenizer) {
+    public static void assertEqualTokenFeatureLengths(String text, AbstractTokenizer tokenizer) {
         List<AbstractToken> tokens = tokenizer.tokenize(text);
-        Set<Integer> lenghts = new HashSet<>();
+        Set<Integer> lengths = new HashSet<>();
 
         for (AbstractToken token : tokens) {
-            lenghts.add(
+//            System.out.println(
+//                token.getAllFeaturesArray().length +
+//                    " - " +
+//                    token.getSurfaceForm() +
+//                    " - " +
+//                    Arrays.asList(token.getAllFeaturesArray())
+//            );
+            lengths.add(
                 token.getAllFeaturesArray().length
             );
         }
 
-        assertEquals(1, lenghts.size());
+        assertEquals(1, lengths.size());
     }
 }

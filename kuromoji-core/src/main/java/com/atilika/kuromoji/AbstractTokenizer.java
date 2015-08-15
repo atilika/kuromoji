@@ -270,10 +270,9 @@ public abstract class AbstractTokenizer {
         protected boolean split = true;
         protected List<Integer> penalties = Collections.emptyList();
 
-        protected int totalFeatures = 1;
-        protected int unknownDictionaryTotalFeatures = 1;
-        protected int readingFeature = 0;
-        protected int partOfSpeechFeature = 0;
+        protected int totalFeatures = -1;
+        protected int readingFeature = -1;
+        protected int partOfSpeechFeature = -1;
 
         protected ResourceResolver resolver;
 
@@ -285,7 +284,9 @@ public abstract class AbstractTokenizer {
                 connectionCosts = ConnectionCosts.newInstance(resolver);
                 tokenInfoDictionary = TokenInfoDictionary.newInstance(resolver);
                 characterDefinitions = CharacterDefinitions.newInstance(resolver);
-                unknownDictionary = UnknownDictionary.newInstance(resolver, characterDefinitions, unknownDictionaryTotalFeatures);
+                unknownDictionary = UnknownDictionary.newInstance(
+                    resolver, characterDefinitions, totalFeatures
+                );
                 insertedDictionary = new InsertedDictionary(totalFeatures);
             } catch (Exception ouch) {
                 throw new RuntimeException("Could not load dictionaries.", ouch);

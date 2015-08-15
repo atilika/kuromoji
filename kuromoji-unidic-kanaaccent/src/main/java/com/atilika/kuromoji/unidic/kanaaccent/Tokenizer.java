@@ -18,6 +18,7 @@ package com.atilika.kuromoji.unidic.kanaaccent;
 
 import com.atilika.kuromoji.AbstractTokenizer;
 import com.atilika.kuromoji.dict.Dictionary;
+import com.atilika.kuromoji.unidic.kanaaccent.compile.DictionaryEntry;
 import com.atilika.kuromoji.util.SimpleResourceResolver;
 import com.atilika.kuromoji.viterbi.TokenFactory;
 import com.atilika.kuromoji.viterbi.ViterbiNode;
@@ -73,10 +74,9 @@ public class Tokenizer extends AbstractTokenizer {
          * Creates a default builder
          */
         public Builder() {
-            totalFeatures = 22;
-            unknownDictionaryTotalFeatures = 26;
-            readingFeature = 13;
-            partOfSpeechFeature = 0;
+            totalFeatures = DictionaryEntry.TOTAL_FEATURES;
+            readingFeature = DictionaryEntry.READING_FEATURE;
+            partOfSpeechFeature = DictionaryEntry.PART_OF_SPEECH_FEATURE;
 
             resolver = new SimpleResourceResolver(this.getClass());
 
