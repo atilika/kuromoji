@@ -23,6 +23,7 @@ import com.atilika.kuromoji.dict.Dictionary;
 import com.atilika.kuromoji.dict.InsertedDictionary;
 import com.atilika.kuromoji.dict.TokenInfoDictionary;
 import com.atilika.kuromoji.dict.UnknownDictionary;
+import com.atilika.kuromoji.ipadic.compile.DictionaryEntry;
 import com.atilika.kuromoji.trie.DoubleArrayTrie;
 import com.atilika.kuromoji.util.SimpleResourceResolver;
 import com.atilika.kuromoji.viterbi.TokenFactory;
@@ -93,10 +94,9 @@ public class Tokenizer extends AbstractTokenizer {
          * Creates a default builder
          */
         public Builder() {
-            totalFeatures = 9;
-            unknownDictionaryTotalFeatures = 9;
-            readingFeature = 7;
-            partOfSpeechFeature = 0;
+            totalFeatures = DictionaryEntry.TOTAL_FEATURES;
+            readingFeature = DictionaryEntry.READING_FEATURE;
+            partOfSpeechFeature = DictionaryEntry.PART_OF_SPEECH_FEATURE;
 
             tokenFactory = new TokenFactory<Token>() {
                 @Override
@@ -209,8 +209,10 @@ public class Tokenizer extends AbstractTokenizer {
                     characterDefinitions.setCategories('・', new String[]{"SYMBOL"});
                 }
 
-                unknownDictionary = UnknownDictionary.newInstance(resolver, characterDefinitions, 9);
-                insertedDictionary = new InsertedDictionary(9);
+                unknownDictionary = UnknownDictionary.newInstance(
+                    resolver, characterDefinitions, totalFeatures
+                );
+                insertedDictionary = new InsertedDictionary(totalFeatures);
             } catch (Exception ouch) {
                 throw new RuntimeException("Could not load dictionaries.", ouch);
             }

@@ -42,6 +42,10 @@ public class DictionaryEntry extends AbstractDictionaryEntry {
     public static final int FINAL_SOUND_ALTERATION_TYPE = 19;
     public static final int FINAL_SOUND_ALTERATION_FORM = 20;
 
+    public static final int TOTAL_FEATURES = 17;
+    public static final int READING_FEATURE = 7;
+    public static final int PART_OF_SPEECH_FEATURE = 0;
+
     private final String posLevel1;
     private final String posLevel2;
     private final String posLevel3;

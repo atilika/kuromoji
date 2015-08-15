@@ -23,9 +23,10 @@ import org.junit.Test;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
-import static com.atilika.kuromoji.TestUtils.assertEqualTokenFeatureLenghts;
+import static com.atilika.kuromoji.TestUtils.assertEqualTokenFeatureLengths;
 import static com.atilika.kuromoji.TestUtils.assertTokenizedStreamEquals;
 import static org.junit.Assert.assertEquals;
 
@@ -94,7 +95,7 @@ public class TokenizerTest {
         List<Token> tokens = tokenizer.tokenize("北斗の拳は非常に面白かった。");
 
         String expectedSurface = "北斗の拳";
-        String expectedFeatures = "カスタム名詞,*,*,*,*,*,*,*,*,*,*,*,*,ホクトノケン,*,*,*,*,*,*,*,*";
+        String expectedFeatures = "カスタム名詞,*,*,*,*,*,*,*,*,*,*,*,*,ホクトノケン,*,*,*,*,*,*,*,*,*,*,*,*";
 
         assertEquals(expectedSurface, tokens.get(0).getSurfaceForm());
         assertEquals(expectedFeatures, tokens.get(0).getAllFeatures());
@@ -240,8 +241,6 @@ public class TokenizerTest {
             assertEquals(expectedFinalSoundAlterationTypes[i], tokens.get(i).getFinalSoundAlterationType());
             assertEquals(expectedFinalSoundAlterationForms[i], tokens.get(i).getFinalSoundAlterationForm());
         }
-
-
     }
 
     @Test
@@ -294,7 +293,18 @@ public class TokenizerTest {
 
     @Test
     public void testFeatureLengths() throws IOException {
-        assertEqualTokenFeatureLenghts("ahgsfdajhgsfdこの丘はアクロポリスと呼ばれている。", tokenizer);
+        String userDictionary = "" +
+            "gsf,gsf,ジーエスーエフ,カスタム名詞\n";
+
+        Tokenizer tokenizer = new Tokenizer.Builder()
+            .userDictionary(
+                new ByteArrayInputStream(
+                    userDictionary.getBytes(StandardCharsets.UTF_8)
+                )
+            )
+            .build();
+
+        assertEqualTokenFeatureLengths("ahgsfdajhgsfdこの丘はアクロポリスと呼ばれている。", tokenizer);
     }
 
     @Test
