@@ -20,10 +20,10 @@ import com.atilika.kuromoji.AbstractToken;
 import com.atilika.kuromoji.AbstractTokenizer;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
-import org.apache.commons.cli.PosixParser;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -306,10 +306,10 @@ public class Benchmark {
         options.addOption("u", "user-dictionary", true, "Optional user dictionary filename to use");
         options.addOption("c", "count", true, "Number of documents ot process (Default: 0, which means all");
 //        options.addOption("v", "validation-input", true, "Validation filename");
-        options.addOption("o", "tokenizer-output", true, "Tokenizer output filename.  If unset, segmentation is done, but.");
-        options.addOption(null, "benchmark-output", true, "Output filename");
+        options.addOption("o", "output", true, "Output filename.  If unset, segmentation is done, but the result is discarded");
+        options.addOption(null, "benchmark-output", true, "Benchmark metrics output filename filename");
 
-        CommandLineParser parser = new PosixParser();
+        CommandLineParser parser = new DefaultParser();
         CommandLine commandLine = null;
         try {
             commandLine = parser.parse(options, args);
@@ -320,6 +320,7 @@ public class Benchmark {
                 throw new ParseException("A single input filename is required");
             }
         } catch (ParseException e) {
+            System.err.println(e.getMessage());
             usage(options);
         }
 

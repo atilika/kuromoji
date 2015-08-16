@@ -28,7 +28,7 @@ public class BenchmarkTest {
     @Ignore("Enable during development")
     @Test
     public void testBenchmarkIpadics() throws IOException {
-        benchmark("com.atilika.kuromoji.ipadic.Tokenizer", "ipadic", "kuromoji-benchmark/jawiki/jawikiuserdict.txt");
+//        benchmark("com.atilika.kuromoji.ipadic.Tokenizer", "ipadic", "kuromoji-benchmark/jawiki/jawikiuserdict.txt");
         benchmark("com.atilika.kuromoji.ipadic.Tokenizer", "ipadic");
 //        benchmark("com.atilika.kuromoji.jumandic.Tokenizer", "jumandic");
 //        benchmark("com.atilika.kuromoji.naist.jdic.Tokenizer", "naist-jdic");
@@ -71,7 +71,7 @@ public class BenchmarkTest {
         args.add("3000");
         args.add("--benchmark-output");
         args.add("jawiki-" + tokenizerName + "-benchmark.tsv");
-        args.add("kuromoji-benchmark/jawiki/jawiki.tsv.gz");
+        args.add("../kuromoji-benchmark/jawiki/jawiki.tsv.gz");
 
         if (userDictionaryFilename != null) {
             args.add(0, "-u");
