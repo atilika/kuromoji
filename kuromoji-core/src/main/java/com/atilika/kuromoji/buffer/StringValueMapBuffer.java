@@ -63,7 +63,7 @@ public class StringValueMapBuffer {
     private int calculateSize(TreeMap<Integer, String> input) {
         int size = 0;
         for (String value : input.values()) {
-            size += INTEGER_BYTES + value.getBytes().length + 2 * INTEGER_BYTES;
+            size += INTEGER_BYTES + value.getBytes(StandardCharsets.UTF_8).length + 2 * INTEGER_BYTES;
         }
         return size;
     }
