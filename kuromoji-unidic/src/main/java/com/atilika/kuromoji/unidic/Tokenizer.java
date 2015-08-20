@@ -24,6 +24,8 @@ import com.atilika.kuromoji.util.SimpleResourceResolver;
 import com.atilika.kuromoji.viterbi.TokenFactory;
 import com.atilika.kuromoji.viterbi.ViterbiNode;
 
+import java.util.List;
+
 /**
  * A tokenizer based on the UniDic dictionary
  * <p>
@@ -64,6 +66,18 @@ public class Tokenizer extends AbstractTokenizer {
      */
     private Tokenizer(Builder builder) {
         configure(builder);
+    }
+
+    /**
+     * Tokenizes the provided text and returns a list of tokens with various feature information
+     * <p>
+     * This method is thread safe
+     *
+     * @param text  text to tokenize
+     * @return list of Token, not null
+     */
+    public List<Token> tokenize(String text) {
+        return doTokenize(text);
     }
 
     /**

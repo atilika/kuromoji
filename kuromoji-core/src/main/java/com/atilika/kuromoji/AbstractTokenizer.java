@@ -121,7 +121,7 @@ public abstract class AbstractTokenizer {
      * @param <T>  token type
      * @return list of Token, not null
      */
-    public <T extends AbstractToken> List<T> tokenize(String text) {
+    public <T extends AbstractToken> List<T> doTokenize(String text) {
 
         if (!split) {
             return tokenize(0, text);
