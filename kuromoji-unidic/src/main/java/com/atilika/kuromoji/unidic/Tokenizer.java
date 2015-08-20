@@ -50,6 +50,7 @@ import java.util.List;
  * }
  * </pre>
  */
+
 public class Tokenizer extends AbstractTokenizer {
 
     /**
@@ -76,8 +77,9 @@ public class Tokenizer extends AbstractTokenizer {
      * @param text  text to tokenize
      * @return list of Token, not null
      */
+    @Override
     public List<Token> tokenize(String text) {
-        return doTokenize(text);
+        return createTokenList(text);
     }
 
     /**

@@ -76,8 +76,9 @@ public class Tokenizer extends AbstractTokenizer {
      * @param text  text to tokenize
      * @return list of Token, not null
      */
+    @Override
     public List<Token> tokenize(String text) {
-        return doTokenize(text);
+        return createTokenList(text);
     }
 
     public static class Builder extends AbstractTokenizer.Builder {

@@ -29,6 +29,7 @@ public class CommonCornerCasesTest {
             Arrays.asList(
                 "僕", "の", "鼻", "は", "ちょっと", "\r", "\n", "長い", "だ", "よ", "。"
             ),
+
             tokenizer.tokenize(gerryNoHanaNoHanashi)
         );
     }
