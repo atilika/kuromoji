@@ -27,7 +27,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 
-import static com.atilika.kuromoji.TestUtils.assertEqualTokenFeatureLengths;
 import static com.atilika.kuromoji.TestUtils.assertTokenSurfacesEquals;
 import static org.junit.Assert.assertEquals;
 
