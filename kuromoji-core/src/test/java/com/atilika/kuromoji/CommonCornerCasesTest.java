@@ -23,12 +23,13 @@ import static com.atilika.kuromoji.TestUtils.assertTokenSurfacesEquals;
 public class CommonCornerCasesTest {
 
     public static void testPunctuation(AbstractTokenizer tokenizer) {
-        String gerryNoHanaNoHanashi = "僕の鼻はちょっと\r\n長いだよ。";
+        String gerryNoHanaNoHanashi = "僕の鼻はちょっと\r\n長いよ。";
 
         assertTokenSurfacesEquals(
             Arrays.asList(
-                "僕", "の", "鼻", "は", "ちょっと", "\r", "\n", "長い", "だ", "よ", "。"
+                "僕", "の", "鼻", "は", "ちょっと", "\r", "\n", "長い", "よ", "。"
             ),
+
             tokenizer.tokenize(gerryNoHanaNoHanashi)
         );
     }

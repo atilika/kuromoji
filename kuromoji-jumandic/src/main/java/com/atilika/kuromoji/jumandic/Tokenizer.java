@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.atilika.kuromoji.jumandic;
 
 import com.atilika.kuromoji.AbstractTokenizer;
@@ -22,6 +23,8 @@ import com.atilika.kuromoji.jumandic.compile.DictionaryEntry;
 import com.atilika.kuromoji.util.SimpleResourceResolver;
 import com.atilika.kuromoji.viterbi.TokenFactory;
 import com.atilika.kuromoji.viterbi.ViterbiNode;
+
+import java.util.List;
 
 /**
  * A tokenizer based on the JUMAN DIC dictionary
@@ -34,7 +37,7 @@ import com.atilika.kuromoji.viterbi.ViterbiNode;
  * import com.atilika.kuromoji.jumandic.Token;
  * import com.atilika.kuromoji.jumandic.Tokenizer;
  * import java.util.List;
- *
+ * <p>
  * public class KuromojiExample {
  *     public static void main(String[] args) {
  *         Tokenizer tokenizer = new Tokenizer() ;
@@ -63,6 +66,19 @@ public class Tokenizer extends AbstractTokenizer {
      */
     private Tokenizer(Builder builder) {
         configure(builder);
+    }
+
+    /**
+     * Tokenizes the provided text and returns a list of tokens with various feature information
+     * <p>
+     * This method is thread safe
+     *
+     * @param text  text to tokenize
+     * @return list of Token, not null
+     */
+    @Override
+    public List<Token> tokenize(String text) {
+        return createTokenList(text);
     }
 
     /**

@@ -130,7 +130,6 @@ public class Benchmark {
 
         while ((line = reader.readLine()) != null) {
             String text = EscapeUtils.unescape(line);
-//            System.out.println(documents.get() + ": " + text.split("\t")[0]);
 
             tokenizeDocument(writer, text);
 
@@ -145,7 +144,7 @@ public class Benchmark {
     }
 
     private void tokenizeDocument(Writer writer, String text) throws IOException {
-        List<AbstractToken> tokens = tokenizer.tokenize(text);
+        List<? extends AbstractToken> tokens = tokenizer.tokenize(text);
 
         updateStatistics(text, tokens);
 
@@ -160,7 +159,7 @@ public class Benchmark {
         }
     }
 
-    private void updateStatistics(String text, List<AbstractToken> tokens) {
+    private void updateStatistics(String text, List<? extends AbstractToken> tokens) {
         this.documents.incrementAndGet();
         this.characters.getAndAdd(text.length());
         this.tokens.getAndAdd(tokens.size());
