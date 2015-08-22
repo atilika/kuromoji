@@ -111,6 +111,10 @@ public abstract class AbstractTokenizer {
         dictionaryMap.put(ViterbiNode.Type.INSERTED, insertedDictionary);
     }
 
+    public List<? extends AbstractToken> tokenize(String text) {
+        return createTokenList(text);
+    }
+
 
     /**
      * Tokenizes the provided text and returns a list of tokens with various feature information
@@ -121,16 +125,16 @@ public abstract class AbstractTokenizer {
      * @param <T>  token type
      * @return list of Token, not null
      */
-    public <T extends AbstractToken> List<T> tokenize(String text) {
+    protected <T extends AbstractToken> List<T> createTokenList(String text) {
 
         if (!split) {
-            return tokenize(0, text);
+            return createTokenList(0, text);
         }
 
         List<Integer> splitPositions = getSplitPositions(text);
 
         if (splitPositions.size() == 0) {
-            return tokenize(0, text);
+            return createTokenList(0, text);
         }
 
         ArrayList<T> result = new ArrayList<>();
@@ -138,12 +142,12 @@ public abstract class AbstractTokenizer {
         int offset = 0;
 
         for (int position : splitPositions) {
-            result.addAll(this.<T>tokenize(offset, text.substring(offset, position + 1)));
+            result.addAll(this.<T>createTokenList(offset, text.substring(offset, position + 1)));
             offset = position + 1;
         }
 
         if (offset < text.length()) {
-            result.addAll(this.<T>tokenize(offset, text.substring(offset)));
+            result.addAll(this.<T>createTokenList(offset, text.substring(offset)));
         }
 
         return result;
@@ -229,7 +233,7 @@ public abstract class AbstractTokenizer {
      * @param text sentence to tokenize
      * @return list of Token
      */
-    private <T extends AbstractToken> List<T> tokenize(int offset, String text) {
+    private <T extends AbstractToken> List<T> createTokenList(int offset, String text) {
         ArrayList<T> result = new ArrayList<>();
 
         ViterbiLattice lattice = viterbiBuilder.build(text);

@@ -22,16 +22,18 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public class TestUtils {
 
-    public static void assertTokenSurfacesEquals(List<String> expectedSurfaces, List<AbstractToken> actualTokens) {
+    public static void assertTokenSurfacesEquals(List<String> expectedSurfaces, List<? extends AbstractToken> actualTokens) {
         List<String> actualSurfaces = new ArrayList<>();
 
         for (AbstractToken token : actualTokens) {
@@ -54,7 +56,7 @@ public class TestUtils {
         String untokenizedLine;
 
         while ((untokenizedLine = untokenizedInputReader.readLine()) != null) {
-            List<AbstractToken> tokens = tokenizer.tokenize(untokenizedLine);
+            List<? extends AbstractToken> tokens = tokenizer.tokenize(untokenizedLine);
 
             for (AbstractToken token : tokens) {
                 String tokenLine = tokenizedInputReader.readLine();
@@ -120,17 +122,10 @@ public class TestUtils {
     }
 
     public static void assertEqualTokenFeatureLengths(String text, AbstractTokenizer tokenizer) {
-        List<AbstractToken> tokens = tokenizer.tokenize(text);
+        List<? extends AbstractToken> tokens = tokenizer.tokenize(text);
         Set<Integer> lengths = new HashSet<>();
 
         for (AbstractToken token : tokens) {
-//            System.out.println(
-//                token.getAllFeaturesArray().length +
-//                    " - " +
-//                    token.getSurfaceForm() +
-//                    " - " +
-//                    Arrays.asList(token.getAllFeaturesArray())
-//            );
             lengths.add(
                 token.getAllFeaturesArray().length
             );
