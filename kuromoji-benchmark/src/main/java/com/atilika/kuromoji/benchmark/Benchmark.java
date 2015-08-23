@@ -341,7 +341,6 @@ public class Benchmark {
 
             // Set user dictionary
             if (userDictionaryFilename != null) {
-
                 builder.getClass()
                     .getMethod("userDictionary", String.class)
                     .invoke(builder, userDictionaryFilename);
