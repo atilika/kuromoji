@@ -60,6 +60,20 @@ public class SimpleBenchmarkTest {
         }
     }
 
+    @Test
+    public void testInstantiationBenchmark() throws Exception {
+        for (String classname : tokenizerClasses) {
+            long starttime = System.currentTimeMillis();
+            int count = 10;
+
+            for (int i = 0; i < count; i++) {
+                tokenizeForName(classname);
+            }
+
+            System.out.println("Created " + count + " instances of " + classname + " in " + (System.currentTimeMillis() - starttime) + "ms");
+        }
+    }
+
     private AbstractTokenizer tokenizeForName(String classname) throws Exception {
         Class clazz = Class.forName(classname);
         return (AbstractTokenizer) clazz.newInstance();
