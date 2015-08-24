@@ -322,6 +322,13 @@
     <dependencies>
         <dependency>
             <groupId>com.atilika.kuromoji</groupId>
+            <artifactId>kuromoji-core</artifactId>
+            <version>0.9-SNAPSHOT</version>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.atilika.kuromoji</groupId>
             <artifactId>kuromoji-ipadic</artifactId>
             <version>0.9.0</version>
             <scope>compile</scope>

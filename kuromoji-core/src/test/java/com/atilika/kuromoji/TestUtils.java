@@ -43,6 +43,21 @@ public class TestUtils {
         assertEquals(expectedSurfaces, actualSurfaces);
     }
 
+    public static void assertCanTokenizeStream(InputStream untokenizedInput, AbstractTokenizer tokenizer) throws IOException {
+        BufferedReader untokenizedInputReader = new BufferedReader(
+            new InputStreamReader(untokenizedInput, StandardCharsets.UTF_8)
+        );
+
+        String untokenizedLine;
+
+        while ((untokenizedLine = untokenizedInputReader.readLine()) != null) {
+            List<? extends AbstractToken> tokens = tokenizer.tokenize(untokenizedLine);
+            // Discard tokens -- we just check that no exceptions are thrown
+        }
+
+        assertTrue(true);
+    }
+
     public static void assertTokenizedStreamEquals(InputStream tokenizedInput,
                                                    InputStream untokenizedInput,
                                                    AbstractTokenizer tokenizer) throws IOException {
