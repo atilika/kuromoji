@@ -205,7 +205,7 @@ public class TokenizerTest {
 
     @Test
     public void testAllFeatures() {
-        Tokenizer tokenizer = new Tokenizer.Builder().build();
+        Tokenizer tokenizer = new Tokenizer();
         String input = "寿司が食べたいです。";
 
         List<Token> tokens = tokenizer.tokenize(input);
