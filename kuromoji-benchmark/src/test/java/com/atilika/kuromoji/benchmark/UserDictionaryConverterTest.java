@@ -27,8 +27,8 @@ public class UserDictionaryConverterTest {
     @Test
     public void testConvert() throws IOException {
         UserDictionaryConverter.main(new String[]{
-            "/Users/cm/Projects/kuromoji-cmoen/kuromoji-benchmark/jawiki/jawiki.tsv.gz",
-            "/Users/cm/Projects/kuromoji-cmoen/kuromoji-benchmark/jawiki/jawikiuserdict.txt"
+            "../kuromoji-benchmark/jawiki/jawiki.tsv.gz",
+            "../kuromoji-benchmark/jawiki/jawikiuserdict.txt"
         });
     }
 }
