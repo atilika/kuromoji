@@ -44,7 +44,11 @@ public class SimpleBenchmarkTest {
         for (String classname : tokenizerClasses) {
             long starttime = System.currentTimeMillis();
             AbstractTokenizer t = tokenizeForName(classname);
-            System.out.println("Created " + classname + " in " + (System.currentTimeMillis() - starttime) + "ms");
+
+            System.out.println("Created " + classname
+                + " in " + (System.currentTimeMillis() - starttime)
+                + " msec"
+            );
             tokenizers.put(classname, t);
         }
 
@@ -56,7 +60,10 @@ public class SimpleBenchmarkTest {
                 getClass().getResourceAsStream("/bocchan.txt"),
                 tokenizer
             );
-            System.out.println("Tokenized bocchan.txt using " + classname + " in " + (System.currentTimeMillis() - starttime) + "ms");
+            System.out.println("Tokenized bocchan.txt using " + classname
+                + " in " + (System.currentTimeMillis() - starttime)
+                + " msec"
+            );
         }
     }
 
@@ -70,7 +77,11 @@ public class SimpleBenchmarkTest {
                 tokenizeForName(classname);
             }
 
-            System.out.println("Created " + count + " instances of " + classname + " in " + (System.currentTimeMillis() - starttime) + "ms");
+            System.out.println("Created " + count
+                + " instances of " + classname
+                + " in " + (System.currentTimeMillis() - starttime)
+                + " msec"
+            );
         }
     }
 

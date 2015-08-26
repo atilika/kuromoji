@@ -16,14 +16,16 @@
  */
 package com.atilika.kuromoji.compile;
 
-import com.atilika.kuromoji.dict.AbstractDictionaryEntry;
 import com.atilika.kuromoji.buffer.BufferEntry;
-import com.atilika.kuromoji.dict.GenericDictionaryEntry;
-import com.atilika.kuromoji.dict.TokenInfoDictionary;
 import com.atilika.kuromoji.buffer.FeatureInfoMap;
 import com.atilika.kuromoji.buffer.StringValueMapBuffer;
 import com.atilika.kuromoji.buffer.WordIdMap;
+import com.atilika.kuromoji.dict.AbstractDictionaryEntry;
+import com.atilika.kuromoji.dict.GenericDictionaryEntry;
+import com.atilika.kuromoji.dict.TokenInfoDictionary;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -33,6 +35,7 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.SequenceInputStream;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -44,7 +47,7 @@ public abstract class AbstractTokenInfoDictionaryCompiler<T extends AbstractDict
     protected List<BufferEntry> bufferEntries = new ArrayList<>();
     protected FeatureInfoMap posInfo = new FeatureInfoMap();
     protected FeatureInfoMap otherInfo = new FeatureInfoMap();
-    protected WordIdMap wordIdMap = new WordIdMap();
+    protected WordIdMapCompiler wordIdsCompiler = new WordIdMapCompiler();
 
     // optional list to collect the generic dictionary entries
     protected List<GenericDictionaryEntry> dictionaryEntries = null;
@@ -121,7 +124,7 @@ public abstract class AbstractTokenInfoDictionaryCompiler<T extends AbstractDict
 
     @Override
     public void compile() throws IOException {
-
+        // TODO: Should call this method instead of write()
     }
 
     private boolean entriesFitInAByte(int entryCount) {
@@ -163,7 +166,7 @@ public abstract class AbstractTokenInfoDictionaryCompiler<T extends AbstractDict
     }
 
     public void addMapping(int sourceId, int wordId) {
-        wordIdMap.addMapping(sourceId, wordId);
+        wordIdsCompiler.addMapping(sourceId, wordId);
     }
 
     public List<String> getSurfaces() {
@@ -174,7 +177,7 @@ public abstract class AbstractTokenInfoDictionaryCompiler<T extends AbstractDict
         writeDictionary(directoryName + File.separator + TokenInfoDictionary.TOKEN_INFO_DICTIONARY_FILENAME);
         writeMap(directoryName + File.separator + TokenInfoDictionary.POS_MAP_FILENAME, posInfo);
         writeMap(directoryName + File.separator + TokenInfoDictionary.FEATURE_MAP_FILENAME, otherInfo);
-        writeTargetMap(directoryName + File.separator + TokenInfoDictionary.TARGETMAP_FILENAME);
+        writeWordIds(directoryName + File.separator + TokenInfoDictionary.TARGETMAP_FILENAME);
     }
 
 
@@ -194,22 +197,37 @@ public abstract class AbstractTokenInfoDictionaryCompiler<T extends AbstractDict
         tokenInfoBufferCompiler.compile();
     }
 
-    protected void writeTargetMap(String filename) throws IOException {
-        wordIdMap.write(new FileOutputStream(filename));
+    protected void writeWordIds(String filename) throws IOException {
+        wordIdsCompiler.write(new FileOutputStream(filename));
     }
 
-    public WordIdMap getWordIdMap() {
-        return wordIdMap;
+    @Deprecated
+    public WordIdMap getWordIdMap() throws IOException {
+        File file = File.createTempFile("kuromoji-wordid-", ".bin");
+        file.deleteOnExit();
+
+        OutputStream output = new BufferedOutputStream(new FileOutputStream(file));
+        wordIdsCompiler.write(output);
+        output.close();
+
+        InputStream input = new BufferedInputStream(new FileInputStream(file));
+        WordIdMap wordIds = new WordIdMap(input);
+        input.close();
+
+        return wordIds;
     }
 
+    @Deprecated
     public List<BufferEntry> getBufferEntries() {
         return bufferEntries;
     }
 
+    @Deprecated
     public List<GenericDictionaryEntry> getDictionaryEntries() {
         return dictionaryEntries;
     }
 
+    @Deprecated
     public void setDictionaryEntries(List<GenericDictionaryEntry> dictionaryEntries) {
         this.dictionaryEntries = dictionaryEntries;
     }
