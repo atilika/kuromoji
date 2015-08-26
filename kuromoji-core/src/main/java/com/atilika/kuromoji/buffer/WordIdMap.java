@@ -18,49 +18,30 @@ package com.atilika.kuromoji.buffer;
 
 import com.atilika.kuromoji.io.IntegerArrayIO;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
 
 public class WordIdMap {
 
-    private int[][] wordIds;
+    private final int[] indices;
 
-    public WordIdMap() {
-        wordIds = new int[1][];
-    }
+    private final int[] wordIds;
 
-    public WordIdMap(InputStream is) throws IOException {
-        wordIds = IntegerArrayIO.readSparseArray2D(is);
+    private final int[] empty = new int[]{};
+
+    public WordIdMap(InputStream input) throws IOException {
+        indices = IntegerArrayIO.readArray(input);
+        wordIds = IntegerArrayIO.readArray(input);
     }
 
     public int[] lookUp(int sourceId) {
-        return wordIds[sourceId];
-    }
+        int index = indices[sourceId];
 
-    public void addMapping(int sourceId, int wordId) {
-        if (wordIds.length <= sourceId) {
-            int[][] newArray = new int[sourceId + 1][];
-            System.arraycopy(wordIds, 0, newArray, 0, wordIds.length);
-            wordIds = newArray;
+        if (index == -1) {
+            return empty;
         }
 
-        // Prepare array -- extend the length of array by one
-        int[] current = wordIds[sourceId];
-        if (current == null) {
-            current = new int[1];
-        } else {
-            int[] newArray = new int[current.length + 1];
-            System.arraycopy(current, 0, newArray, 0, current.length);
-            current = newArray;
-        }
-        wordIds[sourceId] = current;
-
-        int[] targets = wordIds[sourceId];
-        targets[targets.length - 1] = wordId;
-    }
-
-    public void write(FileOutputStream fos) throws IOException {
-        IntegerArrayIO.writeSparseArray2D(fos, wordIds);
+        return Arrays.copyOfRange(wordIds, index + 1, index + 1 + wordIds[index]);
     }
 }
