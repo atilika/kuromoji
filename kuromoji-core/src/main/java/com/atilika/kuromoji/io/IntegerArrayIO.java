@@ -21,19 +21,29 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.ByteBuffer;
+import java.nio.IntBuffer;
+import java.nio.channels.Channels;
+import java.nio.channels.ReadableByteChannel;
+import java.nio.channels.WritableByteChannel;
 
 public class IntegerArrayIO {
+
+    private static final int INT_BYTES = 4;
 
     public static int[] readArray(InputStream input) throws IOException {
         DataInputStream dataInput = new DataInputStream(input);
         int length = dataInput.readInt();
 
-        int[] array = new int[length];
+        ByteBuffer tmpBuffer = ByteBuffer.allocate(length * INT_BYTES);
+        ReadableByteChannel channel = Channels.newChannel(dataInput);
+        channel.read(tmpBuffer);
 
-        for (int i = 0; i < length; i++) {
-            int val = dataInput.readInt();
-            array[i] = val;
-        }
+        tmpBuffer.rewind();
+        IntBuffer intBuffer = tmpBuffer.asIntBuffer();
+
+        int[] array = new int[length];
+        intBuffer.get(array);
 
         return array;
     }
@@ -44,9 +54,14 @@ public class IntegerArrayIO {
 
         dataOutput.writeInt(length);
 
-        for (int i = 0; i < array.length; i++) {
-            dataOutput.writeInt(array[i]);
-        }
+        ByteBuffer tmpBuffer = ByteBuffer.allocate(length * INT_BYTES);
+        IntBuffer intBuffer = tmpBuffer.asIntBuffer();
+
+        tmpBuffer.rewind();
+        intBuffer.put(array);
+
+        WritableByteChannel channel = Channels.newChannel(dataOutput);
+        channel.write(tmpBuffer);
     }
 
     public static int[][] readArray2D(InputStream input) throws IOException {
