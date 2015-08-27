@@ -129,9 +129,9 @@ public class Tokenizer extends TokenizerBase {
          * <p>
          * The tokenization mode defines how Available modes are as follows:
          * <ul>
-         * <li>{@link TokenizerBase.Mode#NORMAL} - The default mode
-         * <li>{@link TokenizerBase.Mode#SEARCH} - Uses a heuristic to segment compound nouns (複合名詞) into their parts
-         * <li>{@link TokenizerBase.Mode#EXTENDED} - Same as SEARCH, but emits unigram tokens for unknown terms
+         * <li>{@link com.atilika.kuromoji.TokenizerBase.Mode#NORMAL} - The default mode
+         * <li>{@link com.atilika.kuromoji.TokenizerBase.Mode#SEARCH} - Uses a heuristic to segment compound nouns (複合名詞) into their parts
+         * <li>{@link com.atilika.kuromoji.TokenizerBase.Mode#EXTENDED} - Same as SEARCH, but emits unigram tokens for unknown terms
          * </ul>
          * See {@link #kanjiPenalty} and {@link #otherPenalty} for how to adjust costs used by SEARCH and EXTENDED mode
          *
@@ -146,7 +146,7 @@ public class Tokenizer extends TokenizerBase {
         /**
          * Sets a custom kanji penalty
          * <p>
-         * This is an expert feature used with {@link TokenizerBase.Mode#SEARCH} and {@link TokenizerBase.Mode#EXTENDED} modes that sets a length threshold and an additional costs used when running the Viterbi search.
+         * This is an expert feature used with {@link com.atilika.kuromoji.TokenizerBase.Mode#SEARCH} and {@link com.atilika.kuromoji.TokenizerBase.Mode#EXTENDED} modes that sets a length threshold and an additional costs used when running the Viterbi search.
          * The additional cost is applicable for kanji candidate tokens longer than the length threshold specified.
          * <p>
          * This is an expert feature and you usually would not need to change this.
@@ -164,7 +164,7 @@ public class Tokenizer extends TokenizerBase {
         /**
          * Sets a custom non-kanji penalty
          * <p>
-         * This is an expert feature used with {@link TokenizerBase.Mode#SEARCH} and {@link TokenizerBase.Mode#EXTENDED} modes that sets a length threshold and an additional costs used when running the Viterbi search.
+         * This is an expert feature used with {@link com.atilika.kuromoji.TokenizerBase.Mode#SEARCH} and {@link com.atilika.kuromoji.TokenizerBase.Mode#EXTENDED} modes that sets a length threshold and an additional costs used when running the Viterbi search.
          * The additional cost is applicable for non-kanji candidate tokens longer than the length threshold specified.
          * <p>
          * This is an expert feature and you usually would not need to change this.
@@ -183,7 +183,7 @@ public class Tokenizer extends TokenizerBase {
          * Predictate that splits unknown words on the middle dot character (U+30FB KATAKANA MIDDLE DOT)
          * <p>
          * This feature is off by default.
-         * This is an expert feature sometimes used with {@link TokenizerBase.Mode#SEARCH} and {@link TokenizerBase.Mode#EXTENDED} mode.
+         * This is an expert feature sometimes used with {@link com.atilika.kuromoji.TokenizerBase.Mode#SEARCH} and {@link com.atilika.kuromoji.TokenizerBase.Mode#EXTENDED} mode.
          *
          * @param split  predicate to indicate split on middle dot
          * @return this builder, not null

@@ -20,37 +20,37 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Normal Trie which is used to build DoubleArrayTrie
+ * Simple Trie used to build the DoubleArrayTrie
  */
 public class Trie {
 
-    /**
-     * Root node of Trie
-     */
+    /** Root node */
     private Node root;
 
     /**
      * Constructor
-     * Initialize Trie with empty root node
+     * <p>
+     * Initialize this as an empty trie
      */
     public Trie() {
         root = new Node();
     }
 
     /**
-     * Add input value into Trie
-     * Before adding, it adds terminating character(\u0001) to input string
+     * Adds an input value to this trie
+     * <p>
+     * Before the value is added, a terminating character (U+0001) is appended to the input string
      *
-     * @param value String to add to Trie
+     * @param value  value to add to this trie
      */
     public void add(String value) {
         root.add(value, true);
     }
 
     /**
-     * Return root node which contains other nodes
+     * Returns this trie's root node
      *
-     * @return Node
+     * @return root node, not null
      */
     public Node getRoot() {
         return root;
@@ -60,9 +60,9 @@ public class Trie {
      * Trie Node
      */
     public class Node {
-        char key; /// key(char) of this node
+        private char key;
 
-        List<Node> children = new ArrayList<Node>(); // Array to hold children nodes
+        private List<Node> children = new ArrayList<>();
 
         /**
          * Constructor
@@ -73,16 +73,16 @@ public class Trie {
         /**
          * Constructor
          *
-         * @param key key for this node
+         * @param key  this node's key
          */
         public Node(char key) {
             this.key = key;
         }
 
         /**
-         * Add string to Trie
+         * Add string to add to this node
          *
-         * @param value String to add
+         * @param value  string value, not null
          */
         public void add(String value) {
             add(value, false);
@@ -94,19 +94,21 @@ public class Trie {
             }
 
             Node node = addChild(new Node(value.charAt(0)));
+
             for (int i = 1; i < value.length(); i++) {
                 node = node.addChild(new Node(value.charAt(i)));
             }
+
             if (terminate && (node != null)) {
                 node.addChild(new Node(DoubleArrayTrie.TERMINATING_CHARACTER));
             }
         }
 
         /**
-         * Add Node to this node as child
+         * Adds a new child node to this node
          *
-         * @param newNode node to add
-         * @return added node. If a node with same key already exists, return that node.
+         * @param newNode  new child to add
+         * @return the child node added, or, if a node with same key already exists, that node
          */
         public Node addChild(Node newNode) {
             Node child = getChild(newNode.getKey());
@@ -118,7 +120,7 @@ public class Trie {
         }
 
         /**
-         * Return the key of the node
+         * Return this node's key
          *
          * @return key
          */
@@ -127,11 +129,12 @@ public class Trie {
         }
 
         /**
-         * Check if children following this node has only single path.
-         * For example, if you have "abcde" and "abfgh" in Trie, calling this method on node "a" and "b" returns false.
-         * Calling this method on "c", "d", "e", "f", "g" and "h" returns true.
+         * Predicate indicating if children following this node forms single key path (no branching)
+         * <p>
+         * For example, if we have "abcde" and "abfgh" in the trie, calling this method on node "a" and "b" returns false.
+         * However, this method on "c", "d", "e", "f", "g" and "h" returns true.
          *
-         * @return true if it has only single path. false if it has multiple path.
+         * @return true if this node has a single key path. false otherwise.
          */
         public boolean hasSinglePath() {
             switch (children.size()) {
@@ -145,19 +148,19 @@ public class Trie {
         }
 
         /**
-         * Return children node
+         * Returns this node's child nodes
          *
-         * @return Array of children nodes
+         * @return child nodes, not null
          */
         public List<Node> getChildren() {
             return children;
         }
 
         /**
-         * Return node which has input key
+         * Searches this nodes for a child with a specific key
          *
-         * @param key key to look for
-         * @return node which has input key. null if it doesn't exist.
+         * @param key  key to search for
+         * @return node matching the input key if it exists, otherwise null
          */
         private Node getChild(char key) {
             for (Node child : children) {
