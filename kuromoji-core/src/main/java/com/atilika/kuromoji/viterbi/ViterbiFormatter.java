@@ -209,7 +209,7 @@ public class ViterbiFormatter {
                 return BOS_LABEL;
             }
         } else {
-            return node.getSurfaceForm();
+            return node.getSurface();
         }
     }
 

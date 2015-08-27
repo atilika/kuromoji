@@ -16,21 +16,21 @@
  */
 package com.atilika.kuromoji.unidic;
 
-import com.atilika.kuromoji.AbstractToken;
+import com.atilika.kuromoji.TokenBase;
 import com.atilika.kuromoji.dict.Dictionary;
 import com.atilika.kuromoji.unidic.compile.DictionaryEntry;
 import com.atilika.kuromoji.viterbi.ViterbiNode;
 
 /**
- * UNIDIC token produced by the UNIDIC tokenizer with various morphological features
+ * UniDic token produced by the UniDic tokenizer with various morphological features
  */
-public class Token extends AbstractToken {
+public class Token extends TokenBase {
     public Token(int wordId,
-                 String surfaceForm,
+                 String surface,
                  ViterbiNode.Type type,
                  int position,
                  Dictionary dictionary) {
-        super(wordId, surfaceForm, type, position, dictionary);
+        super(wordId, surface, type, position, dictionary);
     }
 
     /**

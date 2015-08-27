@@ -16,7 +16,7 @@
  */
 package com.atilika.kuromoji.jumandic;
 
-import com.atilika.kuromoji.AbstractToken;
+import com.atilika.kuromoji.TokenBase;
 import com.atilika.kuromoji.dict.Dictionary;
 import com.atilika.kuromoji.jumandic.compile.DictionaryEntry;
 import com.atilika.kuromoji.viterbi.ViterbiNode;
@@ -24,14 +24,14 @@ import com.atilika.kuromoji.viterbi.ViterbiNode;
 /**
  * JUMANDIC token produced by the JUMANDIC tokenizer with various morphological features
  */
-public class Token extends AbstractToken {
+public class Token extends TokenBase {
 
     public Token(int wordId,
-                 String surfaceForm,
+                 String surface,
                  ViterbiNode.Type type,
                  int position,
                  Dictionary dictionary) {
-        super(wordId, surfaceForm, type, position, dictionary);
+        super(wordId, surface, type, position, dictionary);
     }
 
     /**

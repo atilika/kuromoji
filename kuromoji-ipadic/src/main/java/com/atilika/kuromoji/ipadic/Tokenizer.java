@@ -16,7 +16,7 @@
  */
 package com.atilika.kuromoji.ipadic;
 
-import com.atilika.kuromoji.AbstractTokenizer;
+import com.atilika.kuromoji.TokenizerBase;
 import com.atilika.kuromoji.dict.CharacterDefinitions;
 import com.atilika.kuromoji.dict.ConnectionCosts;
 import com.atilika.kuromoji.dict.Dictionary;
@@ -49,14 +49,14 @@ import java.util.List;
  *         Tokenizer tokenizer = new Tokenizer() ;
  *         List<Token> tokens = tokenizer.tokenize("お寿司が食べたい。");
  *         for (Token token : tokens) {
- *             System.out.println(token.getSurfaceForm() + "\t" + token.getAllFeatures());
+ *             System.out.println(token.getSurface() + "\t" + token.getAllFeatures());
  *         }
  *     }
  * }
  * }
  * </pre>
  */
-public class Tokenizer extends AbstractTokenizer {
+public class Tokenizer extends TokenizerBase {
 
     /**
      * Construct a default tokenizer
@@ -90,7 +90,7 @@ public class Tokenizer extends AbstractTokenizer {
     /**
      * Builder class for creating a customized tokenizer instance
      */
-    public static class Builder extends AbstractTokenizer.Builder {
+    public static class Builder extends TokenizerBase.Builder {
 
         private static final int DEFAULT_KANJI_LENGTH_THRESHOLD = 2;
         private static final int DEFAULT_OTHER_LENGTH_THRESHOLD = 7;
@@ -115,11 +115,11 @@ public class Tokenizer extends AbstractTokenizer {
             tokenFactory = new TokenFactory<Token>() {
                 @Override
                 public Token createToken(int wordId,
-                                         String surfaceForm,
+                                         String surface,
                                          ViterbiNode.Type type,
                                          int position,
                                          Dictionary dictionary) {
-                    return new Token(wordId, surfaceForm, type, position, dictionary);
+                    return new Token(wordId, surface, type, position, dictionary);
                 }
             };
         }
@@ -129,9 +129,9 @@ public class Tokenizer extends AbstractTokenizer {
          * <p>
          * The tokenization mode defines how Available modes are as follows:
          * <ul>
-         * <li>{@link com.atilika.kuromoji.AbstractTokenizer.Mode#NORMAL} - The default mode
-         * <li>{@link com.atilika.kuromoji.AbstractTokenizer.Mode#SEARCH} - Uses a heuristic to segment compound nouns (複合名詞) into their parts
-         * <li>{@link com.atilika.kuromoji.AbstractTokenizer.Mode#EXTENDED} - Same as SEARCH, but emits unigram tokens for unknown terms
+         * <li>{@link TokenizerBase.Mode#NORMAL} - The default mode
+         * <li>{@link TokenizerBase.Mode#SEARCH} - Uses a heuristic to segment compound nouns (複合名詞) into their parts
+         * <li>{@link TokenizerBase.Mode#EXTENDED} - Same as SEARCH, but emits unigram tokens for unknown terms
          * </ul>
          * See {@link #kanjiPenalty} and {@link #otherPenalty} for how to adjust costs used by SEARCH and EXTENDED mode
          *
@@ -146,7 +146,7 @@ public class Tokenizer extends AbstractTokenizer {
         /**
          * Sets a custom kanji penalty
          * <p>
-         * This is an expert feature used with {@link com.atilika.kuromoji.AbstractTokenizer.Mode#SEARCH} and {@link com.atilika.kuromoji.AbstractTokenizer.Mode#EXTENDED} modes that sets a length threshold and an additional costs used when running the Viterbi search.
+         * This is an expert feature used with {@link TokenizerBase.Mode#SEARCH} and {@link TokenizerBase.Mode#EXTENDED} modes that sets a length threshold and an additional costs used when running the Viterbi search.
          * The additional cost is applicable for kanji candidate tokens longer than the length threshold specified.
          * <p>
          * This is an expert feature and you usually would not need to change this.
@@ -164,7 +164,7 @@ public class Tokenizer extends AbstractTokenizer {
         /**
          * Sets a custom non-kanji penalty
          * <p>
-         * This is an expert feature used with {@link com.atilika.kuromoji.AbstractTokenizer.Mode#SEARCH} and {@link com.atilika.kuromoji.AbstractTokenizer.Mode#EXTENDED} modes that sets a length threshold and an additional costs used when running the Viterbi search.
+         * This is an expert feature used with {@link TokenizerBase.Mode#SEARCH} and {@link TokenizerBase.Mode#EXTENDED} modes that sets a length threshold and an additional costs used when running the Viterbi search.
          * The additional cost is applicable for non-kanji candidate tokens longer than the length threshold specified.
          * <p>
          * This is an expert feature and you usually would not need to change this.
@@ -183,7 +183,7 @@ public class Tokenizer extends AbstractTokenizer {
          * Predictate that splits unknown words on the middle dot character (U+30FB KATAKANA MIDDLE DOT)
          * <p>
          * This feature is off by default.
-         * This is an expert feature sometimes used with {@link com.atilika.kuromoji.AbstractTokenizer.Mode#SEARCH} and {@link com.atilika.kuromoji.AbstractTokenizer.Mode#EXTENDED} mode.
+         * This is an expert feature sometimes used with {@link TokenizerBase.Mode#SEARCH} and {@link TokenizerBase.Mode#EXTENDED} mode.
          *
          * @param split  predicate to indicate split on middle dot
          * @return this builder, not null

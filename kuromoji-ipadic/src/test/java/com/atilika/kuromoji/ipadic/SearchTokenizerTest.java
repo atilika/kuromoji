@@ -16,7 +16,7 @@
  */
 package com.atilika.kuromoji.ipadic;
 
-import com.atilika.kuromoji.AbstractTokenizer.Mode;
+import com.atilika.kuromoji.TokenizerBase.Mode;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -74,7 +74,7 @@ public class SearchTokenizerTest {
         assertEquals("Input: " + text, expectedSurfaces.size(), tokens.size());
 
         for (int i = 0; i < tokens.size(); i++) {
-            assertEquals(expectedSurfaces.get(i), tokens.get(i).getSurfaceForm());
+            assertEquals(expectedSurfaces.get(i), tokens.get(i).getSurface());
         }
     }
 

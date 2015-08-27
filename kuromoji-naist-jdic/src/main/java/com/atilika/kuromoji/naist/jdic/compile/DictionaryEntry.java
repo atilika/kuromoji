@@ -16,14 +16,14 @@
  */
 package com.atilika.kuromoji.naist.jdic.compile;
 
-import com.atilika.kuromoji.dict.AbstractDictionaryEntry;
+import com.atilika.kuromoji.dict.DictionaryEntryBase;
 
 import static com.atilika.kuromoji.dict.DictionaryField.LEFT_ID;
 import static com.atilika.kuromoji.dict.DictionaryField.RIGHT_ID;
 import static com.atilika.kuromoji.dict.DictionaryField.SURFACE;
 import static com.atilika.kuromoji.dict.DictionaryField.WORD_COST;
 
-public class DictionaryEntry extends AbstractDictionaryEntry {
+public class DictionaryEntry extends DictionaryEntryBase {
     public static final int POS_LEVEL_1 = 4;
     public static final int POS_LEVEL_2 = 5;
     public static final int POS_LEVEL_3 = 6;

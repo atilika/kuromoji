@@ -17,14 +17,14 @@
 
 package com.atilika.kuromoji.naist.jdic.compile;
 
-import com.atilika.kuromoji.compile.AbstractTokenInfoDictionaryCompiler;
+import com.atilika.kuromoji.compile.TokenInfoDictionaryCompilerBase;
 import com.atilika.kuromoji.dict.GenericDictionaryEntry;
 import com.atilika.kuromoji.util.DictionaryEntryLineParser;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class TokenInfoDictionaryCompiler extends AbstractTokenInfoDictionaryCompiler<DictionaryEntry> {
+public class TokenInfoDictionaryCompiler extends TokenInfoDictionaryCompilerBase<DictionaryEntry> {
 
     public TokenInfoDictionaryCompiler(String encoding) {
         super(encoding);

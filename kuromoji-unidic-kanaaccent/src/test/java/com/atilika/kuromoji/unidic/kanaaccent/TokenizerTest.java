@@ -74,7 +74,7 @@ public class TokenizerTest {
         };
 
         for (int i = 0; i < tokens.size(); i++) {
-            assertEquals(expectedSurfaces[i], tokens.get(i).getSurfaceForm());
+            assertEquals(expectedSurfaces[i], tokens.get(i).getSurface());
             assertEquals(expectedFeatures[i], tokens.get(i).getAllFeatures());
         }
     }
@@ -97,7 +97,7 @@ public class TokenizerTest {
         String expectedSurface = "北斗の拳";
         String expectedFeatures = "カスタム名詞,*,*,*,*,*,*,*,*,*,*,*,*,ホクトノケン,*,*,*,*,*,*,*,*,*,*,*,*";
 
-        assertEquals(expectedSurface, tokens.get(0).getSurfaceForm());
+        assertEquals(expectedSurface, tokens.get(0).getSurface());
         assertEquals(expectedFeatures, tokens.get(0).getAllFeatures());
     }
 
@@ -117,7 +117,7 @@ public class TokenizerTest {
             "名詞,普通名詞,一般,*,*,*,クウコウ,空港,空港,クーコー,空港,クーコー,漢,*,*,*,*,クウコウ,クウコウ,クウコウ,クウコウ,*,*,0,C2,*"};
 
         for (int i = 0; i < tokens.size(); i++) {
-            assertEquals(expectedSurfaces[i], tokens.get(i).getSurfaceForm());
+            assertEquals(expectedSurfaces[i], tokens.get(i).getSurface());
             assertEquals(expectedFeatures[i], tokens.get(i).getAllFeatures());
         }
     }

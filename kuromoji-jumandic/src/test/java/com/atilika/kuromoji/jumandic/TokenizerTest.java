@@ -47,7 +47,7 @@ public class TokenizerTest {
         assertEquals(expectedSurfaceForms.length, tokens.size());
 
         for (int i = 0; i < expectedSurfaceForms.length; i++) {
-            assertEquals(expectedSurfaceForms[i], tokens.get(i).getSurfaceForm());
+            assertEquals(expectedSurfaceForms[i], tokens.get(i).getSurface());
         }
     }
 

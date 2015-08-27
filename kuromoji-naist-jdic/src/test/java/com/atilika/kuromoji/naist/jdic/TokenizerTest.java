@@ -71,7 +71,7 @@ public class TokenizerTest {
         String[] expectedSurfaces = new String[]{"お", "寿司", "が", "食べ", "たい", "。"};
 
         for (int i = 0; i < tokens.size(); i++) {
-            assertEquals(expectedSurfaces[i], tokens.get(i).getSurfaceForm());
+            assertEquals(expectedSurfaces[i], tokens.get(i).getSurface());
         }
     }
 

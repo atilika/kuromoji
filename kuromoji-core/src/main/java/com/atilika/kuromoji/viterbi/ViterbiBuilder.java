@@ -16,7 +16,7 @@
  */
 package com.atilika.kuromoji.viterbi;
 
-import com.atilika.kuromoji.AbstractTokenizer.Mode;
+import com.atilika.kuromoji.TokenizerBase.Mode;
 import com.atilika.kuromoji.dict.CharacterDefinitions;
 import com.atilika.kuromoji.dict.TokenInfoDictionary;
 import com.atilika.kuromoji.dict.UnknownDictionary;
@@ -242,9 +242,9 @@ public class ViterbiBuilder {
                 ViterbiNode glueBase = findGlueNodeCandidate(index, nodeStartIndices[startIndex], startIndex);
                 if (glueBase != null) {
                     int length = index + 1 - startIndex;
-                    String surface = glueBase.getSurfaceForm().substring(0, length);
+                    String surface = glueBase.getSurface().substring(0, length);
                     ViterbiNode glueNode = createGlueNode(startIndex, glueBase, surface);
-                    lattice.addNode(glueNode, startIndex, startIndex + glueNode.getSurfaceForm().length());
+                    lattice.addNode(glueNode, startIndex, startIndex + glueNode.getSurface().length());
                     return;
                 }
             }
@@ -265,10 +265,10 @@ public class ViterbiBuilder {
                 ViterbiNode glueBase = findGlueNodeCandidate(nodeEndIndex, nodeEndIndices[endIndex], endIndex);
                 if (glueBase != null) {
                     int delta = endIndex - nodeEndIndex;
-                    String glueBaseSurface = glueBase.getSurfaceForm();
+                    String glueBaseSurface = glueBase.getSurface();
                     String surface = glueBaseSurface.substring(glueBaseSurface.length() - delta);
                     ViterbiNode glueNode = createGlueNode(nodeEndIndex, glueBase, surface);
-                    lattice.addNode(glueNode, nodeEndIndex, nodeEndIndex + glueNode.getSurfaceForm().length());
+                    lattice.addNode(glueNode, nodeEndIndex, nodeEndIndex + glueNode.getSurface().length());
                     return;
                 }
             }
@@ -317,8 +317,8 @@ public class ViterbiBuilder {
      * @return whether candidate is acceptable
      */
     private boolean isAcceptableCandidate(int targetLength, ViterbiNode glueBase, ViterbiNode candidate) {
-        return (glueBase == null || candidate.getSurfaceForm().length() < glueBase.getSurfaceForm().length()) &&
-            candidate.getSurfaceForm().length() >= targetLength;
+        return (glueBase == null || candidate.getSurface().length() < glueBase.getSurface().length()) &&
+            candidate.getSurface().length() >= targetLength;
     }
 
     /**
