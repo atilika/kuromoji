@@ -16,8 +16,8 @@
  */
 package com.atilika.kuromoji.benchmark;
 
-import com.atilika.kuromoji.AbstractToken;
-import com.atilika.kuromoji.AbstractTokenizer;
+import com.atilika.kuromoji.TokenBase;
+import com.atilika.kuromoji.TokenizerBase;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
@@ -50,7 +50,7 @@ public class Benchmark {
 
     private long startTimeMillis;
 
-    private final AbstractTokenizer tokenizer;
+    private final TokenizerBase tokenizer;
 
     private final File inputFile;
 
@@ -144,12 +144,12 @@ public class Benchmark {
     }
 
     private void tokenizeDocument(Writer writer, String text) throws IOException {
-        List<? extends AbstractToken> tokens = tokenizer.tokenize(text);
+        List<? extends TokenBase> tokens = tokenizer.tokenize(text);
 
         updateStatistics(text, tokens);
 
         for (int i = 0; i < tokens.size(); i++) {
-            AbstractToken token = tokens.get(i);
+            TokenBase token = tokens.get(i);
 
             writeToken(writer, token);
 
@@ -159,7 +159,7 @@ public class Benchmark {
         }
     }
 
-    private void updateStatistics(String text, List<? extends AbstractToken> tokens) {
+    private void updateStatistics(String text, List<? extends TokenBase> tokens) {
         this.documents.incrementAndGet();
         this.characters.getAndAdd(text.length());
         this.tokens.getAndAdd(tokens.size());
@@ -228,8 +228,8 @@ public class Benchmark {
         return builder.toString();
     }
 
-    public void writeToken(Writer writer, AbstractToken token) throws IOException {
-        writer.write(token.getSurfaceForm());
+    public void writeToken(Writer writer, TokenBase token) throws IOException {
+        writer.write(token.getSurface());
         writer.write('\t');
         writer.write(token.getAllFeatures());
         writer.write('\n');
@@ -237,7 +237,7 @@ public class Benchmark {
 
     public static class Builder {
 
-        private AbstractTokenizer tokenizer;
+        private TokenizerBase tokenizer;
 
         private File inputFile;
 
@@ -253,7 +253,7 @@ public class Benchmark {
 
         private long count = 0;
 
-        public Builder tokenizer(AbstractTokenizer tokenizer) {
+        public Builder tokenizer(TokenizerBase tokenizer) {
             this.tokenizer = tokenizer;
             return this;
         }
@@ -331,7 +331,7 @@ public class Benchmark {
 
         String userDictionaryFilename = commandLine.getOptionValue("u");
 
-        AbstractTokenizer tokenizer = null;
+        TokenizerBase tokenizer = null;
         try {
             Class clazz = Class.forName(className);
 
@@ -347,7 +347,7 @@ public class Benchmark {
             }
 
             // Build tokenizer
-            tokenizer = (AbstractTokenizer) builder.getClass()
+            tokenizer = (TokenizerBase) builder.getClass()
                 .getMethod("build")
                 .invoke(builder);
 

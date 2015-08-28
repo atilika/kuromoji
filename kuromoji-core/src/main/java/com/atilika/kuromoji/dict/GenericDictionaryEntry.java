@@ -20,7 +20,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GenericDictionaryEntry extends AbstractDictionaryEntry implements Serializable {
+public class GenericDictionaryEntry extends DictionaryEntryBase implements Serializable {
 
     private final List<String> posFeatures;
     private final List<String> features;

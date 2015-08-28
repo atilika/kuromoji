@@ -16,17 +16,17 @@
  */
 package com.atilika.kuromoji.dict;
 
-public abstract class AbstractDictionaryEntry {
+public abstract class DictionaryEntryBase {
 
     protected final String surface;
     protected final short leftId;
     protected final short rightId;
     protected final short wordCost;
 
-    public AbstractDictionaryEntry(String surface,
-                                   short leftId,
-                                   short rightId,
-                                   short wordCost) {
+    public DictionaryEntryBase(String surface,
+                               short leftId,
+                               short rightId,
+                               short wordCost) {
         this.surface = surface;
         this.leftId = leftId;
         this.rightId = rightId;

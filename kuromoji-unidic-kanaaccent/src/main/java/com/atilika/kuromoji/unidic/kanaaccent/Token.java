@@ -16,23 +16,23 @@
  */
 package com.atilika.kuromoji.unidic.kanaaccent;
 
-import com.atilika.kuromoji.AbstractToken;
+import com.atilika.kuromoji.TokenBase;
 import com.atilika.kuromoji.dict.Dictionary;
 import com.atilika.kuromoji.unidic.kanaaccent.compile.DictionaryEntry;
 import com.atilika.kuromoji.viterbi.ViterbiNode;
 
 /**
- * UNIDIC (kana accent) token produced by the UNIDIC (kana accent) tokenizer
+ * UniDic Kana Accent token produced by the UniDic Kana Accent tokenizer
  * with various morphological features
  */
-public class Token extends AbstractToken {
+public class Token extends TokenBase {
 
     public Token(int wordId,
-                 String surfaceForm,
+                 String surface,
                  ViterbiNode.Type type,
                  int position,
                  Dictionary dictionary) {
-        super(wordId, surfaceForm, type, position, dictionary);
+        super(wordId, surface, type, position, dictionary);
     }
 
     /**
@@ -40,8 +40,8 @@ public class Token extends AbstractToken {
      *
      * @return 1st level part-of-speech tag, not null
      */
-    public String getPosLevel1() {
-        return getFeature(DictionaryEntry.POS_LEVEL_1);
+    public String getPartOfSpeechLevel1() {
+        return getFeature(DictionaryEntry.PART_OF_SPEECH_LEVEL_1);
     }
 
     /**
@@ -49,8 +49,8 @@ public class Token extends AbstractToken {
      *
      * @return 2nd level part-of-speech tag, not null
      */
-    public String getPosLevel2() {
-        return getFeature(DictionaryEntry.POS_LEVEL_2);
+    public String getPartOfSpeechLevel2() {
+        return getFeature(DictionaryEntry.PART_OF_SPEECH_LEVEL_2);
     }
 
     /**
@@ -58,8 +58,8 @@ public class Token extends AbstractToken {
      *
      * @return 3rd level part-of-speech tag, not null
      */
-    public String getPosLevel3() {
-        return getFeature(DictionaryEntry.POS_LEVEL_3);
+    public String getPartOfSpeechLevel3() {
+        return getFeature(DictionaryEntry.PART_OF_SPEECH_LEVEL_3);
     }
 
     /**
@@ -67,8 +67,8 @@ public class Token extends AbstractToken {
      *
      * @return 4th level part-of-speech tag, not null
      */
-    public String getPosLevel4() {
-        return getFeature(DictionaryEntry.POS_LEVEL_4);
+    public String getPartOfSpeechLevel4() {
+        return getFeature(DictionaryEntry.PART_OF_SPEECH_LEVEL_4);
     }
 
     /**
@@ -120,6 +120,11 @@ public class Token extends AbstractToken {
         return getFeature(DictionaryEntry.PRONUNCIATION);
     }
 
+    /**
+     * Gets the pronunciation base form for this token (発音形基本形)
+     *
+     * @return pronunciation base form, not null
+     */
     public String getPronunciationBaseForm() {
         return getFeature(DictionaryEntry.PRONUNCIATION_BASE_FORM);
     }

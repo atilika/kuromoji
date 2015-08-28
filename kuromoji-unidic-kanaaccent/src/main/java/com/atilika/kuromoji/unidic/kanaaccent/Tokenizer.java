@@ -16,7 +16,7 @@
  */
 package com.atilika.kuromoji.unidic.kanaaccent;
 
-import com.atilika.kuromoji.AbstractTokenizer;
+import com.atilika.kuromoji.TokenizerBase;
 import com.atilika.kuromoji.dict.Dictionary;
 import com.atilika.kuromoji.unidic.kanaaccent.compile.DictionaryEntry;
 import com.atilika.kuromoji.util.SimpleResourceResolver;
@@ -42,14 +42,14 @@ import java.util.List;
  *         Tokenizer tokenizer = new Tokenizer() ;
  *         List<Token> tokens = tokenizer.tokenize("お寿司が食べたい。");
  *         for (Token token : tokens) {
- *             System.out.println(token.getSurfaceForm() + "\t" + token.getAllFeatures());
+ *             System.out.println(token.getSurface() + "\t" + token.getAllFeatures());
  *         }
  *     }
  * }
  * }
  * </pre>
  */
-public class Tokenizer extends AbstractTokenizer {
+public class Tokenizer extends TokenizerBase {
 
     /**
      * Construct a default tokenizer
@@ -84,7 +84,7 @@ public class Tokenizer extends AbstractTokenizer {
     /**
      * Builder class for creating a customized tokenizer instance
      */
-    public static class Builder extends AbstractTokenizer.Builder {
+    public static class Builder extends TokenizerBase.Builder {
 
         /**
          * Creates a default builder
@@ -99,11 +99,11 @@ public class Tokenizer extends AbstractTokenizer {
             tokenFactory = new TokenFactory<Token>() {
                 @Override
                 public Token createToken(int wordId,
-                                         String surfaceForm,
+                                         String surface,
                                          ViterbiNode.Type type,
                                          int position,
                                          Dictionary dictionary) {
-                    return new Token(wordId, surfaceForm, type, position, dictionary);
+                    return new Token(wordId, surface, type, position, dictionary);
                 }
             };
         }

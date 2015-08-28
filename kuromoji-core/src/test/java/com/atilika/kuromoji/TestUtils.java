@@ -33,17 +33,17 @@ import static org.junit.Assert.fail;
 
 public class TestUtils {
 
-    public static void assertTokenSurfacesEquals(List<String> expectedSurfaces, List<? extends AbstractToken> actualTokens) {
+    public static void assertTokenSurfacesEquals(List<String> expectedSurfaces, List<? extends TokenBase> actualTokens) {
         List<String> actualSurfaces = new ArrayList<>();
 
-        for (AbstractToken token : actualTokens) {
-            actualSurfaces.add(token.getSurfaceForm());
+        for (TokenBase token : actualTokens) {
+            actualSurfaces.add(token.getSurface());
         }
 
         assertEquals(expectedSurfaces, actualSurfaces);
     }
 
-    public static void assertCanTokenizeStream(InputStream untokenizedInput, AbstractTokenizer tokenizer) throws IOException {
+    public static void assertCanTokenizeStream(InputStream untokenizedInput, TokenizerBase tokenizer) throws IOException {
         BufferedReader untokenizedInputReader = new BufferedReader(
             new InputStreamReader(untokenizedInput, StandardCharsets.UTF_8)
         );
@@ -51,7 +51,7 @@ public class TestUtils {
         String untokenizedLine;
 
         while ((untokenizedLine = untokenizedInputReader.readLine()) != null) {
-            List<? extends AbstractToken> tokens = tokenizer.tokenize(untokenizedLine);
+            List<? extends TokenBase> tokens = tokenizer.tokenize(untokenizedLine);
             // Discard tokens -- we just check that no exceptions are thrown
         }
 
@@ -60,7 +60,7 @@ public class TestUtils {
 
     public static void assertTokenizedStreamEquals(InputStream tokenizedInput,
                                                    InputStream untokenizedInput,
-                                                   AbstractTokenizer tokenizer) throws IOException {
+                                                   TokenizerBase tokenizer) throws IOException {
         BufferedReader untokenizedInputReader = new BufferedReader(
             new InputStreamReader(untokenizedInput, StandardCharsets.UTF_8)
         );
@@ -71,9 +71,9 @@ public class TestUtils {
         String untokenizedLine;
 
         while ((untokenizedLine = untokenizedInputReader.readLine()) != null) {
-            List<? extends AbstractToken> tokens = tokenizer.tokenize(untokenizedLine);
+            List<? extends TokenBase> tokens = tokenizer.tokenize(untokenizedLine);
 
-            for (AbstractToken token : tokens) {
+            for (TokenBase token : tokens) {
                 String tokenLine = tokenizedInputReader.readLine();
 
                 assertNotNull(tokenLine);
@@ -83,7 +83,7 @@ public class TestUtils {
                 String surface = parts[0];
                 String features = parts[1];
 
-                assertEquals(surface, token.getSurfaceForm());
+                assertEquals(surface, token.getSurface());
                 assertEquals(features, token.getAllFeatures());
             }
         }
@@ -93,7 +93,7 @@ public class TestUtils {
                                                                 final int perThreadRuns,
                                                                 final String tokenizedInputResource,
                                                                 final String untokenizedInputResource,
-                                                                final AbstractTokenizer tokenizer)
+                                                                final TokenizerBase tokenizer)
         throws IOException, InterruptedException {
         List<Thread> threads = new ArrayList<>();
 
@@ -136,11 +136,11 @@ public class TestUtils {
         assertTrue(true);
     }
 
-    public static void assertEqualTokenFeatureLengths(String text, AbstractTokenizer tokenizer) {
-        List<? extends AbstractToken> tokens = tokenizer.tokenize(text);
+    public static void assertEqualTokenFeatureLengths(String text, TokenizerBase tokenizer) {
+        List<? extends TokenBase> tokens = tokenizer.tokenize(text);
         Set<Integer> lengths = new HashSet<>();
 
-        for (AbstractToken token : tokens) {
+        for (TokenBase token : tokens) {
             lengths.add(
                 token.getAllFeaturesArray().length
             );
