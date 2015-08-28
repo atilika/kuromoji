@@ -54,10 +54,10 @@ public class TokenInfoDictionaryCompiler extends TokenInfoDictionaryCompilerBase
     public List<String> extractPosFeatures(DictionaryEntry entry) {
         List<String> posFeatures = new ArrayList<>();
 
-        posFeatures.add(entry.getPosLevel1());
-        posFeatures.add(entry.getPosLevel2());
-        posFeatures.add(entry.getPosLevel3());
-        posFeatures.add(entry.getPosLevel4());
+        posFeatures.add(entry.getPartOfSpeechLevel1());
+        posFeatures.add(entry.getPartOfSpeechLevel2());
+        posFeatures.add(entry.getPartOfSpeechLevel3());
+        posFeatures.add(entry.getPartOfSpeechLevel4());
 
         posFeatures.add(entry.getConjugationType());
         posFeatures.add(entry.getConjugationForm());

@@ -39,8 +39,8 @@ public class Token extends TokenBase {
      *
      * @return 1st level part-of-speech tag, not null
      */
-    public String getPosLevel1() {
-        return this.getFeature(DictionaryEntry.POS_LEVEL_1);
+    public String getPartOfSpeechLevel1() {
+        return this.getFeature(DictionaryEntry.PART_OF_SPEECH_LEVEL_1);
     }
 
     /**
@@ -48,8 +48,8 @@ public class Token extends TokenBase {
      *
      * @return 2nd level part-of-speech tag, not null
      */
-    public String getPosLevel2() {
-        return this.getFeature(DictionaryEntry.POS_LEVEL_2);
+    public String getPartOfSpeechLevel2() {
+        return this.getFeature(DictionaryEntry.PART_OF_SPEECH_LEVEL_2);
     }
 
     /**
@@ -57,8 +57,8 @@ public class Token extends TokenBase {
      *
      * @return 3rd level part-of-speech tag, not null
      */
-    public String getPosLevel3() {
-        return this.getFeature(DictionaryEntry.POS_LEVEL_3);
+    public String getPartOfSpeechLevel3() {
+        return this.getFeature(DictionaryEntry.PART_OF_SPEECH_LEVEL_3);
     }
 
     /**
@@ -66,8 +66,8 @@ public class Token extends TokenBase {
      *
      * @return 4th level part-of-speech tag, not null
      */
-    public String getPosLevel4() {
-        return this.getFeature(DictionaryEntry.POS_LEVEL_4);
+    public String getPartOfSpeechLevel4() {
+        return this.getFeature(DictionaryEntry.PART_OF_SPEECH_LEVEL_4);
     }
 
     /**

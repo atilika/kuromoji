@@ -134,10 +134,10 @@ public class TokenizerTest {
         assertEquals(posLevel1.length, tokens.size());
 
         for (int i = 0; i < tokens.size(); i++) {
-            assertEquals(posLevel1[i], tokens.get(i).getPosLevel1());
-            assertEquals(posLevel2[i], tokens.get(i).getPosLevel2());
-            assertEquals(posLevel3[i], tokens.get(i).getPosLevel3());
-            assertEquals(posLevel4[i], tokens.get(i).getPosLevel4());
+            assertEquals(posLevel1[i], tokens.get(i).getPartOfSpeechLevel1());
+            assertEquals(posLevel2[i], tokens.get(i).getPartOfSpeechLevel2());
+            assertEquals(posLevel3[i], tokens.get(i).getPartOfSpeechLevel3());
+            assertEquals(posLevel4[i], tokens.get(i).getPartOfSpeechLevel4());
         }
 
     }

@@ -132,25 +132,25 @@ public class TokenizerTest {
         String[] posLevel1 = {"接頭詞", "名詞", "助詞", "動詞", "助動詞", "記号"};
 
         for (int i = 0; i < tokens.size(); i++) {
-            assertEquals(posLevel1[i], tokens.get(i).getPosLevel1());
+            assertEquals(posLevel1[i], tokens.get(i).getPartOfSpeechLevel1());
         }
 
         String[] posLevel2 = {"名詞接続", "一般", "格助詞", "自立", "*", "一般"};
 
         for (int i = 0; i < tokens.size(); i++) {
-            assertEquals(posLevel2[i], tokens.get(i).getPosLevel2());
+            assertEquals(posLevel2[i], tokens.get(i).getPartOfSpeechLevel2());
         }
 
         String[] posLevel3 = {"*", "*", "一般", "*", "*", "*"};
 
         for (int i = 0; i < tokens.size(); i++) {
-            assertEquals(posLevel3[i], tokens.get(i).getPosLevel3());
+            assertEquals(posLevel3[i], tokens.get(i).getPartOfSpeechLevel3());
         }
 
         String[] posLevel4 = {"*", "*", "*", "*", "*", "*"};
 
         for (int i = 0; i < tokens.size(); i++) {
-            assertEquals(posLevel4[i], tokens.get(i).getPosLevel4());
+            assertEquals(posLevel4[i], tokens.get(i).getPartOfSpeechLevel4());
         }
     }
 

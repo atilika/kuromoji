@@ -24,10 +24,10 @@ import static com.atilika.kuromoji.dict.DictionaryField.SURFACE;
 import static com.atilika.kuromoji.dict.DictionaryField.WORD_COST;
 
 public class DictionaryEntry extends DictionaryEntryBase {
-    public static final int POS_LEVEL_1 = 4;
-    public static final int POS_LEVEL_2 = 5;
-    public static final int POS_LEVEL_3 = 6;
-    public static final int POS_LEVEL_4 = 7;
+    public static final int PART_OF_SPEECH_LEVEL_1 = 4;
+    public static final int PART_OF_SPEECH_LEVEL_2 = 5;
+    public static final int PART_OF_SPEECH_LEVEL_3 = 6;
+    public static final int PART_OF_SPEECH_LEVEL_4 = 7;
     public static final int BASE_FORM = 8;
     public static final int READING = 9;
     public static final int SEMANTIC_INFORMATION = 10;
@@ -52,10 +52,10 @@ public class DictionaryEntry extends DictionaryEntryBase {
             Short.parseShort(fields[WORD_COST])
         );
 
-        posLevel1 = fields[POS_LEVEL_1];
-        posLevel2 = fields[POS_LEVEL_2];
-        posLevel3 = fields[POS_LEVEL_3];
-        posLevel4 = fields[POS_LEVEL_4];
+        posLevel1 = fields[PART_OF_SPEECH_LEVEL_1];
+        posLevel2 = fields[PART_OF_SPEECH_LEVEL_2];
+        posLevel3 = fields[PART_OF_SPEECH_LEVEL_3];
+        posLevel4 = fields[PART_OF_SPEECH_LEVEL_4];
 
         baseForm = fields[BASE_FORM];
         reading = fields[READING];
@@ -63,19 +63,19 @@ public class DictionaryEntry extends DictionaryEntryBase {
     }
 
 
-    public String getPosLevel1() {
+    public String getPartOfSpeechLevel1() {
         return posLevel1;
     }
 
-    public String getPosLevel2() {
+    public String getPartOfSpeechLevel2() {
         return posLevel2;
     }
 
-    public String getPosLevel3() {
+    public String getPartOfSpeechLevel3() {
         return posLevel3;
     }
 
-    public String getPosLevel4() {
+    public String getPartOfSpeechLevel4() {
         return posLevel4;
     }
 

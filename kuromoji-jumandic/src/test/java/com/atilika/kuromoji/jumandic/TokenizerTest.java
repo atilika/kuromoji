@@ -100,25 +100,25 @@ public class TokenizerTest {
         String[] expectedPosLevel1 = {"接頭辞", "名詞", "助詞", "動詞", "接尾辞"};
 
         for (int i = 0; i < tokens.size(); i++) {
-            assertEquals(expectedPosLevel1[i], tokens.get(i).getPosLevel1());
+            assertEquals(expectedPosLevel1[i], tokens.get(i).getPartOfSpeechLevel1());
         }
 
         String[] expectedPosLevel2 = {"名詞接頭辞", "普通名詞", "格助詞", "*", "形容詞性述語接尾辞"};
 
         for (int i = 0; i < tokens.size(); i++) {
-            assertEquals(expectedPosLevel2[i], tokens.get(i).getPosLevel2());
+            assertEquals(expectedPosLevel2[i], tokens.get(i).getPartOfSpeechLevel2());
         }
 
         String[] expectedPosLevel3 = {"*", "*", "*", "母音動詞", "イ形容詞アウオ段"};
 
         for (int i = 0; i < tokens.size(); i++) {
-            assertEquals(expectedPosLevel3[i], tokens.get(i).getPosLevel3());
+            assertEquals(expectedPosLevel3[i], tokens.get(i).getPartOfSpeechLevel3());
         }
 
         String[] expectedPosLevel4 = {"*", "*", "*", "未然形", "基本形"};
 
         for (int i = 0; i < tokens.size(); i++) {
-            assertEquals(expectedPosLevel4[i], tokens.get(i).getPosLevel4());
+            assertEquals(expectedPosLevel4[i], tokens.get(i).getPartOfSpeechLevel4());
         }
 
     }
@@ -190,6 +190,6 @@ public class TokenizerTest {
     }
 
     private String getCombinedPartOfSpeech(Token token) {
-        return token.getPosLevel1() + "," + token.getPosLevel2() + "," + token.getPosLevel3() + "," + token.getPosLevel4();
+        return token.getPartOfSpeechLevel1() + "," + token.getPartOfSpeechLevel2() + "," + token.getPartOfSpeechLevel3() + "," + token.getPartOfSpeechLevel4();
     }
 }
