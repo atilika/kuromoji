@@ -16,15 +16,15 @@
  */
 package com.atilika.kuromoji.ipadic.compile;
 
-import com.atilika.kuromoji.compile.AbstractTokenInfoDictionaryCompiler;
-import com.atilika.kuromoji.compile.AbstractDictionaryCompiler;
+import com.atilika.kuromoji.compile.TokenInfoDictionaryCompilerBase;
+import com.atilika.kuromoji.compile.DictionaryCompilerBase;
 
 import java.io.IOException;
 
-public class DictionaryCompiler extends AbstractDictionaryCompiler {
+public class DictionaryCompiler extends DictionaryCompilerBase {
 
     @Override
-    protected AbstractTokenInfoDictionaryCompiler getTokenInfoDictionaryCompiler(String encoding) {
+    protected TokenInfoDictionaryCompilerBase getTokenInfoDictionaryCompiler(String encoding) {
         return new TokenInfoDictionaryCompiler(encoding);
     }
 

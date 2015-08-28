@@ -67,7 +67,7 @@ public class TokenizerTest {
         };
 
         for (int i = 0; i < tokens.size(); i++) {
-            assertEquals(expectedSurfaces[i], tokens.get(i).getSurfaceForm());
+            assertEquals(expectedSurfaces[i], tokens.get(i).getSurface());
             assertEquals(expectedFeatures[i], tokens.get(i).getAllFeatures());
         }
     }
@@ -79,7 +79,7 @@ public class TokenizerTest {
         String expectedSurface = "核";
         String expectedFeatures = "名詞,普通名詞,一般,*,*,*,カク,核,核,カク,核,カク,漢,*,*,ク促,基本形";
 
-        assertEquals(expectedSurface, tokens.get(0).getSurfaceForm());
+        assertEquals(expectedSurface, tokens.get(0).getSurface());
         assertEquals(expectedFeatures, tokens.get(0).getAllFeatures());
     }
 
@@ -111,10 +111,10 @@ public class TokenizerTest {
         assertEquals(posLevel1.length, tokens.size());
 
         for (int i = 0; i < tokens.size(); i++) {
-            assertEquals(posLevel1[i], tokens.get(i).getPosLevel1());
-            assertEquals(posLevel2[i], tokens.get(i).getPosLevel2());
-            assertEquals(posLevel3[i], tokens.get(i).getPosLevel3());
-            assertEquals(posLevel4[i], tokens.get(i).getPosLevel4());
+            assertEquals(posLevel1[i], tokens.get(i).getPartOfSpeechLevel1());
+            assertEquals(posLevel2[i], tokens.get(i).getPartOfSpeechLevel2());
+            assertEquals(posLevel3[i], tokens.get(i).getPartOfSpeechLevel3());
+            assertEquals(posLevel4[i], tokens.get(i).getPartOfSpeechLevel4());
         }
     }
 

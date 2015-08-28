@@ -16,7 +16,7 @@
  */
 package com.atilika.kuromoji.jumandic;
 
-import com.atilika.kuromoji.AbstractToken;
+import com.atilika.kuromoji.TokenBase;
 import com.atilika.kuromoji.dict.Dictionary;
 import com.atilika.kuromoji.jumandic.compile.DictionaryEntry;
 import com.atilika.kuromoji.viterbi.ViterbiNode;
@@ -24,14 +24,14 @@ import com.atilika.kuromoji.viterbi.ViterbiNode;
 /**
  * JUMANDIC token produced by the JUMANDIC tokenizer with various morphological features
  */
-public class Token extends AbstractToken {
+public class Token extends TokenBase {
 
     public Token(int wordId,
-                 String surfaceForm,
+                 String surface,
                  ViterbiNode.Type type,
                  int position,
                  Dictionary dictionary) {
-        super(wordId, surfaceForm, type, position, dictionary);
+        super(wordId, surface, type, position, dictionary);
     }
 
     /**
@@ -39,8 +39,8 @@ public class Token extends AbstractToken {
      *
      * @return 1st level part-of-speech tag, not null
      */
-    public String getPosLevel1() {
-        return this.getFeature(DictionaryEntry.POS_LEVEL_1);
+    public String getPartOfSpeechLevel1() {
+        return this.getFeature(DictionaryEntry.PART_OF_SPEECH_LEVEL_1);
     }
 
     /**
@@ -48,8 +48,8 @@ public class Token extends AbstractToken {
      *
      * @return 2nd level part-of-speech tag, not null
      */
-    public String getPosLevel2() {
-        return this.getFeature(DictionaryEntry.POS_LEVEL_2);
+    public String getPartOfSpeechLevel2() {
+        return this.getFeature(DictionaryEntry.PART_OF_SPEECH_LEVEL_2);
     }
 
     /**
@@ -57,8 +57,8 @@ public class Token extends AbstractToken {
      *
      * @return 3rd level part-of-speech tag, not null
      */
-    public String getPosLevel3() {
-        return this.getFeature(DictionaryEntry.POS_LEVEL_3);
+    public String getPartOfSpeechLevel3() {
+        return this.getFeature(DictionaryEntry.PART_OF_SPEECH_LEVEL_3);
     }
 
     /**
@@ -66,8 +66,8 @@ public class Token extends AbstractToken {
      *
      * @return 4th level part-of-speech tag, not null
      */
-    public String getPosLevel4() {
-        return this.getFeature(DictionaryEntry.POS_LEVEL_4);
+    public String getPartOfSpeechLevel4() {
+        return this.getFeature(DictionaryEntry.PART_OF_SPEECH_LEVEL_4);
     }
 
     /**

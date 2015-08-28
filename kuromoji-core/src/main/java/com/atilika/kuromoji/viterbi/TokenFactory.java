@@ -16,13 +16,13 @@
  */
 package com.atilika.kuromoji.viterbi;
 
-import com.atilika.kuromoji.AbstractToken;
+import com.atilika.kuromoji.TokenBase;
 import com.atilika.kuromoji.dict.Dictionary;
 
-public interface TokenFactory<T extends AbstractToken> {
+public interface TokenFactory<T extends TokenBase> {
 
     T createToken(int wordId,
-                  String surfaceForm,
+                  String surface,
                   ViterbiNode.Type type,
                   int position,
                   Dictionary dictionary);

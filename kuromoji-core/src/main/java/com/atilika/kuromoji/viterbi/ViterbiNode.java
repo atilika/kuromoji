@@ -28,7 +28,7 @@ public class ViterbiNode {
     }
 
     private final int wordId;
-    private final String surfaceForm;
+    private final String surface;
     private final int leftId;
     private final int rightId;
 
@@ -45,9 +45,9 @@ public class ViterbiNode {
     private final Type type;
     private final int startIndex;
 
-    public ViterbiNode(int wordId, String surfaceForm, int leftId, int rightId, int wordCost, int startIndex, Type type) {
+    public ViterbiNode(int wordId, String surface, int leftId, int rightId, int wordCost, int startIndex, Type type) {
         this.wordId = wordId;
-        this.surfaceForm = surfaceForm;
+        this.surface = surface;
         this.leftId = leftId;
         this.rightId = rightId;
         this.wordCost = wordCost;
@@ -67,10 +67,10 @@ public class ViterbiNode {
     }
 
     /**
-     * @return the surfaceForm
+     * @return the surface
      */
-    public String getSurfaceForm() {
-        return surfaceForm;
+    public String getSurface() {
+        return surface;
     }
 
     /**

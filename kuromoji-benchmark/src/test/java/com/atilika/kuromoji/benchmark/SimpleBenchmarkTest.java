@@ -16,7 +16,7 @@
  */
 package com.atilika.kuromoji.benchmark;
 
-import com.atilika.kuromoji.AbstractTokenizer;
+import com.atilika.kuromoji.TokenizerBase;
 import com.atilika.kuromoji.TestUtils;
 import org.junit.Test;
 
@@ -37,13 +37,13 @@ public class SimpleBenchmarkTest {
         IPADIC, JUMAN_DIC, NAIST_JDIC, UNIDIC, UNIDIC_KANAACCENT
     );
 
-    private Map<String, AbstractTokenizer> tokenizers = new HashMap<>();
+    private Map<String, TokenizerBase> tokenizers = new HashMap<>();
 
     @Test
     public void testSimpleBenchmark() throws Exception {
         for (String classname : tokenizerClasses) {
             long starttime = System.currentTimeMillis();
-            AbstractTokenizer t = tokenizeForName(classname);
+            TokenizerBase t = tokenizeForName(classname);
 
             System.out.println("Created " + classname
                 + " in " + (System.currentTimeMillis() - starttime)
@@ -53,7 +53,7 @@ public class SimpleBenchmarkTest {
         }
 
         for (String classname : tokenizerClasses) {
-            AbstractTokenizer tokenizer = tokenizers.get(classname);
+            TokenizerBase tokenizer = tokenizers.get(classname);
             long starttime = System.currentTimeMillis();
 
             TestUtils.assertCanTokenizeStream(
@@ -85,8 +85,8 @@ public class SimpleBenchmarkTest {
         }
     }
 
-    private AbstractTokenizer tokenizeForName(String classname) throws Exception {
+    private TokenizerBase tokenizeForName(String classname) throws Exception {
         Class clazz = Class.forName(classname);
-        return (AbstractTokenizer) clazz.newInstance();
+        return (TokenizerBase) clazz.newInstance();
     }
 }

@@ -22,19 +22,19 @@ import com.atilika.kuromoji.viterbi.ViterbiNode.Type;
 /**
  * Abstract token class with features shared by all tokens produced by all tokenizers
  */
-public abstract class AbstractToken {
+public abstract class TokenBase {
 
     private static final int META_DATA_SIZE = 4;
 
     private final Dictionary dictionary;
     private final int wordId;
-    private final String surfaceForm;
+    private final String surface;
     private final int position;
     private final Type type;
 
-    public AbstractToken(int wordId, String surfaceForm, Type type, int position, Dictionary dictionary) {
+    public TokenBase(int wordId, String surface, Type type, int position, Dictionary dictionary) {
         this.wordId = wordId;
-        this.surfaceForm = surfaceForm;
+        this.surface = surface;
         this.type = type;
         this.position = position;
         this.dictionary = dictionary;
@@ -45,8 +45,8 @@ public abstract class AbstractToken {
      *
      * @return surface form, not null
      */
-    public String getSurfaceForm() {
-        return surfaceForm;
+    public String getSurface() {
+        return surface;
     }
 
     /**
@@ -99,7 +99,7 @@ public abstract class AbstractToken {
     @Override
     public String toString() {
         return "Token{" +
-            "surfaceForm='" + surfaceForm + '\'' +
+            "surface='" + surface + '\'' +
             ", position=" + position +
             ", type=" + type +
             ", dictionary=" + dictionary +

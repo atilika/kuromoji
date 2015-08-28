@@ -71,7 +71,7 @@ public class TokenizerTest {
         String[] expectedSurfaces = new String[]{"お", "寿司", "が", "食べ", "たい", "。"};
 
         for (int i = 0; i < tokens.size(); i++) {
-            assertEquals(expectedSurfaces[i], tokens.get(i).getSurfaceForm());
+            assertEquals(expectedSurfaces[i], tokens.get(i).getSurface());
         }
     }
 
@@ -108,10 +108,10 @@ public class TokenizerTest {
 
         for (int i = 0; i < tokens.size(); i++) {
             Token token = tokens.get(i);
-            String partOfSpeech = token.getPosLevel1()
-                + "," + token.getPosLevel2()
-                + "," + token.getPosLevel3()
-                + "," + token.getPosLevel4();
+            String partOfSpeech = token.getPartOfSpeechLevel1()
+                + "," + token.getPartOfSpeechLevel2()
+                + "," + token.getPartOfSpeechLevel3()
+                + "," + token.getPartOfSpeechLevel4();
             assertEquals(expectedPos[i], partOfSpeech);
         }
     }
@@ -123,25 +123,25 @@ public class TokenizerTest {
         String[] expectedPosLevel1 = {"接頭詞", "名詞", "助詞", "動詞", "助動詞"};
 
         for (int i = 0; i < tokens.size(); i++) {
-            assertEquals(expectedPosLevel1[i], tokens.get(i).getPosLevel1());
+            assertEquals(expectedPosLevel1[i], tokens.get(i).getPartOfSpeechLevel1());
         }
 
         String[] expectedPosLevel2 = {"名詞接続", "一般", "格助詞", "自立", "*"};
 
         for (int i = 0; i < tokens.size(); i++) {
-            assertEquals(expectedPosLevel2[i], tokens.get(i).getPosLevel2());
+            assertEquals(expectedPosLevel2[i], tokens.get(i).getPartOfSpeechLevel2());
         }
 
         String[] expectedPosLevel3 = {"*", "*", "一般", "*", "*"};
 
         for (int i = 0; i < tokens.size(); i++) {
-            assertEquals(expectedPosLevel3[i], tokens.get(i).getPosLevel3());
+            assertEquals(expectedPosLevel3[i], tokens.get(i).getPartOfSpeechLevel3());
         }
 
         String[] expectedPosLevel4 = {"*", "*", "*", "*", "*"};
 
         for (int i = 0; i < tokens.size(); i++) {
-            assertEquals(expectedPosLevel4[i], tokens.get(i).getPosLevel4());
+            assertEquals(expectedPosLevel4[i], tokens.get(i).getPartOfSpeechLevel4());
         }
     }
 

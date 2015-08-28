@@ -65,7 +65,7 @@ public class UserDictionaryConverter {
             String reading = token.getReading();
 
             if (reading.equals("*")) {
-                builder.append(token.getSurfaceForm());
+                builder.append(token.getSurface());
             } else {
                 builder.append(reading);
             }
