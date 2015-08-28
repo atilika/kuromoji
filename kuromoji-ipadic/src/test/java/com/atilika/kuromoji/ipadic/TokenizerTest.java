@@ -47,11 +47,11 @@ public class TokenizerTest {
     @Test
     public void testSimpleSegmentation() {
         String input = "スペースステーションに行きます。うたがわしい。";
-        String[] surfaceForms = {"スペース", "ステーション", "に", "行き", "ます", "。", "うたがわしい", "。"};
+        String[] surfaces = {"スペース", "ステーション", "に", "行き", "ます", "。", "うたがわしい", "。"};
         List<Token> tokens = tokenizer.tokenize(input);
-        assertTrue(tokens.size() == surfaceForms.length);
+        assertTrue(tokens.size() == surfaces.length);
         for (int i = 0; i < tokens.size(); i++) {
-            assertEquals(surfaceForms[i], tokens.get(i).getSurfaceForm());
+            assertEquals(surfaces[i], tokens.get(i).getSurface());
         }
     }
 
@@ -77,7 +77,7 @@ public class TokenizerTest {
     public void testSimpleBaseFormKnownWord() {
         List<Token> tokens = tokenizer.tokenize("お寿司が食べたい。");
         assertTrue(tokens.size() == 6);
-        assertEquals("食べ", tokens.get(3).getSurfaceForm());
+        assertEquals("食べ", tokens.get(3).getSurface());
         assertEquals("食べる", tokens.get(3).getBaseForm());
 
     }
@@ -96,14 +96,14 @@ public class TokenizerTest {
     public void testYabottaiCornerCase() {
         List<Token> tokens = tokenizer.tokenize("やぼったい");
         assertEquals(1, tokens.size());
-        assertEquals("やぼったい", tokens.get(0).getSurfaceForm());
+        assertEquals("やぼったい", tokens.get(0).getSurface());
     }
 
     @Test
     public void testTsukitoshaCornerCase() {
         List<Token> tokens = tokenizer.tokenize("突き通しゃ");
         assertEquals(1, tokens.size());
-        assertEquals("突き通しゃ", tokens.get(0).getSurfaceForm());
+        assertEquals("突き通しゃ", tokens.get(0).getSurface());
     }
 
     @Test
@@ -132,25 +132,25 @@ public class TokenizerTest {
         String[] posLevel1 = {"接頭詞", "名詞", "助詞", "動詞", "助動詞", "記号"};
 
         for (int i = 0; i < tokens.size(); i++) {
-            assertEquals(posLevel1[i], tokens.get(i).getPosLevel1());
+            assertEquals(posLevel1[i], tokens.get(i).getPartOfSpeechLevel1());
         }
 
         String[] posLevel2 = {"名詞接続", "一般", "格助詞", "自立", "*", "一般"};
 
         for (int i = 0; i < tokens.size(); i++) {
-            assertEquals(posLevel2[i], tokens.get(i).getPosLevel2());
+            assertEquals(posLevel2[i], tokens.get(i).getPartOfSpeechLevel2());
         }
 
         String[] posLevel3 = {"*", "*", "一般", "*", "*", "*"};
 
         for (int i = 0; i < tokens.size(); i++) {
-            assertEquals(posLevel3[i], tokens.get(i).getPosLevel3());
+            assertEquals(posLevel3[i], tokens.get(i).getPartOfSpeechLevel3());
         }
 
         String[] posLevel4 = {"*", "*", "*", "*", "*", "*"};
 
         for (int i = 0; i < tokens.size(); i++) {
-            assertEquals(posLevel4[i], tokens.get(i).getPosLevel4());
+            assertEquals(posLevel4[i], tokens.get(i).getPartOfSpeechLevel4());
         }
     }
 
@@ -217,7 +217,7 @@ public class TokenizerTest {
     }
 
     private String toString(Token token) {
-        return token.getSurfaceForm() + "\t" + token.getAllFeatures();
+        return token.getSurface() + "\t" + token.getAllFeatures();
     }
 
     @Test

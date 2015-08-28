@@ -30,7 +30,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
 
-public abstract class AbstractDictionaryCompiler {
+public abstract class DictionaryCompilerBase {
 
     public void build(String inputDirname, String outputDirname, String encoding, boolean compactTries) throws IOException {
         File outputDir = new File(outputDirname);
@@ -42,7 +42,7 @@ public abstract class AbstractDictionaryCompiler {
 
     private void buildTokenInfoDictionary(String inputDirname, String outputDirname, String encoding, boolean compactTrie) throws IOException {
         ProgressLog.begin("compiling tokeninfo dict");
-        AbstractTokenInfoDictionaryCompiler tokenInfoCompiler = getTokenInfoDictionaryCompiler(encoding);
+        TokenInfoDictionaryCompilerBase tokenInfoCompiler = getTokenInfoDictionaryCompiler(encoding);
 
         ProgressLog.println("analyzing dictionary features");
         tokenInfoCompiler.analyzeTokenInfo(
@@ -90,7 +90,7 @@ public abstract class AbstractDictionaryCompiler {
         ProgressLog.end();
     }
 
-    abstract protected AbstractTokenInfoDictionaryCompiler getTokenInfoDictionaryCompiler(String encoding);
+    abstract protected TokenInfoDictionaryCompilerBase getTokenInfoDictionaryCompiler(String encoding);
 
     protected void buildUnknownWordDictionary(String inputDirname, String outputDirname, String encoding) throws IOException {
         ProgressLog.begin("compiling unknown word dict");

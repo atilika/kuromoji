@@ -44,9 +44,9 @@ import java.util.EnumMap;
 import java.util.List;
 
 /**
- * AbstractTokenizer main class
+ * TokenizerBase main class
  */
-public abstract class AbstractTokenizer {
+public abstract class TokenizerBase {
 
     public enum Mode {
         NORMAL, SEARCH, EXTENDED
@@ -111,7 +111,7 @@ public abstract class AbstractTokenizer {
         dictionaryMap.put(ViterbiNode.Type.INSERTED, insertedDictionary);
     }
 
-    public List<? extends AbstractToken> tokenize(String text) {
+    public List<? extends TokenBase> tokenize(String text) {
         return createTokenList(text);
     }
 
@@ -125,7 +125,7 @@ public abstract class AbstractTokenizer {
      * @param <T>  token type
      * @return list of Token, not null
      */
-    protected <T extends AbstractToken> List<T> createTokenList(String text) {
+    protected <T extends TokenBase> List<T> createTokenList(String text) {
 
         if (!split) {
             return createTokenList(0, text);
@@ -233,7 +233,7 @@ public abstract class AbstractTokenizer {
      * @param text sentence to tokenize
      * @return list of Token
      */
-    private <T extends AbstractToken> List<T> createTokenList(int offset, String text) {
+    private <T extends TokenBase> List<T> createTokenList(int offset, String text) {
         ArrayList<T> result = new ArrayList<>();
 
         ViterbiLattice lattice = viterbiBuilder.build(text);
@@ -247,7 +247,7 @@ public abstract class AbstractTokenizer {
             @SuppressWarnings("unchecked")
             T token = (T) tokenFactory.createToken(
                 wordId,
-                node.getSurfaceForm(),
+                node.getSurface(),
                 node.getType(),
                 offset + node.getStartIndex(),
                 dictionaryMap.get(node.getType())
@@ -303,7 +303,7 @@ public abstract class AbstractTokenizer {
          * @param <T> token type
          * @return Tokenizer instance
          */
-        public abstract <T extends AbstractTokenizer> T build();
+        public abstract <T extends TokenizerBase> T build();
 
         /**
          * Sets an optional user dictionary as an input stream

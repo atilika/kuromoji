@@ -16,14 +16,14 @@
  */
 package com.atilika.kuromoji.ipadic.compile;
 
-import com.atilika.kuromoji.compile.AbstractTokenInfoDictionaryCompiler;
+import com.atilika.kuromoji.compile.TokenInfoDictionaryCompilerBase;
 import com.atilika.kuromoji.dict.GenericDictionaryEntry;
 import com.atilika.kuromoji.util.DictionaryEntryLineParser;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class TokenInfoDictionaryCompiler extends AbstractTokenInfoDictionaryCompiler<DictionaryEntry> {
+public class TokenInfoDictionaryCompiler extends TokenInfoDictionaryCompilerBase<DictionaryEntry> {
 
     public TokenInfoDictionaryCompiler(String encoding) {
         super(encoding);
@@ -54,10 +54,10 @@ public class TokenInfoDictionaryCompiler extends AbstractTokenInfoDictionaryComp
     public List<String> extractPosFeatures(DictionaryEntry entry) {
         List<String> posFeatures = new ArrayList<>();
 
-        posFeatures.add(entry.getPosLevel1());
-        posFeatures.add(entry.getPosLevel2());
-        posFeatures.add(entry.getPosLevel3());
-        posFeatures.add(entry.getPosLevel4());
+        posFeatures.add(entry.getPartOfSpeechLevel1());
+        posFeatures.add(entry.getPartOfSpeechLevel2());
+        posFeatures.add(entry.getPartOfSpeechLevel3());
+        posFeatures.add(entry.getPartOfSpeechLevel4());
 
         posFeatures.add(entry.getConjugationType());
         posFeatures.add(entry.getConjugatedForm());

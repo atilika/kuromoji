@@ -22,7 +22,7 @@ import static com.atilika.kuromoji.TestUtils.assertTokenSurfacesEquals;
 
 public class CommonCornerCasesTest {
 
-    public static void testPunctuation(AbstractTokenizer tokenizer) {
+    public static void testPunctuation(TokenizerBase tokenizer) {
         String gerryNoHanaNoHanashi = "僕の鼻はちょっと\r\n長いよ。";
 
         assertTokenSurfacesEquals(

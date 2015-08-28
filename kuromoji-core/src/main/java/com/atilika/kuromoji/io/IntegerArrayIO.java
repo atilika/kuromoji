@@ -29,7 +29,7 @@ import java.nio.channels.WritableByteChannel;
 
 public class IntegerArrayIO {
 
-    private static final int INT_BYTES = 4;
+    private static final int INT_BYTES = Integer.SIZE / Byte.SIZE;
 
     public static int[] readArray(InputStream input) throws IOException {
         DataInputStream dataInput = new DataInputStream(input);

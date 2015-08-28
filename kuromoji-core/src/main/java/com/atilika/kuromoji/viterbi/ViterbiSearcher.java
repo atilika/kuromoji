@@ -16,7 +16,7 @@
  */
 package com.atilika.kuromoji.viterbi;
 
-import com.atilika.kuromoji.AbstractTokenizer;
+import com.atilika.kuromoji.TokenizerBase;
 import com.atilika.kuromoji.dict.ConnectionCosts;
 import com.atilika.kuromoji.dict.UnknownDictionary;
 
@@ -35,9 +35,9 @@ public class ViterbiSearcher {
     private int kanjiPenalty;
     private int otherPenalty;
 
-    private final AbstractTokenizer.Mode mode;
+    private final TokenizerBase.Mode mode;
 
-    public ViterbiSearcher(AbstractTokenizer.Mode mode,
+    public ViterbiSearcher(TokenizerBase.Mode mode,
                            ConnectionCosts costs,
                            UnknownDictionary unknownDictionary,
                            List<Integer> penalties) {
@@ -104,7 +104,7 @@ public class ViterbiSearcher {
                     wordCost;
 
                 // Add extra cost for long nodes in "Search mode".
-                if (mode == AbstractTokenizer.Mode.SEARCH || mode == AbstractTokenizer.Mode.EXTENDED) {
+                if (mode == TokenizerBase.Mode.SEARCH || mode == TokenizerBase.Mode.EXTENDED) {
                     pathCost += getPenaltyCost(node);
                 }
 
@@ -120,11 +120,11 @@ public class ViterbiSearcher {
 
     private int getPenaltyCost(ViterbiNode node) {
         int pathCost = 0;
-        String surfaceForm = node.getSurfaceForm();
-        int length = surfaceForm.length();
+        String surface = node.getSurface();
+        int length = surface.length();
 
         if (length > kanjiPenaltyLengthTreshold) {
-            if (isKanjiOnly(surfaceForm)) {    // Process only Kanji keywords
+            if (isKanjiOnly(surface)) {    // Process only Kanji keywords
                 pathCost += (length - kanjiPenaltyLengthTreshold) * kanjiPenalty;
             } else if (length > otherPenaltyLengthThreshold) {
                 pathCost += (length - otherPenaltyLengthThreshold) * otherPenalty;
@@ -133,9 +133,9 @@ public class ViterbiSearcher {
         return pathCost;
     }
 
-    private boolean isKanjiOnly(String surfaceForm) {
-        for (int i = 0; i < surfaceForm.length(); i++) {
-            char c = surfaceForm.charAt(i);
+    private boolean isKanjiOnly(String surface) {
+        for (int i = 0; i < surface.length(); i++) {
+            char c = surface.charAt(i);
 
             if (Character.UnicodeBlock.of(c) != Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS) {
                 return false;
@@ -145,8 +145,7 @@ public class ViterbiSearcher {
     }
 
     private LinkedList<ViterbiNode> backtrackBestPath(ViterbiNode eos) {
-        // track best path
-        ViterbiNode node = eos; // EOS
+        ViterbiNode node = eos;
         LinkedList<ViterbiNode> result = new LinkedList<>();
 
         result.add(node);
@@ -157,8 +156,8 @@ public class ViterbiSearcher {
             if (leftNode == null) {
                 break;
             } else {
-                // EXTENDED mode convert unknown word into unigram node
-                if (mode == AbstractTokenizer.Mode.EXTENDED && leftNode.getType() == ViterbiNode.Type.UNKNOWN) {
+                // Extended mode converts unknown word into unigram nodes
+                if (mode == TokenizerBase.Mode.EXTENDED && leftNode.getType() == ViterbiNode.Type.UNKNOWN) {
                     LinkedList<ViterbiNode> uniGramNodes = convertUnknownWordToUnigramNode(leftNode);
                     result.addAll(uniGramNodes);
                 } else {
@@ -172,11 +171,11 @@ public class ViterbiSearcher {
 
     private LinkedList<ViterbiNode> convertUnknownWordToUnigramNode(ViterbiNode node) {
         LinkedList<ViterbiNode> uniGramNodes = new LinkedList<>();
-        int unigramWordId = 0; //  CharacterDefinition.CharacterClass.NGRAM.getId();
-        String surfaceForm = node.getSurfaceForm();
+        int unigramWordId = 0;
+        String surface = node.getSurface();
 
-        for (int i = surfaceForm.length(); i > 0; i--) {
-            String word = surfaceForm.substring(i - 1, i);
+        for (int i = surface.length(); i > 0; i--) {
+            String word = surface.substring(i - 1, i);
             int startIndex = node.getStartIndex() + i - 1;
 
             ViterbiNode uniGramNode = new ViterbiNode(unigramWordId, word, unknownDictionary, startIndex, ViterbiNode.Type.UNKNOWN);

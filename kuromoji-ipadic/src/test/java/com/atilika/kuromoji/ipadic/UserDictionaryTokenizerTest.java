@@ -16,7 +16,6 @@
  */
 package com.atilika.kuromoji.ipadic;
 
-import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -72,13 +71,13 @@ public class UserDictionaryTokenizerTest {
     @Test
     public void testAllFeatures() throws IOException {
         String input = "シロクロ";
-        String[] surfaceForms = {"シロ", "クロ"};
+        String[] surfaces = {"シロ", "クロ"};
         Tokenizer tokenizer = makeTokenizer(userDictionary);
         List<Token> tokens = tokenizer.tokenize(input);
 
-        assertEquals(surfaceForms.length, tokens.size());
+        assertEquals(surfaces.length, tokens.size());
         Token token = tokens.get(1);
-        String actual = token.getSurfaceForm() + "\t" + token.getAllFeatures();
+        String actual = token.getSurface() + "\t" + token.getAllFeatures();
         assertEquals("クロ\tカスタム名詞,*,*,*,*,*,*,クロ,*", actual);
     }
 
@@ -102,7 +101,7 @@ public class UserDictionaryTokenizerTest {
         Tokenizer tokenizer = makeTokenizer(userDictionary);
 
         String input = "アクロア";
-        String[] surfaceForms = {"ア", "クロ", "ア"};
+        String[] surfaces = {"ア", "クロ", "ア"};
         String[] features = {
             "*,*,*,*,*,*,*,*,*",
             "カスタム名詞,*,*,*,*,*,*,クロ,*",
@@ -111,7 +110,7 @@ public class UserDictionaryTokenizerTest {
         List<Token> tokens = tokenizer.tokenize(input);
 
         for (int i = 0; i < tokens.size(); i++) {
-            assertEquals(surfaceForms[i], tokens.get(i).getSurfaceForm());
+            assertEquals(surfaces[i], tokens.get(i).getSurface());
             assertEquals(features[i], tokens.get(i).getAllFeatures());
         }
     }
@@ -122,7 +121,7 @@ public class UserDictionaryTokenizerTest {
         Tokenizer tokenizer = makeTokenizer(userDictionary);
 
         String input = "この丘の名前はアクロアだ。";
-        String[] surfaceForms = {"この", "丘", "の", "名前", "は", "ア", "クロ", "ア", "だ", "。"};
+        String[] surfaces = {"この", "丘", "の", "名前", "は", "ア", "クロ", "ア", "だ", "。"};
         String[] features = {
             "連体詞,*,*,*,*,*,この,コノ,コノ",
             "名詞,一般,*,*,*,*,丘,オカ,オカ",
@@ -138,7 +137,7 @@ public class UserDictionaryTokenizerTest {
         List<Token> tokens = tokenizer.tokenize(input);
 
         for (int i = 0; i < tokens.size(); i++) {
-            assertEquals(surfaceForms[i], tokens.get(i).getSurfaceForm());
+            assertEquals(surfaces[i], tokens.get(i).getSurface());
             assertEquals(features[i], tokens.get(i).getAllFeatures());
         }
     }

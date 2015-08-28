@@ -20,7 +20,7 @@ import com.atilika.kuromoji.buffer.BufferEntry;
 import com.atilika.kuromoji.buffer.FeatureInfoMap;
 import com.atilika.kuromoji.buffer.StringValueMapBuffer;
 import com.atilika.kuromoji.buffer.WordIdMap;
-import com.atilika.kuromoji.dict.AbstractDictionaryEntry;
+import com.atilika.kuromoji.dict.DictionaryEntryBase;
 import com.atilika.kuromoji.dict.GenericDictionaryEntry;
 import com.atilika.kuromoji.dict.TokenInfoDictionary;
 
@@ -42,7 +42,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.TreeMap;
 
-public abstract class AbstractTokenInfoDictionaryCompiler<T extends AbstractDictionaryEntry> implements Compiler {
+public abstract class TokenInfoDictionaryCompilerBase<T extends DictionaryEntryBase> implements Compiler {
 
     protected List<BufferEntry> bufferEntries = new ArrayList<>();
     protected FeatureInfoMap posInfo = new FeatureInfoMap();
@@ -55,7 +55,7 @@ public abstract class AbstractTokenInfoDictionaryCompiler<T extends AbstractDict
     private String encoding;
     private List<String> surfaces = new ArrayList<>();
 
-    public AbstractTokenInfoDictionaryCompiler(String encoding) {
+    public TokenInfoDictionaryCompilerBase(String encoding) {
         this.encoding = encoding;
     }
 
