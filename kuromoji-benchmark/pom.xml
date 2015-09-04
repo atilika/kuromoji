@@ -323,38 +323,38 @@
         <dependency>
             <groupId>com.atilika.kuromoji</groupId>
             <artifactId>kuromoji-core</artifactId>
-            <version>0.9-SNAPSHOT</version>
+            <version>${project.version}</version>
             <type>test-jar</type>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.atilika.kuromoji</groupId>
             <artifactId>kuromoji-ipadic</artifactId>
-            <version>0.9-SNAPSHOT</version>
+            <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.atilika.kuromoji</groupId>
             <artifactId>kuromoji-jumandic</artifactId>
-            <version>0.9-SNAPSHOT</version>
+            <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.atilika.kuromoji</groupId>
             <artifactId>kuromoji-naist-jdic</artifactId>
-            <version>0.9-SNAPSHOT</version>
+            <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.atilika.kuromoji</groupId>
             <artifactId>kuromoji-unidic</artifactId>
-            <version>0.9-SNAPSHOT</version>
+            <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.atilika.kuromoji</groupId>
             <artifactId>kuromoji-unidic-kanaaccent</artifactId>
-            <version>0.9-SNAPSHOT</version>
+            <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
@@ -366,7 +366,7 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.11</version>
+            <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
