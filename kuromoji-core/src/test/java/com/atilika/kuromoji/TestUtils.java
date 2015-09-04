@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -51,11 +52,20 @@ public class TestUtils {
         String untokenizedLine;
 
         while ((untokenizedLine = untokenizedInputReader.readLine()) != null) {
-            List<? extends TokenBase> tokens = tokenizer.tokenize(untokenizedLine);
-            // Discard tokens -- we just check that no exceptions are thrown
+            assertCanTokenizeString(untokenizedLine, tokenizer);
         }
 
         assertTrue(true);
+    }
+
+    public static void assertCanTokenizeString(String input, TokenizerBase tokenizer) {
+        List<? extends TokenBase> tokens = tokenizer.tokenize(input);
+
+        if (input.length() > 0) {
+            assertFalse(tokens.isEmpty());
+        } else {
+            assertTrue(tokens.isEmpty());
+        }
     }
 
     public static void assertTokenizedStreamEquals(InputStream tokenizedInput,
