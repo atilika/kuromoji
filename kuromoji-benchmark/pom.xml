@@ -5,7 +5,7 @@
     <parent>
         <artifactId>kuromoji</artifactId>
         <groupId>com.atilika.kuromoji</groupId>
-        <version>${project.version}</version>
+        <version>0.9-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -323,38 +323,38 @@
         <dependency>
             <groupId>com.atilika.kuromoji</groupId>
             <artifactId>kuromoji-core</artifactId>
-            <version>${project.version}</version>
+            <version>0.9-SNAPSHOT</version>
             <type>test-jar</type>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.atilika.kuromoji</groupId>
             <artifactId>kuromoji-ipadic</artifactId>
-            <version>${project.version}</version>
+            <version>0.9-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.atilika.kuromoji</groupId>
             <artifactId>kuromoji-jumandic</artifactId>
-            <version>${project.version}</version>
+            <version>0.9-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.atilika.kuromoji</groupId>
             <artifactId>kuromoji-naist-jdic</artifactId>
-            <version>${project.version}</version>
+            <version>0.9-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.atilika.kuromoji</groupId>
             <artifactId>kuromoji-unidic</artifactId>
-            <version>${project.version}</version>
+            <version>0.9-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.atilika.kuromoji</groupId>
             <artifactId>kuromoji-unidic-kanaaccent</artifactId>
-            <version>${project.version}</version>
+            <version>0.9-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
