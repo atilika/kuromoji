@@ -22,8 +22,6 @@ import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.LineNumberReader;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
@@ -232,45 +230,6 @@ public class TokenizerTest {
     }
 
     @Test
-    public void testBocchan() throws IOException {
-        int runs = 3;
-        LineNumberReader reader = new LineNumberReader(new InputStreamReader(
-            this.getClass().getClassLoader().getResourceAsStream("bocchan.txt")));
-
-        String text = reader.readLine();
-        reader.close();
-
-        System.out.println("Test for Bocchan without pre-splitting sentences");
-
-        long totalStart = System.currentTimeMillis();
-
-        for (int i = 0; i < runs; i++) {
-            List<Token> tokens = tokenizer.tokenize(text);
-            for (Token token : tokens) {
-                token.getAllFeatures();
-            }
-        }
-
-        reportStatistics(totalStart, runs);
-
-        System.out.println("Test for Bocchan with pre-splitting sentences");
-
-        String[] sentences = text.split("、|。");
-
-        totalStart = System.currentTimeMillis();
-        for (int i = 0; i < runs; i++) {
-            for (String sentence : sentences) {
-                List<Token> tokens = tokenizer.tokenize(sentence);
-                for (Token token : tokens) {
-                    token.getAllFeatures();
-                }
-            }
-        }
-
-        reportStatistics(totalStart, runs);
-    }
-
-    @Test
     public void testFeatureLengths() throws IOException {
         String userDictionary = "" +
             "gsf,gsf,ジーエスーエフ,カスタム名詞\n";
@@ -298,12 +257,5 @@ public class TokenizerTest {
     @Test
     public void testPunctuation() {
         CommonCornerCasesTest.testPunctuation(new Tokenizer());
-    }
-
-    private void reportStatistics(long totalStart, int runs) {
-        long time = System.currentTimeMillis() - totalStart;
-
-        System.out.println("Total time : " + time);
-        System.out.println("Average time per run : " + (time / runs));
     }
 }
