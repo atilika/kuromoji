@@ -147,7 +147,7 @@ Released version of Kuromoji are available from Maven Central.
  If you want to build Kuromoji from source code, run the following command:
 
 ```shell
-    $ mvn clean package
+$ mvn clean package
 ```
 
 This will download all source dictionary data and build Kuromoji with all dictionaries. The following jars will then be available:
