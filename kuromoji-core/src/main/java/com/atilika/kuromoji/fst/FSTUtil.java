@@ -1,6 +1,7 @@
 package com.atilika.kuromoji.fst;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -17,7 +18,7 @@ public class FSTUtil {
      */
     public void sortInput(InputStream inputStream) throws IOException {
 
-        InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+        InputStreamReader inputStreamReader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
         BufferedReader reader = new BufferedReader(inputStreamReader);
 
         String line;
@@ -46,7 +47,7 @@ public class FSTUtil {
      */
     private void writeSortedInput(OutputStream output) throws IOException {
 
-        OutputStreamWriter outputStreamWriter = new OutputStreamWriter(output);
+        OutputStreamWriter outputStreamWriter = new OutputStreamWriter(output, StandardCharsets.UTF_8);
         BufferedWriter writer = new BufferedWriter(outputStreamWriter);
 
         writeSortedInput(writer);
