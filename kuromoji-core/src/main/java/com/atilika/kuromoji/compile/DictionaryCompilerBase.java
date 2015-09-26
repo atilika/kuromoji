@@ -31,15 +31,15 @@ import java.util.List;
 
 public abstract class DictionaryCompilerBase {
 
-    public void build(String inputDirname, String outputDirname, String encoding, boolean compactTries) throws IOException {
+    public void build(String inputDirname, String outputDirname, String encoding) throws IOException {
         File outputDir = new File(outputDirname);
         outputDir.mkdirs();
-        buildTokenInfoDictionary(inputDirname, outputDirname, encoding, compactTries);
+        buildTokenInfoDictionary(inputDirname, outputDirname, encoding);
         buildUnknownWordDictionary(inputDirname, outputDirname, encoding);
         buildConnectionCosts(inputDirname, outputDirname);
     }
 
-    private void buildTokenInfoDictionary(String inputDirname, String outputDirname, String encoding, boolean compactTrie) throws IOException {
+    private void buildTokenInfoDictionary(String inputDirname, String outputDirname, String encoding) throws IOException {
         ProgressLog.begin("compiling tokeninfo dict");
         TokenInfoDictionaryCompilerBase tokenInfoCompiler = getTokenInfoDictionaryCompiler(encoding);
 
@@ -84,8 +84,6 @@ public abstract class DictionaryCompilerBase {
                 ProgressLog.println("failed to look up [" + surface + "]");
             }
         }
-
-        ProgressLog.end();
 
         ProgressLog.end();
 
@@ -163,16 +161,14 @@ public abstract class DictionaryCompilerBase {
         String inputDirname = args[0];
         String outputDirname = args[1];
         String inputEncoding = args[2];
-        boolean compactTries = Boolean.parseBoolean(args[3]);
 
         ProgressLog.println("dictionary compiler");
         ProgressLog.println("");
         ProgressLog.println("input directory: " + inputDirname);
         ProgressLog.println("output directory: " + outputDirname);
         ProgressLog.println("input encoding: " + inputEncoding);
-        ProgressLog.println("compact tries: " + compactTries);
         ProgressLog.println("");
 
-        build(inputDirname, outputDirname, inputEncoding, compactTries);
+        build(inputDirname, outputDirname, inputEncoding);
     }
 }
