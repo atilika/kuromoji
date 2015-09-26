@@ -1,10 +1,13 @@
 package com.atilika.kuromoji.fst;
 
+import com.atilika.kuromoji.util.SimpleResourceResolver;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
@@ -42,5 +45,27 @@ public class FSTTest {
     @Test
     public void testMiss() throws Exception {
         assertEquals(-1, fst.lookup("mouse"));
+    }
+
+    @Ignore("Replace this with prefix match tests")
+    @Test
+    public void testIPADIC() throws IOException {
+        FST ipadic = new FST(new FileInputStream(new File("/Users/cm/Projects/kuromoji-cmoen/kuromoji-ipadic/src/main/resources/com/atilika/kuromoji/ipadic/fst.bin")));
+
+        debugLookup(ipadic, "ア");
+        debugLookup(ipadic, "アテ");
+        debugLookup(ipadic, "アティ");
+        debugLookup(ipadic, "株");
+        debugLookup(ipadic, "株式");
+        debugLookup(ipadic, "会社");
+        debugLookup(ipadic, "株式会");
+        debugLookup(ipadic, "株式会社");
+        debugLookup(ipadic, "ステーシ");
+        debugLookup(ipadic, "ステーション");
+    }
+
+    public void debugLookup(FST fst, String key) {
+        int value = fst.lookup(key);
+        System.out.println("\t" + key + " -> " + value);
     }
 }

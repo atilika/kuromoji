@@ -21,14 +21,14 @@ import com.atilika.kuromoji.dict.CharacterDefinitions;
 import com.atilika.kuromoji.dict.TokenInfoDictionary;
 import com.atilika.kuromoji.dict.UnknownDictionary;
 import com.atilika.kuromoji.dict.UserDictionary;
-import com.atilika.kuromoji.trie.DoubleArrayTrie;
+import com.atilika.kuromoji.fst.FST;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ViterbiBuilder {
 
-    private final DoubleArrayTrie trie;
+    private final FST trie;
     private final TokenInfoDictionary dictionary;
     private final UnknownDictionary unknownDictionary;
     private final UserDictionary userDictionary;
@@ -45,7 +45,7 @@ public class ViterbiBuilder {
      * @param userDictionary  user dictionary
      * @param mode  tokenization {@link Mode mode}
      */
-    public ViterbiBuilder(DoubleArrayTrie trie,
+    public ViterbiBuilder(FST trie,
                           TokenInfoDictionary dictionary,
                           UnknownDictionary unknownDictionary,
                           UserDictionary userDictionary,
@@ -111,11 +111,15 @@ public class ViterbiBuilder {
         boolean found = false;
         for (int endIndex = 1; endIndex < suffix.length() + 1; endIndex++) {
             String prefix = suffix.substring(0, endIndex);
-            int result = trie.lookup(prefix, 0, 0);
+//            int result = trie.lookup(prefix, 0, 0);
+            int result = trie.lookup(prefix);
+
+//            System.out.println("looked up: " + prefix + " -> " + result);
 
             if (result > 0) {    // Found match in double array trie
                 found = true;    // Don't produce unknown word starting from this index
                 for (int wordId : dictionary.lookupWordIds(result)) {
+//                    System.out.println("\tadding node: " + prefix);
                     ViterbiNode node = new ViterbiNode(wordId, prefix, dictionary, startIndex, ViterbiNode.Type.KNOWN);
                     lattice.addNode(node, startIndex + 1, startIndex + 1 + endIndex);
                 }

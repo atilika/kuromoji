@@ -40,13 +40,11 @@ public class Program {
 //            int arg2 = instruction.get(internalIndex + 4) << 24 | instruction.get(internalIndex + 5) << 16 | instruction.get(internalIndex + 6) << 8 | instruction.get(internalIndex + 7);
 //            int arg3 = instruction.get(internalIndex + 8) << 24 | instruction.get(internalIndex + 9) << 16 | instruction.get(internalIndex + 10) << 8 | instruction.get(internalIndex + 11);
 
-        instruction.position(internalIndex);
-
         Instruction i = new Instruction();
-        i.setOpcode(instruction.get());
-        i.setArg1(instruction.getChar());
-        i.setArg2(instruction.getInt());
-        i.setArg3(instruction.getInt());
+        i.setOpcode(instruction.get(internalIndex));
+        i.setArg1(instruction.getChar(internalIndex + 1));
+        i.setArg2(instruction.getInt(internalIndex + 1 + 2));
+        i.setArg3(instruction.getInt(internalIndex + 1 + 2 + 4));
 
         return i;
     }
@@ -110,9 +108,13 @@ public class Program {
         return instructions;
     }
 
-    public int[] getCacheFirstAddresses() {return this.cacheFirstAddresses;}
+    public int[] getCacheFirstAddresses() {
+        return this.cacheFirstAddresses;
+    }
 
-    public int[] getCacheFirstOutputs() {return this.cacheFirstOutputs;}
+    public int[] getCacheFirstOutputs() {
+        return this.cacheFirstOutputs;
+    }
 
     public int getNumInstructions() {
         return this.endOfTheProgram / Program.BYTES_PER_INSTRUCTIONS;

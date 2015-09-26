@@ -49,7 +49,12 @@ public class VirtualMachine {
             }
 
             Instruction i = program.getInstructionAt(pc);
-//            System.out.println(i);
+
+//            if (position < input.length()) {
+//                System.out.println("char: " + input.charAt(position) + ", instruction: " + i);
+//            } else {
+//                System.out.println("instruction: " + i);
+//            }
 
             short opcode = i.getOpcode();
 
@@ -59,7 +64,14 @@ public class VirtualMachine {
 
                     char arg1 = i.getArg1();
 
-                    if (position >= input.length()) {
+                    if (position > input.length()) {
+                        break;
+                    }
+
+                    // We're at the end of input and we didn't match, which means a prefix match
+                    if (position == input.length()) {
+                        accumulator = 0;
+                        done = true;
                         break;
                     }
 
@@ -97,6 +109,12 @@ public class VirtualMachine {
                             pc = i.getArg2() + 1; // JUMP to Address i.arg2
                             accumulator += i.getArg3();
                             position += 1; // move the input char pointer
+                        } else {
+                            // We're at the end of input and we didn't match, which means a prefix match
+                            if (position == input.length()) {
+                                accumulator = 0;
+                                done = true;
+                            }
                         }
                     }
                     break;

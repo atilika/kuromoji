@@ -19,7 +19,7 @@ package com.atilika.kuromoji.compile;
 import com.atilika.kuromoji.dict.CharacterDefinitions;
 import com.atilika.kuromoji.dict.ConnectionCosts;
 import com.atilika.kuromoji.dict.UnknownDictionary;
-import com.atilika.kuromoji.trie.DoubleArrayTrie;
+import com.atilika.kuromoji.fst.FST;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -27,7 +27,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.List;
 
 public abstract class DictionaryCompilerBase {
@@ -57,33 +56,47 @@ public abstract class DictionaryCompilerBase {
         @SuppressWarnings("unchecked")
         List<String> surfaces = tokenInfoCompiler.getSurfaces();
 
-        ProgressLog.begin("compiling double array trie");
-        DoubleArrayTrie trie = DoubleArrayTrieCompiler.build(surfaces, compactTrie);
-        OutputStream daTrieOutput = new FileOutputStream(
-            outputDirname + File.separator + DoubleArrayTrie.DOUBLE_ARRAY_TRIE_FILENAME
-        );
-        trie.write(daTrieOutput);
-        daTrieOutput.close();
+        ProgressLog.begin("compiling fst");
 
-        try {
-            ProgressLog.println("validating saved double array trie");
-            DoubleArrayTrie daTrie = DoubleArrayTrie.read(new FileInputStream(outputDirname + File.separator + DoubleArrayTrie.DOUBLE_ARRAY_TRIE_FILENAME));
-            for (String surface : surfaces) {
-                if (daTrie.lookup(surface) < 0) {
-                    ProgressLog.println("failed to look up [" + surface + "]");
-                }
+        FSTCompiler fstCompiler = new FSTCompiler(
+            new BufferedOutputStream(
+                new FileOutputStream(
+                    new File(outputDirname, FST.FST_FILENAME)
+                )
+            ),
+            surfaces
+        );
+
+        fstCompiler.compile();
+
+        ProgressLog.println("validating saved fst");
+
+        FST fst = new FST(
+            new BufferedInputStream(
+                new FileInputStream(
+                    new File(outputDirname, FST.FST_FILENAME)
+                )
+            )
+        );
+
+        for (String surface : surfaces) {
+            if (fst.lookup(surface) < 0) {
+                ProgressLog.println("failed to look up [" + surface + "]");
             }
-        } catch (Exception e) {
-            e.printStackTrace();
         }
+
+        ProgressLog.end();
+
         ProgressLog.end();
 
         ProgressLog.begin("processing target map");
+
         for (int i = 0; i < surfaces.size(); i++) {
-            int doubleArrayId = trie.lookup(surfaces.get(i));
-            assert doubleArrayId > 0;
-            tokenInfoCompiler.addMapping(doubleArrayId, i);
+            int id = fst.lookup(surfaces.get(i));
+            assert id > 0;
+            tokenInfoCompiler.addMapping(id, i);
         }
+
         tokenInfoCompiler.write(outputDirname); // TODO: Should be refactored -Christian
         ProgressLog.end();
 
