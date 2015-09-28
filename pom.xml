@@ -41,10 +41,12 @@
     <modules>
         <module>kuromoji-core</module>
         <module>kuromoji-ipadic</module>
+        <module>kuromoji-ipadic-neologd</module>
         <module>kuromoji-jumandic</module>
         <module>kuromoji-naist-jdic</module>
         <module>kuromoji-unidic</module>
         <module>kuromoji-unidic-kanaaccent</module>
+        <module>kuromoji-unidic-neologd</module>
         <module>kuromoji-benchmark</module>
     </modules>
 
