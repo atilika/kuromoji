@@ -20,7 +20,6 @@
         <kuromoji.dict.dir>${project.basedir}/dictionary/mecab-naist-jdic-0.6.3b-20111013</kuromoji.dict.dir>
         <kuromoji.dict.targetdir>${project.basedir}/src/main/resources/com/atilika/kuromoji/naist/jdic</kuromoji.dict.targetdir>
         <kuromoji.dict.encoding>euc-jp</kuromoji.dict.encoding>
-        <kuromoji.dict.compact>false</kuromoji.dict.compact>
     </properties>
 
     <build>
@@ -132,7 +131,6 @@
                                 <argument>${kuromoji.dict.dir}</argument>
                                 <argument>${kuromoji.dict.targetdir}</argument>
                                 <argument>${kuromoji.dict.encoding}</argument>
-                                <argument>${kuromoji.dict.compact}</argument>
                             </arguments>
                         </configuration>
                     </plugin>
