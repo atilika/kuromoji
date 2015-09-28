@@ -18,6 +18,7 @@ package com.atilika.kuromoji.ipadic.neologd;
 
 import com.atilika.kuromoji.CommonCornerCasesTest;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
@@ -45,7 +46,7 @@ public class TokenizerTest {
     @Test
     public void testSimpleSegmentation() {
         String input = "スペースステーションに行きます。うたがわしい。";
-        String[] surfaces = {"スペース", "ステーション", "に", "行き", "ます", "。", "うたがわしい", "。"};
+        String[] surfaces = {"スペースステーション", "に", "行き", "ます", "。", "うたがわしい", "。"};
         assertTokenSurfacesEquals(
             Arrays.asList(surfaces),
             tokenizer.tokenize(input)
@@ -151,6 +152,7 @@ public class TokenizerTest {
         }
     }
 
+    @Ignore("Need to decide if custom penalties should be supported...")
     @Test
     public void testCustomPenalties() {
         String input = "シニアソフトウェアエンジニアを探しています";

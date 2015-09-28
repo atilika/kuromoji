@@ -18,6 +18,7 @@ package com.atilika.kuromoji.ipadic.neologd;
 
 import com.atilika.kuromoji.TokenizerBase.Mode;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -30,6 +31,7 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
+@Ignore("Need to decide if search mode should be supported...")
 public class SearchTokenizerTest {
 
     private static Tokenizer tokenizer;
