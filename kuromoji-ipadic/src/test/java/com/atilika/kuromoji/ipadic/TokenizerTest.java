@@ -46,10 +46,11 @@ public class TokenizerTest {
     public void testSimpleSegmentation() {
         String input = "スペースステーションに行きます。うたがわしい。";
         String[] surfaces = {"スペース", "ステーション", "に", "行き", "ます", "。", "うたがわしい", "。"};
-        assertTokenSurfacesEquals(
-            Arrays.asList(surfaces),
-            tokenizer.tokenize(input)
-        );
+        List<Token> tokens = tokenizer.tokenize(input);
+        assertTrue(tokens.size() == surfaces.length);
+        for (int i = 0; i < tokens.size(); i++) {
+            assertEquals(surfaces[i], tokens.get(i).getSurface());
+        }
     }
 
     @Test
