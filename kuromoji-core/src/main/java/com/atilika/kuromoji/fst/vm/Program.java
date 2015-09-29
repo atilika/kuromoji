@@ -1,11 +1,17 @@
 package com.atilika.kuromoji.fst.vm;
 
-import java.io.*;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.ByteBuffer;
-import java.nio.channels.*;
-import java.util.ArrayList;
+import java.nio.channels.Channels;
+import java.nio.channels.ReadableByteChannel;
+import java.nio.channels.WritableByteChannel;
 import java.util.Arrays;
-import java.util.List;
 
 public class Program {
 
@@ -33,29 +39,28 @@ public class Program {
     }
 
 
-    public Instruction getInstructionAt(int pc) {
+    public byte getOpcode(int pc) {
         int internalIndex = pc * BYTES_PER_INSTRUCTIONS;
-//            short opcode = (short) (instruction.get(internalIndex) << 8 | instruction.get(internalIndex + 1));
-//            char arg1 = (char) (instruction.get(internalIndex + 2) << 8 | instruction.get(internalIndex + 3));
-//            int arg2 = instruction.get(internalIndex + 4) << 24 | instruction.get(internalIndex + 5) << 16 | instruction.get(internalIndex + 6) << 8 | instruction.get(internalIndex + 7);
-//            int arg3 = instruction.get(internalIndex + 8) << 24 | instruction.get(internalIndex + 9) << 16 | instruction.get(internalIndex + 10) << 8 | instruction.get(internalIndex + 11);
-
-        Instruction i = new Instruction();
-        i.setOpcode(instruction.get(internalIndex));
-        i.setArg1(instruction.getChar(internalIndex + 1));
-        i.setArg2(instruction.getInt(internalIndex + 1 + 2));
-        i.setArg3(instruction.getInt(internalIndex + 1 + 2 + 4));
-
-        return i;
+        return instruction.get(internalIndex);
     }
 
-    /**
-     * Add an instruction to Bytebuffer. Doubling the size of buffer when the current size is not enough.
-     *
-     * @param i
-     */
-    public void addInstruction(Instruction i) {
-        addInstruction(i.getOpcode(), i.getArg1(), i.getArg2(), i.getArg3());
+    public char getArg1(int pc) {
+        int internalIndex = pc * BYTES_PER_INSTRUCTIONS;
+        return instruction.getChar(internalIndex + 1);
+    }
+
+    public int getArg2(int pc) {
+        int internalIndex = pc * BYTES_PER_INSTRUCTIONS;
+        return instruction.getInt(internalIndex + 1 + 2);
+    }
+
+    public int getArg3(int pc) {
+        int internalIndex = pc * BYTES_PER_INSTRUCTIONS;
+        return instruction.getInt(internalIndex + 1 + 2 + 4);
+    }
+
+    public void addInstruction(byte op) {
+        addInstruction(op, ' ', -1, 0);
     }
 
     public void addInstruction(byte op, char label, int targetAddress, int output) {
@@ -91,21 +96,6 @@ public class Program {
         instruction.flip(); // limit ← position, position ← 0
         newInstructions.put(instruction);
         instruction = newInstructions;
-    }
-
-    public void addInstructions(List<Instruction> instructions) {
-        for (Instruction i : instructions) {
-            addInstruction(i);
-        }
-    }
-
-    public List<Instruction> dumpInstructions() {
-        List<Instruction> instructions = new ArrayList<>();
-        int numInstructions = this.getNumInstructions();
-        for (int pc = 0; pc < numInstructions; pc++) {
-            instructions.add(this.getInstructionAt(pc));
-        }
-        return instructions;
     }
 
     public int[] getCacheFirstAddresses() {
@@ -178,15 +168,15 @@ public class Program {
      */
     public void storeCache() {
         int pc = this.endOfTheProgram / Program.BYTES_PER_INSTRUCTIONS - 1;
-        Instruction i = new Instruction();
+        byte opcode = Program.HELLO;
 
         // Retrieving through the arcs from the starting state
-        while (i.getOpcode() != Program.FAIL) {
-            i = this.getInstructionAt(pc);
-            int indice = i.getArg1();
-            this.cacheFirstAddresses[indice] = i.getArg2();
-            this.cacheFirstOutputs[indice] = i.getArg3();
-            this.cacheFirstIsAccept[indice] = i.getOpcode() == Program.ACCEPT_OR_MATCH;
+        while (opcode != Program.FAIL) {
+            int indice = this.getArg1(pc);
+            this.cacheFirstAddresses[indice] = this.getArg2(pc);
+            this.cacheFirstOutputs[indice] = this.getArg3(pc);
+            opcode = this.getOpcode(pc);
+            this.cacheFirstIsAccept[indice] = opcode == Program.ACCEPT_OR_MATCH;
             pc--;
         }
     }

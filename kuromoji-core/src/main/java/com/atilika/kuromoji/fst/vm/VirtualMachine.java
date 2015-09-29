@@ -13,11 +13,7 @@ public class VirtualMachine {
     }
 
     public int run(Program program, String input) {
-        int pc; // Thread-safe
-
-//        pc = 0;
-        pc = program.endOfTheProgram / Program.BYTES_PER_INSTRUCTIONS - 1; // Compiled in a reverse order
-
+        int pc = program.endOfTheProgram / Program.BYTES_PER_INSTRUCTIONS - 1; // Compiled in a reverse order
         int accumulator = 0; // CPU register
         int position = 0; // CPU register
 
@@ -28,16 +24,17 @@ public class VirtualMachine {
 
             // Referring to the cache
             if (useCache && isFirstArc && input.charAt(position) < program.getCacheFirstAddresses().length) {
+                char inputChar = input.charAt(position);
 
-                if (program.getCacheFirstAddresses()[input.charAt(position)] == -1) {
+                if (program.getCacheFirstAddresses()[inputChar] == -1) {
                     accumulator = -1;
                     break;
                 }
 
-                pc = program.getCacheFirstAddresses()[input.charAt(position)];
-                accumulator += program.getCacheFirstOutputs()[input.charAt(position)];
+                pc = program.getCacheFirstAddresses()[inputChar];
+                accumulator += program.getCacheFirstOutputs()[inputChar];
 
-                if (input.length() == position + 1 && program.cacheFirstIsAccept[input.charAt(position)]) {
+                if (input.length() == position + 1 && program.cacheFirstIsAccept[inputChar]) {
                     // last character
                     done = true;
                 }
@@ -48,21 +45,13 @@ public class VirtualMachine {
                 continue;
             }
 
-            Instruction i = program.getInstructionAt(pc);
-
-//            if (position < input.length()) {
-//                System.out.println("char: " + input.charAt(position) + ", instruction: " + i);
-//            } else {
-//                System.out.println("instruction: " + i);
-//            }
-
-            short opcode = i.getOpcode();
+            short opcode = program.getOpcode(pc);
 
             switch (opcode) {
 
                 case Program.MATCH:
 
-                    char arg1 = i.getArg1();
+                    char arg1 = program.getArg1(pc);
 
                     if (position > input.length()) {
                         break;
@@ -76,10 +65,8 @@ public class VirtualMachine {
                     }
 
                     if (arg1 == input.charAt(position)) {
-//                        pc += i.arg2 - 1; // pc is always incremented!
-//                        pc = i.arg2 - 1; // JUMP to Address i.arg2
-                        pc = i.getArg2() + 1; // JUMP to Address i.arg2
-                        accumulator += i.getArg3();
+                        accumulator += program.getArg3(pc);
+                        pc = program.getArg2(pc) + 1; // JUMP to Address i.arg2
                         position += 1; // move the input char pointer
                     }
 
@@ -96,18 +83,16 @@ public class VirtualMachine {
                     break;
 
                 case Program.ACCEPT_OR_MATCH:
-                    arg1 = i.getArg1();
+                    arg1 = program.getArg1(pc);
 
                     if (input.length() == position + 1 && arg1 == input.charAt(position)) {
                         // last character
-                        accumulator += i.getArg3();
+                        accumulator += program.getArg3(pc);
                         done = true;
-                    }
-                    else {
+                    } else {
                         if (position < input.length() && arg1 == input.charAt(position)) {
-//                        pc += i.arg2 - 1; // pc is always incremented!
-                            pc = i.getArg2() + 1; // JUMP to Address i.arg2
-                            accumulator += i.getArg3();
+                            accumulator += program.getArg3(pc);
+                            pc = program.getArg2(pc) + 1; // JUMP to Address i.arg2
                             position += 1; // move the input char pointer
                         } else {
                             // We're at the end of input and we didn't match, which means a prefix match
@@ -125,10 +110,9 @@ public class VirtualMachine {
                     break;
 
                 default:
-                    throw new RuntimeException("You have screwed up badly, please go away!");
+                    throw new RuntimeException("Unexpected program status. Terminating FST!");
             }
 
-//            pc++;
             pc--;
         }
 

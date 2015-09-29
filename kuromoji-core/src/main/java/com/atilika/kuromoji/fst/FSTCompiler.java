@@ -1,6 +1,5 @@
 package com.atilika.kuromoji.fst;
 
-import com.atilika.kuromoji.fst.vm.Instruction;
 import com.atilika.kuromoji.fst.vm.Program;
 
 public class FSTCompiler {

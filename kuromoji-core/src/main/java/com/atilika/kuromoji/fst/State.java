@@ -31,11 +31,6 @@ public class State {
     }
 
     public Arc setArc(char transition, int output, State toState) {
-//        Arc existingArc = findArc(transition);
-//        if (existingArc != null) {
-//            // does override existing arc
-//            arcs.remove(existingArc);
-//        }
         // Assuming no duplicate transition character
         Arc newArc = new Arc(output, toState, transition);
         arcs.add(newArc);
@@ -43,10 +38,6 @@ public class State {
     }
 
     public void setArc(char transition, State toState) {
-//        if (findArc(transition) != null) {
-////            does not override existing arc
-//            return;
-//        }
         // Assuming no duplicate transition character
         Arc newArc = new Arc(toState);
         newArc.setLabel(transition);
@@ -70,17 +61,6 @@ public class State {
     }
 
     public boolean isFinal() { return this.isFinal; }
-
-//    public Arc findArc(char transition) {
-//        // linear search
-//        for (Arc arc : arcs) {
-//            if (arc.getLabel() == transition) {
-//                return arc;
-//            }
-//        }
-//
-//        return null;
-//    }
 
     public Arc findArc(char transition) {
         return binarySearchArc(transition, 0, this.arcs.size());
