@@ -1,9 +1,7 @@
 package com.atilika.kuromoji.fst;
 
-import com.atilika.kuromoji.fst.vm.Instruction;
 import com.atilika.kuromoji.fst.vm.Program;
 import com.atilika.kuromoji.fst.vm.VirtualMachine;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -24,7 +22,6 @@ public class FSTCompilerTest {
         VirtualMachine vm = new VirtualMachine();
         Program program = new FSTTestHelper().getProgram(inputValues, outputValues);
 
-        List<Instruction> instructionsForDebug = program.dumpInstructions();
         for (int i = 0; i < inputValues.length; i++) {
             assertEquals(outputValues[i], vm.run(program, inputValues[i]));
         }
@@ -40,23 +37,22 @@ public class FSTCompilerTest {
         fstBuilder.createDictionary(inputValues, outputValues);
 
         Program program = fstBuilder.getFstCompiler().getProgram();
-        List<Instruction> instructionsForDebug = program.dumpInstructions();
 
 //      There should be only one instruction with the label 's' and the output 1
-        List<Instruction> instructionsToSameState = new ArrayList<>();
+        List<Integer> instructionsToSameState = new ArrayList<>();
 
         int numInstructionWithTransitionCharS = 0;
-        for (Instruction instruction : instructionsForDebug) {
-            if (instruction.getArg1() == 's') {
+        for (int pc = 0; pc < program.getNumInstructions(); pc++) {
+            if (program.getArg1(pc) == 's') {
                 numInstructionWithTransitionCharS++;
             }
-            if (instruction.getArg1() == 'g' || instruction.getArg1() == 't') {
-                instructionsToSameState.add(instruction);
+            if (program.getArg1(pc) == 'g' || program.getArg1(pc) == 't') {
+                instructionsToSameState.add(program.getArg2(pc));
             }
         }
         assertEquals(1, numInstructionWithTransitionCharS); // 1, since states are equivalent.
         // pointing to the same Instruction address
-        assertEquals(instructionsToSameState.get(0).getArg2(), instructionsToSameState.get(1).getArg2());
+        assertEquals(instructionsToSameState.get(0), instructionsToSameState.get(1));
     }
 
     @Test
@@ -74,7 +70,6 @@ public class FSTCompilerTest {
 
         VirtualMachine vm = new VirtualMachine();
         Program program = new FSTTestHelper().getProgram(sortedInput, outputValues);
-        List<Instruction> instructionsDebug = program.dumpInstructions();
         for (int i = 0; i < sortedInput.length; i++) {
             assertEquals(outputValues[i], vm.run(program, sortedInput[i]));
         }
@@ -88,8 +83,6 @@ public class FSTCompilerTest {
 
         VirtualMachine vm = new VirtualMachine();
         Program program = new FSTTestHelper().getProgram(inputValues, outputValues);
-
-        List<Instruction> instructionsDebug = program.dumpInstructions();
 
         for (int i = 0; i < inputValues.length; i++) {
             assertEquals(outputValues[i], vm.run(program, inputValues[i]));
@@ -107,8 +100,6 @@ public class FSTCompilerTest {
         // Test whether the program is correctly made.
         VirtualMachine vm = new VirtualMachine();
         Program program = new FSTTestHelper().getProgram(inputValues, outputValues);
-
-        List<Instruction> instructionsDebug = program.dumpInstructions();
 
         for (int i = 0; i < inputValues.length; i++) {
             assertEquals(outputValues[i], vm.run(program, inputValues[i]));
