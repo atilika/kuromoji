@@ -21,8 +21,7 @@ public class FSTCompiler {
         if (state.arcs.size() == 0) {
             // an arc which points to dead end accepting state
             state.setTargetJumpAddress(ADDRESS_FAIL);// assuming dead-end accepting state is always at the address 0
-        }
-        else {
+        } else {
             // check whether equivalent destination state is already frozen
             if (state.getTargetJumpAddress() == -1) {
                 // The last arc is regarded as a state because currently, VM is running the program backwards.
@@ -49,19 +48,28 @@ public class FSTCompiler {
      * @param freezingState
      * @return the address of new instruction
      */
-    public int makeNewInstructionsForFreezingState(State freezingState){
+    public int makeNewInstructionsForFreezingState(State freezingState) {
         program.addInstructionFail();
 
         for (Arc outgoingArc : freezingState.arcs) {
             compileArcToInstruction(outgoingArc);
         }
 
-        int newAddress = program.getNumInstructions() - 1;
+        int newAddress = program.getInstructionCount() - 1;
         freezingState.setTargetJumpAddress(newAddress);
         return newAddress;
     }
 
+    int maxJumpAddress = 0;
+    int minJumpAddress = 0;
+    int maxOutput = 0;
+    int minOutput = 0;
+
     private void compileArcToInstruction(Arc d) {
+        maxJumpAddress = Math.max(maxJumpAddress, d.getDestination().getTargetJumpAddress());
+        minJumpAddress = Math.min(minJumpAddress, d.getDestination().getTargetJumpAddress());
+        maxOutput = Math.max(maxOutput, d.getOutput());
+        minOutput = Math.min(minOutput, d.getOutput());
         if (d.getDestination().isFinal()) {
             program.addInstructionMatchOrAccept(d.getLabel(), d.getDestination().getTargetJumpAddress(), d.getOutput());
         } else {

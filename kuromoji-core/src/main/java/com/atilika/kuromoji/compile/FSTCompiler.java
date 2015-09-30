@@ -27,28 +27,18 @@ import java.util.List;
 public class FSTCompiler implements Compiler {
 
     private final OutputStream output;
-
-    private final HashSet<String> surfaces;
+    private final String[] surfaces;
 
     public FSTCompiler(OutputStream output, List<String> surfaces) {
         this.output = output;
-        this.surfaces = new HashSet<>(surfaces);
+        this.surfaces = new HashSet<>(surfaces).toArray(new String[0]);
     }
 
     @Override
     public void compile() throws IOException {
         FSTBuilder fstBuilder = new FSTBuilder();
-
-        int size = surfaces.size();
-        String[] surfacesArray = surfaces.toArray(new String[size]);
-        int[] outputsArray = new int[size];
-
-        for (int i = 0; i < size; i++) {
-            outputsArray[i] = i + 1; // Value should not start at 0 because that means a prefix match
-        }
-
-        Arrays.sort(surfacesArray);
-        fstBuilder.createDictionary(surfacesArray, outputsArray);
+        Arrays.sort(surfaces);
+        fstBuilder.createDictionary(surfaces, null) ;
         fstBuilder.getFstCompiler().getProgram().outputProgramToStream(output); // Closes stream
     }
 }
