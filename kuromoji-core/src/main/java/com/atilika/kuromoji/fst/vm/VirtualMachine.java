@@ -47,43 +47,29 @@ public class VirtualMachine {
 
             long instruction = program.instructions[pc];
             boolean fail = program.isFail(instruction);
-            boolean accept = program.isAccept(instruction);
 
             if (fail) {
                 done = true;
                 accumulator = -1;
             } else {
+                boolean accept = program.isAccept(instruction);
                 char label = program.getLabel(instruction);
                 int targetAddress = program.getTargetAddress(instruction);
                 int output = program.getOutput(instruction);
 
-                if (accept) {
-                    if (input.length() == position + 1 && label == input.charAt(position)) {
-                        // last character
-                        accumulator += output;
-                        done = true;
-                    } else {
-                        if (position < input.length() && label == input.charAt(position)) {
-                            accumulator += output;
-                            pc = targetAddress + 1; // JUMP to Address i.arg2
-                            position++; // move the input char pointer
-                        } else {
-                            // We're at the end of input and we didn't match, which means a prefix match
-                            if (position == input.length()) {
-                                accumulator = 0;
-                                done = true;
-                            }
-                        }
-                    }
-                } else if (position <= input.length()) {
-                    // We're at the end of input and we didn't match, which means a prefix match
-                    if (position == input.length()) {
-                        accumulator = 0;
-                        done = true;
-                    } else if (label == input.charAt(position)) {
+                if (accept && (position + 1 == input.length()) && (label == input.charAt(position))) {
+                    // last character
+                    accumulator += output;
+                    done = true;
+                } else {
+                    if (position < input.length() && label == input.charAt(position)) {
                         accumulator += output;
                         pc = targetAddress + 1; // JUMP to Address i.arg2
                         position++; // move the input char pointer
+                    } else if (position == input.length()) {
+                        // We're at the end of input and we didn't match, which means a prefix match
+                        accumulator = 0;
+                        done = true;
                     }
                 }
             }
