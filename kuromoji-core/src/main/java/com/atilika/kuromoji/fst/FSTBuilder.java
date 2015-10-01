@@ -1,7 +1,5 @@
 package com.atilika.kuromoji.fst;
 
-import com.atilika.kuromoji.compile.ProgressLog;
-
 import java.io.IOException;
 import java.io.LineNumberReader;
 import java.io.Reader;
@@ -111,8 +109,6 @@ public class FSTBuilder {
         }
 
         handleLastWord(previousWord);
-
-        ProgressLog.println("SIZING: instructions: " + fstCompiler.program.getInstructionCount() + " jump address: " + fstCompiler.minJumpAddress + "->" + fstCompiler.maxJumpAddress + " output:" + fstCompiler.minJumpAddress + "->" + fstCompiler.maxOutput);
     }
 
     private void createDictionaryCommon(String inputWord, String previousWord, int currentOutput) {
@@ -186,7 +182,7 @@ public class FSTBuilder {
      */
     private void compileStartingState() {
         fstCompiler.compileStartingState(tempStates.get(0)); // For FST Compiler, caching
-        fstCompiler.program.storeCache(); // Should come after the filp. Else the limit will be the end of first arcs.
+        fstCompiler.program.storeCache();
     }
 
     /**

@@ -1,22 +1,21 @@
 package com.atilika.kuromoji.fst.vm;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.EOFException;
+import com.atilika.kuromoji.io.LongArrayIO;
+
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 public class Program {
 
     public static final int CACHED_CHAR_RANGE = 1 << 16; // 2bytes, range of whole char type.
+    public static final int CHUNK_SIZE = 4096;
 
-    private List<Long> instructions = new ArrayList<>(); // list of instructions
+    public long[] instructions = new long[0]; // instructions to execute
+    private int instructionCount = 0;
     public int[] cacheFirstAddresses; // 4 bytes * 66536 = 262,144 ~= 262KB
     public int[] cacheFirstOutputs;  // 262KB
     public boolean[] cacheFirstIsAccept; // 1 bit * 66536 = 66536 bits = 8317 bits ~= 8KB
@@ -26,10 +25,6 @@ public class Program {
         Arrays.fill(this.cacheFirstAddresses, -1);
         this.cacheFirstOutputs = new int[CACHED_CHAR_RANGE];
         this.cacheFirstIsAccept = new boolean[CACHED_CHAR_RANGE];
-    }
-
-    public long getInstruction(int pc) {
-        return instructions.get(pc);
     }
 
     public boolean isAccept(long instruction) {
@@ -53,7 +48,6 @@ public class Program {
     }
 
     public void addInstruction(boolean fail, boolean accept, char label, int targetAddress, int output) {
-
         assert (targetAddress < 0x7FFFFFFF);
         assert (output < 0x7FFFFFFF);
 
@@ -67,7 +61,10 @@ public class Program {
         value |= ((long) targetAddress & 0x00000000007FFFFFL) << 40;
         value |= ((long) output & 0x00000000007FFFFFL) << 16;
 
-        instructions.add(value);
+        if (instructions.length <= instructionCount) {
+            instructions = Arrays.copyOf(instructions, instructions.length + CHUNK_SIZE);
+        }
+        instructions[instructionCount++] = value;
     }
 
     public void addInstructionFail() {
@@ -90,10 +87,6 @@ public class Program {
         return this.cacheFirstOutputs;
     }
 
-    public int getInstructionCount() {
-        return instructions.size();
-    }
-
     /**
      * Output the stored bytebuffer FST as a file
      *
@@ -105,12 +98,8 @@ public class Program {
     }
 
     public void outputProgramToStream(OutputStream output) throws IOException {
-        DataOutputStream dos = new DataOutputStream(output);
-        dos.writeInt(instructions.size());
-        for (Long instruction : instructions) {
-            dos.writeLong(instruction);
-        }
-        dos.close();
+        LongArrayIO.writeArray(output, instructions, instructionCount);
+        output.close();
     }
 
     /**
@@ -124,36 +113,9 @@ public class Program {
     }
 
     public void readProgramFromFile(InputStream input) throws IOException {
-        DataInputStream dis = new DataInputStream(input);
-        instructions.clear();
-        dis.readInt();
-
-        // TODO: replace with fastest nio long array read technique
-        /*
-        byte[] byteArray = new byte[longCount * 8];
-        FileInputStream fis = new FileInputStream("lotsoflongs");
-        fis.read(byteArray);
-        fis.close();
-        for (int i = 0; i < longCount; i += 8)
-            longArray[i >> 3] = ((long) byteArray[0+i]        << 56) +
-                ((long)(byteArray[1+i] & 255) << 48) +
-                ((long)(byteArray[2+i] & 255) << 40) +
-                ((long)(byteArray[3+i] & 255) << 32) +
-                ((long)(byteArray[4+i] & 255) << 24) +
-                ((byteArray[5+i] & 255) << 16) +
-                ((byteArray[6+i] & 255) <<  8) +
-                ((byteArray[7+i] & 255) <<  0);
-        */
-
-        try {
-            while (true) {
-                instructions.add(dis.readLong());
-            }
-        } catch (EOFException e) {
-            // ignored
-        }
-        dis.close();
-
+        instructions = LongArrayIO.readArray(input);
+        input.close();
+        instructionCount = instructions.length;
         storeCache();
     }
 
@@ -163,26 +125,27 @@ public class Program {
      * @return
      */
     public int size() {
-        return instructions.size();
+        return instructionCount;
     }
 
     /**
      * Cache outgoing arcs from the starting state
      */
     public void storeCache() {
-        int pc = instructions.size() - 1;
+        int pc = size() - 1;
 
         // Retrieving through the arcs from the starting state
-        while (true) {
-            long instruction = getInstruction(pc);
-            if (isFail(instruction)) {
-                break;
-            }
+        while (pc >= 0) {
+            long instruction = instructions[pc];
             int indice = getLabel(instruction);
             cacheFirstAddresses[indice] = getTargetAddress(instruction);
             cacheFirstOutputs[indice] = getOutput(instruction);
             cacheFirstIsAccept[indice] = isAccept(instruction);
+            if (isFail(instruction)) {
+                break;
+            }
             pc--;
         }
     }
+
 }

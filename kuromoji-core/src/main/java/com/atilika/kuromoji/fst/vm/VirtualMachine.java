@@ -45,7 +45,7 @@ public class VirtualMachine {
                 continue;
             }
 
-            long instruction = program.getInstruction(pc);
+            long instruction = program.instructions[pc];
             boolean fail = program.isFail(instruction);
             boolean accept = program.isAccept(instruction);
 
@@ -92,6 +92,5 @@ public class VirtualMachine {
         }
 
         return accumulator;
-
     }
 }

@@ -42,8 +42,8 @@ public class FSTCompilerTest {
         List<Integer> instructionsToSameState = new ArrayList<>();
 
         int numInstructionWithTransitionCharS = 0;
-        for (int pc = 0; pc < program.getInstructionCount(); pc++) {
-            long instruction = program.getInstruction(pc);
+        for (int pc = 0; pc < program.size(); pc++) {
+            long instruction = program.instructions[pc];
             if (program.getLabel(instruction) == 's') {
                 numInstructionWithTransitionCharS++;
             }

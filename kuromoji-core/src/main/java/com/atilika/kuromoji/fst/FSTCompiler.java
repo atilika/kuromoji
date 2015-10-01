@@ -55,21 +55,12 @@ public class FSTCompiler {
             compileArcToInstruction(outgoingArc);
         }
 
-        int newAddress = program.getInstructionCount() - 1;
+        int newAddress = program.size() - 1;
         freezingState.setTargetJumpAddress(newAddress);
         return newAddress;
     }
 
-    int maxJumpAddress = 0;
-    int minJumpAddress = 0;
-    int maxOutput = 0;
-    int minOutput = 0;
-
     private void compileArcToInstruction(Arc d) {
-        maxJumpAddress = Math.max(maxJumpAddress, d.getDestination().getTargetJumpAddress());
-        minJumpAddress = Math.min(minJumpAddress, d.getDestination().getTargetJumpAddress());
-        maxOutput = Math.max(maxOutput, d.getOutput());
-        minOutput = Math.min(minOutput, d.getOutput());
         if (d.getDestination().isFinal()) {
             program.addInstructionMatchOrAccept(d.getLabel(), d.getDestination().getTargetJumpAddress(), d.getOutput());
         } else {
