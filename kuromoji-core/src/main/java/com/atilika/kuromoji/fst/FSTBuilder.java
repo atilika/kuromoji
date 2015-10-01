@@ -11,7 +11,6 @@ import java.util.Map;
 
 public class FSTBuilder {
     // Note that FST only allows the presorted dictionaries as input.
-
     private Map<Integer, List<State>> statesDictionary;
 
     private FSTCompiler fstCompiler = new FSTCompiler();
@@ -101,7 +100,11 @@ public class FSTBuilder {
 
         for (int inputWordIdx = 0; inputWordIdx < inputWords.length; inputWordIdx++) {
             String inputWord = inputWords[inputWordIdx];
-            createDictionaryCommon(inputWord, previousWord, outputValues[inputWordIdx]);
+            createDictionaryCommon(
+                inputWord,
+                previousWord,
+                outputValues == null ? inputWordIdx + 1 : outputValues[inputWordIdx]
+            );
             previousWord = inputWord;
         }
 
@@ -111,15 +114,13 @@ public class FSTBuilder {
     private void createDictionaryCommon(String inputWord, String previousWord, int currentOutput) {
 
         int commonPrefixLengthPlusOne = commonPrefixIndice(previousWord, inputWord) + 1;
-//        System.out.println(currentOutput);
-//        We minimize the states from the suffix of the previous word
+        // We minimize the states from the suffix of the previous word
 
         // Dynamically adding additional temporary states if necessary
         if (inputWord.length() >= tempStates.size()) {
             for (int j = tempStates.size(); j <= inputWord.length(); j++) {
                 tempStates.add(new State());
             }
-//            System.out.println("tempStates size is now: " + tempStates.size());
         }
 
         for (int i = previousWord.length(); i >= commonPrefixLengthPlusOne; i--) {
@@ -150,7 +151,8 @@ public class FSTBuilder {
 
     /**
      * Freeze a new state if there is no equivalent state in the states dictionary.
-     *  @param previousWord
+     *
+     * @param previousWord
      * @param i
      */
     private void freezeAndPointToNewState(String previousWord, int i) {
@@ -164,7 +166,8 @@ public class FSTBuilder {
 
     /**
      * Freezing temp states which represent the last word of the input words
-     *  @param previousWord
+     *
+     * @param previousWord
      */
     private void handleLastWord(String previousWord) {
         for (int i = previousWord.length(); i > 0; i--) {
@@ -179,8 +182,7 @@ public class FSTBuilder {
      */
     private void compileStartingState() {
         fstCompiler.compileStartingState(tempStates.get(0)); // For FST Compiler, caching
-        fstCompiler.program.instruction.flip(); // storing limit as the limit of the bytebuffer
-        fstCompiler.program.storeCache(); // Should come after the filp. Else the limit will be the end of first arcs.
+        fstCompiler.program.storeCache();
     }
 
     /**

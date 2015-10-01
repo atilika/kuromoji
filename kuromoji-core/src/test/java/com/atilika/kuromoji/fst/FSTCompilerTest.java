@@ -42,12 +42,13 @@ public class FSTCompilerTest {
         List<Integer> instructionsToSameState = new ArrayList<>();
 
         int numInstructionWithTransitionCharS = 0;
-        for (int pc = 0; pc < program.getNumInstructions(); pc++) {
-            if (program.getArg1(pc) == 's') {
+        for (int pc = 0; pc < program.size(); pc++) {
+            long instruction = program.instructions[pc];
+            if (program.getLabel(instruction) == 's') {
                 numInstructionWithTransitionCharS++;
             }
-            if (program.getArg1(pc) == 'g' || program.getArg1(pc) == 't') {
-                instructionsToSameState.add(program.getArg2(pc));
+            if (program.getLabel(instruction) == 'g' || program.getLabel(instruction) == 't') {
+                instructionsToSameState.add(program.getTargetAddress(instruction));
             }
         }
         assertEquals(1, numInstructionWithTransitionCharS); // 1, since states are equivalent.

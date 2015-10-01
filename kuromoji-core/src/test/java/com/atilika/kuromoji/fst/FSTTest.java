@@ -1,13 +1,11 @@
 package com.atilika.kuromoji.fst;
 
-import com.atilika.kuromoji.util.SimpleResourceResolver;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
@@ -50,8 +48,9 @@ public class FSTTest {
     @Ignore("Replace this with prefix match tests")
     @Test
     public void testIPADIC() throws IOException {
-        FST ipadic = new FST(new FileInputStream(new File("/Users/cm/Projects/kuromoji-cmoen/kuromoji-ipadic/src/main/resources/com/atilika/kuromoji/ipadic/fst.bin")));
+        FST ipadic = new FST(new FileInputStream(new File("./kuromoji-ipadic/src/main/resources/com/atilika/kuromoji/ipadic/fst.bin")));
 
+        debugLookup(ipadic, "馬鹿馬鹿しい");
         debugLookup(ipadic, "ア");
         debugLookup(ipadic, "アテ");
         debugLookup(ipadic, "アティ");

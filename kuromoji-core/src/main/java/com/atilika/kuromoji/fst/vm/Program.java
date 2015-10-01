@@ -1,32 +1,21 @@
 package com.atilika.kuromoji.fst.vm;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
+import com.atilika.kuromoji.io.LongArrayIO;
+
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.ByteBuffer;
-import java.nio.channels.Channels;
-import java.nio.channels.ReadableByteChannel;
-import java.nio.channels.WritableByteChannel;
 import java.util.Arrays;
 
 public class Program {
 
-    public static final byte MATCH = 1;
-    public static final byte FAIL = 3;
-    public static final byte HELLO = 4;
-    public static final byte ACCEPT = 5;
-    public static final byte ACCEPT_OR_MATCH = 6;
-    public final static int BYTES_PER_INSTRUCTIONS = 11;
-
-    int endOfTheProgram; // place of the end of the byte buffer;
-    int numInstructionsAllocated = 100000; // counting the first 4 bytes as one psuedo instruction
-    public ByteBuffer instruction = ByteBuffer.allocate(BYTES_PER_INSTRUCTIONS * numInstructionsAllocated); // init
-
     public static final int CACHED_CHAR_RANGE = 1 << 16; // 2bytes, range of whole char type.
+    public static final int CHUNK_SIZE = 4096;
+
+    public long[] instructions = new long[0]; // instructions to execute
+    private int instructionCount = 0;
     public int[] cacheFirstAddresses; // 4 bytes * 66536 = 262,144 ~= 262KB
     public int[] cacheFirstOutputs;  // 262KB
     public boolean[] cacheFirstIsAccept; // 1 bit * 66536 = 66536 bits = 8317 bits ~= 8KB
@@ -38,64 +27,56 @@ public class Program {
         this.cacheFirstIsAccept = new boolean[CACHED_CHAR_RANGE];
     }
 
-
-    public byte getOpcode(int pc) {
-        int internalIndex = pc * BYTES_PER_INSTRUCTIONS;
-        return instruction.get(internalIndex);
+    public boolean isAccept(long instruction) {
+        return (instruction & 0x0000008000000000L) != 0;
     }
 
-    public char getArg1(int pc) {
-        int internalIndex = pc * BYTES_PER_INSTRUCTIONS;
-        return instruction.getChar(internalIndex + 1);
+    public boolean isFail(long instruction) {
+        return (instruction & 0x8000000000000000L) != 0;
     }
 
-    public int getArg2(int pc) {
-        int internalIndex = pc * BYTES_PER_INSTRUCTIONS;
-        return instruction.getInt(internalIndex + 1 + 2);
+    public char getLabel(long instruction) {
+        return (char) (instruction & 0x000000000000FFFFL);
     }
 
-    public int getArg3(int pc) {
-        int internalIndex = pc * BYTES_PER_INSTRUCTIONS;
-        return instruction.getInt(internalIndex + 1 + 2 + 4);
+    public int getTargetAddress(long instruction) {
+        return isFail(instruction) ? -1 : (int) ((instruction >> 40) & 0x00000000007FFFFFL);
     }
 
-    public void addInstruction(byte op) {
-        addInstruction(op, ' ', -1, 0);
+    public int getOutput(long instruction) {
+        return (instruction & 0x0000004000000000L) != 0 ? -1 : (int) ((instruction >> 16) & 0x00000000007FFFFFL);
     }
 
-    public void addInstruction(byte op, char label, int targetAddress, int output) {
-        int currentSizePlusOneInstruction = (this.getNumInstructions() + 1) * BYTES_PER_INSTRUCTIONS;
-        if (currentSizePlusOneInstruction >= BYTES_PER_INSTRUCTIONS * numInstructionsAllocated) {
-            doubleBufferSize();
+    public void addInstruction(boolean fail, boolean accept, char label, int targetAddress, int output) {
+        assert (targetAddress < 0x7FFFFFFF);
+        assert (output < 0x7FFFFFFF);
+
+        // encode the instruction into a 8 byte long
+        // 3 bytes == target address for 23 bits, msb == fail
+        // 3 bytes == output for 23 bits, msb == accept
+        // 2 bytes == label
+        long value = fail ? 0x8000000000000000L : 0x0000000000000000L;
+        value |= accept ? 0x0000008000000000L : 0x0000000000000000L;
+        value |= ((long) label & 0x000000000000FFFFL);
+        value |= ((long) targetAddress & 0x00000000007FFFFFL) << 40;
+        value |= ((long) output & 0x00000000007FFFFFL) << 16;
+
+        if (instructions.length <= instructionCount) {
+            instructions = Arrays.copyOf(instructions, instructions.length + CHUNK_SIZE);
         }
-
-        instruction.put(op);
-        instruction.putChar(label);
-        instruction.putInt(targetAddress);
-        instruction.putInt(output);
-
-        endOfTheProgram += BYTES_PER_INSTRUCTIONS;
+        instructions[instructionCount++] = value;
     }
 
     public void addInstructionFail() {
-        addInstruction(FAIL, ' ', -1, 0); // Ideally, compress this
+        addInstruction(true, false, ' ', -1, 0); // Ideally, compress this
     }
 
     public void addInstructionMatch(char label, int targetAddress, int output) {
-        addInstruction(MATCH, label, targetAddress, output);
+        addInstruction(false, false, label, targetAddress, output);
     }
 
     public void addInstructionMatchOrAccept(char label, int targetAddress, int output) {
-        addInstruction(ACCEPT_OR_MATCH, label, targetAddress, output);
-    }
-
-    private void doubleBufferSize() {
-        // grow byte array by doubling the size of it.
-        numInstructionsAllocated = numInstructionsAllocated << 1;
-        ByteBuffer newInstructions = ByteBuffer.allocate(BYTES_PER_INSTRUCTIONS * numInstructionsAllocated);
-        instruction.flip(); // limit ← position, position ← 0
-        newInstructions.put(instruction);
-        instruction = newInstructions;
+        addInstruction(false, true, label, targetAddress, output);
     }
 
     public int[] getCacheFirstAddresses() {
@@ -104,10 +85,6 @@ public class Program {
 
     public int[] getCacheFirstOutputs() {
         return this.cacheFirstOutputs;
-    }
-
-    public int getNumInstructions() {
-        return this.endOfTheProgram / Program.BYTES_PER_INSTRUCTIONS;
     }
 
     /**
@@ -121,19 +98,8 @@ public class Program {
     }
 
     public void outputProgramToStream(OutputStream output) throws IOException {
-        ByteBuffer bbuf = this.instruction;
-        bbuf.rewind();
-
-        bbuf.rewind();
-        bbuf.limit(endOfTheProgram);
-
-        DataOutputStream dos = new DataOutputStream(output);
-        dos.writeInt(endOfTheProgram);
-
-        // Appeding the whole bytebuffer to the end of the file
-        WritableByteChannel wChannel = Channels.newChannel(dos);
-        wChannel.write(bbuf);
-        wChannel.close();
+        LongArrayIO.writeArray(output, instructions, instructionCount);
+        output.close();
     }
 
     /**
@@ -147,37 +113,39 @@ public class Program {
     }
 
     public void readProgramFromFile(InputStream input) throws IOException {
-
-        DataInputStream dis = new DataInputStream(input);
-        int instructionSize = dis.readInt();    // Read size of bytebuffer
-        ByteBuffer bbuf = ByteBuffer.allocate(instructionSize);
-
-        // Reading the rest of the bytes
-        ReadableByteChannel rChannel = Channels.newChannel(dis);
-        rChannel.read(bbuf);
-        this.instruction = bbuf;
-        this.endOfTheProgram = instructionSize;
-
-        rChannel.close();
-
+        instructions = LongArrayIO.readArray(input);
+        input.close();
+        instructionCount = instructions.length;
         storeCache();
+    }
+
+    /**
+     * How big is the program
+     *
+     * @return
+     */
+    public int size() {
+        return instructionCount;
     }
 
     /**
      * Cache outgoing arcs from the starting state
      */
     public void storeCache() {
-        int pc = this.endOfTheProgram / Program.BYTES_PER_INSTRUCTIONS - 1;
-        byte opcode = Program.HELLO;
+        int pc = size() - 1;
 
         // Retrieving through the arcs from the starting state
-        while (opcode != Program.FAIL) {
-            int indice = this.getArg1(pc);
-            this.cacheFirstAddresses[indice] = this.getArg2(pc);
-            this.cacheFirstOutputs[indice] = this.getArg3(pc);
-            opcode = this.getOpcode(pc);
-            this.cacheFirstIsAccept[indice] = opcode == Program.ACCEPT_OR_MATCH;
+        while (pc >= 0) {
+            long instruction = instructions[pc];
+            int indice = getLabel(instruction);
+            cacheFirstAddresses[indice] = getTargetAddress(instruction);
+            cacheFirstOutputs[indice] = getOutput(instruction);
+            cacheFirstIsAccept[indice] = isAccept(instruction);
+            if (isFail(instruction)) {
+                break;
+            }
             pc--;
         }
     }
+
 }
