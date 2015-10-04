@@ -56,9 +56,9 @@ public class Compiler {
         writeStateArcs(state);
         writeStateType(state);
 
-        if (state.getNewTargetAddress() == -1) {
+        if (state.getTargetJumpAddress() == -1) {
             // The last arc is regarded as a state because we evaluate the FST backwards.
-            state.setNewTargetAddress(written - 1);
+            state.setTargetJumpAddress(written - 1);
         }
     }
 
@@ -86,7 +86,7 @@ public class Compiler {
         State target = arc.getDestination();
 
         dataOutput.writeShort(arc.getLabel());
-        dataOutput.writeInt(target.getNewTargetAddress());
+        dataOutput.writeInt(target.getTargetJumpAddress());
         dataOutput.writeInt(arc.getOutput());
 
         written += ARC_SIZE;

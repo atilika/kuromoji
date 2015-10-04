@@ -24,9 +24,8 @@ public class State {
     List<Arc> arcs;
     private boolean isFinal = false;
     boolean visited; //for visualization purpose
-    private int targetJumpAddress = -1;
 
-    private int newTargetAddress = -1;
+    private int targetJumpAddress = -1;
 
     public State() {
         this.arcs = new ArrayList<>();
@@ -40,16 +39,8 @@ public class State {
         this.isFinal = source.isFinal;
     }
 
-    public int getNewTargetAddress() {
-        return newTargetAddress;
-    }
-
-    public void setNewTargetAddress(int newTargetAddress) {
-        this.newTargetAddress = newTargetAddress;
-    }
-
     public int getTargetJumpAddress() {
-        return this.targetJumpAddress;
+        return targetJumpAddress;
     }
 
     public void setTargetJumpAddress(int targetJumpAddress) {
