@@ -1,3 +1,19 @@
+/**
+ * Copyright © 2010-2015 Atilika Inc. and contributors (see CONTRIBUTORS.md)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License.  A copy of the
+ * License is distributed with this work in the LICENSE.md file.  You may
+ * also obtain a copy of the License from
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.atilika.kuromoji.fst;
 
 import java.util.ArrayList;
@@ -10,6 +26,8 @@ public class State {
     boolean visited; //for visualization purpose
     private int targetJumpAddress = -1;
 
+    private int newTargetAddress = -1;
+
     public State() {
         this.arcs = new ArrayList<>();
     } // INITIAL_CAPACITY not set
@@ -20,6 +38,14 @@ public class State {
     public State(State source) {
         this.arcs = source.arcs;
         this.isFinal = source.isFinal;
+    }
+
+    public int getNewTargetAddress() {
+        return newTargetAddress;
+    }
+
+    public void setNewTargetAddress(int newTargetAddress) {
+        this.newTargetAddress = newTargetAddress;
     }
 
     public int getTargetJumpAddress() {
@@ -45,7 +71,7 @@ public class State {
     }
 
     public List<Character> getAllTransitionStrings() {
-        List<Character> retList = new ArrayList<Character>();
+        List<Character> retList = new ArrayList<>();
 
         for (Arc arc : arcs) {
             retList.add(arc.getLabel());
@@ -60,7 +86,9 @@ public class State {
         this.isFinal = true;
     }
 
-    public boolean isFinal() { return this.isFinal; }
+    public boolean isFinal() {
+        return this.isFinal;
+    }
 
     public Arc findArc(char transition) {
         return binarySearchArc(transition, 0, this.arcs.size());
@@ -75,12 +103,10 @@ public class State {
 
         if (arcs.get(indice).getLabel() == transition) {
             return arcs.get(indice);
-        }
-        else if (arcs.get(indice).getLabel() > transition) {
+        } else if (arcs.get(indice).getLabel() > transition) {
             // transition char is placed at the left part of the array
             return binarySearchArc(transition, beginIndice, indice);
-        }
-        else if (arcs.get(indice).getLabel() < transition) {
+        } else if (arcs.get(indice).getLabel() < transition) {
             // transition char is placed at the right part of the array
             return binarySearchArc(transition, indice + 1, endIndice);
         }

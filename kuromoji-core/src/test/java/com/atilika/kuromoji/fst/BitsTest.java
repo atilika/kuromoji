@@ -16,25 +16,19 @@
  */
 package com.atilika.kuromoji.fst;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
-public class FSTFormatterTest {
+import static org.junit.Assert.assertEquals;
 
-    @Ignore
+public class BitsTest {
+
     @Test
-    public void testFormat() throws Exception {
-        String inputValues[] = {"cat", "cats", "dog", "dogs", "friday", "friend", "padata"};
-        int outputValues[] = {0, 1, 2, 3, 4, 20, 42};
+    public void testBits() {
+        byte[] bytes = new byte[]{90, -1, 0, 0, 0, -112, 0, 0, 0, 6, 0, 5, 1};
 
-//        String inputValues[] = {"さかな", "寿", "寿司"};
-//        int outputValues[] = {0, 1, 2};
-
-        Builder builder = new Builder();
-        builder.build(inputValues, outputValues);
-
-        FSTFormatter fstFormatter = new FSTFormatter();
-        fstFormatter.format(builder, "LinearSearchFiniteStateTransducerOutput.txt");
-//        fstFormatter.format(builder, "FSTsimpleDescendingOutput.txt");
+        assertEquals(1, Bits.getByte(bytes, bytes.length - 1));
+        assertEquals(5, Bits.getShort(bytes, bytes.length - (1 + 1)));
+        assertEquals(6, Bits.getInt(bytes, bytes.length - (1 + 1 + 2)));
+        assertEquals(144, Bits.getInt(bytes, bytes.length - (1 + 1 + 2 + 4)));
     }
 }

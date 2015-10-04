@@ -22,34 +22,39 @@ import java.io.IOException;
 
 import static org.junit.Assert.assertEquals;
 
-public class FSTTest {
+public class BitsFormatterTest {
+
+    BitsFormatter formatter = new BitsFormatter();
 
     @Test
-    public void testFST2() throws IOException {
-        String inputValues[] = {
-            "brats", "cat", "dog", "dogs", "rat",
-        };
-
-        int outputValues[] = {
-            1, 3, 5, 7, 11
-        };
+    public void testFormatCompiled() throws IOException {
+        String inputValues[] = {"cat", "cats", "rats"};
+        int outputValues[] = {10, 20, 30};
 
         Builder builder = new Builder();
         builder.build(inputValues, outputValues);
 
-        for (int i = 0; i < inputValues.length; i++) {
-            assertEquals(outputValues[i], builder.transduce(inputValues[i]));
-        }
-
         Compiler compiledFST = builder.getCompiler();
-        FST fst = new FST(compiledFST.getByteArray());
 
-        assertEquals(0, fst.lookup("brat")); // Prefix match
-        assertEquals(1, fst.lookup("brats"));
-        assertEquals(3, fst.lookup("cat"));
-        assertEquals(5, fst.lookup("dog"));
-        assertEquals(7, fst.lookup("dogs"));
-        assertEquals(11, fst.lookup("rat"));
-        assertEquals(-1, fst.lookup("rats")); // No match
+        assertEquals("" +
+            " 106: MATCH\n" +
+            " 103:\tr -> 30\t(JMP: 83)\n" +
+            "  93:\tc -> 10\t(JMP: 41)\n" +
+            "  83: MATCH\n" +
+            "  80:\ta -> 0\t(JMP: 70)\n" +
+            "  70: MATCH\n" +
+            "  67:\tt -> 0\t(JMP: 57)\n" +
+            "  57: MATCH\n" +
+            "  54:\ts -> 0\t(JMP: 2)\n" +
+            "  44: ACCEPT\n" +
+            "  41: MATCH\n" +
+            "  38:\ta -> 0\t(JMP: 28)\n" +
+            "  28: MATCH\n" +
+            "  25:\tt -> 0\t(JMP: 15)\n" +
+            "  15: ACCEPT\n" +
+            "  12:\ts -> 10\t(JMP: 2)\n" +
+            "   2: ACCEPT\n",
+            formatter.format(compiledFST.getByteArray())
+        );
     }
 }

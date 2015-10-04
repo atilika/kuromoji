@@ -1,3 +1,19 @@
+/**
+ * Copyright © 2010-2015 Atilika Inc. and contributors (see CONTRIBUTORS.md)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License.  A copy of the
+ * License is distributed with this work in the LICENSE.md file.  You may
+ * also obtain a copy of the License from
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.atilika.kuromoji.fst;
 
 import java.io.IOException;
@@ -9,15 +25,15 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-public class FSTBuilder {
+public class Builder {
     // Note that FST only allows the presorted dictionaries as input.
     private Map<Integer, List<State>> statesDictionary;
 
-    private FSTCompiler fstCompiler = new FSTCompiler();
+    private Compiler compiler = new Compiler();
 
     private List<State> tempStates;
 
-    public FSTBuilder() {
+    public Builder() {
         List<State> stateList = new LinkedList<>();
         stateList.add(new State());
         this.statesDictionary = new HashMap<>();
@@ -95,7 +111,7 @@ public class FSTBuilder {
      * @param inputWords
      * @param outputValues
      */
-    public void createDictionary(String[] inputWords, int[] outputValues) {
+    public void build(String[] inputWords, int[] outputValues) throws IOException {
         String previousWord = "";
 
         for (int inputWordIdx = 0; inputWordIdx < inputWords.length; inputWordIdx++) {
@@ -111,7 +127,7 @@ public class FSTBuilder {
         handleLastWord(previousWord);
     }
 
-    private void createDictionaryCommon(String inputWord, String previousWord, int currentOutput) {
+    private void createDictionaryCommon(String inputWord, String previousWord, int currentOutput) throws IOException {
 
         int commonPrefixLengthPlusOne = commonPrefixIndice(previousWord, inputWord) + 1;
         // We minimize the states from the suffix of the previous word
@@ -155,13 +171,14 @@ public class FSTBuilder {
      * @param previousWord
      * @param i
      */
-    private void freezeAndPointToNewState(String previousWord, int i) {
+    private void freezeAndPointToNewState(String previousWord, int i) throws IOException {
         State state = tempStates.get(i - 1);
         char previousWordChar = previousWord.charAt(i - 1);
         int output = state.findArc(previousWordChar).getOutput();
         state.arcs.remove(state.findArc(previousWordChar));
         Arc arcToFrozenState = state.setArc(previousWordChar, output, findEquivalentState(tempStates.get(i)));
-        fstCompiler.compileState(arcToFrozenState.getDestination()); // For FST Compiler, be sure to have it *AFTER* the setTransitionFunction
+
+        compiler.compileState(arcToFrozenState.getDestination());
     }
 
     /**
@@ -169,7 +186,7 @@ public class FSTBuilder {
      *
      * @param previousWord
      */
-    private void handleLastWord(String previousWord) {
+    private void handleLastWord(String previousWord) throws IOException {
         for (int i = previousWord.length(); i > 0; i--) {
             freezeAndPointToNewState(previousWord, i);
         }
@@ -180,9 +197,9 @@ public class FSTBuilder {
     /**
      * Compiles and caches the outgoing arcs from the starting state
      */
-    private void compileStartingState() {
-        fstCompiler.compileStartingState(tempStates.get(0)); // For FST Compiler, caching
-        fstCompiler.program.storeCache();
+    private void compileStartingState() throws IOException {
+
+        compiler.compileState(tempStates.get(0));
     }
 
     /**
@@ -252,7 +269,7 @@ public class FSTBuilder {
         return newStateToDic;
     }
 
-    public FSTCompiler getFstCompiler() {
-        return fstCompiler;
+    public Compiler getCompiler() {
+        return compiler;
     }
 }
