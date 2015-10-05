@@ -5,7 +5,7 @@
     <parent>
         <artifactId>kuromoji</artifactId>
         <groupId>com.atilika.kuromoji</groupId>
-        <version>0.9-SNAPSHOT</version>
+        <version>1.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -144,6 +144,25 @@
                                 </configuration>
                             </execution>
                             <execution>
+                                <id>benchmark-ipadic-neologd</id>
+                                <phase>generate-resources</phase>
+                                <goals>
+                                    <goal>java</goal>
+                                </goals>
+                                <configuration>
+                                    <mainClass>com.atilika.kuromoji.benchmark.Benchmark</mainClass>
+                                    <arguments>
+                                        <argument>--tokenizer</argument>
+                                        <argument>com.atilika.kuromoji.ipadic.neologd.Tokenizer</argument>
+                                        <argument>--count</argument>
+                                        <argument>${kuromoji.benchmark.count}</argument>
+                                        <argument>--benchmark-output</argument>
+                                        <argument>${project.build.directory}/kuromoji-benchmark-ipadic-neologd.tsv</argument>
+                                        <argument>${kuromoji.wiki.dir}/${kuromoji.wiki.file}</argument>
+                                    </arguments>
+                                </configuration>
+                            </execution>
+                            <execution>
                                 <id>benchmark-jumandic</id>
                                 <phase>generate-resources</phase>
                                 <goals>
@@ -222,6 +241,26 @@
                                 </configuration>
                             </execution>
                             <execution>
+                                <id>benchmark-unidic-neologd</id>
+                                <phase>generate-resources</phase>
+                                <goals>
+                                    <goal>java</goal>
+                                </goals>
+                                <configuration>
+                                    <mainClass>com.atilika.kuromoji.benchmark.Benchmark</mainClass>
+                                    <arguments>
+                                        <argument>--tokenizer</argument>
+                                        <argument>com.atilika.kuromoji.unidic.neologd.Tokenizer</argument>
+                                        <argument>--count</argument>
+                                        <argument>${kuromoji.benchmark.count}</argument>
+                                        <argument>--benchmark-output</argument>
+                                        <argument>${project.build.directory}/kuromoji-benchmark-unidic-neologd.tsv
+                                        </argument>
+                                        <argument>${kuromoji.wiki.dir}/${kuromoji.wiki.file}</argument>
+                                    </arguments>
+                                </configuration>
+                            </execution>
+                            <execution>
                                 <id>make-userdictionary</id>
                                 <phase>generate-resources</phase>
                                 <goals>
@@ -252,6 +291,28 @@
                                         <argument>${kuromoji.benchmark.count}</argument>
                                         <argument>--benchmark-output</argument>
                                         <argument>${project.build.directory}/kuromoji-benchmark-ipadic-userdict.tsv
+                                        </argument>
+                                        <argument>${kuromoji.wiki.dir}/${kuromoji.wiki.file}</argument>
+                                    </arguments>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>benchmark-ipadic-neologd-userdict</id>
+                                <phase>generate-resources</phase>
+                                <goals>
+                                    <goal>java</goal>
+                                </goals>
+                                <configuration>
+                                    <mainClass>com.atilika.kuromoji.benchmark.Benchmark</mainClass>
+                                    <arguments>
+                                        <argument>--user-dictionary</argument>
+                                        <argument>${kuromoji.wiki.dir}/${kuromoji.benchmark.userdictionary}</argument>
+                                        <argument>--tokenizer</argument>
+                                        <argument>com.atilika.kuromoji.ipadic.neologd.Tokenizer</argument>
+                                        <argument>--count</argument>
+                                        <argument>${kuromoji.benchmark.count}</argument>
+                                        <argument>--benchmark-output</argument>
+                                        <argument>${project.build.directory}/kuromoji-benchmark-ipadic-neologd-userdict.tsv
                                         </argument>
                                         <argument>${kuromoji.wiki.dir}/${kuromoji.wiki.file}</argument>
                                     </arguments>
@@ -347,6 +408,29 @@
                                     </arguments>
                                 </configuration>
                             </execution>
+                            <execution>
+                                <id>benchmark-unidic-neologd-userdict</id>
+                                <phase>generate-resources</phase>
+                                <goals>
+                                    <goal>java</goal>
+                                </goals>
+                                <configuration>
+                                    <mainClass>com.atilika.kuromoji.benchmark.Benchmark</mainClass>
+                                    <arguments>
+                                        <argument>--user-dictionary</argument>
+                                        <argument>${kuromoji.wiki.dir}/${kuromoji.benchmark.userdictionary}</argument>
+                                        <argument>--tokenizer</argument>
+                                        <argument>com.atilika.kuromoji.unidic.neologd.Tokenizer</argument>
+                                        <argument>--count</argument>
+                                        <argument>${kuromoji.benchmark.count}</argument>
+                                        <argument>--benchmark-output</argument>
+                                        <argument>
+                                            ${project.build.directory}/kuromoji-benchmark-unidic-neologd-userdict.tsv
+                                        </argument>
+                                        <argument>${kuromoji.wiki.dir}/${kuromoji.wiki.file}</argument>
+                                    </arguments>
+                                </configuration>
+                            </execution>
                         </executions>
                     </plugin>
                 </plugins>
@@ -358,38 +442,50 @@
         <dependency>
             <groupId>com.atilika.kuromoji</groupId>
             <artifactId>kuromoji-core</artifactId>
-            <version>0.9-SNAPSHOT</version>
+            <version>1.0-SNAPSHOT</version>
             <type>test-jar</type>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.atilika.kuromoji</groupId>
             <artifactId>kuromoji-ipadic</artifactId>
-            <version>0.9-SNAPSHOT</version>
+            <version>1.0-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.atilika.kuromoji</groupId>
+            <artifactId>kuromoji-ipadic-neologd</artifactId>
+            <version>1.0-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.atilika.kuromoji</groupId>
             <artifactId>kuromoji-jumandic</artifactId>
-            <version>0.9-SNAPSHOT</version>
+            <version>1.0-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.atilika.kuromoji</groupId>
             <artifactId>kuromoji-naist-jdic</artifactId>
-            <version>0.9-SNAPSHOT</version>
+            <version>1.0-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.atilika.kuromoji</groupId>
             <artifactId>kuromoji-unidic</artifactId>
-            <version>0.9-SNAPSHOT</version>
+            <version>1.0-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.atilika.kuromoji</groupId>
             <artifactId>kuromoji-unidic-kanaaccent</artifactId>
-            <version>0.9-SNAPSHOT</version>
+            <version>1.0-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.atilika.kuromoji</groupId>
+            <artifactId>kuromoji-unidic-neologd</artifactId>
+            <version>1.0-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
         <dependency>

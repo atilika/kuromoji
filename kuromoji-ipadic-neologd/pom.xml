@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>kuromoji</artifactId>
+        <groupId>com.atilika.kuromoji</groupId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <name>Kuromoji IPADIC NEologd</name>
+
+    <artifactId>kuromoji-ipadic-neologd</artifactId>
+    <packaging>jar</packaging>
+
+    <properties>
+        <kuromoji.dict.file>mecab-ipadic-2.7.0-20070801-neologd-20150925.tar.gz</kuromoji.dict.file>
+        <kuromoji.dict.url>http://atilika.com/releases/mecab-ipadic-neologd/${kuromoji.dict.file}</kuromoji.dict.url>
+        <kuromoji.dict.dir>${project.basedir}/dictionary/mecab-ipadic-2.7.0-20070801-neologd-20150925</kuromoji.dict.dir>
+        <kuromoji.dict.targetdir>${project.basedir}/src/main/resources/com/atilika/kuromoji/ipadic/neologd</kuromoji.dict.targetdir>
+        <kuromoji.dict.encoding>utf-8</kuromoji.dict.encoding>
+    </properties>
+
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>2.7</version>
+                <executions>
+                    <execution>
+                        <id>copy-license-resources</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.outputDirectory}/META-INF</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <!-- Becomes top level directory. Is there a better way to do this? -->
+                                    <directory>${project.basedir}/..</directory>
+                                    <filtering>false</filtering>
+                                    <includes>
+                                        <include>LICENSE.md</include>
+                                        <include>CONTRIBUTORS.md</include>
+                                    </includes>
+                                </resource>
+                                <resource>
+                                    <directory>${project.basedir}</directory>
+                                    <filtering>false</filtering>
+                                    <includes>
+                                        <include>NOTICE.md</include>
+                                    </includes>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+    <profiles>
+        <profile>
+            <id>compile-dictionary</id>
+            <activation>
+                <property>
+                    <name>!skipCompileDictionary</name>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <version>1.6</version>
+                        <executions>
+                            <execution>
+                                <id>download-dictionary</id>
+                                <phase>generate-resources</phase>
+                                <configuration>
+                                    <target unless="skipDownloadDictionary">
+                                        <echo message="Downloading dictionary"/>
+                                        <delete dir="dictionary"/>
+                                        <mkdir dir="dictionary"/>
+                                        <get src="${kuromoji.dict.url}"
+                                             dest="dictionary/${kuromoji.dict.file}"/>
+                                        <untar src="dictionary/${kuromoji.dict.file}"
+                                               dest="dictionary" compression="gzip"/>
+                                    </target>
+                                </configuration>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-compiler-plugin</artifactId>
+                        <version>3.3</version>
+                        <executions>
+                            <execution>
+                                <id>compile-dictionary-compiler</id>
+                                <phase>generate-resources</phase>
+                                <goals>
+                                    <goal>compile</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <version>1.2.1</version>
+                        <executions>
+                            <execution>
+                                <id>run-dictionary-compiler</id>
+                                <phase>generate-resources</phase>
+                                <goals>
+                                    <goal>java</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <mainClass>com.atilika.kuromoji.ipadic.neologd.compile.DictionaryCompiler</mainClass>
+                            <arguments>
+                                <argument>${kuromoji.dict.dir}</argument>
+                                <argument>${kuromoji.dict.targetdir}</argument>
+                                <argument>${kuromoji.dict.encoding}</argument>
+                            </arguments>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.atilika.kuromoji</groupId>
+            <artifactId>kuromoji-core</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.atilika.kuromoji</groupId>
+            <artifactId>kuromoji-core</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.carrotsearch.randomizedtesting</groupId>
+            <artifactId>randomizedtesting-runner</artifactId>
+            <version>${randomizedtesting.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+</project>

@@ -21,14 +21,14 @@ import com.atilika.kuromoji.dict.CharacterDefinitions;
 import com.atilika.kuromoji.dict.TokenInfoDictionary;
 import com.atilika.kuromoji.dict.UnknownDictionary;
 import com.atilika.kuromoji.dict.UserDictionary;
-import com.atilika.kuromoji.trie.DoubleArrayTrie;
+import com.atilika.kuromoji.fst.FST;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ViterbiBuilder {
 
-    private final DoubleArrayTrie trie;
+    private final FST fst;
     private final TokenInfoDictionary dictionary;
     private final UnknownDictionary unknownDictionary;
     private final UserDictionary userDictionary;
@@ -39,18 +39,18 @@ public class ViterbiBuilder {
     /**
      * Constructor
      *
-     * @param trie  trie with surface forms
+     * @param fst  FST with surface forms
      * @param dictionary  token info dictionary
      * @param unknownDictionary  unknown word dictionary
      * @param userDictionary  user dictionary
      * @param mode  tokenization {@link Mode mode}
      */
-    public ViterbiBuilder(DoubleArrayTrie trie,
+    public ViterbiBuilder(FST fst,
                           TokenInfoDictionary dictionary,
                           UnknownDictionary unknownDictionary,
                           UserDictionary userDictionary,
                           Mode mode) {
-        this.trie = trie;
+        this.fst = fst;
         this.dictionary = dictionary;
         this.unknownDictionary = unknownDictionary;
         this.userDictionary = userDictionary;
@@ -111,15 +111,15 @@ public class ViterbiBuilder {
         boolean found = false;
         for (int endIndex = 1; endIndex < suffix.length() + 1; endIndex++) {
             String prefix = suffix.substring(0, endIndex);
-            int result = trie.lookup(prefix, 0, 0);
+            int result = fst.lookup(prefix);
 
-            if (result > 0) {    // Found match in double array trie
-                found = true;    // Don't produce unknown word starting from this index
+            if (result > 0) {
+                found = true; // Don't produce unknown word starting from this index
                 for (int wordId : dictionary.lookupWordIds(result)) {
                     ViterbiNode node = new ViterbiNode(wordId, prefix, dictionary, startIndex, ViterbiNode.Type.KNOWN);
                     lattice.addNode(node, startIndex + 1, startIndex + 1 + endIndex);
                 }
-            } else if (result < 0) {    // If result is less than zero, continue to next position
+            } else if (result < 0) { // If result is less than zero, continue to next position
                 break;
             }
         }
