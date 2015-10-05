@@ -16,10 +16,12 @@
  */
 package com.atilika.kuromoji.compile;
 
-import com.atilika.kuromoji.fst.FSTBuilder;
+import com.atilika.kuromoji.fst.Builder;
+import com.atilika.kuromoji.io.ByteBufferIO;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -36,9 +38,15 @@ public class FSTCompiler implements Compiler {
 
     @Override
     public void compile() throws IOException {
-        FSTBuilder fstBuilder = new FSTBuilder();
         Arrays.sort(surfaces);
-        fstBuilder.createDictionary(surfaces, null) ;
-        fstBuilder.getFstCompiler().getProgram().outputProgramToStream(output); // Closes stream
+
+        Builder builder = new Builder();
+        builder.build(surfaces, null) ;
+
+        ByteBuffer fst = ByteBuffer.wrap(
+            builder.getCompiler().getByteArray()
+        );
+
+        ByteBufferIO.write(output, fst);
     }
 }

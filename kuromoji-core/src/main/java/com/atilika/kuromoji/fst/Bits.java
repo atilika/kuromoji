@@ -16,25 +16,17 @@
  */
 package com.atilika.kuromoji.fst;
 
-import org.junit.Ignore;
-import org.junit.Test;
+public class Bits {
 
-public class FSTFormatterTest {
+    public static byte getByte(byte[] array, int index) {
+        return array[index];
+    }
 
-    @Ignore
-    @Test
-    public void testFormat() throws Exception {
-        String inputValues[] = {"cat", "cats", "dog", "dogs", "friday", "friend", "padata"};
-        int outputValues[] = {0, 1, 2, 3, 4, 20, 42};
+    public static int getShort(byte[] bytes, int index) {
+        return (bytes[index - 1] & 0xff) << 8 | (bytes[index] & 0xff);
+    }
 
-//        String inputValues[] = {"さかな", "寿", "寿司"};
-//        int outputValues[] = {0, 1, 2};
-
-        Builder builder = new Builder();
-        builder.build(inputValues, outputValues);
-
-        FSTFormatter fstFormatter = new FSTFormatter();
-        fstFormatter.format(builder, "LinearSearchFiniteStateTransducerOutput.txt");
-//        fstFormatter.format(builder, "FSTsimpleDescendingOutput.txt");
+    public static int getInt(byte[] bytes, int index) {
+        return (bytes[index - 3] & 0xff) << 24 | (bytes[index - 2] & 0xff) << 16 | (bytes[index - 1] & 0xff) << 8 | (bytes[index] & 0xff);
     }
 }

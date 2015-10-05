@@ -18,38 +18,23 @@ package com.atilika.kuromoji.fst;
 
 import org.junit.Test;
 
-import java.io.IOException;
-
 import static org.junit.Assert.assertEquals;
 
-public class FSTTest {
+public class BuilderTest {
 
     @Test
-    public void testFST2() throws IOException {
-        String inputValues[] = {
-            "brats", "cat", "dog", "dogs", "rat",
-        };
-
-        int outputValues[] = {
-            1, 3, 5, 7, 11
-        };
+    public void testCreateDictionary() throws Exception {
+        String inputValues[] = {"cat", "cats", "dog", "dogs", "friday", "friend", "pydata"};
+        int outputValues[] = {1, 2, 3, 4, 20, 42, 43};
 
         Builder builder = new Builder();
         builder.build(inputValues, outputValues);
 
         for (int i = 0; i < inputValues.length; i++) {
-            assertEquals(outputValues[i], builder.transduce(inputValues[i]));
+            assertEquals(
+                outputValues[i],
+                builder.transduce(inputValues[i])
+            );
         }
-
-        Compiler compiledFST = builder.getCompiler();
-        FST fst = new FST(compiledFST.getByteArray());
-
-        assertEquals(0, fst.lookup("brat")); // Prefix match
-        assertEquals(1, fst.lookup("brats"));
-        assertEquals(3, fst.lookup("cat"));
-        assertEquals(5, fst.lookup("dog"));
-        assertEquals(7, fst.lookup("dogs"));
-        assertEquals(11, fst.lookup("rat"));
-        assertEquals(-1, fst.lookup("rats")); // No match
     }
 }
