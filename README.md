@@ -173,14 +173,14 @@ $ mvn clean package
 This will download all source dictionary data and build Kuromoji with all dictionaries. The following jars will then be available:
 
 ```
-kuromoji-core/target/kuromoji-core-0.9-SNAPSHOT.jar
-kuromoji-ipadic/target/kuromoji-ipadic-0.9-SNAPSHOT.jar
-kuromoji-ipadic-neologd/target/kuromoji-ipadic-neologd-0.9-SNAPSHOT.jar
-kuromoji-jumandic/target/kuromoji-jumandic-0.9-SNAPSHOT.jar
-kuromoji-naist-jdic/target/kuromoji-naist-jdic-0.9-SNAPSHOT.jar
-kuromoji-unidic/target/kuromoji-unidic-0.9-SNAPSHOT.jar
-kuromoji-unidic-kanaaccent/target/kuromoji-unidic-kanaaccent-0.9-SNAPSHOT.jar
-kuromoji-unidic-neologd/target/kuromoji-unidic-neologd-0.9-SNAPSHOT.jar
+kuromoji-core/target/kuromoji-core-1.0-SNAPSHOT.jar
+kuromoji-ipadic/target/kuromoji-ipadic-1.0-SNAPSHOT.jar
+kuromoji-ipadic-neologd/target/kuromoji-ipadic-neologd-1.0-SNAPSHOT.jar
+kuromoji-jumandic/target/kuromoji-jumandic-1.0-SNAPSHOT.jar
+kuromoji-naist-jdic/target/kuromoji-naist-jdic-1.0-SNAPSHOT.jar
+kuromoji-unidic/target/kuromoji-unidic-1.0-SNAPSHOT.jar
+kuromoji-unidic-kanaaccent/target/kuromoji-unidic-kanaaccent-1.0-SNAPSHOT.jar
+kuromoji-unidic-neologd/target/kuromoji-unidic-neologd-1.0-SNAPSHOT.jar
 ```
 
 The following additional build options are available:
