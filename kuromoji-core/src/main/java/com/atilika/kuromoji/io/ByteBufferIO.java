@@ -50,8 +50,10 @@ public class ByteBufferIO {
             new BufferedOutputStream(output)
         );
 
-        dataOutput.writeInt(buffer.position());
-        buffer.flip();
+        buffer = buffer.duplicate();
+        buffer.rewind();
+
+        dataOutput.writeInt(buffer.capacity());
 
         WritableByteChannel channel = Channels.newChannel(dataOutput);
         channel.write(buffer);

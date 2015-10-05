@@ -5,7 +5,7 @@
     <parent>
         <artifactId>kuromoji</artifactId>
         <groupId>com.atilika.kuromoji</groupId>
-        <version>0.9-SNAPSHOT</version>
+        <version>1.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -20,7 +20,6 @@
         <kuromoji.dict.dir>${project.basedir}/dictionary/mecab-jumandic-7.0-20130310</kuromoji.dict.dir>
         <kuromoji.dict.targetdir>${project.basedir}/src/main/resources/com/atilika/kuromoji/jumandic</kuromoji.dict.targetdir>
         <kuromoji.dict.encoding>utf-8</kuromoji.dict.encoding>
-        <kuromoji.dict.compact>false</kuromoji.dict.compact>
     </properties>
 
     <build>
@@ -132,7 +131,6 @@
                                 <argument>${kuromoji.dict.dir}</argument>
                                 <argument>${kuromoji.dict.targetdir}</argument>
                                 <argument>${kuromoji.dict.encoding}</argument>
-                                <argument>${kuromoji.dict.compact}</argument>
                             </arguments>
                         </configuration>
                     </plugin>
@@ -145,13 +143,13 @@
         <dependency>
             <groupId>com.atilika.kuromoji</groupId>
             <artifactId>kuromoji-core</artifactId>
-            <version>0.9-SNAPSHOT</version>
+            <version>1.0-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.atilika.kuromoji</groupId>
             <artifactId>kuromoji-core</artifactId>
-            <version>0.9-SNAPSHOT</version>
+            <version>1.0-SNAPSHOT</version>
             <type>test-jar</type>
             <scope>test</scope>
         </dependency>

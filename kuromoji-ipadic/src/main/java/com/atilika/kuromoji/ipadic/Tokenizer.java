@@ -23,8 +23,8 @@ import com.atilika.kuromoji.dict.Dictionary;
 import com.atilika.kuromoji.dict.InsertedDictionary;
 import com.atilika.kuromoji.dict.TokenInfoDictionary;
 import com.atilika.kuromoji.dict.UnknownDictionary;
+import com.atilika.kuromoji.fst.FST;
 import com.atilika.kuromoji.ipadic.compile.DictionaryEntry;
-import com.atilika.kuromoji.trie.DoubleArrayTrie;
 import com.atilika.kuromoji.util.SimpleResourceResolver;
 import com.atilika.kuromoji.viterbi.TokenFactory;
 import com.atilika.kuromoji.viterbi.ViterbiNode;
@@ -214,7 +214,7 @@ public class Tokenizer extends TokenizerBase {
             resolver = new SimpleResourceResolver(this.getClass());
 
             try {
-                doubleArrayTrie = DoubleArrayTrie.newInstance(resolver);
+                fst = FST.newInstance(resolver);
                 connectionCosts = ConnectionCosts.newInstance(resolver);
                 tokenInfoDictionary = TokenInfoDictionary.newInstance(resolver);
                 characterDefinitions = CharacterDefinitions.newInstance(resolver);

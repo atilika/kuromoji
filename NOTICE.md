@@ -6,7 +6,9 @@ This software also includes a binary and/or source version of data from various 
 
 - `kuromoji-entities/NOTICE.md`
 - `kuromoji-ipadic/NOTICE.md`
+- `kuromoji-ipadic-neologd/NOTICE.md`
 - `kuromoji-jumandic/NOTICE.md`
 - `kuromoji-naist-jdic/NOTICE.md`
 - `kuromoji-unidic/NOTICE.md`
-- `kuromoji-unidic-extended/NOTICE.md`
+- `kuromoji-unidic-kanaccent/NOTICE.md`
+- `kuromoji-unidic-neologd/NOTICE.md`

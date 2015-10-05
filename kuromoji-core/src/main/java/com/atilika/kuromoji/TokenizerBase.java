@@ -23,7 +23,7 @@ import com.atilika.kuromoji.dict.InsertedDictionary;
 import com.atilika.kuromoji.dict.TokenInfoDictionary;
 import com.atilika.kuromoji.dict.UnknownDictionary;
 import com.atilika.kuromoji.dict.UserDictionary;
-import com.atilika.kuromoji.trie.DoubleArrayTrie;
+import com.atilika.kuromoji.fst.FST;
 import com.atilika.kuromoji.util.ResourceResolver;
 import com.atilika.kuromoji.viterbi.TokenFactory;
 import com.atilika.kuromoji.viterbi.ViterbiBuilder;
@@ -84,7 +84,7 @@ public abstract class TokenizerBase {
         this.insertedDictionary = builder.insertedDictionary;
 
         this.viterbiBuilder = new ViterbiBuilder(
-            builder.doubleArrayTrie,
+            builder.fst,
             tokenInfoDictionary,
             unknownDictionary,
             userDictionary,
@@ -262,7 +262,7 @@ public abstract class TokenizerBase {
      * Abstract Builder shared by all tokenizers
      */
     public abstract static class Builder {
-        protected DoubleArrayTrie doubleArrayTrie;
+        protected FST fst;
         protected ConnectionCosts connectionCosts;
         protected TokenInfoDictionary tokenInfoDictionary;
         protected UnknownDictionary unknownDictionary;
@@ -284,7 +284,7 @@ public abstract class TokenizerBase {
 
         protected void loadDictionaries() {
             try {
-                doubleArrayTrie = DoubleArrayTrie.newInstance(resolver);
+                fst = FST.newInstance(resolver);
                 connectionCosts = ConnectionCosts.newInstance(resolver);
                 tokenInfoDictionary = TokenInfoDictionary.newInstance(resolver);
                 characterDefinitions = CharacterDefinitions.newInstance(resolver);
