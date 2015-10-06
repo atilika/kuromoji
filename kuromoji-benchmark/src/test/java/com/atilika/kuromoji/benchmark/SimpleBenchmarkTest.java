@@ -28,13 +28,15 @@ import java.util.Map;
 public class SimpleBenchmarkTest {
 
     private static final String IPADIC = "com.atilika.kuromoji.ipadic.Tokenizer";
+    private static final String IPADIC_NEOLOGD = "com.atilika.kuromoji.ipadic.neologd.Tokenizer";
     private static final String JUMAN_DIC = "com.atilika.kuromoji.jumandic.Tokenizer";
     private static final String NAIST_JDIC = "com.atilika.kuromoji.naist.jdic.Tokenizer";
     private static final String UNIDIC = "com.atilika.kuromoji.unidic.Tokenizer";
     private static final String UNIDIC_KANAACCENT = "com.atilika.kuromoji.unidic.kanaaccent.Tokenizer";
+    private static final String UNIDIC_NEOLOGD = "com.atilika.kuromoji.unidic.neologd.Tokenizer";
 
     private List<String> tokenizerClasses = Arrays.asList(
-        IPADIC, JUMAN_DIC, NAIST_JDIC, UNIDIC, UNIDIC_KANAACCENT
+        IPADIC, IPADIC_NEOLOGD, JUMAN_DIC, NAIST_JDIC, UNIDIC, UNIDIC_KANAACCENT, UNIDIC_NEOLOGD
     );
 
     private Map<String, TokenizerBase> tokenizers = new HashMap<>();

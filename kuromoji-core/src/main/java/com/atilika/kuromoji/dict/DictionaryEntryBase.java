@@ -26,11 +26,19 @@ public abstract class DictionaryEntryBase {
     public DictionaryEntryBase(String surface,
                                short leftId,
                                short rightId,
-                               short wordCost) {
+                               int wordCost) {
         this.surface = surface;
         this.leftId = leftId;
         this.rightId = rightId;
-        this.wordCost = wordCost;
+
+        // TODO: Temporary work-around for UniDic NEologd to deal with costs outside the short value range
+        if (wordCost < Short.MIN_VALUE) {
+            this.wordCost = Short.MIN_VALUE;
+        } else if (wordCost > Short.MAX_VALUE) {
+            this.wordCost = Short.MAX_VALUE;
+        } else {
+            this.wordCost = (short) wordCost;
+        }
     }
 
     public String getSurface() {

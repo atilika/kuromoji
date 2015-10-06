@@ -1,71 +1,55 @@
+/**
+ * Copyright © 2010-2015 Atilika Inc. and contributors (see CONTRIBUTORS.md)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License.  A copy of the
+ * License is distributed with this work in the LICENSE.md file.  You may
+ * also obtain a copy of the License from
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.atilika.kuromoji.fst;
 
-import com.atilika.kuromoji.util.SimpleResourceResolver;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 
 import static org.junit.Assert.assertEquals;
 
 public class FSTTest {
 
-    private static FST fst;
-
-    @BeforeClass
-    public static void setUp() throws IOException {
-        File output = File.createTempFile("fst-", ".fst");
-        output.deleteOnExit();
-
-        String[] keys = new String[]{"cat", "cats", "dog"};
-        int[] values = new int[]{1, 2, 4};
-
-        FSTBuilder builder = new FSTBuilder();
-
-        builder.createDictionary(keys, values);
-        builder.getFstCompiler().getProgram().outputProgramToStream(
-            new FileOutputStream(output)
-        );
-
-        fst = new FST(new FileInputStream(output));
-    }
-
     @Test
-    public void testFST() throws IOException {
-        assertEquals(4, fst.lookup("dog"));
-        assertEquals(1, fst.lookup("cat"));
-        assertEquals(2, fst.lookup("cats"));
-    }
+    public void testFST2() throws IOException {
+        String inputValues[] = {
+            "brats", "cat", "dog", "dogs", "rat",
+        };
 
-    @Test
-    public void testMiss() throws Exception {
-        assertEquals(-1, fst.lookup("mouse"));
-    }
+        int outputValues[] = {
+            1, 3, 5, 7, 11
+        };
 
-    @Ignore("Replace this with prefix match tests")
-    @Test
-    public void testIPADIC() throws IOException {
-        FST ipadic = new FST(new FileInputStream(new File("/Users/cm/Projects/kuromoji-cmoen/kuromoji-ipadic/src/main/resources/com/atilika/kuromoji/ipadic/fst.bin")));
+        Builder builder = new Builder();
+        builder.build(inputValues, outputValues);
 
-        debugLookup(ipadic, "ア");
-        debugLookup(ipadic, "アテ");
-        debugLookup(ipadic, "アティ");
-        debugLookup(ipadic, "株");
-        debugLookup(ipadic, "株式");
-        debugLookup(ipadic, "会社");
-        debugLookup(ipadic, "株式会");
-        debugLookup(ipadic, "株式会社");
-        debugLookup(ipadic, "ステーシ");
-        debugLookup(ipadic, "ステーション");
-    }
+        for (int i = 0; i < inputValues.length; i++) {
+            assertEquals(outputValues[i], builder.transduce(inputValues[i]));
+        }
 
-    public void debugLookup(FST fst, String key) {
-        int value = fst.lookup(key);
-        System.out.println("\t" + key + " -> " + value);
+        Compiler compiledFST = builder.getCompiler();
+        FST fst = new FST(compiledFST.getByteArray());
+
+        assertEquals(0, fst.lookup("brat")); // Prefix match
+        assertEquals(1, fst.lookup("brats"));
+        assertEquals(3, fst.lookup("cat"));
+        assertEquals(5, fst.lookup("dog"));
+        assertEquals(7, fst.lookup("dogs"));
+        assertEquals(11, fst.lookup("rat"));
+        assertEquals(-1, fst.lookup("rats")); // No match
     }
 }
