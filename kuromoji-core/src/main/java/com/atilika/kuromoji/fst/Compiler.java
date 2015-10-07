@@ -53,10 +53,9 @@ public class Compiler {
     }
 
     public void compileState(State state) throws IOException {
-        writeStateArcs(state);
-        writeStateType(state);
-
         if (state.getTargetJumpAddress() == -1) {
+            writeStateArcs(state);
+            writeStateType(state);
             // The last arc is regarded as a state because we evaluate the FST backwards.
             state.setTargetJumpAddress(written - 1);
         }
