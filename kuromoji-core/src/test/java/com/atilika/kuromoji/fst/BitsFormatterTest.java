@@ -37,23 +37,22 @@ public class BitsFormatterTest {
         Compiler compiledFST = builder.getCompiler();
 
         assertEquals("" +
-            " 106: MATCH\n" +
-            " 103:\tr -> 30\t(JMP: 83)\n" +
-            "  93:\tc -> 10\t(JMP: 41)\n" +
-            "  83: MATCH\n" +
-            "  80:\ta -> 0\t(JMP: 70)\n" +
-            "  70: MATCH\n" +
-            "  67:\tt -> 0\t(JMP: 57)\n" +
-            "  57: MATCH\n" +
-            "  54:\ts -> 0\t(JMP: 2)\n" +
-            "  44: ACCEPT\n" +
-            "  41: MATCH\n" +
-            "  38:\ta -> 0\t(JMP: 28)\n" +
-            "  28: MATCH\n" +
-            "  25:\tt -> 0\t(JMP: 15)\n" +
-            "  15: ACCEPT\n" +
-            "  12:\ts -> 10\t(JMP: 2)\n" +
-            "   2: ACCEPT\n",
+                " 103: MATCH\n" +
+                " 100:\tr -> 30\t(JMP: 80)\n" +
+                "  90:\tc -> 10\t(JMP: 41)\n" +
+                "  80: MATCH\n" +
+                "  77:\ta -> 0\t(JMP: 67)\n" +
+                "  67: MATCH\n" +
+                "  64:\tt -> 0\t(JMP: 54)\n" +
+                "  54: MATCH\n" +
+                "  51:\ts -> 0\t(JMP: 2)\n" +
+                "  41: MATCH\n" +
+                "  38:\ta -> 0\t(JMP: 28)\n" +
+                "  28: MATCH\n" +
+                "  25:\tt -> 0\t(JMP: 15)\n" +
+                "  15: ACCEPT\n" +
+                "  12:\ts -> 10\t(JMP: 2)\n" +
+                "   2: ACCEPT\n",
             formatter.format(compiledFST.getByteArray())
         );
     }
