@@ -9,7 +9,4 @@ before_install:
   - sudo rm -f /etc/mavenrc
 
 install:
-  - mvn install -DskipTests -pl kuromoji-ipadic -pl kuromoji-unidic -am
-
-script:
-  - mvn test -DskipCompileDictionary -pl kuromoji-ipadic -pl kuromoji-unidic -am
+  - mvn package
