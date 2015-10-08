@@ -73,7 +73,7 @@ public class SimpleBenchmarkTest {
     public void testInstantiationBenchmark() throws Exception {
         for (String classname : tokenizerClasses) {
             long starttime = System.currentTimeMillis();
-            int count = 10;
+            int count = 5;
 
             for (int i = 0; i < count; i++) {
                 tokenizeForName(classname);
