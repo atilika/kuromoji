@@ -28,7 +28,7 @@ public class MultiThreadedTokenizerTest {
     public void testMultiThreadedBocchan() throws IOException, InterruptedException {
         assertMultiThreadedTokenizedStreamEquals(
             5,
-            25,
+            10,
             "/bocchan-unidic-kanaaccent-features.txt",
             "/bocchan.txt",
             new Tokenizer()
