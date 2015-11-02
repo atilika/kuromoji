@@ -46,7 +46,7 @@ public class Builder {
     /**
      * Applies the transducer over the input text
      *
-     * @param input input text to transduce
+     * @param input  input text to transduce
      * @return corresponding value on a match and -1 otherwise
      */
     public int transduce(String input) {
@@ -70,7 +70,7 @@ public class Builder {
     /**
      * Get starting state. Note that only start state uses 0 as the key for states dictionary.
      *
-     * @return starting state
+     * @return start state
      */
     public State getStartState() {
         return this.statesDictionary.get(0).get(0);
@@ -79,8 +79,8 @@ public class Builder {
     /**
      * For this method, once it reads the string, it throws away.
      *
-     * @param reader
-     * @throws IOException
+     * @param reader  reader to read dictionary entries from
+     * @throws IOException in case of IO error
      */
     public void createDictionaryIncremental(Reader reader) throws IOException {
         LineNumberReader lineNumberReader = new LineNumberReader(reader);
@@ -108,8 +108,8 @@ public class Builder {
     /**
      * builds FST given input words and output values
      *
-     * @param inputWords
-     * @param outputValues
+     * @param inputWords  array of input strings, not null
+     * @param outputValues  array of output values
      */
     public void build(String[] inputWords, int[] outputValues) throws IOException {
         String previousWord = "";
@@ -235,7 +235,7 @@ public class Builder {
     /**
      * Find the equivalent state by checking its destination states to when collided.
      *
-     * @param state
+     * @param state  state to check for equivalence
      * @return returns an equivalent state which is already in the stateDicitonary. If there is no equivalent state,
      * then a new state will created and put into statesDictionary.
      */
