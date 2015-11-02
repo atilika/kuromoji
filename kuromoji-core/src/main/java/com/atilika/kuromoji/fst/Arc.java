@@ -17,9 +17,12 @@
 package com.atilika.kuromoji.fst;
 
 public class Arc {
-    char label;
-    int output = 0;
-    State destination;
+
+    private char label;
+
+    private int output = 0;
+
+    private State destination;
 
     public Arc(int output, State destination, char label) {
         this.output = output;
@@ -43,7 +46,9 @@ public class Arc {
         return this.label;
     }
 
-    public void setOutput(Integer output) {this.output = output;}
+    public void setOutput(int output) {
+        this.output = output;
+    }
 
     public void setLabel(char label) {
         this.label = label;
