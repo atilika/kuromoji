@@ -80,7 +80,7 @@ public class Builder {
      * For this method, once it reads the string, it throws away.
      *
      * @param reader  reader to read dictionary entries from
-     * @throws IOException in case of IO error
+     * @throws IOException in case of an IO error
      */
     public void createDictionaryIncremental(Reader reader) throws IOException {
         LineNumberReader lineNumberReader = new LineNumberReader(reader);
@@ -110,6 +110,7 @@ public class Builder {
      *
      * @param inputWords  array of input strings, not null
      * @param outputValues  array of output values
+     * @throws IOException in case of an IO error
      */
     public void build(String[] inputWords, int[] outputValues) throws IOException {
         String previousWord = "";
