@@ -25,7 +25,9 @@ import java.util.List;
 public class Compiler {
 
     /**
-     * 1 byte   bit 7: true => accept, false => match
+     * <pre>
+     * @{code
+     * 1 byte   bit 7: true - accept state, false - match state
      *          bits 3-6 indicate number of bytes in output value (m)
      *          bits 0-2 indicate number of bytes in jump address (n)
      * 2 bytes  number of outgoing arcs
@@ -36,6 +38,8 @@ public class Compiler {
      *   m bytes accumlator
      *  )
      * ]
+     * }
+     * </pre>
      */
     public static final byte STATE_TYPE_MATCH = (byte) 0x00;
 
