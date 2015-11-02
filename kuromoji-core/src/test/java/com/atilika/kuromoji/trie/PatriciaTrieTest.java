@@ -274,7 +274,7 @@ public class PatriciaTrieTest {
     @Test
     public void testMultiThreadedTrie() throws InterruptedException {
         final int numThreads = 10;
-        final int perThreadRuns = 500000;
+        final int perThreadRuns = 50000;
         final int keySetSize = 1000;
 
         final List<Thread> threads = new ArrayList<>();

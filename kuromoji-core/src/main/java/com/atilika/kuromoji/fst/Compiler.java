@@ -26,7 +26,7 @@ public class Compiler {
 
     /**
      * <pre>
-     * @{code
+     * {@code
      * 1 byte   bit 7: true - accept state, false - match state
      *          bits 3-6 indicate number of bytes in output value (m)
      *          bits 0-2 indicate number of bytes in jump address (n)
