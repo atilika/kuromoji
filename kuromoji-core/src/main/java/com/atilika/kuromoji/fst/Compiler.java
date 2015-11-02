@@ -59,6 +59,7 @@ public class Compiler {
 
             writeStateArcs(state, outputBytes, jumpBytes);
             writeStateType(state, outputBytes, jumpBytes);
+
             // The last arc is regarded as a state because we evaluate the FST backwards.
             state.setTargetJumpAddress(written - 1);
         }
