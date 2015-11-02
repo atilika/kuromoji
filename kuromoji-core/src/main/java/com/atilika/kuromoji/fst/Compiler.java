@@ -25,21 +25,21 @@ import java.util.List;
 public class Compiler {
 
     /**
-     * 1 byte   node type: 0x01 = accept, 0x02 = match
+     * 1 byte   bit 7: true => accept, false => match
+     *          bits 3-6 indicate number of bytes in output value (m)
+     *          bits 0-2 indicate number of bytes in jump address (n)
      * 2 bytes  number of outgoing arcs
      * [
      *  (
      *   2 bytes label (char),
-     *   4 bytes jump address,
-     *   4 bytes accumlator
+     *   n bytes jump address,
+     *   m bytes accumlator
      *  )
      * ]
      */
-    public static final byte STATE_TYPE_MATCH = 0x01;
+    public static final byte STATE_TYPE_MATCH = (byte) 0x00;
 
-    public static final byte STATE_TYPE_ACCEPT = 0x02;
-
-    public static final int ARC_SIZE = 2 + 4 + 4;
+    public static final byte STATE_TYPE_ACCEPT = (byte) 0x80;
 
     private ByteArrayOutputStream byteArrayOutput;
 
@@ -54,44 +54,137 @@ public class Compiler {
 
     public void compileState(State state) throws IOException {
         if (state.getTargetJumpAddress() == -1) {
-            writeStateArcs(state);
-            writeStateType(state);
+            int jumpBytes = findMaxJumpAddressBytes(state);
+            int outputBytes = findMaxOutputBytes(state);
+
+            writeStateArcs(state, outputBytes, jumpBytes);
+            writeStateType(state, outputBytes, jumpBytes);
+
             // The last arc is regarded as a state because we evaluate the FST backwards.
             state.setTargetJumpAddress(written - 1);
         }
     }
 
-    private void writeStateType(State state) throws IOException {
+    private void writeStateType(State state, int outputBytes, int jumpBytes) throws IOException {
+        byte stateType;
+
         if (state.isFinal()) {
-            dataOutput.writeByte(STATE_TYPE_ACCEPT);
+            stateType = STATE_TYPE_ACCEPT;
         } else {
-            dataOutput.writeByte(STATE_TYPE_MATCH);
+            stateType = STATE_TYPE_MATCH;
         }
+
+        stateType |= jumpBytes - 1;
+        stateType |= outputBytes << 3;
+
+        dataOutput.writeByte(stateType);
+
         written += 1;
     }
 
-    private void writeStateArcs(State state) throws IOException {
+    private void writeStateArcs(State state, int outputBytes, int jumpBytes) throws IOException {
         List<Arc> arcs = state.arcs;
 
         for (Arc arc : arcs) {
-            writeStateArc(arc);
+            writeStateArc(arc, outputBytes, jumpBytes);
         }
 
         dataOutput.writeShort(arcs.size());
         written += 2;
     }
 
-    private void writeStateArc(Arc arc) throws IOException {
+    private void writeStateArc(Arc arc, int outputBytes, int jumpBytes) throws IOException {
         State target = arc.getDestination();
+        int arcSize = 2 + jumpBytes + outputBytes; // label + bytes for a jump + output
 
         dataOutput.writeShort(arc.getLabel());
-        dataOutput.writeInt(target.getTargetJumpAddress());
-        dataOutput.writeInt(arc.getOutput());
+        writeIntValue(target.getTargetJumpAddress(), jumpBytes);
+        writeIntValue(arc.getOutput(), outputBytes);
 
-        written += ARC_SIZE;
+        written += arcSize;
     }
 
-    public byte[] getByteArray() {
+    private void writeIntValue(int value, int bytes) throws IOException {
+        switch (bytes) {
+            case 0:
+                break;
+
+            case 1:
+                dataOutput.writeByte(value & 0xff);
+                break;
+
+            case 2:
+                dataOutput.writeByte((value >> 8) & 0xff);
+                dataOutput.writeByte(value & 0xff);
+                break;
+
+            case 3:
+                dataOutput.writeByte((value >> 16) & 0xff);
+                dataOutput.writeByte((value >> 8) & 0xff);
+                dataOutput.writeByte(value & 0xff);
+                break;
+
+            case 4:
+                dataOutput.writeByte((value >> 24) & 0xff);
+                dataOutput.writeByte((value >> 16) & 0xff);
+                dataOutput.writeByte((value >> 8) & 0xff);
+                dataOutput.writeByte(value & 0xff);
+                break;
+
+            default:
+                throw new RuntimeException("Illegal int byte size: " + bytes);
+        }
+    }
+
+    private int findMaxJumpAddressBytes(State state) {
+        int maxJumpAddress = 0;
+
+        for (Arc arc : state.arcs) {
+            int jumpAddress = arc.getDestination().getTargetJumpAddress();
+
+            if (maxJumpAddress < jumpAddress) {
+                maxJumpAddress = jumpAddress;
+            }
+        }
+
+        return findBytes(maxJumpAddress);
+    }
+
+    private int findMaxOutputBytes(State state) {
+        int maxOutput = 0;
+
+        for (Arc arc : state.arcs) {
+            int output = arc.getOutput();
+
+            if (maxOutput < output) {
+                maxOutput = output;
+            }
+        }
+
+        if (maxOutput == 0) {
+            return 0;
+        }
+
+        return findBytes(maxOutput);
+    }
+
+    private int findBytes(int value) {
+        if (value < 256) {
+            return 1;
+        }
+
+        if (value < 65536) {
+            return 2;
+        }
+
+        if (value < 16777216) {
+            return 3;
+        }
+
+        return 4;
+    }
+
+    public byte[] getBytes() {
         return byteArrayOutput.toByteArray();
     }
 }
