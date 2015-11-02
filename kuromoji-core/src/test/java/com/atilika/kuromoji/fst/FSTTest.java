@@ -25,7 +25,7 @@ import static org.junit.Assert.assertEquals;
 public class FSTTest {
 
     @Test
-    public void testFST2() throws IOException {
+    public void testFST() throws IOException {
         String inputValues[] = {
             "brats", "cat", "dog", "dogs", "rat",
         };
