@@ -68,7 +68,7 @@ public class PatriciaTrieTest {
     public void testRandom() {
         // Generate random strings
         List<String> randoms = new ArrayList<>();
-        for (int i = 0; i < 100000; i++) {
+        for (int i = 0; i < 10000; i++) {
             randoms.add(UUID.randomUUID().toString());
         }
         // Insert them
@@ -87,7 +87,7 @@ public class PatriciaTrieTest {
     public void testPutAll() {
         // Generate random strings
         Map<String, String> randoms = new HashMap<>();
-        for (int i = 0; i < 10000; i++) {
+        for (int i = 0; i < 1000; i++) {
             String random = UUID.randomUUID().toString();
             randoms.put(random, random);
         }
@@ -274,7 +274,7 @@ public class PatriciaTrieTest {
     @Test
     public void testMultiThreadedTrie() throws InterruptedException {
         final int numThreads = 10;
-        final int perThreadRuns = 500000;
+        final int perThreadRuns = 50000;
         final int keySetSize = 1000;
 
         final List<Thread> threads = new ArrayList<>();

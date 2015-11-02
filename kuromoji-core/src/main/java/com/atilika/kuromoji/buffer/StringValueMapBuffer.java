@@ -63,13 +63,13 @@ public class StringValueMapBuffer {
     private int calculateSize(TreeMap<Integer, String> input) {
         int size = 0;
         for (String value : input.values()) {
-            size += INTEGER_BYTES + value.getBytes(StandardCharsets.UTF_8).length + 2 * INTEGER_BYTES;
+            size += INTEGER_BYTES + value.getBytes(StandardCharsets.UTF_16).length + 2 * INTEGER_BYTES;
         }
         return size;
     }
 
     private int putString(int address, String s) {
-        byte[] bytes = s.getBytes(StandardCharsets.UTF_8);
+        byte[] bytes = s.getBytes(StandardCharsets.UTF_16);
 
         buffer.position(address);
         // TODO: The length field in the entry (bytes.length) field can be optimized (shrunk) for most dictionary types.
@@ -86,7 +86,7 @@ public class StringValueMapBuffer {
 
     private String getString(int address) {
         int length = buffer.getShort(address);
-        return new String(buffer.array(), address + SHORT_BYTES, length, StandardCharsets.UTF_8);
+        return new String(buffer.array(), address + SHORT_BYTES, length, StandardCharsets.UTF_16);
     }
 
     public void write(OutputStream os) throws IOException {

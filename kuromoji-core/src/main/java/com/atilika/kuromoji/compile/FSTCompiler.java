@@ -44,7 +44,7 @@ public class FSTCompiler implements Compiler {
         builder.build(surfaces, null) ;
 
         ByteBuffer fst = ByteBuffer.wrap(
-            builder.getCompiler().getByteArray()
+            builder.getCompiler().getBytes()
         );
 
         ByteBufferIO.write(output, fst);

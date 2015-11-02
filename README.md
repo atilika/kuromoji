@@ -7,6 +7,8 @@ Kuromoji is an easy to use and self-contained Japanese morphological analyzer th
 - **Lemmatization.** Get dictionary forms for inflected verbs and adjectives
 - **Readings.** Extract readings for kanji
 
+Several other features are supported . Please consult each dictionaries' `Token` class for details.
+
 ## Using Kuromoji
 
 The example below shows how to use the Kuromoji morphological analyzer in its simlest form; to segment text into tokens and output features for each token.
@@ -95,13 +97,8 @@ The sections below list fully qualified class names and the Maven coordinates fo
 - `com.atilika.kuromoji.ipadic.neologd.Tokenizer`
 - `com.atilika.kuromoji.ipadic.neologd.Token`
 
-```xml
-<dependency>
-  <groupId>com.atilika.kuromoji</groupId>
-  <artifactId>kuromoji-ipadic-neologd</artifactId>
-  <version>0.9.0</version>
-</dependency>
-```
+This dictionary will be available from Maven Central in a future version.
+
 
 ### kuromoji-jumandic
 
@@ -160,13 +157,8 @@ The sections below list fully qualified class names and the Maven coordinates fo
 - `com.atilika.kuromoji.unidic.neologd.Tokenizer`
 - `com.atilika.kuromoji.unidic.kanaaneologdcent.Token`
 
-```xml
-<dependency>
-  <groupId>com.atilika.kuromoji</groupId>
-  <artifactId>kuromoji-unidic-neologd</artifactId>
-  <version>0.9.0</version>
-</dependency>
-```
+This dictionary will be available from Maven Central in a future version.
+
 
 ## Building Kuromoji from source code
 
@@ -181,14 +173,14 @@ $ mvn clean package
 This will download all source dictionary data and build Kuromoji with all dictionaries. The following jars will then be available:
 
 ```
-kuromoji-core/target/kuromoji-core-0.9-SNAPSHOT.jar
-kuromoji-ipadic/target/kuromoji-ipadic-0.9-SNAPSHOT.jar
-kuromoji-ipadic-neologd/target/kuromoji-ipadic-neologd-0.9-SNAPSHOT.jar
-kuromoji-jumandic/target/kuromoji-jumandic-0.9-SNAPSHOT.jar
-kuromoji-naist-jdic/target/kuromoji-naist-jdic-0.9-SNAPSHOT.jar
-kuromoji-unidic/target/kuromoji-unidic-0.9-SNAPSHOT.jar
-kuromoji-unidic-kanaaccent/target/kuromoji-unidic-kanaaccent-0.9-SNAPSHOT.jar
-kuromoji-unidic-neologd/target/kuromoji-unidic-neologd-0.9-SNAPSHOT.jar
+kuromoji-core/target/kuromoji-core-1.0-SNAPSHOT.jar
+kuromoji-ipadic/target/kuromoji-ipadic-1.0-SNAPSHOT.jar
+kuromoji-ipadic-neologd/target/kuromoji-ipadic-neologd-1.0-SNAPSHOT.jar
+kuromoji-jumandic/target/kuromoji-jumandic-1.0-SNAPSHOT.jar
+kuromoji-naist-jdic/target/kuromoji-naist-jdic-1.0-SNAPSHOT.jar
+kuromoji-unidic/target/kuromoji-unidic-1.0-SNAPSHOT.jar
+kuromoji-unidic-kanaaccent/target/kuromoji-unidic-kanaaccent-1.0-SNAPSHOT.jar
+kuromoji-unidic-neologd/target/kuromoji-unidic-neologd-1.0-SNAPSHOT.jar
 ```
 
 The following additional build options are available:

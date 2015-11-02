@@ -25,7 +25,7 @@ import static org.junit.Assert.assertEquals;
 public class FSTTest {
 
     @Test
-    public void testFST2() throws IOException {
+    public void testFST() throws IOException {
         String inputValues[] = {
             "brats", "cat", "dog", "dogs", "rat",
         };
@@ -42,7 +42,7 @@ public class FSTTest {
         }
 
         Compiler compiledFST = builder.getCompiler();
-        FST fst = new FST(compiledFST.getByteArray());
+        FST fst = new FST(compiledFST.getBytes());
 
         assertEquals(0, fst.lookup("brat")); // Prefix match
         assertEquals(1, fst.lookup("brats"));
