@@ -39,6 +39,7 @@ import java.io.OutputStream;
 import java.io.SequenceInputStream;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.TreeMap;
 
@@ -161,7 +162,15 @@ public abstract class TokenInfoDictionaryCompilerBase<T extends DictionaryEntryB
 
         ArrayList<File> files = new ArrayList<>();
         Collections.addAll(files, dir.listFiles(filter));
-        Collections.sort(files);
+        // since the order these files are processed can affect how some words are chosen,
+        // we ensure files are sorted by name rather than OS-specific file comparison rules
+        Collections.sort(files, new Comparator<File>() {
+            @Override
+            public int compare(File a, File b) {
+                return a.getName().compareTo(b.getName());
+            }
+        });
+
         return files;
     }
 
