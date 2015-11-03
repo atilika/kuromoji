@@ -30,6 +30,7 @@ public class StringValueMapBufferTest {
 
         input.put(1, "hello");
         input.put(2, "日本");
+        input.put(3, "カタカナ");
         input.put(0, "Bye");
 
         StringValueMapBuffer values = new StringValueMapBuffer(input);
@@ -37,5 +38,6 @@ public class StringValueMapBufferTest {
         assertEquals("Bye", values.get(0));
         assertEquals("hello", values.get(1));
         assertEquals("日本", values.get(2));
+        assertEquals("カタカナ", values.get(3));
     }
 }
