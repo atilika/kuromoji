@@ -28,9 +28,9 @@ public class FeatureInfoMap {
 
     private int maxValue = 0;
 
-    public List<Integer> mapFeatures(List<String> allPosFeatures) {
+    public List<Integer> mapFeatures(List<String> features) {
         List<Integer> posFeatureIds = new ArrayList<>();
-        for (String feature : allPosFeatures) {
+        for (String feature : features) {
             if (featureMap.containsKey(feature)) {
                 posFeatureIds.add(featureMap.get(feature));
             } else {
