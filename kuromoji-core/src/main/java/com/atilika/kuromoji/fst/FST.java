@@ -31,36 +31,44 @@ public class FST {
 
     private int[] jumpCache = new int[65536];
 
-    public FST(byte[] compiled) throws IOException {
+    private int[] outputCache = new int[65536];
+
+    public FST(byte[] compiled) {
         this.fst = compiled;
         initCache();
     }
 
     public FST(InputStream input) throws IOException {
-        this.fst = ByteBufferIO.read(input).array();
-        initCache();
+        this(ByteBufferIO.read(input).array());
     }
 
     private void initCache() {
         Arrays.fill(jumpCache, -1);
+        Arrays.fill(outputCache, -1);
 
-        int address = fst.length - 1 - 1;
+        int address = fst.length - 1;
+
+        final byte stateType = Bits.getByte(fst, address);
+        address -= 1;
+
+        final int jumpBytes = (stateType & 0x03) + 1;
+        final int outputBytes = (stateType & 0x03 << 3) >> 3;
 
         int arcs = Bits.getShort(fst, address);
         address -= 2;
 
         for (int i = 0; i < arcs; i++) {
+            final int output = Bits.getInt(fst, address, outputBytes);
+            address -= outputBytes;
 
-            final int output = Bits.getInt(fst, address);
-            address -= 4;
-
-            final int jump = Bits.getInt(fst, address);
-            address -= 4;
+            final int jump = Bits.getInt(fst, address, jumpBytes);
+            address -= jumpBytes;
 
             final char label = (char) Bits.getShort(fst, address);
             address -= 2;
 
-            jumpCache[label] = address + Compiler.ARC_SIZE;
+            jumpCache[label] = jump;
+            outputCache[label] = output;
         }
     }
 
@@ -71,7 +79,17 @@ public class FST {
         int index = 0;
 
         while (true) {
-            final byte stateType = Bits.getByte(fst, address);
+            final byte stateTypByte = Bits.getByte(fst, address);
+
+            // The number of bytes in the target address (always larger than zero)
+            final int jumpBytes = (stateTypByte & 0x03) + 1;
+
+            // The number of bytes in the output value
+            int outputBytes = (stateTypByte & 0x03 << 3) >> 3;
+
+            final int arcSize = 2 + jumpBytes + outputBytes;
+
+            final byte stateType = (byte) (stateTypByte & 0x80);
             address -= 1;
 
             if (index == length) {
@@ -88,20 +106,16 @@ public class FST {
                 //
                 // Processes cached root arcs - transition directly to the next state on a match
                 //
-                int jump = jumpCache[c];
+                final int jump = jumpCache[c];
 
                 if (jump == -1) {
                     return -1;
                 }
 
-                address = jump;
-
-                final int output = Bits.getInt(fst, address);
-                address -= 4;
-
+                final int output = outputCache[c];
                 accumulator += output;
 
-                address = Bits.getInt(fst, address);
+                address = jump;
                 matched = true;
             } else {
                 //
@@ -119,13 +133,14 @@ public class FST {
 
                 while (low <= high) {
                     final int middle = low + (high - low) / 2;
-                    final int arcAddr = address - middle * Compiler.ARC_SIZE;
-                    final char label = (char) Bits.getShort(fst, arcAddr - 8);
+                    final int arcAddr = address - middle * arcSize;
+
+                    final char label = getArcLabel(arcAddr, outputBytes, jumpBytes);
 
                     if (label == c) {
                         matched = true;
-                        address = Bits.getInt(fst, arcAddr - 4);
-                        accumulator += Bits.getInt(fst, arcAddr);
+                        address = getArcJump(arcAddr, outputBytes, jumpBytes);
+                        accumulator += getArcOutput(arcAddr, outputBytes, jumpBytes);
                         break;
                     } else if (label > c) {
                         low = middle + 1;
@@ -141,6 +156,18 @@ public class FST {
 
             index++;
         }
+    }
+
+    private char getArcLabel(final int arcAddress, final int accumulateBytes, final int jumpBytes) {
+        return (char) Bits.getShort(fst, arcAddress - (accumulateBytes + jumpBytes));
+    }
+
+    private int getArcJump(final int arcAddress, final int accumulateBytes, final int jumpBytes) {
+        return Bits.getInt(fst, arcAddress - accumulateBytes, jumpBytes);
+    }
+
+    private int getArcOutput(final int arcAddress, final int accumulateBytes, final int jumpBytes) {
+        return Bits.getInt(fst, arcAddress, accumulateBytes);
     }
 
     public static FST newInstance(ResourceResolver resolver) throws IOException {

@@ -33,6 +33,8 @@ public class State {
 
     /**
      * Copy constructor
+     *
+     * @param source  state to copy
      */
     public State(State source) {
         this.arcs = source.arcs;
