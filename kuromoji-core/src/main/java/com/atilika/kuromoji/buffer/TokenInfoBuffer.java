@@ -50,7 +50,6 @@ public class TokenInfoBuffer {
         entry.posInfos = new byte[posInfoCount];
         entry.featureInfos = new int[featureCount];
 
-        int entrySize = getEntrySize(tokenInfoCount, posInfoCount, featureCount);
         int position = getPosition(offset, entrySize);
 
         // Get left id, right id and word cost

@@ -148,11 +148,11 @@ public class TokenInfoBufferCompilerTest {
 
         compiler.compile();
 
-        TokenInfoBuffer tokenInfoBuffer2 = new TokenInfoBuffer(
+        TokenInfoBuffer tokenInfoBuffer = new TokenInfoBuffer(
             new FileInputStream(file)
         );
 
-        BufferEntry result = tokenInfoBuffer2.lookupEntry(0);
+        BufferEntry result = tokenInfoBuffer.lookupEntry(0);
 
         assertEquals("hello", resultMap.get(result.featureInfos[0]));
         assertEquals("素敵な世界", resultMap.get(result.featureInfos[1]));
