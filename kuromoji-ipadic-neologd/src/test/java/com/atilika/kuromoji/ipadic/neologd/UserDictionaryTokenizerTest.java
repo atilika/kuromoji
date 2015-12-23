@@ -117,7 +117,7 @@ public class UserDictionaryTokenizerTest {
 
     @Test
     public void testLatticeBrokenAfterUserDictEntryInSentence() throws IOException {
-        String userDictionary = "==クロ,クロ,クロ,カスタム名詞";
+        String userDictionary = "クロ,クロ,クロ,カスタム名詞";
         Tokenizer tokenizer = makeTokenizer(userDictionary);
 
         String input = "この丘の名前はアクロアだ。";
