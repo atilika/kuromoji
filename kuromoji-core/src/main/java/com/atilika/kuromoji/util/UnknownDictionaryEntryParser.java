@@ -45,7 +45,7 @@ public class UnknownDictionaryEntryParser extends DictionaryEntryLineParser {
             .leftId(leftId)
             .rightId(rightId)
             .wordCost(wordCost)
-            .pos(pos)
+            .partOfSpeech(pos)
             .features(features)
             .build();
 

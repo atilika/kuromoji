@@ -37,21 +37,21 @@ public class TokenInfoDictionaryCompiler extends TokenInfoDictionaryCompilerBase
     }
 
     @Override
-    protected GenericDictionaryEntry generateGenericDictionaryEntry(DictionaryEntry entry) {
-        List<String> pos = extractPosFeatures(entry);
-        List<String> features = extractOtherFeatures(entry);
+    protected GenericDictionaryEntry makeGenericDictionaryEntry(DictionaryEntry entry) {
+        List<String> pos = makePartOfSpeechFeatures(entry);
+        List<String> features = makeOtherFeatures(entry);
 
         return new GenericDictionaryEntry.Builder()
             .surface(entry.getSurface())
             .leftId(entry.getLeftId())
             .rightId(entry.getRightId())
             .wordCost(entry.getWordCost())
-            .pos(pos)
+            .partOfSpeech(pos)
             .features(features)
             .build();
     }
 
-    public List<String> extractPosFeatures(DictionaryEntry entry) {
+    public List<String> makePartOfSpeechFeatures(DictionaryEntry entry) {
         List<String> posFeatures = new ArrayList<>();
 
         posFeatures.add(entry.getPartOfSpeechLevel1());
@@ -65,7 +65,7 @@ public class TokenInfoDictionaryCompiler extends TokenInfoDictionaryCompilerBase
         return posFeatures;
     }
 
-    public List<String> extractOtherFeatures(DictionaryEntry entry) {
+    public List<String> makeOtherFeatures(DictionaryEntry entry) {
         List<String> otherFeatures = new ArrayList<>();
 
         otherFeatures.add(entry.getLemmaReadingForm());

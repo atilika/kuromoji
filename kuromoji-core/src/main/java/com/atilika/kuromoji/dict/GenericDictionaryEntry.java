@@ -16,27 +16,25 @@
  */
 package com.atilika.kuromoji.dict;
 
-import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 
-public class GenericDictionaryEntry extends DictionaryEntryBase implements Serializable {
+public class GenericDictionaryEntry extends DictionaryEntryBase {
 
-    private final List<String> posFeatures;
-    private final List<String> features;
+    private final String[] partOfSpeechFeatures;
+    private final String[] otherFeatures;
 
     public GenericDictionaryEntry(Builder builder) {
         super(builder.surface, builder.leftId, builder.rightId, builder.wordCost);
-        posFeatures = builder.pos;
-        features = builder.features;
+        partOfSpeechFeatures = builder.partOfSpeechFeatures;
+        otherFeatures = builder.otherFeatures;
     }
 
-    public List<String> getPosFeatures() {
-        return posFeatures;
+    public String[] getPartOfSpeechFeatures() {
+        return partOfSpeechFeatures;
     }
 
-    public List<String> getFeatures() {
-        return features;
+    public String[] getOtherFeatures() {
+        return otherFeatures;
     }
 
     public static class Builder {
@@ -44,8 +42,8 @@ public class GenericDictionaryEntry extends DictionaryEntryBase implements Seria
         private short leftId;
         private short rightId;
         private short wordCost;
-        private List<String> pos = new ArrayList<>();
-        private List<String> features = new ArrayList<>();
+        private String[] partOfSpeechFeatures;
+        private String[] otherFeatures;
 
         public Builder surface(String surface) {
             this.surface = surface;
@@ -67,13 +65,13 @@ public class GenericDictionaryEntry extends DictionaryEntryBase implements Seria
             return this;
         }
 
-        public Builder pos(List<String> pos) {
-            this.pos = pos;
+        public Builder partOfSpeech(List<String> pos) {
+            this.partOfSpeechFeatures = pos.toArray(new String[0]);
             return this;
         }
 
         public Builder features(List<String> features) {
-            this.features = features;
+            this.otherFeatures = features.toArray(new String[0]);;
             return this;
         }
 
