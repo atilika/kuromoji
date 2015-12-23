@@ -27,6 +27,7 @@ import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -77,8 +78,8 @@ public class UnknownDictionaryCompiler implements Compiler {
             GenericDictionaryEntry entry = dictionaryEntries.get(i);
 
             List<String> tmp = new ArrayList<>();
-            tmp.addAll(entry.getPosFeatures());
-            tmp.addAll(entry.getFeatures());
+            tmp.addAll(Arrays.asList(entry.getPartOfSpeechFeatures()));
+            tmp.addAll(Arrays.asList(entry.getOtherFeatures()));
 
             String[] f = new String[tmp.size()];
             features[i] = tmp.toArray(f);

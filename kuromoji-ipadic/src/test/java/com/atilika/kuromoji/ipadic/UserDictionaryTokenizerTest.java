@@ -117,7 +117,7 @@ public class UserDictionaryTokenizerTest {
 
     @Test
     public void testLatticeBrokenAfterUserDictEntryInSentence() throws IOException {
-        String userDictionary = "クロ,クロ,クロ,カスタム名詞,a,a,a";
+        String userDictionary = "クロ,クロ,クロ,カスタム名詞";
         Tokenizer tokenizer = makeTokenizer(userDictionary);
 
         String input = "この丘の名前はアクロアだ。";
@@ -204,6 +204,38 @@ public class UserDictionaryTokenizerTest {
             Arrays.asList("引", "く", "。"),
             tokenizer.tokenize("引く。")
         );
+    }
+
+    @Test
+    public void testFullUserDictionary() throws IOException {
+        String userDictionary = "" +
+            "日本経済新聞,日本 経済 新聞,ニホン ケイザイ シンブン,カスタム名詞\n" +
+            "渡部,1290,1290,5900,カスタム名詞,固有名詞,人名,姓,*,*,渡部,ワタナベ,ワタナベ\n";
+
+        Tokenizer tokenizer = makeTokenizer(userDictionary);
+
+        String input = "渡部さんは日本経済新聞社に勤めている。";
+        String[] surfaces = {"渡部", "さん", "は", "日本", "経済", "新聞", "社", "に", "勤め", "て", "いる", "。"};
+        String[] features = {
+            "カスタム名詞,固有名詞,人名,姓,*,*,渡部,ワタナベ,ワタナベ",
+            "名詞,接尾,人名,*,*,*,さん,サン,サン",
+            "助詞,係助詞,*,*,*,*,は,ハ,ワ",
+            "カスタム名詞,*,*,*,*,*,*,ニホン,*",
+            "カスタム名詞,*,*,*,*,*,*,ケイザイ,*",
+            "カスタム名詞,*,*,*,*,*,*,シンブン,*",
+            "名詞,一般,*,*,*,*,社,シャ,シャ",
+            "助詞,格助詞,一般,*,*,*,に,ニ,ニ",
+            "動詞,自立,*,*,一段,連用形,勤める,ツトメ,ツトメ",
+            "助詞,接続助詞,*,*,*,*,て,テ,テ",
+            "動詞,非自立,*,*,一段,基本形,いる,イル,イル",
+            "記号,句点,*,*,*,*,。,。,。"
+        };
+        List<Token> tokens = tokenizer.tokenize(input);
+
+        for (int i = 0; i < tokens.size(); i++) {
+            assertEquals(surfaces[i], tokens.get(i).getSurface());
+            assertEquals(features[i], tokens.get(i).getAllFeatures());
+        }
     }
 
     @Ignore("Doesn't segment properly - Viterbi lattice looks funny")

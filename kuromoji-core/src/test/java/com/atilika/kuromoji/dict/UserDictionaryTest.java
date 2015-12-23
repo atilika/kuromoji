@@ -61,7 +61,7 @@ public class UserDictionaryTest {
             9, 7, 0
         );
 
-        assertEquals("カスタム名詞,*,*,*,*,*,*,ニホン,*", dictionary.getAllFeatures(100000000));
+        assertEquals("カスタム名詞,*,*,*,*,*,*,ニホン,*", dictionary.getAllFeatures(0));
     }
 
     @Test
@@ -71,7 +71,7 @@ public class UserDictionaryTest {
             7, 5, 0
         );
 
-        assertEquals("カスタム名詞,*,*,*,*,ニホン,*", dictionary.getAllFeatures(100000000));
+        assertEquals("カスタム名詞,*,*,*,*,ニホン,*", dictionary.getAllFeatures(0));
     }
 
     @Test
@@ -85,7 +85,7 @@ public class UserDictionaryTest {
         //   葦登,1358,1358,4975,名詞,一般,*,*,*,*,葦登,ヨシノボリ,ヨシノボリ,,
         //
         // How should we treat the last features in the user dictionary?  They seem empty, but we return * for them...
-        assertEquals("カスタム名詞,*,*,*,*,*,*,ニホン,*,*,*", dictionary.getAllFeatures(100000000));
+        assertEquals("カスタム名詞,*,*,*,*,*,*,ニホン,*,*,*", dictionary.getAllFeatures(0));
     }
 
     @Test
@@ -95,7 +95,7 @@ public class UserDictionaryTest {
             13, 7, 0
         );
 
-        assertEquals("カスタム名詞,*,*,*,*,*,*,ニホン,*,*,*,*,*", dictionary.getAllFeatures(100000000));
+        assertEquals("カスタム名詞,*,*,*,*,*,*,ニホン,*,*,*,*,*", dictionary.getAllFeatures(0));
     }
 
     @Test
@@ -105,7 +105,7 @@ public class UserDictionaryTest {
             22, 13, 0
         );
 
-        assertEquals("カスタム名詞,*,*,*,*,*,*,*,*,*,*,*,*,ニホン,*,*,*,*,*,*,*,*", dictionary.getAllFeatures(100000000));
+        assertEquals("カスタム名詞,*,*,*,*,*,*,*,*,*,*,*,*,ニホン,*,*,*,*,*,*,*,*", dictionary.getAllFeatures(0));
     }
 
     @Test

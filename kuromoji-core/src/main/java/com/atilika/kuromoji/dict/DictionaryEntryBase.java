@@ -19,8 +19,11 @@ package com.atilika.kuromoji.dict;
 public abstract class DictionaryEntryBase {
 
     protected final String surface;
+
     protected final short leftId;
+
     protected final short rightId;
+
     protected final short wordCost;
 
     public DictionaryEntryBase(String surface,
