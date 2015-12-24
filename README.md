@@ -58,12 +58,12 @@ See the documentation for the `com.atilika.kuromoji.ipadic.Token` class for more
 
 Kuromoji currently supports the following dictionaries:
 - IPADIC ([2.7.0-20070801](http://atilika.com/releases/mecab-ipadic/mecab-ipadic-2.7.0-20070801.tar.gz))
-- IPADIC NEologd ([2.7.0-20070801-neologd-20150925](http://atilika.com/releases/mecab-ipadic-neologd/mecab-ipadic-2.7.0-20070801-neologd-20150925.tar.gz))
+- IPADIC NEologd ([2.7.0-20070801-neologd-20151224](http://atilika.com/releases/mecab-ipadic-neologd/mecab-ipadic-2.7.0-20070801-neologd-20151224.tar.gz))
 - JUMANDIC ([7.0-20130310](http://atilika.com/releases/mecab-jumandic/mecab-jumandic-7.0-20130310.tar.gz))
 - NAIST jdic ([0.6.3b-20111013](http://atilika.com/releases/mecab-naist-jdic/mecab-naist-jdic-0.6.3b-20111013.tar.gz))
 - UniDic ([2.1.2](http://atilika.com/releases/unidic-mecab/unidic-mecab-2.1.2_src.zip))
 - UniDic Kana Accent ([2.1.2](http://atilika.com/releases/unidic-mecab/unidic-mecab_kana-accent-2.1.2_src.zip))
-- UniDic NEologd ([2.1.2-neologd-20150925](http://atilika.com/releases/unidic-mecab-neologd/unidic-mecab-2.1.2_src-neologd-20150925.zip))
+- UniDic NEologd ([2.1.2-neologd-20151224](http://atilika.com/releases/unidic-mecab-neologd/unidic-mecab-2.1.2_src-neologd-20151224.zip))
 
 **Question:** So which of these dictionaries should I use?
 

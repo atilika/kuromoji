@@ -121,7 +121,7 @@ public class UserDictionaryTokenizerTest {
         Tokenizer tokenizer = makeTokenizer(userDictionary);
 
         String input = "この丘の名前はアクロアだ。";
-        String[] surfaces = {"この", "丘", "の", "名前", "は", "ア", "クロ", "ア", "だ", "。"};
+        String[] surfaces = {"この", "丘", "の", "名前", "は", "ア", "クロ", "アだ", "。"};
         String[] features = {
             "連体詞,*,*,*,*,*,この,コノ,コノ",
             "名詞,一般,*,*,*,*,丘,オカ,オカ",
@@ -130,8 +130,7 @@ public class UserDictionaryTokenizerTest {
             "助詞,係助詞,*,*,*,*,は,ハ,ワ",
             "*,*,*,*,*,*,*,*,*",
             "カスタム名詞,*,*,*,*,*,*,クロ,*",
-            "*,*,*,*,*,*,*,*,*",
-            "助動詞,*,*,*,特殊・ダ,基本形,だ,ダ,ダ",
+            "名詞,形容動詞語幹,*,*,*,*,婀娜,アダ,アダ",
             "記号,句点,*,*,*,*,。,。,。"
         };
         List<Token> tokens = tokenizer.tokenize(input);
