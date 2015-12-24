@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Ignore("Disabled as often depletes heap-size")
 public class SimpleBenchmarkTest {
 
     private static final String IPADIC = "com.atilika.kuromoji.ipadic.Tokenizer";
@@ -70,7 +71,6 @@ public class SimpleBenchmarkTest {
         }
     }
 
-    @Ignore("Distabled as it often depletes heap-size")
     @Test
     public void testInstantiationBenchmark() throws Exception {
         for (String classname : tokenizerClasses) {
