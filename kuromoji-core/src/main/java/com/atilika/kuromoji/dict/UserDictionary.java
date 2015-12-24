@@ -194,7 +194,7 @@ public class UserDictionary implements Dictionary {
             surface, costs, features
         );
 
-        int[] wordIdAndLengths = new int[1 + 1]; // Surface and a single lenght - the length of surface
+        int[] wordIdAndLengths = new int[1 + 1]; // Surface and a single length - the length of surface
         wordIdAndLengths[0] = entries.size();
         wordIdAndLengths[1] = surface.length();
 

@@ -7,7 +7,7 @@ Kuromoji is an easy to use and self-contained Japanese morphological analyzer th
 - **Lemmatization.** Get dictionary forms for inflected verbs and adjectives
 - **Readings.** Extract readings for kanji
 
-Several other features are supported . Please consult each dictionaries' `Token` class for details.
+Several other features are supported. Please consult each dictionaries' `Token` class for details.
 
 ## Using Kuromoji
 

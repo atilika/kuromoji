@@ -18,6 +18,7 @@ package com.atilika.kuromoji.benchmark;
 
 import com.atilika.kuromoji.TokenizerBase;
 import com.atilika.kuromoji.TestUtils;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -69,6 +70,7 @@ public class SimpleBenchmarkTest {
         }
     }
 
+    @Ignore("Distabled as it often depletes heap-size")
     @Test
     public void testInstantiationBenchmark() throws Exception {
         for (String classname : tokenizerClasses) {
