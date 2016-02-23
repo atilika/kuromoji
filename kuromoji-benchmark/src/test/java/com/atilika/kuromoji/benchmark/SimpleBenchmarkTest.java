@@ -18,6 +18,7 @@ package com.atilika.kuromoji.benchmark;
 
 import com.atilika.kuromoji.TokenizerBase;
 import com.atilika.kuromoji.TestUtils;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -25,6 +26,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Ignore("Disabled as often depletes heap-size")
 public class SimpleBenchmarkTest {
 
     private static final String IPADIC = "com.atilika.kuromoji.ipadic.Tokenizer";

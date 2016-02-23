@@ -40,7 +40,7 @@ public class Token extends TokenBase {
      * @return 1st level part-of-speech tag, not null
      */
     public String getPartOfSpeechLevel1() {
-        return this.getFeature(DictionaryEntry.PART_OF_SPEECH_LEVEL_1);
+        return getFeature(DictionaryEntry.PART_OF_SPEECH_LEVEL_1);
     }
 
     /**
@@ -49,7 +49,7 @@ public class Token extends TokenBase {
      * @return 2nd level part-of-speech tag, not null
      */
     public String getPartOfSpeechLevel2() {
-        return this.getFeature(DictionaryEntry.PART_OF_SPEECH_LEVEL_2);
+        return getFeature(DictionaryEntry.PART_OF_SPEECH_LEVEL_2);
     }
 
     /**
@@ -58,7 +58,7 @@ public class Token extends TokenBase {
      * @return 3rd level part-of-speech tag, not null
      */
     public String getPartOfSpeechLevel3() {
-        return this.getFeature(DictionaryEntry.PART_OF_SPEECH_LEVEL_3);
+        return getFeature(DictionaryEntry.PART_OF_SPEECH_LEVEL_3);
     }
 
     /**
@@ -67,7 +67,7 @@ public class Token extends TokenBase {
      * @return 4th level part-of-speech tag, not null
      */
     public String getPartOfSpeechLevel4() {
-        return this.getFeature(DictionaryEntry.PART_OF_SPEECH_LEVEL_4);
+        return getFeature(DictionaryEntry.PART_OF_SPEECH_LEVEL_4);
     }
 
     /**
@@ -76,7 +76,7 @@ public class Token extends TokenBase {
      * @return base form, not null
      */
     public String getBaseForm() {
-        return this.getFeature(DictionaryEntry.BASE_FORM);
+        return getFeature(DictionaryEntry.BASE_FORM);
     }
 
     /**
@@ -85,7 +85,7 @@ public class Token extends TokenBase {
      * @return reading, not null
      */
     public String getReading() {
-        return this.getFeature(DictionaryEntry.READING);
+        return getFeature(DictionaryEntry.READING);
     }
 
     /**
@@ -94,6 +94,6 @@ public class Token extends TokenBase {
      * @return semantic information, not null
      */
     public String getSemanticInformation() {
-        return this.getFeature(DictionaryEntry.SEMANTIC_INFORMATION);
+        return getFeature(DictionaryEntry.SEMANTIC_INFORMATION);
     }
 }

@@ -243,7 +243,7 @@ public class ViterbiBuilder {
                 if (glueBase != null) {
                     int length = index + 1 - startIndex;
                     String surface = glueBase.getSurface().substring(0, length);
-                    ViterbiNode glueNode = createGlueNode(startIndex, glueBase, surface);
+                    ViterbiNode glueNode = makeGlueNode(startIndex, glueBase, surface);
                     lattice.addNode(glueNode, startIndex, startIndex + glueNode.getSurface().length());
                     return;
                 }
@@ -267,7 +267,7 @@ public class ViterbiBuilder {
                     int delta = endIndex - nodeEndIndex;
                     String glueBaseSurface = glueBase.getSurface();
                     String surface = glueBaseSurface.substring(glueBaseSurface.length() - delta);
-                    ViterbiNode glueNode = createGlueNode(nodeEndIndex, glueBase, surface);
+                    ViterbiNode glueNode = makeGlueNode(nodeEndIndex, glueBase, surface);
                     lattice.addNode(glueNode, nodeEndIndex, nodeEndIndex + glueNode.getSurface().length());
                     return;
                 }
@@ -331,7 +331,7 @@ public class ViterbiBuilder {
      * @param surface
      * @return new ViterbiNode to be inserted as glue into the lattice
      */
-    private ViterbiNode createGlueNode(int startIndex, ViterbiNode glueBase, String surface) {
+    private ViterbiNode makeGlueNode(int startIndex, ViterbiNode glueBase, String surface) {
         return new ViterbiNode(
             glueBase.getWordId(),
             surface,

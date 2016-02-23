@@ -67,9 +67,9 @@ public abstract class TokenInfoDictionaryCompilerBase<T extends DictionaryEntryB
         while ((line = reader.readLine()) != null) {
             T entry = parse(line);
 
-            GenericDictionaryEntry dictionaryEntry = generateGenericDictionaryEntry(entry);
+            GenericDictionaryEntry dictionaryEntry = makeGenericDictionaryEntry(entry);
 
-            posInfo.mapFeatures(dictionaryEntry.getPosFeatures());
+            posInfo.mapFeatures(dictionaryEntry.getPartOfSpeechFeatures());
         }
     }
 
@@ -81,17 +81,17 @@ public abstract class TokenInfoDictionaryCompilerBase<T extends DictionaryEntryB
         while ((line = reader.readLine()) != null) {
             T entry = parse(line);
 
-            GenericDictionaryEntry dictionaryEntry = generateGenericDictionaryEntry(entry);
+            GenericDictionaryEntry dictionaryEntry = makeGenericDictionaryEntry(entry);
 
             short leftId = dictionaryEntry.getLeftId();
             short rightId = dictionaryEntry.getRightId();
             short wordCost = dictionaryEntry.getWordCost();
 
-            List<String> allPosFeatures = dictionaryEntry.getPosFeatures();
+            String[] allPosFeatures = dictionaryEntry.getPartOfSpeechFeatures();
 
             List<Integer> posFeatureIds = posInfo.mapFeatures(allPosFeatures);
 
-            List<String> featureList = dictionaryEntry.getFeatures();
+            String[] featureList = dictionaryEntry.getOtherFeatures();
             List<Integer> otherFeatureIds = otherInfo.mapFeatures(featureList);
 
             BufferEntry bufferEntry = new BufferEntry();
@@ -119,7 +119,7 @@ public abstract class TokenInfoDictionaryCompilerBase<T extends DictionaryEntryB
         }
     }
 
-    protected abstract GenericDictionaryEntry generateGenericDictionaryEntry(T entry);
+    protected abstract GenericDictionaryEntry makeGenericDictionaryEntry(T entry);
 
     protected abstract T parse(String line);
 
