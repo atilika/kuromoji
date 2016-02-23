@@ -1,13 +1,13 @@
 /**
  * Copyright © 2010-2015 Atilika Inc. and contributors (see CONTRIBUTORS.md)
- *
+ * <p/>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may
  * not use this file except in compliance with the License.  A copy of the
  * License is distributed with this work in the LICENSE.md file.  You may
  * also obtain a copy of the License from
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p/>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p/>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -192,6 +192,25 @@ public class UserDictionaryTokenizerTest {
         assertEquals(
             "マルキ・ド・サドノエンシュツノモトニシャラントンセイシンビョウインカンジャタチニヨッテエンジラレタジャン＝ポール・マラーノハクガイトアンサツ",
             tokenizer.tokenize("マルキ・ド・サドの演出のもとにシャラントン精神病院患者たちによって演じられたジャン＝ポール・マラーの迫害と暗殺").get(0).getReading()
+        );
+    }
+
+    @Test
+    public void testOverlappingUserEntries() throws Exception {
+        String userDictionary = "クリ,クリ,クリ,カスタム名詞\n" +
+            "チャン,チャン,チャン,カスタム名詞\n" +
+            "リスチャン,リスチャン,リスチャン,カスタム名詞";
+
+        String input = "クリスチャンは寿司が大好きです。";
+
+        Tokenizer tokenizer = makeTokenizer(userDictionary);
+
+        List<Token> tokens = tokenizer.tokenize(input);
+
+
+        assertTokenSurfacesEquals(
+            Arrays.asList("ク", "リスチャン", "は", "寿司", "が", "大好き", "です", "。"),
+            tokens
         );
     }
 
