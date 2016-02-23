@@ -1,13 +1,13 @@
 /**
  * Copyright © 2010-2015 Atilika Inc. and contributors (see CONTRIBUTORS.md)
- * <p/>
+ *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may
  * not use this file except in compliance with the License.  A copy of the
  * License is distributed with this work in the LICENSE.md file.  You may
  * also obtain a copy of the License from
- * <p/>
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * <p/>
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -27,9 +27,7 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class UserDictionary implements Dictionary {
 
@@ -115,14 +113,6 @@ public class UserDictionary implements Dictionary {
     public int getWordCost(int wordId) {
         UserDictionaryEntry entry = entries.get(wordId);
         return entry.getWordCost();
-//        int surfaceLength = surfaceLengths.get(wordId);
-//        int cost = WORD_COST_BASE * surfaceLength;
-//
-//        if (cost > MINIMUM_WORD_COST) {
-//            return cost;
-//        }
-//
-//        return WORD_COST_BASE;
     }
 
     @Override
