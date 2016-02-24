@@ -33,8 +33,13 @@ public class UserDictionary implements Dictionary {
 
     private static final int SIMPLE_USERDICT_FIELDS = 4;
 
-    // Left id, right id, word cost
-    private static final int[] SIMPLE_USERDICT_COSTS = new int[]{5, 5, -100000};
+    private static final int WORD_COST_BASE = -100000;
+
+    public static final int MINIMUM_WORD_COST = Integer.MIN_VALUE / 2;
+
+    private static final int LEFT_ID = 5;
+
+    private static final int RIGHT_ID = 5;
 
     private static final String DEFAULT_FEATURE = "*";
 
@@ -61,7 +66,7 @@ public class UserDictionary implements Dictionary {
     /**
      * Lookup words in text
      *
-     * @param text  text to look up user dictionary matches for
+     * @param text text to look up user dictionary matches for
      * @return list of UserDictionaryMatch, not null
      */
     public List<UserDictionaryMatch> findUserDictionaryMatches(String text) {
@@ -235,15 +240,25 @@ public class UserDictionary implements Dictionary {
             wordIdAndLengths[i + 1] = segmentation[i].length();
 
             String[] features = makeSimpleFeatures(partOfSpeech, readings[i]);
+            int[] costs = makeCosts(surface.length());
 
             UserDictionaryEntry entry = new UserDictionaryEntry(
-                segmentation[i], SIMPLE_USERDICT_COSTS, features
+                segmentation[i], costs, features
             );
 
             entries.add(entry);
         }
 
         surfaces.put(surface, wordIdAndLengths);
+    }
+
+    private int[] makeCosts(int length) {
+        int wordCost = WORD_COST_BASE * length;
+        if (wordCost < MINIMUM_WORD_COST) {
+            wordCost = MINIMUM_WORD_COST;
+        }
+
+        return new int[]{LEFT_ID, RIGHT_ID, wordCost};
     }
 
     private String[] makeSimpleFeatures(String partOfSpeech, String reading) {

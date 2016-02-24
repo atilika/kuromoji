@@ -196,6 +196,25 @@ public class UserDictionaryTokenizerTest {
     }
 
     @Test
+    public void testOverlappingUserEntries() throws Exception {
+        String userDictionary = "クリ,クリ,クリ,カスタム名詞\n" +
+            "チャン,チャン,チャン,カスタム名詞\n" +
+            "リスチャン,リスチャン,リスチャン,カスタム名詞";
+
+        String input = "クリスチャンは寿司が大好きです。";
+
+        Tokenizer tokenizer = makeTokenizer(userDictionary);
+
+        List<Token> tokens = tokenizer.tokenize(input);
+
+
+        assertTokenSurfacesEquals(
+            Arrays.asList("ク", "リスチャン", "は", "寿司", "が", "大好き", "です", "。"),
+            tokens
+        );
+    }
+
+    @Test
     public void testInsertedFail() throws IOException {
         String userDictionary = "引,引,引,カスタム品詞\n";
         Tokenizer tokenizer = makeTokenizer(userDictionary);
