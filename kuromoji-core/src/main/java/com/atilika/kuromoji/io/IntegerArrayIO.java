@@ -31,21 +31,13 @@ public class IntegerArrayIO {
 
     private static final int INT_BYTES = Integer.SIZE / Byte.SIZE;
 
-    public static int[] readArray(InputStream input) throws IOException {
-        DataInputStream dataInput = new DataInputStream(input);
-        int length = dataInput.readInt();
-
-        ByteBuffer tmpBuffer = ByteBuffer.allocate(length * INT_BYTES);
-        ReadableByteChannel channel = Channels.newChannel(dataInput);
-        channel.read(tmpBuffer);
-
-        tmpBuffer.rewind();
-        IntBuffer intBuffer = tmpBuffer.asIntBuffer();
-
-        int[] array = new int[length];
-        intBuffer.get(array);
-
-        return array;
+    public static int[][] readArrays(InputStream input, int arrayCount) throws IOException {
+        int[][] arrays = new int[arrayCount][];
+        ReadableByteChannel channel = Channels.newChannel(input);
+        for (int i = 0; i < arrayCount; i++) {
+            arrays[i] = readArrayFromChannel(channel);
+        }
+        return arrays;
     }
 
     public static void writeArray(OutputStream output, int[] array) throws IOException {
@@ -66,15 +58,8 @@ public class IntegerArrayIO {
 
     public static int[][] readArray2D(InputStream input) throws IOException {
         DataInputStream dataInput = new DataInputStream(input);
-        int length = dataInput.readInt();
 
-        int[][] array = new int[length][];
-
-        for (int i = 0; i < length; i++) {
-            array[i] = readArray(dataInput);
-        }
-
-        return array;
+        return readArrays(dataInput, dataInput.readInt());
     }
 
     public static void writeArray2D(OutputStream output, int[][] array) throws IOException {
@@ -89,18 +74,17 @@ public class IntegerArrayIO {
     }
 
     public static int[][] readSparseArray2D(InputStream input) throws IOException {
-        DataInputStream dataInput = new DataInputStream(input);
-        int length = dataInput.readInt();
+        ReadableByteChannel channel = Channels.newChannel(input);
 
-        int[][] array = new int[length][];
+        int arrayCount = readIntFromByteChannel(channel);
+        int[][] arrays = new int[arrayCount][];
 
         int index;
 
-        while ((index = dataInput.readInt()) >= 0) {
-            array[index] = readArray(dataInput);
+        while ((index = readIntFromByteChannel(channel)) >= 0) {
+            arrays[index] = readArrayFromChannel(channel);
         }
-
-        return array;
+        return arrays;
     }
 
     public static void writeSparseArray2D(OutputStream output, int[][] array) throws IOException {
@@ -119,5 +103,31 @@ public class IntegerArrayIO {
         }
         // This negative index serves as an end-of-array marker
         dataOutput.writeInt(-1);
+    }
+
+    private static int readIntFromByteChannel(ReadableByteChannel channel) throws IOException {
+        ByteBuffer intBuffer = ByteBuffer.allocate(INT_BYTES);
+        int result = -1;
+        while (intBuffer.hasRemaining() && (channel.read(intBuffer) >= 0)) {
+        }
+        if (!intBuffer.hasRemaining()) {
+            intBuffer.rewind();
+            result = intBuffer.asIntBuffer().get(0);
+        }
+        return result;
+    }
+
+    private static int[] readArrayFromChannel(ReadableByteChannel channel) throws IOException {
+        int length = readIntFromByteChannel(channel);
+
+        ByteBuffer tmpBuffer = ByteBuffer.allocate(length * INT_BYTES);
+        while (tmpBuffer.hasRemaining() && (channel.read(tmpBuffer) >= 0)) {
+        }
+        tmpBuffer.rewind();
+        IntBuffer intBuffer = tmpBuffer.asIntBuffer();
+
+        int[] array = new int[length];
+        intBuffer.get(array);
+        return array;
     }
 }

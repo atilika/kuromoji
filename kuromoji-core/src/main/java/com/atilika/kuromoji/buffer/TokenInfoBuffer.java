@@ -18,6 +18,7 @@ package com.atilika.kuromoji.buffer;
 
 import com.atilika.kuromoji.io.ByteBufferIO;
 
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
@@ -36,7 +37,7 @@ public class TokenInfoBuffer {
     private final int entrySize;
 
     public TokenInfoBuffer(InputStream is) throws IOException {
-        buffer = ByteBufferIO.read(is);
+        buffer = ByteBufferIO.read(new BufferedInputStream(is));
         tokenInfoCount = getTokenInfoCount();
         posInfoCount = getPosInfoCount();
         featureCount = getFeatureCount();
