@@ -19,6 +19,7 @@ package com.atilika.kuromoji.buffer;
 import com.atilika.kuromoji.io.ByteBufferIO;
 import com.atilika.kuromoji.util.ScriptUtils;
 
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -47,7 +48,7 @@ public class StringValueMapBuffer {
     }
 
     public StringValueMapBuffer(InputStream is) throws IOException {
-        buffer = ByteBufferIO.read(is);
+        buffer = ByteBufferIO.read(new BufferedInputStream(is));
         size = buffer.getInt();
     }
 

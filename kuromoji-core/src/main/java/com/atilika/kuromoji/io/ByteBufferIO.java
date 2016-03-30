@@ -6,7 +6,7 @@
  * License is distributed with this work in the LICENSE.md file.  You may
  * also obtain a copy of the License from
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,8 +16,6 @@
  */
 package com.atilika.kuromoji.io;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -31,24 +29,22 @@ import java.nio.channels.WritableByteChannel;
 public class ByteBufferIO {
 
     public static ByteBuffer read(InputStream input) throws IOException {
-        DataInputStream dataInput = new DataInputStream(
-            new BufferedInputStream(input)
-        );
+        DataInputStream dataInput = new DataInputStream(input);
 
         int size = dataInput.readInt();
         ByteBuffer buffer = ByteBuffer.allocate(size);
 
         ReadableByteChannel channel = Channels.newChannel(dataInput);
-        channel.read(buffer);
+        while (buffer.hasRemaining()) {
+            channel.read(buffer);
+        }
 
         buffer.rewind();
         return buffer;
     }
 
     public static void write(OutputStream output, ByteBuffer buffer) throws IOException {
-        DataOutputStream dataOutput = new DataOutputStream(
-            new BufferedOutputStream(output)
-        );
+        DataOutputStream dataOutput = new DataOutputStream(output);
 
         buffer = buffer.duplicate();
         buffer.rewind();

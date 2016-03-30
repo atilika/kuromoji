@@ -31,8 +31,9 @@ public class WordIdMap {
     private final int[] empty = new int[]{};
 
     public WordIdMap(InputStream input) throws IOException {
-        indices = IntegerArrayIO.readArray(input);
-        wordIds = IntegerArrayIO.readArray(input);
+        int arrays[][] = IntegerArrayIO.readArrays(input, 2);
+        indices = arrays[0];
+        wordIds = arrays[1];
     }
 
     public int[] lookUp(int sourceId) {
