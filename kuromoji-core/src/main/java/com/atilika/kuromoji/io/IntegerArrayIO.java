@@ -6,7 +6,7 @@
  * License is distributed with this work in the LICENSE.md file.  You may
  * also obtain a copy of the License from
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -105,30 +105,23 @@ public class IntegerArrayIO {
         dataOutput.writeInt(-1);
     }
 
-    private static int readIntFromByteChannel(ReadableByteChannel channel) {
+    private static int readIntFromByteChannel(ReadableByteChannel channel) throws IOException {
         ByteBuffer intBuffer = ByteBuffer.allocate(INT_BYTES);
         int result = -1;
-        try {
-            while (intBuffer.hasRemaining() && (channel.read(intBuffer) >= 0)) {
-            }
-            if (!intBuffer.hasRemaining()) {
-                intBuffer.rewind();
-                result = intBuffer.asIntBuffer().get(0);
-            }
-        } catch (Exception ignored) {
+        while (intBuffer.hasRemaining() && (channel.read(intBuffer) >= 0)) {
+        }
+        if (!intBuffer.hasRemaining()) {
+            intBuffer.rewind();
+            result = intBuffer.asIntBuffer().get(0);
         }
         return result;
     }
 
-    private static int[] readArrayFromChannel(ReadableByteChannel channel) {
+    private static int[] readArrayFromChannel(ReadableByteChannel channel) throws IOException {
         int length = readIntFromByteChannel(channel);
 
         ByteBuffer tmpBuffer = ByteBuffer.allocate(length * INT_BYTES);
-        try {
-            while (tmpBuffer.hasRemaining() && (channel.read(tmpBuffer) >= 0)) {
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+        while (tmpBuffer.hasRemaining() && (channel.read(tmpBuffer) >= 0)) {
         }
         tmpBuffer.rewind();
         IntBuffer intBuffer = tmpBuffer.asIntBuffer();
