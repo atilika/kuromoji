@@ -126,6 +126,10 @@ public class IntegerArrayIO {
         tmpBuffer.rewind();
         IntBuffer intBuffer = tmpBuffer.asIntBuffer();
 
+        if (intBuffer.hasArray() && !intBuffer.isReadOnly()) {
+            return intBuffer.array();
+        }
+
         int[] array = new int[length];
         intBuffer.get(array);
         return array;
