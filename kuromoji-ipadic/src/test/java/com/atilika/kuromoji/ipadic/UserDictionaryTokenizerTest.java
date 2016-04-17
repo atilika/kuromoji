@@ -207,11 +207,25 @@ public class UserDictionaryTokenizerTest {
 
         List<Token> tokens = tokenizer.tokenize(input);
 
-
         assertTokenSurfacesEquals(
             Arrays.asList("ク", "リスチャン", "は", "寿司", "が", "大好き", "です", "。"),
             tokens
         );
+    }
+
+    @Test
+    public void testShorterEntryMatchWhenUserEntriesOverlap() throws Exception {
+        String userDictionary = "関西国際空港,関西国際空港,かんさいこくさいくうこう,カスタム施設\n" +
+            "関西,関西,かんさい,カスタム地名";
+
+        String input = "関西国際医療センター";
+
+        Tokenizer tokenizer = makeTokenizer(userDictionary);
+
+        List<Token> tokens = tokenizer.tokenize(input);
+
+        assertEquals("関西", tokens.get(0).getSurface());
+        assertEquals("カスタム地名", tokens.get(0).getPartOfSpeechLevel1());
     }
 
     @Test

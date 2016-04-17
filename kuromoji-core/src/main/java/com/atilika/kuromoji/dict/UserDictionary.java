@@ -75,9 +75,16 @@ public class UserDictionary implements Dictionary {
 
         while (startIndex < text.length()) {
             int matchLength = 0;
+            int endIndex = 0;
 
-            while (startIndex + matchLength < text.length() && surfaces.containsKeyPrefix(text.substring(startIndex, startIndex + matchLength + 1))) {
-                matchLength++;
+            while (currentInputContainsPotentialMatch(text, startIndex, endIndex)) {
+                String matchCandidate = text.substring(startIndex, startIndex + endIndex);
+
+                if (surfaces.containsKey(matchCandidate)) {
+                    matchLength = endIndex;
+                }
+
+                endIndex++;
             }
 
             if (matchLength > 0) {
@@ -95,6 +102,10 @@ public class UserDictionary implements Dictionary {
         }
 
         return matchInfos;
+    }
+
+    private boolean currentInputContainsPotentialMatch(String text, int startIndex, int endIndex) {
+        return startIndex + endIndex <= text.length() && surfaces.containsKeyPrefix(text.substring(startIndex, startIndex + endIndex));
     }
 
     @Override
