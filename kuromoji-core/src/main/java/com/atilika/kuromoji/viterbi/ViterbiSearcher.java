@@ -30,7 +30,7 @@ public class ViterbiSearcher {
     private final ConnectionCosts costs;
     private final UnknownDictionary unknownDictionary;
 
-    private int kanjiPenaltyLengthTreshold;
+    private int kanjiPenaltyLengthThreshold;
     private int otherPenaltyLengthThreshold;
     private int kanjiPenalty;
     private int otherPenalty;
@@ -42,7 +42,7 @@ public class ViterbiSearcher {
                            UnknownDictionary unknownDictionary,
                            List<Integer> penalties) {
         if (!penalties.isEmpty()) {
-            this.kanjiPenaltyLengthTreshold = penalties.get(0);
+            this.kanjiPenaltyLengthThreshold = penalties.get(0);
             this.kanjiPenalty = penalties.get(1);
             this.otherPenaltyLengthThreshold = penalties.get(2);
             this.otherPenalty = penalties.get(3);
@@ -63,7 +63,21 @@ public class ViterbiSearcher {
 
         ViterbiNode[][] endIndexArr = calculatePathCosts(lattice);
         LinkedList<ViterbiNode> result = backtrackBestPath(endIndexArr[0][0]);
+        return result;
+    }
 
+    /**
+     * Find the best paths with cost at most maxCost. At most maxCount paths will be returned. The paths are ordered by cost in ascending order.
+     *
+     * @param lattice  the result of a build method
+     * @param maxCount  the maximum number of paths to find
+     * @param maxCost  the maximum cost of a path
+     * @return  MultiSearchResult containing the shortest paths and their costs
+     */
+    public MultiSearchResult searchMultiple(ViterbiLattice lattice, int maxCount, int maxCost) {
+        calculatePathCosts(lattice);
+        MultiSearcher multiSearcher = new MultiSearcher(costs, mode, this);
+        MultiSearchResult result = multiSearcher.getShortestPaths(lattice, maxCount, maxCost);
         return result;
     }
 
@@ -118,14 +132,14 @@ public class ViterbiSearcher {
         }
     }
 
-    private int getPenaltyCost(ViterbiNode node) {
+    int getPenaltyCost(ViterbiNode node) {
         int pathCost = 0;
         String surface = node.getSurface();
         int length = surface.length();
 
-        if (length > kanjiPenaltyLengthTreshold) {
+        if (length > kanjiPenaltyLengthThreshold) {
             if (isKanjiOnly(surface)) {    // Process only Kanji keywords
-                pathCost += (length - kanjiPenaltyLengthTreshold) * kanjiPenalty;
+                pathCost += (length - kanjiPenaltyLengthThreshold) * kanjiPenalty;
             } else if (length > otherPenaltyLengthThreshold) {
                 pathCost += (length - otherPenaltyLengthThreshold) * otherPenalty;
             }

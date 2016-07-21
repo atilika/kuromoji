@@ -25,6 +25,7 @@ import com.atilika.kuromoji.dict.UnknownDictionary;
 import com.atilika.kuromoji.dict.UserDictionary;
 import com.atilika.kuromoji.fst.FST;
 import com.atilika.kuromoji.util.ResourceResolver;
+import com.atilika.kuromoji.viterbi.MultiSearchResult;
 import com.atilika.kuromoji.viterbi.TokenFactory;
 import com.atilika.kuromoji.viterbi.ViterbiBuilder;
 import com.atilika.kuromoji.viterbi.ViterbiFormatter;
@@ -115,6 +116,17 @@ public abstract class TokenizerBase {
         return createTokenList(text);
     }
 
+    public <T extends TokenBase> List<List<T>> multiTokenize(String text, int maxCount, int maxCost) {
+        return createMultiTokenList(text, maxCount, maxCost);
+    }
+
+    public <T extends TokenBase> List<List<T>> multiTokenizeAnyCost(String text, int maxCount) {
+        return multiTokenize(text, maxCount, Integer.MAX_VALUE);
+    }
+
+    public <T extends TokenBase> List<List<T>> multiTokenizeAll(String text, int maxCost) {
+        return multiTokenize(text, Integer.MAX_VALUE, maxCost);
+    }
 
     /**
      * Tokenizes the provided text and returns a list of tokens with various feature information
@@ -151,6 +163,21 @@ public abstract class TokenizerBase {
         }
 
         return result;
+    }
+
+    /**
+     * Tokenizes the provided text and returns up to maxCount lists of tokens with various feature information. Each list corresponds to a possible tokenization with cost at most maxCost.
+     * <p>
+     * This method is thread safe
+     *
+     * @param text  text to tokenize
+     * @param maxCount  maximum number of different tokenizations
+     * @param maxCost  maximum cost of a tokenization
+     * @param <T>  token type
+     * @return list of Token, not null
+     */
+    protected <T extends TokenBase> List<List<T>> createMultiTokenList(String text, int maxCount, int maxCost) {
+            return createMultiTokenList(0, text, maxCount, maxCost);
     }
 
     /**
@@ -253,6 +280,45 @@ public abstract class TokenizerBase {
                 dictionaryMap.get(node.getType())
             );
             result.add(token);
+        }
+
+        return result;
+    }
+
+    /**
+     * Tokenize input sentence. Up to maxCount different paths of cost at most maxCost are returned ordered in ascending order by cost.
+     *
+     * @param offset   offset of sentence in original input text
+     * @param text sentence to tokenize
+     * @param maxCount  maximum number of paths
+     * @param maxCost  maximum cost of a path
+     * @return list of Token
+     */
+    private <T extends TokenBase> List<List<T>> createMultiTokenList(int offset, String text, int maxCount, int maxCost) {
+        List<List<T>> result = new ArrayList<>();
+
+        ViterbiLattice lattice = viterbiBuilder.build(text);
+        MultiSearchResult multiSearchResult = viterbiSearcher.searchMultiple(lattice, maxCount, maxCost);
+        List<List<ViterbiNode>> paths = multiSearchResult.getTokenizedResultsList();
+
+        for (List<ViterbiNode> path : paths) {
+            ArrayList<T> tokens = new ArrayList<>();
+            for (ViterbiNode node : path) {
+                int wordId = node.getWordId();
+                if (node.getType() == ViterbiNode.Type.KNOWN && wordId == -1) { // Do not include BOS/EOS
+                    continue;
+                }
+                @SuppressWarnings("unchecked")
+                T token = (T) tokenFactory.createToken(
+                        wordId,
+                        node.getSurface(),
+                        node.getType(),
+                        offset + node.getStartIndex(),
+                        dictionaryMap.get(node.getType())
+                );
+                tokens.add(token);
+            }
+            result.add(tokens);
         }
 
         return result;
