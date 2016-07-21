@@ -116,16 +116,16 @@ public abstract class TokenizerBase {
         return createTokenList(text);
     }
 
-    public <T extends TokenBase> List<List<T>> multiTokenize(String text, int maxCount, int maxCost) {
-        return createMultiTokenList(text, maxCount, maxCost);
+    public <T extends TokenBase> List<List<T>> multiTokenize(String text, int maxCount, int costSlack) {
+        return createMultiTokenList(text, maxCount, costSlack);
     }
 
-    public <T extends TokenBase> List<List<T>> multiTokenizeAnyCost(String text, int maxCount) {
-        return multiTokenize(text, maxCount, Integer.MAX_VALUE);
+    public <T extends TokenBase> List<List<T>> multiTokenizeNBest(String text, int n) {
+        return multiTokenize(text, n, Integer.MAX_VALUE);
     }
 
-    public <T extends TokenBase> List<List<T>> multiTokenizeAll(String text, int maxCost) {
-        return multiTokenize(text, Integer.MAX_VALUE, maxCost);
+    public <T extends TokenBase> List<List<T>> multiTokenizeBySlack(String text, int costSlack) {
+        return multiTokenize(text, Integer.MAX_VALUE, costSlack);
     }
 
     /**
@@ -166,18 +166,19 @@ public abstract class TokenizerBase {
     }
 
     /**
-     * Tokenizes the provided text and returns up to maxCount lists of tokens with various feature information. Each list corresponds to a possible tokenization with cost at most maxCost.
+     * Tokenizes the provided text and returns up to maxCount lists of tokens with various feature information.
+     * Each list corresponds to a possible tokenization with cost at most OPT + costSlack, where OPT is the optimal solution.
      * <p>
      * This method is thread safe
      *
      * @param text  text to tokenize
      * @param maxCount  maximum number of different tokenizations
-     * @param maxCost  maximum cost of a tokenization
+     * @param costSlack  maximum cost slack of a tokenization
      * @param <T>  token type
      * @return list of Token, not null
      */
-    protected <T extends TokenBase> List<List<T>> createMultiTokenList(String text, int maxCount, int maxCost) {
-            return createMultiTokenList(0, text, maxCount, maxCost);
+    protected <T extends TokenBase> List<List<T>> createMultiTokenList(String text, int maxCount, int costSlack) {
+            return createMultiTokenList(0, text, maxCount, costSlack);
     }
 
     /**
@@ -286,19 +287,19 @@ public abstract class TokenizerBase {
     }
 
     /**
-     * Tokenize input sentence. Up to maxCount different paths of cost at most maxCost are returned ordered in ascending order by cost.
+     * Tokenize input sentence. Up to maxCount different paths of cost at most OPT + costSlack are returned ordered in ascending order by cost, where OPT is the optimal solution.
      *
      * @param offset   offset of sentence in original input text
      * @param text sentence to tokenize
      * @param maxCount  maximum number of paths
-     * @param maxCost  maximum cost of a path
+     * @param costSlack  maximum cost slack of a path
      * @return list of Token
      */
-    private <T extends TokenBase> List<List<T>> createMultiTokenList(int offset, String text, int maxCount, int maxCost) {
+    private <T extends TokenBase> List<List<T>> createMultiTokenList(int offset, String text, int maxCount, int costSlack) {
         List<List<T>> result = new ArrayList<>();
 
         ViterbiLattice lattice = viterbiBuilder.build(text);
-        MultiSearchResult multiSearchResult = viterbiSearcher.searchMultiple(lattice, maxCount, maxCost);
+        MultiSearchResult multiSearchResult = viterbiSearcher.searchMultiple(lattice, maxCount, costSlack);
         List<List<ViterbiNode>> paths = multiSearchResult.getTokenizedResultsList();
 
         for (List<ViterbiNode> path : paths) {

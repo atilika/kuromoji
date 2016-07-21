@@ -67,17 +67,17 @@ public class ViterbiSearcher {
     }
 
     /**
-     * Find the best paths with cost at most maxCost. At most maxCount paths will be returned. The paths are ordered by cost in ascending order.
+     * Find the best paths with cost at most OPT + costSlack, where OPT is the optimal solution. At most maxCount paths will be returned. The paths are ordered by cost in ascending order.
      *
      * @param lattice  the result of a build method
      * @param maxCount  the maximum number of paths to find
-     * @param maxCost  the maximum cost of a path
+     * @param costSlack  the maximum cost slack of a path
      * @return  MultiSearchResult containing the shortest paths and their costs
      */
-    public MultiSearchResult searchMultiple(ViterbiLattice lattice, int maxCount, int maxCost) {
+    public MultiSearchResult searchMultiple(ViterbiLattice lattice, int maxCount, int costSlack) {
         calculatePathCosts(lattice);
         MultiSearcher multiSearcher = new MultiSearcher(costs, mode, this);
-        MultiSearchResult result = multiSearcher.getShortestPaths(lattice, maxCount, maxCost);
+        MultiSearchResult result = multiSearcher.getShortestPaths(lattice, maxCount, costSlack);
         return result;
     }
 

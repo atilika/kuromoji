@@ -40,19 +40,19 @@ public class MultiSearcher {
     }
 
     /**
-     * Get up to maxCount shortest paths with cost at most maxCost. The results are ordered in ascending order by cost.
+     * Get up to maxCount shortest paths with cost at most OPT + costSlack, where OPT is the optimal solution. The results are ordered in ascending order by cost.
      *
      * @param lattice  an instance of ViterbiLattice prosecced by a ViterbiSearcher
      * @param maxCount  the maximum number of results
-     * @param maxCost  the maximum cost of a result
+     * @param costSlack  the maximum cost slack of a path
      * @return  the shortest paths and their costs
      */
-    public MultiSearchResult getShortestPaths(ViterbiLattice lattice, int maxCount, int maxCost) {
+    public MultiSearchResult getShortestPaths(ViterbiLattice lattice, int maxCount, int costSlack) {
         MultiSearchResult multiSearchResult = new MultiSearchResult();
         buildSidetrackTrees(lattice);
         ViterbiNode eos = lattice.getEndIndexArr()[0][0];
         baseCost = eos.getPathCost();
-        List<SidetrackTreeNode> sidetracks = getPaths(eos.getSidetrackTreeNode(), maxCount, maxCost);
+        List<SidetrackTreeNode> sidetracks = getPaths(eos.getSidetrackTreeNode(), maxCount, costSlack);
         int i = 0;
         for (SidetrackTreeNode sidetrack : sidetracks) {
             List<ViterbiNode> path = generatePath(eos, sidetrack);
@@ -62,7 +62,7 @@ public class MultiSearcher {
         return multiSearchResult;
     }
 
-    private List<SidetrackTreeNode> getPaths(SidetrackTreeNode root, int maxCount, int maxCost) {
+    private List<SidetrackTreeNode> getPaths(SidetrackTreeNode root, int maxCount, int costSlack) {
         List<SidetrackTreeNode> result = new ArrayList<>();
         PriorityQueue<SidetrackTreeNode> sidetrackHeap = new PriorityQueue<>();
         sidetrackHeap.add(root);
@@ -71,7 +71,7 @@ public class MultiSearcher {
                 break;
             }
             SidetrackTreeNode node = sidetrackHeap.poll();
-            if (baseCost + node.getCost() > maxCost) {
+            if (node.getCost() > costSlack) {
                 break;
             }
             result.add(node);
