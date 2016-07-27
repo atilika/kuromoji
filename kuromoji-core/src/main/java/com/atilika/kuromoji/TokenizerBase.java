@@ -25,6 +25,7 @@ import com.atilika.kuromoji.dict.UnknownDictionary;
 import com.atilika.kuromoji.dict.UserDictionary;
 import com.atilika.kuromoji.fst.FST;
 import com.atilika.kuromoji.util.ResourceResolver;
+import com.atilika.kuromoji.viterbi.MultiSearchMerger;
 import com.atilika.kuromoji.viterbi.MultiSearchResult;
 import com.atilika.kuromoji.viterbi.TokenFactory;
 import com.atilika.kuromoji.viterbi.ViterbiBuilder;
@@ -117,6 +118,7 @@ public abstract class TokenizerBase {
     }
 
     public <T extends TokenBase> List<List<T>> multiTokenize(String text, int maxCount, int costSlack) {
+
         return createMultiTokenList(text, maxCount, costSlack);
     }
 
@@ -178,7 +180,65 @@ public abstract class TokenizerBase {
      * @return list of Token, not null
      */
     protected <T extends TokenBase> List<List<T>> createMultiTokenList(String text, int maxCount, int costSlack) {
-            return createMultiTokenList(0, text, maxCount, costSlack);
+
+        if (!split) {
+            return convertMultiSearchResultToList(createMultiSearchResult(text, maxCount, costSlack));
+        }
+
+        List<Integer> splitPositions = getSplitPositions(text);
+
+        if (splitPositions.size() == 0) {
+            return convertMultiSearchResultToList(createMultiSearchResult(text, maxCount, costSlack));
+        }
+
+        List<MultiSearchResult> results = new ArrayList<>();
+        int offset = 0;
+
+        for (int position : splitPositions) {
+            results.add(createMultiSearchResult(text.substring(offset, position + 1), maxCount, costSlack));
+            offset = position + 1;
+        }
+
+        if (offset < text.length()) {
+            results.add(createMultiSearchResult(text.substring(offset), maxCount, costSlack));
+        }
+
+        System.out.println("Merging...");
+
+        MultiSearchMerger merger = new MultiSearchMerger(maxCount, costSlack);
+        MultiSearchResult mergedResult = merger.merge(results);
+
+        System.out.println("Done");
+
+        return convertMultiSearchResultToList(mergedResult);
+    }
+
+    private <T extends TokenBase> List<List<T>> convertMultiSearchResultToList(MultiSearchResult multiSearchResult) {
+        List<List<T>> result = new ArrayList<>();
+
+        List<List<ViterbiNode>> paths = multiSearchResult.getTokenizedResultsList();
+
+        for (List<ViterbiNode> path : paths) {
+            ArrayList<T> tokens = new ArrayList<>();
+            for (ViterbiNode node : path) {
+                int wordId = node.getWordId();
+                if (node.getType() == ViterbiNode.Type.KNOWN && wordId == -1) { // Do not include BOS/EOS
+                    continue;
+                }
+                @SuppressWarnings("unchecked")
+                T token = (T) tokenFactory.createToken(
+                        wordId,
+                        node.getSurface(),
+                        node.getType(),
+                        node.getStartIndex(),
+                        dictionaryMap.get(node.getType())
+                );
+                tokens.add(token);
+            }
+            result.add(tokens);
+        }
+
+        return result;
     }
 
     /**
@@ -289,40 +349,16 @@ public abstract class TokenizerBase {
     /**
      * Tokenize input sentence. Up to maxCount different paths of cost at most OPT + costSlack are returned ordered in ascending order by cost, where OPT is the optimal solution.
      *
-     * @param offset   offset of sentence in original input text
      * @param text sentence to tokenize
      * @param maxCount  maximum number of paths
      * @param costSlack  maximum cost slack of a path
-     * @return list of Token
+     * @return  instance of MultiSearchResult containing the tokenizations
      */
-    private <T extends TokenBase> List<List<T>> createMultiTokenList(int offset, String text, int maxCount, int costSlack) {
-        List<List<T>> result = new ArrayList<>();
-
+    private MultiSearchResult createMultiSearchResult(String text, int maxCount, int costSlack) {
+        System.out.println("Searching text of size: " + text.length());
         ViterbiLattice lattice = viterbiBuilder.build(text);
         MultiSearchResult multiSearchResult = viterbiSearcher.searchMultiple(lattice, maxCount, costSlack);
-        List<List<ViterbiNode>> paths = multiSearchResult.getTokenizedResultsList();
-
-        for (List<ViterbiNode> path : paths) {
-            ArrayList<T> tokens = new ArrayList<>();
-            for (ViterbiNode node : path) {
-                int wordId = node.getWordId();
-                if (node.getType() == ViterbiNode.Type.KNOWN && wordId == -1) { // Do not include BOS/EOS
-                    continue;
-                }
-                @SuppressWarnings("unchecked")
-                T token = (T) tokenFactory.createToken(
-                        wordId,
-                        node.getSurface(),
-                        node.getType(),
-                        offset + node.getStartIndex(),
-                        dictionaryMap.get(node.getType())
-                );
-                tokens.add(token);
-            }
-            result.add(tokens);
-        }
-
-        return result;
+        return multiSearchResult;
     }
 
     /**

@@ -37,6 +37,8 @@ public class ViterbiSearcher {
 
     private final TokenizerBase.Mode mode;
 
+    private MultiSearcher multiSearcher;
+
     public ViterbiSearcher(TokenizerBase.Mode mode,
                            ConnectionCosts costs,
                            UnknownDictionary unknownDictionary,
@@ -51,6 +53,7 @@ public class ViterbiSearcher {
         this.mode = mode;
         this.costs = costs;
         this.unknownDictionary = unknownDictionary;
+        multiSearcher = new MultiSearcher(costs, mode, this);
     }
 
     /**
@@ -76,7 +79,6 @@ public class ViterbiSearcher {
      */
     public MultiSearchResult searchMultiple(ViterbiLattice lattice, int maxCount, int costSlack) {
         calculatePathCosts(lattice);
-        MultiSearcher multiSearcher = new MultiSearcher(costs, mode, this);
         MultiSearchResult result = multiSearcher.getShortestPaths(lattice, maxCount, costSlack);
         return result;
     }

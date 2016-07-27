@@ -68,6 +68,16 @@ public class TestUtils {
         }
     }
 
+    public static void assertCanMultiTokenizeString(String input, int maxCount, int costSlack, TokenizerBase tokenizer) {
+        List<List<TokenBase>> tokens = tokenizer.multiTokenize(input, maxCount, costSlack);
+
+        if (input.length() > 0) {
+            assertFalse(tokens.isEmpty());
+        } else {
+            assertTrue(tokens.isEmpty());
+        }
+    }
+
     public static void assertTokenizedStreamEquals(InputStream tokenizedInput,
                                                    InputStream untokenizedInput,
                                                    TokenizerBase tokenizer) throws IOException {
