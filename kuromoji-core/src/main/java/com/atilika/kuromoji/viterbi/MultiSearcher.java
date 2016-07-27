@@ -10,6 +10,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.PriorityQueue;
 
+/**
+ * An instance of MultiSearcher can be used to extend the search functionality of ViterbiSearcher to find multiple paths ordered by cost.
+ * Note that the MultiSearcher uses the value of ViterbiNode.getPathCost() to evaluate the cost of possible path.
+ * Therefore, the ViterbiLattice should be updated by ViterbiSearcher.calculatePathCosts() before being used by the MultiSearcher.
+ *
+ * The implementation is based on Eppstein's algorithm for finding n shortest paths in a weighted directed graph.
+ */
 public class MultiSearcher {
     private final ConnectionCosts costs;
     private final TokenizerBase.Mode mode;
@@ -24,6 +31,14 @@ public class MultiSearcher {
         this.viterbiSearcher = viterbiSearcher;
     }
 
+    /**
+     * Get up to maxCount shortest paths with cost at most OPT + costSlack, where OPT is the optimal solution. The results are ordered in ascending order by cost.
+     *
+     * @param lattice  an instance of ViterbiLattice prosecced by a ViterbiSearcher
+     * @param maxCount  the maximum number of results
+     * @param costSlack  the maximum cost slack of a path
+     * @return  the shortest paths and their costs
+     */
     public MultiSearchResult getShortestPaths(ViterbiLattice lattice, int maxCount, int costSlack) {
         pathCosts = new ArrayList<>();
         sidetracks = new HashMap<>();
