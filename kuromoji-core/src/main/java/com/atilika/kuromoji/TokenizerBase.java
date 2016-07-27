@@ -203,12 +203,8 @@ public abstract class TokenizerBase {
             results.add(createMultiSearchResult(text.substring(offset), maxCount, costSlack));
         }
 
-        System.out.println("Merging...");
-
         MultiSearchMerger merger = new MultiSearchMerger(maxCount, costSlack);
         MultiSearchResult mergedResult = merger.merge(results);
-
-        System.out.println("Done");
 
         return convertMultiSearchResultToList(mergedResult);
     }
