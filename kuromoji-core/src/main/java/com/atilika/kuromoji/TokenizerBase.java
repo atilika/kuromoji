@@ -355,7 +355,6 @@ public abstract class TokenizerBase {
      * @return  instance of MultiSearchResult containing the tokenizations
      */
     private MultiSearchResult createMultiSearchResult(String text, int maxCount, int costSlack) {
-        System.out.println("Searching text of size: " + text.length());
         ViterbiLattice lattice = viterbiBuilder.build(text);
         MultiSearchResult multiSearchResult = viterbiSearcher.searchMultiple(lattice, maxCount, costSlack);
         return multiSearchResult;
