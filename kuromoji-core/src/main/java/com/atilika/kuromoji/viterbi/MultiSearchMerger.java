@@ -28,9 +28,9 @@ public class MultiSearchMerger {
         for (int i = 0; i < results.size(); i++) {
             suffixCostLowerBounds.add(0);
         }
-        suffixCostLowerBounds.add(suffixCostLowerBounds.size() - 1, results.get(results.size() - 1).getCost(0));
+        suffixCostLowerBounds.set(suffixCostLowerBounds.size() - 1, results.get(results.size() - 1).getCost(0));
         for (int i = results.size() - 2; i >= 0; i--) {
-            suffixCostLowerBounds.add(i, results.get(i).getCost(0) + suffixCostLowerBounds.get(i + 1));
+            suffixCostLowerBounds.set(i, results.get(i).getCost(0) + suffixCostLowerBounds.get(i + 1));
         }
         baseCost = suffixCostLowerBounds.get(0);
 
