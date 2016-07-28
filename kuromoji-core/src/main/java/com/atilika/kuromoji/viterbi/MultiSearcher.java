@@ -87,7 +87,7 @@ public class MultiSearcher {
             sideTrackEdge = sideTrackEdge.getNextOption();
         }
 
-        for (int i = 0; i < maxCount; i++) {
+        for (int i = 1; i < maxCount; i++) {
             if (sidetrackHeap.isEmpty()) {
                 break;
             }
