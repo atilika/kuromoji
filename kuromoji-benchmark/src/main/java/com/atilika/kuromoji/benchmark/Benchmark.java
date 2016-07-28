@@ -145,6 +145,7 @@ public class Benchmark {
 
     private void tokenizeDocument(Writer writer, String text) throws IOException {
         List<? extends TokenBase> tokens = tokenizer.tokenize(text);
+        List<List<TokenBase>> multiTokens = tokenizer.multiTokenize(text, 10, 100000);
 
         updateStatistics(text, tokens);
 

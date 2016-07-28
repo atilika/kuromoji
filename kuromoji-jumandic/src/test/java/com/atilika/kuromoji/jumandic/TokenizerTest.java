@@ -23,9 +23,11 @@ import org.junit.Test;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.List;
 
 import static com.atilika.kuromoji.TestUtils.assertEqualTokenFeatureLengths;
+import static com.atilika.kuromoji.TestUtils.assertTokenSurfacesEquals;
 import static com.atilika.kuromoji.TestUtils.assertTokenizedStreamEquals;
 import static org.junit.Assert.assertEquals;
 
@@ -49,6 +51,35 @@ public class TokenizerTest {
         for (int i = 0; i < expectedSurfaceForms.length; i++) {
             assertEquals(expectedSurfaceForms[i], tokens.get(i).getSurface());
         }
+    }
+
+    @Test
+    public void testSimpleMultiTokenization() {
+        String input = "スペースステーションに行きます。うたがわしい。";
+        List<List<Token>> tokenLists = tokenizer.multiTokenize(input, 20, 100000);
+
+        assertEquals(20, tokenLists.size());
+
+        for (List<Token> tokens : tokenLists) {
+            StringBuilder sb = new StringBuilder();
+            for (Token token : tokens) {
+                sb.append(token.getSurface());
+            }
+            assertEquals(input, sb.toString());
+        }
+
+        String[] surfaces = {"スペースステーション", "に", "行き", "ます", "。", "うたがわしい", "。"};
+        assertTokenSurfacesEquals(
+                Arrays.asList(surfaces),
+                tokenLists.get(0)
+        );
+    }
+
+    @Test
+    public void testMultiTokenizationFindsAll() {
+        String input = "スペースステーション";
+        List<List<Token>> tokenLists = tokenizer.multiTokenizeNBest(input, 100);
+        assertEquals(9, tokenLists.size());
     }
 
     @Test

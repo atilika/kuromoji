@@ -24,9 +24,11 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.List;
 
 import static com.atilika.kuromoji.TestUtils.assertEqualTokenFeatureLengths;
+import static com.atilika.kuromoji.TestUtils.assertTokenSurfacesEquals;
 import static com.atilika.kuromoji.TestUtils.assertTokenizedStreamEquals;
 import static org.junit.Assert.assertEquals;
 
@@ -37,6 +39,28 @@ public class TokenizerTest {
     @Before
     public void setUp() throws Exception {
         tokenizer = new Tokenizer();
+    }
+
+    @Test
+    public void testSimpleMultiTokenization() {
+        String input = "スペースステーションに行きます。うたがわしい。";
+        List<List<Token>> tokenLists = tokenizer.multiTokenize(input, 20, 100000);
+
+        assertEquals(20, tokenLists.size());
+
+        for (List<Token> tokens : tokenLists) {
+            StringBuilder sb = new StringBuilder();
+            for (Token token : tokens) {
+                sb.append(token.getSurface());
+            }
+            assertEquals(input, sb.toString());
+        }
+
+        String[] surfaces = {"スペース", "ステーション", "に", "行き", "ます", "。", "うたがわしい", "。"};
+        assertTokenSurfacesEquals(
+                Arrays.asList(surfaces),
+                tokenLists.get(0)
+        );
     }
 
     @Test
