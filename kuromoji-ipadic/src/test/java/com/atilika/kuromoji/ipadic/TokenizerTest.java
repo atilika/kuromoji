@@ -53,6 +53,46 @@ public class TokenizerTest {
     }
 
     @Test
+    public void testSimpleMultiTokenization() {
+        String input = "スペースステーションに行きます。うたがわしい。";
+        List<List<Token>> tokenLists = tokenizer.multiTokenize(input, 20, 100000);
+
+        assertEquals(20, tokenLists.size());
+
+        for (List<Token> tokens : tokenLists) {
+            StringBuilder sb = new StringBuilder();
+            for (Token token : tokens) {
+                sb.append(token.getSurface());
+            }
+            assertEquals(input, sb.toString());
+        }
+
+        String[] surfaces = {"スペース", "ステーション", "に", "行き", "ます", "。", "うたがわしい", "。"};
+        assertTokenSurfacesEquals(
+                Arrays.asList(surfaces),
+                tokenLists.get(0)
+        );
+    }
+
+    @Test
+    public void testMergerCornerCase() {
+        String input = "難しい。。。";
+        List<List<Token>> tokenLists = tokenizer.multiTokenize(input, 2, 100000);
+        String[] surfaces = {"難しい", "。", "。", "。"};
+        assertTokenSurfacesEquals(
+                Arrays.asList(surfaces),
+                tokenLists.get(0)
+        );
+    }
+
+    @Test
+    public void testMultiTokenizationFindsAll() {
+        String input = "スペースステーション";
+        List<List<Token>> tokenLists = tokenizer.multiTokenizeNBest(input, 100);
+        assertEquals(9, tokenLists.size());
+    }
+
+    @Test
     public void testSimpleReadings() {
         List<Token> tokens = tokenizer.tokenize("寿司が食べたいです。");
         assertTrue(tokens.size() == 6);

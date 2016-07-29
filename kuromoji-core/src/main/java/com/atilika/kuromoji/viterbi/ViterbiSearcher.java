@@ -30,19 +30,21 @@ public class ViterbiSearcher {
     private final ConnectionCosts costs;
     private final UnknownDictionary unknownDictionary;
 
-    private int kanjiPenaltyLengthTreshold;
+    private int kanjiPenaltyLengthThreshold;
     private int otherPenaltyLengthThreshold;
     private int kanjiPenalty;
     private int otherPenalty;
 
     private final TokenizerBase.Mode mode;
 
+    private MultiSearcher multiSearcher;
+
     public ViterbiSearcher(TokenizerBase.Mode mode,
                            ConnectionCosts costs,
                            UnknownDictionary unknownDictionary,
                            List<Integer> penalties) {
         if (!penalties.isEmpty()) {
-            this.kanjiPenaltyLengthTreshold = penalties.get(0);
+            this.kanjiPenaltyLengthThreshold = penalties.get(0);
             this.kanjiPenalty = penalties.get(1);
             this.otherPenaltyLengthThreshold = penalties.get(2);
             this.otherPenalty = penalties.get(3);
@@ -51,6 +53,7 @@ public class ViterbiSearcher {
         this.mode = mode;
         this.costs = costs;
         this.unknownDictionary = unknownDictionary;
+        multiSearcher = new MultiSearcher(costs, mode, this);
     }
 
     /**
@@ -63,7 +66,20 @@ public class ViterbiSearcher {
 
         ViterbiNode[][] endIndexArr = calculatePathCosts(lattice);
         LinkedList<ViterbiNode> result = backtrackBestPath(endIndexArr[0][0]);
+        return result;
+    }
 
+    /**
+     * Find the best paths with cost at most OPT + costSlack, where OPT is the optimal solution. At most maxCount paths will be returned. The paths are ordered by cost in ascending order.
+     *
+     * @param lattice  the result of a build method
+     * @param maxCount  the maximum number of paths to find
+     * @param costSlack  the maximum cost slack of a path
+     * @return  MultiSearchResult containing the shortest paths and their costs
+     */
+    public MultiSearchResult searchMultiple(ViterbiLattice lattice, int maxCount, int costSlack) {
+        calculatePathCosts(lattice);
+        MultiSearchResult result = multiSearcher.getShortestPaths(lattice, maxCount, costSlack);
         return result;
     }
 
@@ -118,14 +134,14 @@ public class ViterbiSearcher {
         }
     }
 
-    private int getPenaltyCost(ViterbiNode node) {
+    int getPenaltyCost(ViterbiNode node) {
         int pathCost = 0;
         String surface = node.getSurface();
         int length = surface.length();
 
-        if (length > kanjiPenaltyLengthTreshold) {
+        if (length > kanjiPenaltyLengthThreshold) {
             if (isKanjiOnly(surface)) {    // Process only Kanji keywords
-                pathCost += (length - kanjiPenaltyLengthTreshold) * kanjiPenalty;
+                pathCost += (length - kanjiPenaltyLengthThreshold) * kanjiPenalty;
             } else if (length > otherPenaltyLengthThreshold) {
                 pathCost += (length - otherPenaltyLengthThreshold) * otherPenalty;
             }

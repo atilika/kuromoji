@@ -73,6 +73,8 @@ public class BenchmarkTest {
         args.add(tokenizerClass);
         args.add("-c");
         args.add("3000");
+        args.add("-n");
+        args.add("10");
         args.add("--benchmark-output");
         args.add("jawiki-" + tokenizerName + "-benchmark.tsv");
         args.add("../kuromoji-benchmark/jawiki/jawiki.tsv.gz");
@@ -92,6 +94,7 @@ public class BenchmarkTest {
         Benchmark.main(new String[]{
             "-t", tokenizerClass,
             "-o", outputFilename,
+            "-n", "10",
             inputFilename
         });
     }
@@ -103,6 +106,7 @@ public class BenchmarkTest {
         Benchmark.main(new String[]{
             "-t", tokenizerClass,
             "-o", outputFilename,
+            "-n", "10",
             "-u", userDictionaryFilename,
             inputFilename
         });

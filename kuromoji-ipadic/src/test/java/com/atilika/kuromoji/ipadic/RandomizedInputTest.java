@@ -20,7 +20,10 @@ import com.carrotsearch.randomizedtesting.RandomizedTest;
 import com.carrotsearch.randomizedtesting.annotations.Repeat;
 import org.junit.Test;
 
+import java.util.Random;
+
 import static com.atilika.kuromoji.TestUtils.assertCanTokenizeString;
+import static com.atilika.kuromoji.TestUtils.assertCanMultiTokenizeString;
 
 public class RandomizedInputTest extends RandomizedTest {
 
@@ -44,5 +47,26 @@ public class RandomizedInputTest extends RandomizedTest {
     @Repeat(iterations = 10)
     public void testRandomizedAsciiInput() {
         assertCanTokenizeString(randomAsciiOfLength(LENGTH), tokenizer);
+    }
+
+    @Test
+    @Repeat(iterations = 10)
+    public void testRandomizedUnicodeInputMultiTokenize() {
+        Random rand = new Random();
+        assertCanMultiTokenizeString(randomUnicodeOfLength(LENGTH), rand.nextInt(998) + 2, rand.nextInt(100000), tokenizer);
+    }
+
+    @Test
+    @Repeat(iterations = 10)
+    public void testRandomizedRealisticUnicodeInputMultiTokenize() {
+        Random rand = new Random();
+        assertCanMultiTokenizeString(randomRealisticUnicodeOfLength(LENGTH), rand.nextInt(998) + 2, rand.nextInt(100000), tokenizer);
+    }
+
+    @Test
+    @Repeat(iterations = 10)
+    public void testRandomizedAsciiInputMultiTokenize() {
+        Random rand = new Random();
+        assertCanMultiTokenizeString(randomAsciiOfLength(LENGTH), rand.nextInt(998) + 2, rand.nextInt(100000), tokenizer);
     }
 }

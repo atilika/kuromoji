@@ -49,6 +49,35 @@ public class TokenizerTest {
     }
 
     @Test
+    public void testSimpleMultiTokenization() {
+        String input = "スペースステーションに行きます。うたがわしい。";
+        List<List<Token>> tokenLists = tokenizer.multiTokenize(input, 20, 100000);
+
+        assertEquals(20, tokenLists.size());
+
+        for (List<Token> tokens : tokenLists) {
+            StringBuilder sb = new StringBuilder();
+            for (Token token : tokens) {
+                sb.append(token.getSurface());
+            }
+            assertEquals(input, sb.toString());
+        }
+
+        String[] surfaces = {"スペース", "ステーション", "に", "行き", "ます", "。", "うたがわしい", "。"};
+        assertTokenSurfacesEquals(
+                Arrays.asList(surfaces),
+                tokenLists.get(0)
+        );
+    }
+
+    @Test
+    public void testMultiTokenizationFindsAll() {
+        String input = "スペースステーション";
+        List<List<Token>> tokenLists = tokenizer.multiTokenizeNBest(input, 100);
+        assertEquals(9, tokenLists.size());
+    }
+
+    @Test
     public void testKansaiInternationalAirport() {
         List<Token> tokens = tokenizer.tokenize("関西国際空港");
         String expectedFeatures = "名詞,固有名詞,組織,*,*,*,関西国際空港,カンサイコクサイクウコウ,カンサイコクサイクーコー,,";

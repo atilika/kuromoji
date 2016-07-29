@@ -25,6 +25,8 @@ import com.atilika.kuromoji.dict.UnknownDictionary;
 import com.atilika.kuromoji.dict.UserDictionary;
 import com.atilika.kuromoji.fst.FST;
 import com.atilika.kuromoji.util.ResourceResolver;
+import com.atilika.kuromoji.viterbi.MultiSearchMerger;
+import com.atilika.kuromoji.viterbi.MultiSearchResult;
 import com.atilika.kuromoji.viterbi.TokenFactory;
 import com.atilika.kuromoji.viterbi.ViterbiBuilder;
 import com.atilika.kuromoji.viterbi.ViterbiFormatter;
@@ -115,6 +117,18 @@ public abstract class TokenizerBase {
         return createTokenList(text);
     }
 
+    public <T extends TokenBase> List<List<T>> multiTokenize(String text, int maxCount, int costSlack) {
+
+        return createMultiTokenList(text, maxCount, costSlack);
+    }
+
+    public <T extends TokenBase> List<List<T>> multiTokenizeNBest(String text, int n) {
+        return multiTokenize(text, n, Integer.MAX_VALUE);
+    }
+
+    public <T extends TokenBase> List<List<T>> multiTokenizeBySlack(String text, int costSlack) {
+        return multiTokenize(text, Integer.MAX_VALUE, costSlack);
+    }
 
     /**
      * Tokenizes the provided text and returns a list of tokens with various feature information
@@ -148,6 +162,76 @@ public abstract class TokenizerBase {
 
         if (offset < text.length()) {
             result.addAll(this.<T>createTokenList(offset, text.substring(offset)));
+        }
+
+        return result;
+    }
+
+    /**
+     * Tokenizes the provided text and returns up to maxCount lists of tokens with various feature information.
+     * Each list corresponds to a possible tokenization with cost at most OPT + costSlack, where OPT is the optimal solution.
+     * <p>
+     * This method is thread safe
+     *
+     * @param text  text to tokenize
+     * @param maxCount  maximum number of different tokenizations
+     * @param costSlack  maximum cost slack of a tokenization
+     * @param <T>  token type
+     * @return list of Token, not null
+     */
+    protected <T extends TokenBase> List<List<T>> createMultiTokenList(String text, int maxCount, int costSlack) {
+
+        if (!split) {
+            return convertMultiSearchResultToList(createMultiSearchResult(text, maxCount, costSlack));
+        }
+
+        List<Integer> splitPositions = getSplitPositions(text);
+
+        if (splitPositions.size() == 0) {
+            return convertMultiSearchResultToList(createMultiSearchResult(text, maxCount, costSlack));
+        }
+
+        List<MultiSearchResult> results = new ArrayList<>();
+        int offset = 0;
+
+        for (int position : splitPositions) {
+            results.add(createMultiSearchResult(text.substring(offset, position + 1), maxCount, costSlack));
+            offset = position + 1;
+        }
+
+        if (offset < text.length()) {
+            results.add(createMultiSearchResult(text.substring(offset), maxCount, costSlack));
+        }
+
+        MultiSearchMerger merger = new MultiSearchMerger(maxCount, costSlack);
+        MultiSearchResult mergedResult = merger.merge(results);
+
+        return convertMultiSearchResultToList(mergedResult);
+    }
+
+    private <T extends TokenBase> List<List<T>> convertMultiSearchResultToList(MultiSearchResult multiSearchResult) {
+        List<List<T>> result = new ArrayList<>();
+
+        List<List<ViterbiNode>> paths = multiSearchResult.getTokenizedResultsList();
+
+        for (List<ViterbiNode> path : paths) {
+            ArrayList<T> tokens = new ArrayList<>();
+            for (ViterbiNode node : path) {
+                int wordId = node.getWordId();
+                if (node.getType() == ViterbiNode.Type.KNOWN && wordId == -1) { // Do not include BOS/EOS
+                    continue;
+                }
+                @SuppressWarnings("unchecked")
+                T token = (T) tokenFactory.createToken(
+                        wordId,
+                        node.getSurface(),
+                        node.getType(),
+                        node.getStartIndex(),
+                        dictionaryMap.get(node.getType())
+                );
+                tokens.add(token);
+            }
+            result.add(tokens);
         }
 
         return result;
@@ -256,6 +340,20 @@ public abstract class TokenizerBase {
         }
 
         return result;
+    }
+
+    /**
+     * Tokenize input sentence. Up to maxCount different paths of cost at most OPT + costSlack are returned ordered in ascending order by cost, where OPT is the optimal solution.
+     *
+     * @param text sentence to tokenize
+     * @param maxCount  maximum number of paths
+     * @param costSlack  maximum cost slack of a path
+     * @return  instance of MultiSearchResult containing the tokenizations
+     */
+    private MultiSearchResult createMultiSearchResult(String text, int maxCount, int costSlack) {
+        ViterbiLattice lattice = viterbiBuilder.build(text);
+        MultiSearchResult multiSearchResult = viterbiSearcher.searchMultiple(lattice, maxCount, costSlack);
+        return multiSearchResult;
     }
 
     /**

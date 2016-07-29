@@ -64,6 +64,8 @@ public class Benchmark {
 
     private final long count;
 
+    private final int nbest;
+
     private Benchmark(Builder builder) {
         this.tokenizer = builder.tokenizer;
         this.inputFile = builder.inputFile;
@@ -72,6 +74,7 @@ public class Benchmark {
         this.validationFile = builder.validationFile;
         this.outputStatistics = builder.outputStatistics;
         this.count = builder.count;
+        this.nbest = builder.nbest;
     }
 
     public void benchmark() throws IOException {
@@ -145,6 +148,9 @@ public class Benchmark {
 
     private void tokenizeDocument(Writer writer, String text) throws IOException {
         List<? extends TokenBase> tokens = tokenizer.tokenize(text);
+        if (nbest > 1) {
+            List<List<TokenBase>> multiTokens = tokenizer.multiTokenizeNBest(text, nbest);
+        }
 
         updateStatistics(text, tokens);
 
@@ -253,6 +259,8 @@ public class Benchmark {
 
         private long count = 0;
 
+        private int nbest = 1;
+
         public Builder tokenizer(TokenizerBase tokenizer) {
             this.tokenizer = tokenizer;
             return this;
@@ -293,6 +301,11 @@ public class Benchmark {
             return this;
         }
 
+        public Builder nbest(int nbest) {
+            this.nbest = nbest;
+            return this;
+        }
+
         public Benchmark build() {
             return new Benchmark(this);
         }
@@ -306,6 +319,7 @@ public class Benchmark {
         options.addOption("c", "count", true, "Number of documents ot process (Default: 0, which means all");
 //        options.addOption("v", "validation-input", true, "Validation filename");
         options.addOption("o", "output", true, "Output filename.  If unset, segmentation is done, but the result is discarded");
+        options.addOption("n", "n-best", true, "The number of tokenizations to get per input");
         options.addOption(null, "benchmark-output", true, "Benchmark metrics output filename filename");
 
         CommandLineParser parser = new DefaultParser();
@@ -375,6 +389,10 @@ public class Benchmark {
             commandLine.getOptionValue("c", "0")
         );
 
+        int nbest = Integer.parseInt(
+            commandLine.getOptionValue("n", "1")
+        );
+
         Benchmark benchmark = new Builder()
             .tokenizer(tokenizer)
             .inputFile(new File(inputFilename))
@@ -382,6 +400,7 @@ public class Benchmark {
             .outputStatisticsFile(statisticsFile)
             .setOutputStatistiscs(true)
             .count(count)
+            .nbest(nbest)
             .build();
 
         benchmark.benchmark();

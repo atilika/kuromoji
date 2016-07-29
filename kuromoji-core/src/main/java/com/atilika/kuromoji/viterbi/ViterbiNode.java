@@ -45,6 +45,7 @@ public class ViterbiNode {
     private final Type type;
     private final int startIndex;
 
+
     public ViterbiNode(int wordId, String surface, int leftId, int rightId, int wordCost, int startIndex, Type type) {
         this.wordId = wordId;
         this.surface = surface;
