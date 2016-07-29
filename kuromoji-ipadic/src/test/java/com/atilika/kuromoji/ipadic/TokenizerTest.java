@@ -75,6 +75,17 @@ public class TokenizerTest {
     }
 
     @Test
+    public void testMergerCornerCase() {
+        String input = "難しい。。。";
+        List<List<Token>> tokenLists = tokenizer.multiTokenize(input, 2, 100000);
+        String[] surfaces = {"難しい", "。", "。", "。"};
+        assertTokenSurfacesEquals(
+                Arrays.asList(surfaces),
+                tokenLists.get(0)
+        );
+    }
+
+    @Test
     public void testMultiTokenizationFindsAll() {
         String input = "スペースステーション";
         List<List<Token>> tokenLists = tokenizer.multiTokenizeNBest(input, 100);
