@@ -8,6 +8,8 @@
 
 * Added support for user dictionary entries with full feature-sets
 
+* Added support for n-best and alternative tokenizations
+
 ## 0.9.0
 
 * First version released to Maven Central

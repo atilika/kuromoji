@@ -8,6 +8,7 @@
 
 * Yoshinari Fujinuma / Amazon Japan K.K.
 * Dawid Weiss
+* Emanuel Gedin
 * Gerrard Hocks
 * Masaru Hasegawa
 * Yong-woon Lee
