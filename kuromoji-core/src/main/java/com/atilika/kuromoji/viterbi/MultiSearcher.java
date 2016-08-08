@@ -76,10 +76,7 @@ public class MultiSearcher {
         LinkedList<ViterbiNode> result = new LinkedList<>();
         ViterbiNode node = eos;
         result.add(node);
-        while (true) {
-            if (node.getLeftNode() == null) {
-                break;
-            }
+        while (node.getLeftNode() != null) {
             ViterbiNode leftNode = node.getLeftNode();
             if (sidetrackEdge != null && sidetrackEdge.getHead() == node) {
                 leftNode = sidetrackEdge.getTail();
