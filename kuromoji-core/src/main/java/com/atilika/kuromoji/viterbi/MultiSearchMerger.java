@@ -52,7 +52,7 @@ public class MultiSearchMerger {
         MultiSearchResult ret = new MultiSearchResult();
         List<MergeBuilder> builders = new ArrayList<>();
         for (int i = 0; i < results.get(0).size(); i++) {
-            if (getCostLowerBound(results.get(0).getCost(i), 0) > baseCost + costSlack || i == maxCount) {
+            if (getCostLowerBound(results.get(0).getCost(i), 0) - costSlack > baseCost || i == maxCount) {
                 break;
             }
 
@@ -88,7 +88,7 @@ public class MultiSearchMerger {
         while (ret.size() < maxCount && pairHeap.size() > 0) {
             MergePair top = pairHeap.poll();
 
-            if (getCostLowerBound(top.getCost(), currentIndex) > baseCost + costSlack) {
+            if (getCostLowerBound(top.getCost(), currentIndex) - costSlack > baseCost) {
                 break;
             }
 
