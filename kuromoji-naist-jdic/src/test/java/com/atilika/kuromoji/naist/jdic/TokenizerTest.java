@@ -30,6 +30,7 @@ import static com.atilika.kuromoji.TestUtils.assertEqualTokenFeatureLengths;
 import static com.atilika.kuromoji.TestUtils.assertTokenSurfacesEquals;
 import static com.atilika.kuromoji.TestUtils.assertTokenizedStreamEquals;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 public class TokenizerTest {
 
@@ -75,6 +76,20 @@ public class TokenizerTest {
         String input = "スペースステーション";
         List<List<Token>> tokenLists = tokenizer.multiTokenizeNBest(input, 100);
         assertEquals(9, tokenLists.size());
+    }
+
+    @Test
+    public void testMultiNoOverflow() {
+        String input = "バスできた。";
+        List<List<Token>> tokenLists = tokenizer.multiTokenizeBySlack(input, Integer.MAX_VALUE);
+        assertNotEquals(0, tokenLists.size());
+    }
+
+    @Test
+    public void testMultiEmptyString() {
+        String input = "";
+        List<List<Token>> tokenLists = tokenizer.multiTokenize(input, 10, Integer.MAX_VALUE);
+        assertEquals(1, tokenLists.size());
     }
 
     @Test
