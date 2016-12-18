@@ -118,7 +118,6 @@ public abstract class TokenizerBase {
     }
 
     public <T extends TokenBase> List<List<T>> multiTokenize(String text, int maxCount, int costSlack) {
-
         return createMultiTokenList(text, maxCount, costSlack);
     }
 
@@ -257,6 +256,26 @@ public abstract class TokenizerBase {
         );
         outputStream.flush();
     }
+
+    /**
+     * Multi tokenizes the provided text and outputs the corresponding Viterbi lattice and the Viterbi path to the provided output stream
+     * <p>
+     * The output is written in <a href="https://en.wikipedia.org/wiki/DOT_(graph_description_language)">DOT</a> format.
+     * <p>
+     * This method is not thread safe
+     *
+     * @param outputStream  output stream to write to
+     * @param text  text to tokenize
+     * @throws java.io.IOException if an error occurs when writing the lattice and path
+     */
+    public void debugMultiTokenize(OutputStream outputStream, String text, int maxCount, int costSlack) throws IOException {
+        ViterbiLattice lattice = viterbiBuilder.build(text);
+        List<List<ViterbiNode>> bestPaths = viterbiSearcher.searchMultiple(lattice, maxCount, costSlack).getTokenizedResultsList();
+        outputStream.write(
+                viterbiFormatter.multiFormat(lattice, bestPaths).getBytes(StandardCharsets.UTF_8)
+        );
+        outputStream.flush();
+    };
 
     /**
      * Writes the Viterbi lattice for the provided text to an output stream
