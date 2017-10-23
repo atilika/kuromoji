@@ -11,7 +11,7 @@ Several other features are supported. Please consult each dictionaries' `Token` 
 
 ## Using Kuromoji
 
-The example below shows how to use the Kuromoji morphological analyzer in its simlest form; to segment text into tokens and output features for each token.
+The example below shows how to use the Kuromoji morphological analyzer in its simplest form; to segment text into tokens and output features for each token.
 
 ```java
 package com.atilika.kuromoji.example;
