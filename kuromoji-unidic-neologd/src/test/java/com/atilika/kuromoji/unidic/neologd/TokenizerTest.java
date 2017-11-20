@@ -113,7 +113,7 @@ public class TokenizerTest {
         List<Token> tokens = tokenizer.tokenize("核");
 
         String expectedSurface = "核";
-        String expectedFeatures = "名詞,普通名詞,一般,*,*,*,カク,核,核,カク,核,カク,漢,*,*,ク促,基本形";
+        String expectedFeatures = "名詞,固有名詞,人名,姓,*,*,サネ,核,核,サネ,核,サネ,固,*,*,*,*";
 
         assertEquals(expectedSurface, tokens.get(0).getSurface());
         assertEquals(expectedFeatures, tokens.get(0).getAllFeatures());

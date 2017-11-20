@@ -15,9 +15,9 @@
     <packaging>jar</packaging>
 
     <properties>
-        <kuromoji.dict.file>mecab-ipadic-2.7.0-20070801-neologd-20151224.tar.gz</kuromoji.dict.file>
+        <kuromoji.dict.file>mecab-ipadic-2.7.0-20070801-neologd-20171113.tar.gz</kuromoji.dict.file>
         <kuromoji.dict.url>http://atilika.com/releases/mecab-ipadic-neologd/${kuromoji.dict.file}</kuromoji.dict.url>
-        <kuromoji.dict.dir>${project.basedir}/dictionary/mecab-ipadic-2.7.0-20070801-neologd-20151224</kuromoji.dict.dir>
+        <kuromoji.dict.dir>${project.basedir}/dictionary/mecab-ipadic-2.7.0-20070801-neologd-20171113</kuromoji.dict.dir>
         <kuromoji.dict.targetdir>${project.basedir}/src/main/resources/com/atilika/kuromoji/ipadic/neologd</kuromoji.dict.targetdir>
         <kuromoji.dict.encoding>utf-8</kuromoji.dict.encoding>
     </properties>

@@ -1,6 +1,6 @@
 # Kuromoji Japanese Morphological Analyzer
 
-Copyright 2010-2015 Atilika Inc. and contributors (see `CONTRIBUTORS.md`)
+Copyright 2010-2017 Atilika Inc. and contributors (see `CONTRIBUTORS.md`)
 
 This software uses a parsed version if the Japanese Wikipedia for testing,
 which can be downloaded from 

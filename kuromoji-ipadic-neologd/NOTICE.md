@@ -1,20 +1,20 @@
 # Kuromoji Japanese Morphological Analyzer
 
-Copyright 2010-2015 Atilika Inc. and contributors (see `CONTRIBUTORS.md`)
+Copyright 2010-2017 Atilika Inc. and contributors (see `CONTRIBUTORS.md`)
 
 This software also includes a binary and/or source version of data from
-`mecab-ipadic-2.7.0-20070801` and `mecab-ipadic-2.7.0-20070801-neologd-20150925`.
+`mecab-ipadic-2.7.0-20070801` and `mecab-ipadic-2.7.0-20070801-neologd-20171113`.
 
 `mecab-ipadic-2.7.0-20070801` can be obtained from
 
 - http://atilika.com/releases/mecab-ipadic/mecab-ipadic-2.7.0-20070801.tar.gz
 - http://jaist.dl.sourceforge.net/project/mecab/mecab-ipadic/2.7.0-20070801/mecab-ipadic-2.7.0-20070801.tar.gz
 
-and `mecab-ipadic-2.7.0-20070801-neologd-20150925` can be obtained from
+and `mecab-ipadic-2.7.0-20070801-neologd-20171113` can be obtained from
 
-- http://atilika.com/releases/mecab-ipadic-neologd/mecab-ipadic-2.7.0-20070801-neologd-20150925.tar.gz
+- http://atilika.com/releases/mecab-ipadic-neologd/mecab-ipadic-2.7.0-20070801-neologd-20171113.tar.gz
 
-The contents of `mecab-ipadic-2.7.0-20070801-neologd-20150925.tar.gz` also
+The contents of `mecab-ipadic-2.7.0-20070801-neologd-20171113.tar.gz` also
 contains `mecab-ipadic-2.7.0-20070801.tar.gz`. (The former file an archive
 of mecab-ipadic-neologd's build directory with binary files removed.)
 
@@ -83,9 +83,9 @@ of mecab-ipadic-neologd's build directory with binary files removed.)
     from and not be held liable to the user for any such damages as noted
     above as far as the program is concerned.
 
-## mecab-ipadic-2.7.0-20070801-neologd-20150925 Notice
+## mecab-ipadic-2.7.0-20070801-neologd-20171113 Notice
 
-    Copyright (C) 2015 Toshinori Sato (@overlast)
+    Copyright (C) 2015-2017 Toshinori Sato (@overlast)
     
           https://github.com/neologd/mecab-ipadic-neologd
     
