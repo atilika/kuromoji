@@ -404,6 +404,18 @@ public abstract class TokenizerBase {
         public abstract <T extends TokenizerBase> T build();
 
         /**
+         * Sets user-defined {@link ResourceResolver}.
+         *
+         * @param resolver {@link com.atilika.kuromoji.util.SimpleResourceResolver SimpleResourceResolver}
+         * or user-defined implementation.
+         * @return this builder
+         */
+        public Builder resolver(ResourceResolver resolver) {
+            this.resolver = resolver;
+            return this;
+        }
+
+        /**
          * Sets an optional user dictionary as an input stream
          * <p>
          * The inpuut stream provided is not closed by this method
