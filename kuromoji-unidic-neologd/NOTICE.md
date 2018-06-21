@@ -1,6 +1,6 @@
 # Kuromoji Japanese Morphological Analyzer
 
-Copyright 2010-2017 Atilika Inc. and contributors (see `CONTRIBUTORS.md`)
+Copyright 2010-2018 Atilika Inc. and contributors (see `CONTRIBUTORS.md`)
 
 This software also includes a binary and/or source version of data from
 `unidic-mecab-2.1.2_src` and `unidic-mecab-2.1.2_src-neologd-20171002`.
