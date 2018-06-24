@@ -21,6 +21,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.nio.channels.Channels;
@@ -49,7 +50,7 @@ public class IntegerArrayIO {
         ByteBuffer tmpBuffer = ByteBuffer.allocate(length * INT_BYTES);
         IntBuffer intBuffer = tmpBuffer.asIntBuffer();
 
-        tmpBuffer.rewind();
+        ((Buffer) tmpBuffer).rewind();
         intBuffer.put(array);
 
         WritableByteChannel channel = Channels.newChannel(dataOutput);
@@ -111,7 +112,7 @@ public class IntegerArrayIO {
         while (intBuffer.hasRemaining() && (channel.read(intBuffer) >= 0)) {
         }
         if (!intBuffer.hasRemaining()) {
-            intBuffer.rewind();
+            ((Buffer) intBuffer).rewind();
             result = intBuffer.asIntBuffer().get(0);
         }
         return result;
@@ -123,7 +124,7 @@ public class IntegerArrayIO {
         ByteBuffer tmpBuffer = ByteBuffer.allocate(length * INT_BYTES);
         while (tmpBuffer.hasRemaining() && (channel.read(tmpBuffer) >= 0)) {
         }
-        tmpBuffer.rewind();
+        ((Buffer) tmpBuffer).rewind();
         IntBuffer intBuffer = tmpBuffer.asIntBuffer();
 
         if (intBuffer.hasArray() && !intBuffer.isReadOnly()) {

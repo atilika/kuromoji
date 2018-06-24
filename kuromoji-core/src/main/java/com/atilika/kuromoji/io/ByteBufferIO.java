@@ -21,6 +21,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
@@ -39,7 +40,7 @@ public class ByteBufferIO {
             channel.read(buffer);
         }
 
-        buffer.rewind();
+        ((Buffer) buffer).rewind();
         return buffer;
     }
 
@@ -47,7 +48,7 @@ public class ByteBufferIO {
         DataOutputStream dataOutput = new DataOutputStream(output);
 
         buffer = buffer.duplicate();
-        buffer.rewind();
+        ((Buffer) buffer).rewind();
 
         dataOutput.writeInt(buffer.capacity());
 
