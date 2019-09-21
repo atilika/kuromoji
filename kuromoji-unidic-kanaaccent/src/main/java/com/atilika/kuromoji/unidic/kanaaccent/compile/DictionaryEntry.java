@@ -52,7 +52,7 @@ public class DictionaryEntry extends DictionaryEntryBase {
     public static final int ACCENT_MODIFICATION_TYPE = 29;
 
     public static final int TOTAL_FEATURES = 26;
-    public static final int READING_FEATURE = 13;
+    public static final int READING_FEATURE = 17;
     public static final int PART_OF_SPEECH_FEATURE = 0;
 
     private final String posLevel1;

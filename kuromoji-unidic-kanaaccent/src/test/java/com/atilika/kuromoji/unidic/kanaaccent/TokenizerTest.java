@@ -134,10 +134,31 @@ public class TokenizerTest {
         List<Token> tokens = tokenizer.tokenize("北斗の拳は非常に面白かった。");
 
         String expectedSurface = "北斗の拳";
-        String expectedFeatures = "カスタム名詞,*,*,*,*,*,*,*,*,*,*,*,*,ホクトノケン,*,*,*,*,*,*,*,*,*,*,*,*";
+        String expectedFeatures = "カスタム名詞,*,*,*,*,*,*,*,*,*,*,*,*,*,*,*,*,ホクトノケン,*,*,*,*,*,*,*,*";
 
         assertEquals(expectedSurface, tokens.get(0).getSurface());
         assertEquals(expectedFeatures, tokens.get(0).getAllFeatures());
+    }
+
+    @Test
+    public void testUserDictionary2() throws IOException {
+        String userDictionary = "" +
+            "日本,日本,ニホン,カスタム名詞\n" +
+            "私,私,ワタシ,カスタム名詞\n";
+
+        Tokenizer tokenizer = new Tokenizer.Builder()
+            .userDictionary(
+                new ByteArrayInputStream(
+                    userDictionary.getBytes(StandardCharsets.UTF_8)
+                )
+            )
+            .build();
+
+        List<Token> tokens = tokenizer.tokenize("私は日本に住んでいて、日本語を勉強しています。");
+
+        assertEquals(18, tokens.size());
+        assertEquals("ワタシ", tokens.get(0).getKana());
+        assertEquals("ニホン", tokens.get(2).getKana());
     }
 
     @Test
