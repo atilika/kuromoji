@@ -231,6 +231,15 @@ public class PatriciaTrieTest {
     }
 
     @Test
+    public void testOverflowBitsEdgeCase() {
+        PatriciaTrie<String> trie = new PatriciaTrie<>();
+        trie.put("a", "0");
+        trie.put("a\uFFFF", "1");
+        assertEquals("0", trie.get("a"));
+        assertEquals("1", trie.get("a\uFFFF"));
+    }
+
+    @Test
     public void testTextScan() {
         PatriciaTrie<String> trie = new PatriciaTrie<>();
         String[] terms = new String[]{
@@ -400,7 +409,7 @@ public class PatriciaTrieTest {
     public void testEmptyKeyMap() {
         PatriciaTrie.KeyMapper<String> keyMapper = new PatriciaTrie.StringKeyMapper();
         // Note: this is a special case handled in PatriciaTrie
-        assertTrue(keyMapper.isSet(0, ""));
+        assertFalse(keyMapper.isSet(0, ""));
         assertTrue(keyMapper.isSet(100, ""));
         assertTrue(keyMapper.isSet(1000, ""));
     }
@@ -431,8 +440,9 @@ public class PatriciaTrieTest {
         assertFalse(keyMapper.isSet(14, key));
         assertTrue(keyMapper.isSet(15, key));
 
-        // Asking for overflow bits should return 1
-        assertTrue(keyMapper.isSet(16, key));
+        // Asking for first overflow bit should return 0
+        assertFalse(keyMapper.isSet(16, key));
+        // Asking for other overflow bits should return 1
         assertTrue(keyMapper.isSet(17, key));
         assertTrue(keyMapper.isSet(100, key));
     }

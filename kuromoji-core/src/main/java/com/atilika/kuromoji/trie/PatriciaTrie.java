@@ -440,7 +440,9 @@ public class PatriciaTrie<V> implements Map<String, V> {
                 return false;
             }
 
-            if (bit >= length(key)) {
+            if (bit == length(key)) {
+                return false;
+            } else if (bit > length(key)) {
                 return true;
             }
 
