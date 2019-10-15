@@ -112,6 +112,8 @@ public class Tokenizer extends TokenizerBase {
             readingFeature = DictionaryEntry.READING_FEATURE;
             partOfSpeechFeature = DictionaryEntry.PART_OF_SPEECH_FEATURE;
 
+            resolver = new SimpleResourceResolver(this.getClass());
+
             tokenFactory = new TokenFactory<Token>() {
                 @Override
                 public Token createToken(int wordId,
@@ -210,8 +212,6 @@ public class Tokenizer extends TokenizerBase {
             penalties.add(kanjiPenalty);
             penalties.add(otherPenaltyLengthThreshold);
             penalties.add(otherPenalty);
-
-            resolver = new SimpleResourceResolver(this.getClass());
 
             try {
                 fst = FST.newInstance(resolver);
