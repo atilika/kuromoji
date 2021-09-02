@@ -14,3 +14,7 @@ install:
 
 script:
   - mvn test -DskipCompileDictionary -pl kuromoji-ipadic -pl kuromoji-unidic -am
+
+cache:
+  directories:
+  - $HOME/.m2
