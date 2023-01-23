@@ -54,10 +54,16 @@ public abstract class TokenInfoDictionaryCompilerBase<T extends DictionaryEntryB
     protected List<GenericDictionaryEntry> dictionaryEntries = null;
 
     private String encoding;
+    private String regexFilter;
     private List<String> surfaces = new ArrayList<>();
 
-    public TokenInfoDictionaryCompilerBase(String encoding) {
+    public TokenInfoDictionaryCompilerBase(String encoding, String regexFilter) {
         this.encoding = encoding;
+        this.regexFilter = regexFilter;
+    }
+
+    private boolean surfaceMatchesRegexFilter(T entry) {
+        return regexFilter != null && entry.getSurface().matches(regexFilter);
     }
 
     public void analyzeTokenInfo(InputStream input) throws IOException {
@@ -66,6 +72,10 @@ public abstract class TokenInfoDictionaryCompilerBase<T extends DictionaryEntryB
 
         while ((line = reader.readLine()) != null) {
             T entry = parse(line);
+
+            if (surfaceMatchesRegexFilter(entry)) {
+                continue;
+            }
 
             GenericDictionaryEntry dictionaryEntry = makeGenericDictionaryEntry(entry);
 
@@ -80,6 +90,10 @@ public abstract class TokenInfoDictionaryCompilerBase<T extends DictionaryEntryB
 
         while ((line = reader.readLine()) != null) {
             T entry = parse(line);
+
+            if (surfaceMatchesRegexFilter(entry)) {
+                continue;
+            }
 
             GenericDictionaryEntry dictionaryEntry = makeGenericDictionaryEntry(entry);
 

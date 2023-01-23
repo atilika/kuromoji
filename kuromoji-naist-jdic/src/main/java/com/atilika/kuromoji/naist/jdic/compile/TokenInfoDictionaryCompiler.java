@@ -26,8 +26,8 @@ import java.util.List;
 
 public class TokenInfoDictionaryCompiler extends TokenInfoDictionaryCompilerBase<DictionaryEntry> {
 
-    public TokenInfoDictionaryCompiler(String encoding) {
-        super(encoding);
+    public TokenInfoDictionaryCompiler(String encoding, String regexFilter) {
+        super(encoding, regexFilter);
     }
 
     @Override

@@ -24,8 +24,8 @@ import java.io.IOException;
 public class DictionaryCompiler extends DictionaryCompilerBase {
 
     @Override
-    protected TokenInfoDictionaryCompilerBase getTokenInfoDictionaryCompiler(String encoding) {
-        return new TokenInfoDictionaryCompiler(encoding);
+    protected TokenInfoDictionaryCompilerBase getTokenInfoDictionaryCompiler(String encoding, String regexFilter) {
+        return new TokenInfoDictionaryCompiler(encoding, regexFilter);
     }
 
     public static void main(String[] args) throws IOException {

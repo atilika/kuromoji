@@ -31,17 +31,17 @@ import java.util.List;
 
 public abstract class DictionaryCompilerBase {
 
-    public void build(String inputDirname, String outputDirname, String encoding) throws IOException {
+    public void build(String inputDirname, String outputDirname, String encoding, String regexFilter) throws IOException {
         File outputDir = new File(outputDirname);
         outputDir.mkdirs();
-        buildTokenInfoDictionary(inputDirname, outputDirname, encoding);
+        buildTokenInfoDictionary(inputDirname, outputDirname, encoding, regexFilter);
         buildUnknownWordDictionary(inputDirname, outputDirname, encoding);
         buildConnectionCosts(inputDirname, outputDirname);
     }
 
-    private void buildTokenInfoDictionary(String inputDirname, String outputDirname, String encoding) throws IOException {
+    private void buildTokenInfoDictionary(String inputDirname, String outputDirname, String encoding, String regexFilter) throws IOException {
         ProgressLog.begin("compiling tokeninfo dict");
-        TokenInfoDictionaryCompilerBase tokenInfoCompiler = getTokenInfoDictionaryCompiler(encoding);
+        TokenInfoDictionaryCompilerBase tokenInfoCompiler = getTokenInfoDictionaryCompiler(encoding, regexFilter);
 
         ProgressLog.println("analyzing dictionary features");
         tokenInfoCompiler.analyzeTokenInfo(
@@ -101,7 +101,7 @@ public abstract class DictionaryCompilerBase {
         ProgressLog.end();
     }
 
-    abstract protected TokenInfoDictionaryCompilerBase getTokenInfoDictionaryCompiler(String encoding);
+    abstract protected TokenInfoDictionaryCompilerBase getTokenInfoDictionaryCompiler(String encoding, String regexFilter);
 
     protected void buildUnknownWordDictionary(String inputDirname, String outputDirname, String encoding) throws IOException {
         ProgressLog.begin("compiling unknown word dict");
@@ -161,14 +161,20 @@ public abstract class DictionaryCompilerBase {
         String inputDirname = args[0];
         String outputDirname = args[1];
         String inputEncoding = args[2];
+        String regexFilter = null;
+
+        if (args.length > 3) {
+            regexFilter = args[3];
+        }
 
         ProgressLog.println("dictionary compiler");
         ProgressLog.println("");
         ProgressLog.println("input directory: " + inputDirname);
         ProgressLog.println("output directory: " + outputDirname);
         ProgressLog.println("input encoding: " + inputEncoding);
+        ProgressLog.println("regex filter: " + regexFilter);
         ProgressLog.println("");
 
-        build(inputDirname, outputDirname, inputEncoding);
+        build(inputDirname, outputDirname, inputEncoding, regexFilter);
     }
 }
