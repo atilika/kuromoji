@@ -74,9 +74,9 @@ public class UserDictionaryConverter {
         return builder.toString();
     }
 
-    private String escape(String string) {
-        if (string.contains(",")) {
-            return "\"" + string + "\"";
+    static String escape(String string) {
+        if (string.contains(",") || string.contains("\"") || string.contains("\n") || string.contains("\r")) {
+            return "\"" + string.replace("\"", "\"\"") + "\"";
         }
 
         return string;
@@ -110,11 +110,9 @@ public class UserDictionaryConverter {
             new OutputStreamWriter(new FileOutputStream(outputFilename), StandardCharsets.UTF_8)
         );
 
-        UserDictionaryConverter converter = new UserDictionaryConverter();
-
-        converter.convert(reader, writer);
-
-        reader.close();
-        writer.close();
+        try (BufferedReader input = reader; BufferedWriter output = writer) {
+            UserDictionaryConverter converter = new UserDictionaryConverter();
+            converter.convert(input, output);
+        }
     }
 }

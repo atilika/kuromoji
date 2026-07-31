@@ -21,7 +21,17 @@ import org.junit.Test;
 
 import java.io.IOException;
 
+import static org.junit.Assert.assertEquals;
+
 public class UserDictionaryConverterTest {
+
+    @Test
+    public void testEscapeCsvSpecialCharacters() {
+        assertEquals("plain", UserDictionaryConverter.escape("plain"));
+        assertEquals("\"with,comma\"", UserDictionaryConverter.escape("with,comma"));
+        assertEquals("\"with \"\"quote\"\"\"", UserDictionaryConverter.escape("with \"quote\""));
+        assertEquals("\"two\nlines\"", UserDictionaryConverter.escape("two\nlines"));
+    }
 
     @Ignore("Enable during development")
     @Test
